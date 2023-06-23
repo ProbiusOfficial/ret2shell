@@ -1,0 +1,49 @@
+{
+  "account": {
+    "login": "Login",
+    "register": "Register",
+    "account": "Account",
+    "password": "Password",
+    "accountTooShort": "Username must be at least 2 characters",
+    "accountTooLong": "Username does not exceed 32 characters",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordTooWeak": "The password should be between 8-40 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character",
+    "captchaIsRequired": "Please fill in the verification code",
+    "unverified": "Unverified",
+    "player": "Player",
+    "domainAdmin": "Domain Administrator",
+    "superAdmin": "Super Administrator",
+    "unknown": "Unknown"
+  },
+  "playground": {
+    "title": "Playground"
+  },
+  "games": {
+    "title": "Games"
+  },
+  "announcements": {
+    "title": "Announcements"
+  },
+  "certs": {
+    "title": "Certificates"
+  },
+  "admin": {
+    "title": "Admin"
+  },
+  "docs": {
+    "title": "Documents"
+  },
+  "about": {
+    "maker": "Reverier Xu"
+  },
+  "misc": {
+    "verifyCode": "Verification Code",
+    "or": "Or"
+  },
+  "theme": {
+    "colorScheme": "Color Scheme",
+    "english": "English",
+    "language": "Language",
+    "simplifiedChinese": "简体中文"
+  }
+}

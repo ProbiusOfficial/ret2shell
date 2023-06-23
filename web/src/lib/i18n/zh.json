@@ -1,0 +1,49 @@
+{
+  "account": {
+    "login": "登录",
+    "register": "注册",
+    "account": "用户名",
+    "password": "密码",
+    "accountTooLong": "用户名不超过32字符",
+    "accountTooShort": "用户名至少2字符",
+    "captchaIsRequired": "请填写验证码",
+    "passwordTooShort": "密码至少8字符",
+    "passwordTooWeak": "密码在8-40字符之间，至少包含一个大写字母、一个小写字母、一个数字和一个特殊字符",
+    "unverified": "未验证",
+    "player": "选手",
+    "domainAdmin": "域管理员",
+    "superAdmin": "超级管理员",
+    "unknown": "未知"
+  },
+  "announcements": {
+    "title": "公告"
+  },
+  "playground": {
+    "title": "练习"
+  },
+  "games": {
+    "title": "赛事"
+  },
+  "certs": {
+    "title": "证书"
+  },
+  "admin": {
+    "title": "管理"
+  },
+  "docs": {
+    "title": "技术文档"
+  },
+  "about": {
+    "maker": "Reverier Xu"
+  },
+  "theme": {
+    "colorScheme": "颜色主题",
+    "language": "语言 / Language",
+    "simplifiedChinese": "简体中文",
+    "english": "English"
+  },
+  "misc": {
+    "or": "或",
+    "verifyCode": "验证码"
+  }
+}
