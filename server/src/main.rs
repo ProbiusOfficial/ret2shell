@@ -13,7 +13,6 @@
 #![warn(missing_docs)]
 
 use clap::{command, Parser, Subcommand};
-use colored::Colorize;
 use config::GlobalConfig;
 use tracing::{error, info, warn};
 
@@ -69,7 +68,7 @@ async fn main() {
         Some(Commands::Up) => up(config).await,
         Some(Commands::Down) => down(config).await,
         None => {
-            warn!("No command specified, default to {}", "`up`".bold().green());
+            warn!("No command specified, default to `up`");
             up(config).await
         }
     } {
@@ -83,7 +82,7 @@ async fn main() {
 
 /// Show greet information.
 fn greet() {
-    info!("Welcome to Ret 2 Shell!");
+    info!("-*- Welcome to Ret 2 Shell! -*-");
     info!("\"怀有希望的人和满天的星星一样 是永远都不会孤独的\"")
 }
 
@@ -92,7 +91,7 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     greet();
     warn!(">> Server initialization started <<");
     let _auditor = audit::initialize(&config).await?;
-    info!("Loaded Module: <Audit>");
+    info!("Loaded Module: < Audit >");
 
     warn!(">> Server initialization finished <<");
     Ok(())

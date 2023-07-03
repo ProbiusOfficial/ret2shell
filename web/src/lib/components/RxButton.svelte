@@ -9,7 +9,6 @@
   export let square = false
   export let disabled = false
   export let active = false
-  export let type: 'button' | 'submit' | 'reset' | null | undefined = 'button'
   let clazz = ''
   export { clazz as class }
 
@@ -47,7 +46,7 @@
     .join(' ')
 </script>
 
-<button class={classes} on:click={handleClick} {disabled} {type}>
+<button class={classes} on:click={handleClick} {disabled} {...$$restProps}>
   {#if loading}
     <span class="loading" />
   {/if}

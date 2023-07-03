@@ -6,8 +6,8 @@
   import CustomizeBox from './CustomizeBox.svelte'
   import { i18n } from '$lib/i18n'
   import RxLink from '$lib/components/RxLink.svelte'
-  import RxButton from '$lib/components/RxButton.svelte'
   import RxPopup from '$lib/components/RxPopup.svelte'
+  import UserBox from './UserBox.svelte'
 </script>
 
 <div class="navbar w-auto backdrop-blur shadow bg-neutral/80 transition-shadow z-40 print:hidden px-2 py-0">
@@ -30,10 +30,15 @@
     <CustomizeBox />
   </RxPopup>
   {#if $user.isLoggedIn}
-    <RxButton ghost>
-      <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
-      <span>{$user.name}</span>
-    </RxButton>
+    <RxPopup class="btn-square btn-ghost hidden sm:inline-flex mr-2" name="userBoxPopup" popupWidth={64}>
+      <!-- TODO: replace with user's avatar if exists -->
+      <div class="avatar" slot="button">
+        <div class="w-8 rounded-full ring-2 ring-offset-base-100 ring-offset-2 !flex flex-col justify-center items-center">
+          <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+        </div>
+      </div>
+      <UserBox />
+    </RxPopup>
   {:else}
     <RxLink href="/account/login" exactlyMatched>
       <span class="w-6 h-6 icon-[fluent--person-16-regular]" />

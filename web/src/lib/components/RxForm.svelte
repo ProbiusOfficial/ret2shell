@@ -20,6 +20,6 @@
     .join(' ')
 </script>
 
-<form use:form class={classes}>
+<form use:form class={classes} {...$$restProps}>
   <slot />
 </form>

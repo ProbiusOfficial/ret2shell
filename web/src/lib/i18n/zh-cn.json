@@ -13,7 +13,9 @@
     "player": "选手",
     "domainAdmin": "域管理员",
     "superAdmin": "超级管理员",
-    "unknown": "未知"
+    "unknown": "未知",
+    "settings": "用户设置",
+    "profile": "用户信息"
   },
   "announcements": {
     "title": "公告"

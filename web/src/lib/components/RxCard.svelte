@@ -16,6 +16,6 @@
     .join(' ')
 </script>
 
-<div class={classes}>
+<div class={classes} {...$$restProps}>
   <slot />
 </div>

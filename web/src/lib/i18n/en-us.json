@@ -13,7 +13,9 @@
     "player": "Player",
     "domainAdmin": "Domain Administrator",
     "superAdmin": "Super Administrator",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "settings": "Account Settings",
+    "profile": "Account Profile"
   },
   "playground": {
     "title": "Playground"

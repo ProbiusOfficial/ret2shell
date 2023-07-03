@@ -1,9 +1,9 @@
 <script lang="ts">
   import '$lib/styles/base.sass'
   import '@fontsource/jetbrains-mono'
-  import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import 'overlayscrollbars/overlayscrollbars.css'
   import TitleBar from '$lib/blocks/TitleBar.svelte'
+  import RxScrollbar from '$lib/components/RxScrollbar.svelte'
   import Background from '$lib/blocks/Background.svelte'
   import { theme } from '$lib/stores/theme'
   import { onDestroy } from 'svelte'
@@ -41,7 +41,7 @@
 
 <svelte:head><title>{$platform.name}</title></svelte:head>
 <Background />
-<OverlayScrollbarsComponent
+<RxScrollbar
   options={{
     scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-light' : 'os-theme-dark', autoHide: 'scroll' },
   }}
@@ -52,7 +52,7 @@
     <TitleBar />
     <slot />
   </div>
-</OverlayScrollbarsComponent>
+</RxScrollbar>
 
 {#if animation}
   <div class="fixed top-0 left-0 w-screen h-screen bg-base-100 z-50" transition:fade={{ duration: 300 }}>

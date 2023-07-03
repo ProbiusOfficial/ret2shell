@@ -6,6 +6,8 @@
   export let justify: 'start' | 'center' | 'end' = 'center'
   export let uppercase = false
   export let exactlyMatched = false
+  let clazz = ''
+  export { clazz as class }
 
   /**
    * Possible classes:
@@ -22,6 +24,7 @@
     size && `btn-${size}`,
     justify && `justify-${justify}`,
     !uppercase && 'normal-case',
+    clazz
   ]
     .filter(Boolean)
     .join(' ')
@@ -31,6 +34,7 @@
   {href}
   class={classes}
   class:text-primary={exactlyMatched ? $page.route.id === href : $page.route.id?.startsWith(href)}
+  {...$$restProps}
 >
   <slot />
 </a>

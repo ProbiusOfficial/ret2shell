@@ -6,15 +6,15 @@ i18next.use(LanguageDetector).init({
   fallbackLng: 'en_US',
   resources: {
     en_US: {
-      translation: await import('./en-us.json')
+      translation: await import('./en-us.json'),
     },
     zh_CN: {
-      translation: await import('./zh-cn.json')
+      translation: await import('./zh-cn.json'),
     },
   },
   interpolation: {
     escapeValue: false,
-  }
+  },
 })
 
 export const i18n = createI18nStore(i18next)

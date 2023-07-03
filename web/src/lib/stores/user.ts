@@ -5,7 +5,7 @@ import type { User } from '$lib/models/user'
 class UserStore {
   token = ''
   id = -1
-  name = 'UNKNOWN'
+  name = ''
   level = -1
   isLoggedIn = false
   info: User = {} as User

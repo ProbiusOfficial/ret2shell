@@ -5,10 +5,13 @@
   export let placement: Placement = 'bottom'
   export let event: 'click' | 'hover' | 'focus-blur' | 'focus-click' = 'click'
   export let offset = 16
+  export let popupWidth = 48
   let clazz = ''
   export { clazz as class }
 
   $: buttonClasses = ['btn', clazz].filter(Boolean).join(' ')
+  // w-0 w-1 w-2 w-3 w-4 w-6 w-8 w-12 w-16 w-20 w-24 w-28 w-32 w-36 w-40 w-48 w-56 w-64 w-72 w-80 w-96 w-auto
+  $: popupClasses = ["rounded-box bg-neutral flex flex-col shadow-lg", `w-${popupWidth}`].filter(Boolean).join(' ')
 
   const popupSettings: PopupSettings = {
     event: event,
@@ -25,6 +28,6 @@
     <span class="w-5 h-5 icon-[fluent--chevron-down-16-regular]" />
   </slot>
 </button>
-<div class="rounded-box bg-neutral w-48 flex flex-col shadow-lg" data-popup={name}>
+<div class={popupClasses} data-popup={name}>
   <slot />
 </div>
