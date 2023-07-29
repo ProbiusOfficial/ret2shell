@@ -19,7 +19,6 @@ pub struct ServerConfig {
 }
 
 impl ServerConfig {
-    #[allow(dead_code)]
     /// Returns the external link prefix for the server, including the protocol (http or https).
     ///
     /// # Example

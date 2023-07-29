@@ -1,3 +1,23 @@
 //! The in-memory cache provider, which is used to store the temporary data like user's token.
 //!
 //! The cache provider is implemented by using the `fred` crate and `redis`.
+
+use crate::config::GlobalConfig;
+
+use self::manager::RedisPool;
+
+pub mod cluster;
+pub mod manager;
+pub mod token;
+pub mod captcha;
+
+pub use token::Token;
+pub use captcha::Captcha;
+
+
+pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<RedisPool> {
+    let nodes = &config.cache.nodes;
+    let max_connections = config.cache.max_connections.unwrap_or(32);
+    let mgr = manager::new_redis_pool(nodes, max_connections).await?;
+    Ok(mgr)
+}

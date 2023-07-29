@@ -2,7 +2,6 @@
 
 use ring::digest::{Context, SHA256};
 
-#[allow(dead_code)]
 /// Calculate the sha256 value of a string, returns a hex string.
 pub fn sha256sum_str(message: &str) -> String {
     let mut context = Context::new(&SHA256);

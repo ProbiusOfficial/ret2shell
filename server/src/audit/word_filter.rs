@@ -7,18 +7,6 @@ use tokio::io::{AsyncBufReadExt, BufReader};
 use crate::config::GlobalConfig;
 
 /// Reads a file containing sensitive words and returns a `BTreeSet` of those words.
-///
-/// # Arguments
-///
-/// * `path` - A string slice that holds the path to the sensitive words file.
-///
-/// # Returns
-///
-/// * `anyhow::Result<BTreeSet<String>>` - A `BTreeSet` containing the sensitive words read from the file.
-///
-/// # Errors
-///
-/// This function will return an error if the file cannot be opened or read.
 pub async fn read_sensitive_word_file(path: &str) -> anyhow::Result<BTreeSet<String>> {
     let mut set = BTreeSet::<String>::new();
     let f = File::open(path).await?;
@@ -31,18 +19,6 @@ pub async fn read_sensitive_word_file(path: &str) -> anyhow::Result<BTreeSet<Str
 }
 
 /// Initializes the Aho-Corasick automaton for sensitive word filtering.
-///
-/// # Arguments
-///
-/// * `config` - An `Arc<RwLock<CybertermConfig>>` containing the configuration settings.
-///
-/// # Returns
-///
-/// * `anyhow::Result<AhoCorasick>` - An `AhoCorasick` automaton for sensitive word filtering.
-///
-/// # Errors
-///
-/// This function will return an error if the sensitive word file cannot be opened or read.
 pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<AhoCorasick> {
     if let Some(audit_config) = config.audit.clone() {
         if let Some(sensitive_word_list) = audit_config.sensitive_word_list {
@@ -54,17 +30,7 @@ pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<AhoCorasick> {
     Ok(AhoCorasick::new(Vec::<String>::new())?)
 }
 
-#[allow(dead_code)]
 /// Checks if a given text contains any sensitive words using the Aho-Corasick automaton.
-///
-/// # Arguments
-///
-/// * `ac` - A reference to an `AhoCorasick` automaton for sensitive word filtering.
-/// * `src` - A string slice containing the text to be checked for sensitive words.
-///
-/// # Returns
-///
-/// * `bool` - Returns `true` if the text contains any sensitive words, otherwise `false`.
 pub fn check_text(ac: &AhoCorasick, src: &str) -> bool {
     ac.find(
         &src.trim()

@@ -13,7 +13,6 @@ pub struct IdsInfo {
     pub uid: String,
 }
 
-#[allow(dead_code)]
 /// Parse the XML response from `yale.edu` schema and get the student info.
 pub fn get_student_info_from_xml_yale_edu(
     xml_response: impl AsRef<str>,

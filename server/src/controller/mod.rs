@@ -12,7 +12,6 @@ use axum::{
 };
 use sea_orm::DatabaseConnection;
 use std::net::IpAddr;
-use std::sync::Arc;
 use std::time::Duration;
 use tower_http::{
     cors::{Any, CorsLayer},
@@ -20,12 +19,11 @@ use tower_http::{
 };
 use tracing::{info, Span};
 
-use crate::{audit::Auditor, config::GlobalConfig};
+use crate::{audit::Auditor, config::GlobalConfig, cache::manager::RedisPool};
 
 mod account;
 mod announcement;
 mod certificate;
-mod challenge;
 mod game;
 mod media;
 mod middleware;
@@ -37,6 +35,7 @@ use middleware::forwarded::get_client_ip;
 #[derive(Clone, FromRef)]
 pub struct GlobalState {
     pub db: DatabaseConnection,
+    pub cache: RedisPool,
     pub auditor: Auditor,
 }
 
@@ -68,16 +67,15 @@ pub async fn initialize(config: &GlobalConfig, state: GlobalState) -> anyhow::Re
                     info!("[{}] in {}ms", response.status(), latency.as_millis());
                 }),
         )
-        .with_state(Arc::new(state));
+        .with_state::<()>(state);
     Ok(router)
 }
 
-fn construct_router() -> Router<Arc<GlobalState>> {
+fn construct_router() -> Router<GlobalState> {
     Router::new()
         .nest("/account", account::router())
         .nest("/announcement", announcement::router())
         .nest("/certificate", certificate::router())
-        .nest("/challenge", challenge::router())
         .nest("/game", game::router())
         .nest("/media", media::router())
         .nest("/platform", platform::router())

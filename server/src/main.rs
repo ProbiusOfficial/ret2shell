@@ -130,7 +130,9 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     info!("Loaded Module: < Audit >");
     let db = migrator::initialize(&config).await?;
     info!("Loaded Module: < Database >");
-    let state = GlobalState { auditor, db };
+    let cache = cache::initialize(&config).await?;
+    info!("Loaded Module: < Cache >");
+    let state = GlobalState { auditor, db, cache };
     let router = controller::initialize(&config, state).await?;
     info!("Router constructed.");
 

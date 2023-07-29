@@ -68,7 +68,6 @@ pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<DatabaseConnect
     Ok(db)
 }
 
-#[allow(dead_code)]
 pub async fn down(config: &GlobalConfig) -> anyhow::Result<()> {
     let mut connect_options = ConnectOptions::new(config.database.dsn());
     connect_options
