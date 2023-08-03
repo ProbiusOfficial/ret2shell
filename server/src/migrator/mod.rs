@@ -60,6 +60,7 @@ impl MigratorTrait for Migrator {
 pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<DatabaseConnection> {
     let mut connect_options = ConnectOptions::new(config.database.dsn());
     connect_options
+        .acquire_timeout(std::time::Duration::from_secs(15))
         .sqlx_logging(true)
         .sqlx_logging_level(LevelFilter::Debug);
 

@@ -126,12 +126,12 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
 
     warn!(">> Server initialization started <<");
 
+    info!("Loading Module: < Audit >");
     let auditor = audit::initialize(&config).await?;
-    info!("Loaded Module: < Audit >");
+    info!("Loading Module: < Database >");
     let db = migrator::initialize(&config).await?;
-    info!("Loaded Module: < Database >");
+    info!("Loading Module: < Cache >");
     let cache = cache::initialize(&config).await?;
-    info!("Loaded Module: < Cache >");
     let state = GlobalState { auditor, db, cache };
     let router = controller::initialize(&config, state).await?;
     info!("Router constructed.");
