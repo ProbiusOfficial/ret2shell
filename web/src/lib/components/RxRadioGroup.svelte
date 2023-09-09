@@ -27,7 +27,7 @@
       preset={item.value}
       label={item.label}
       on:select={(data) => {
-          value = data.detail
+        value = data.detail
       }}
     />
   {/each}

@@ -10,7 +10,7 @@
   import { nanoid } from 'nanoid'
   import RxFormItem from '$lib/components/RxFormItem.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
-    import RxButton from '$lib/components/RxButton.svelte'
+  import RxButton from '$lib/components/RxButton.svelte'
 
   let schema = z.object({
     signing_key: z
@@ -83,7 +83,7 @@
           name="expires_time"
           hasError={$errors.expires_time !== null}
           placeholder={$i18n.t('init.expiresTimePlaceholder')}
-          value=86400
+          value="86400"
           type="number"
         />
       </RxFormItem>
@@ -100,7 +100,7 @@
           name="buffer_time"
           hasError={$errors.buffer_time !== null}
           placeholder={$i18n.t('init.bufferTimePlaceholder')}
-          value=21600
+          value="21600"
           type="number"
         />
       </RxFormItem>

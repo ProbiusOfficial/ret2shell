@@ -17,7 +17,8 @@
     "settings": "Account Settings",
     "profile": "Account Profile",
     "registerTips": "Do not have accounts? Register now!",
-    "3rdAuth": "Using OAuth accounts"
+    "3rdAuth": "Using OAuth accounts",
+    "loginFailed": "Login failed"
   },
   "playground": {
     "title": "Playground",
@@ -59,10 +60,13 @@
     "loadingCaptcha": "Loading Captcha...",
     "reloadCaptcha": "Reload Captcha",
     "powing": "Pow-ing...",
-    "captcha": "Captcha"
+    "captcha": "Captcha",
+    "fetchingPow": "Getting..."
   },
   "global": {
-    "imageBroken": "Image Broken"
+    "imageBroken": "Image Broken",
+    "backendOffline": "The backend appears to be offline, please contact your administrator if you continue to see this message after refreshing several times.",
+    "cookieAlert": "We don't use cookies, so don't worry."
   },
   "errors": {
     "401": "Please Login First",
@@ -199,5 +203,9 @@
     "pusherTokenPlaceholder": "Please enter a token, preferably a random string",
     "submit": "Submit",
     "pusherTokenRequired": "Please enter push token"
+  },
+  "action": {
+    "ok": "OK",
+    "yes": "YES"
   }
 }

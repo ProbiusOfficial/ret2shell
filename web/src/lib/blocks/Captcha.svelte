@@ -8,18 +8,34 @@
   import { getCaptcha } from '$lib/api/account'
   import type { Captcha } from '$lib/models/captcha'
   import { Validator } from '$lib/models/config'
-  import {encode} from 'js-base64'
+  import { encode } from 'js-base64'
+
   export let hasError = false
   export let errors: string | string[] | undefined = undefined
-  export let captchaId = ''
-  export let captchaAnswer = ''
+  export let captchaId: string | unknown = ''
+  export let captchaAnswer: string | unknown = ''
   let loading = true
   let failed = false
   export let enabled = true
   let powing = true
+  let fetchingPow = true
   let fetchingImg = true
-  let imgSrc = ''
   let captcha: Captcha
+
+  function refreshImg() {
+    fetchingImg = true
+    refresh()
+  }
+
+  export function refreshAll() {
+    loading = true
+    refresh()
+  }
+
+  function refreshPow() {
+    fetchingPow = true
+    refresh()
+  }
 
   function refresh() {
     getCaptcha().then((res) => {
@@ -30,11 +46,28 @@
       }
       res.json().then((data) => {
         captcha = data
+        captchaId = captcha.id
         failed = false
         loading = false
         fetchingImg = false
+        fetchingPow = false
       })
     })
+  }
+
+  $: {
+    if (captcha && captcha.validator === Validator.Pow) {
+      powing = true
+      const worker = new Worker(new URL('$lib/workers/pow.worker.ts', import.meta.url), { type: 'module' })
+      worker.postMessage({
+        challenge: captcha.challenge,
+      })
+      worker.onmessage = (e) => {
+        powing = false
+        captchaAnswer = e.data
+        worker.terminate()
+      }
+    }
   }
 
   onMount(() => {
@@ -43,41 +76,36 @@
 </script>
 
 <RxFormItem label={$i18n.t('form.captcha')} name="captchaAnswer" class="" {hasError} {errors}>
-  <input class="hidden" id="captcha_id" name="captcha_id" value={captchaId} />
   {#if loading || failed}
-    <RxButton {loading} class="w-full">
+    <RxButton {loading} class="w-full" disabled={loading} on:click={refreshAll}>
       {loading ? $i18n.t('form.loadingCaptcha') : $i18n.t('form.reloadCaptcha')}
     </RxButton>
-    <input id="captcha_answer" name="captcha_answer" class="hidden" value={captchaAnswer} />
   {:else if enabled && !loading && !failed && captcha.validator === Validator.Pow}
     <RxInput
       icon="icon-[fluent--beaker-16-regular]"
       class="w-full"
-      id="captcha_answer"
       type="text"
-      name="captcha_answer"
       {hasError}
       disabled
-      value={captchaAnswer}
+      bind:value={captchaAnswer}
       placeholder="0XDEADBEEF######"
     >
-      <RxButton loading={powing}>{$i18n.t('form.powing')}</RxButton>
-    </RxInput>
-  {:else if enabled && !loading && !failed && captcha.validator === Validator.Image}
-    <RxInput
-      icon="icon-[fluent--beaker-16-regular]"
-      class="w-full"
-      id="captcha_answer"
-      type="text"
-      name="captcha_answer"
-      {hasError}
-      value={captchaAnswer}
-    >
-      <RxButton class="border-none w-24 p-0 overflow-hidden" disabled={fetchingImg}>
-        <RxImage class="w-full object-scale-down" loading={fetchingImg} src={`data:image/svg+xml;base64,${encode(captcha.challenge, false)}`} />
+      <RxButton loading={powing} disabled={powing || fetchingPow} on:click={refreshPow}>
+        {fetchingPow ? $i18n.t('form.fetchingPow') : powing ? $i18n.t('form.powing') : ''}
+        {#if !fetchingPow && !powing}
+          <span class="icon-[fluent--checkmark-16-regular] w-6 h-6 text-success" />
+        {/if}
       </RxButton>
     </RxInput>
-  {:else}
-    <input id="captcha_answer" name="captcha_answer" class="hidden" value={captchaAnswer} />
+  {:else if enabled && !loading && !failed && captcha.validator === Validator.Image}
+    <RxInput icon="icon-[fluent--beaker-16-regular]" class="w-full" type="text" {hasError} bind:value={captchaAnswer}>
+      <RxButton class="border-none w-24 p-0 overflow-hidden" disabled={fetchingImg} on:click={refreshImg}>
+        <RxImage
+          class="w-full object-scale-down"
+          loading={fetchingImg}
+          src={`data:image/svg+xml;base64,${encode(captcha.challenge, false)}`}
+        />
+      </RxButton>
+    </RxInput>
   {/if}
 </RxFormItem>

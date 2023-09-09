@@ -12,6 +12,9 @@
   import { createForm } from 'felte'
   import Captcha from '$lib/blocks/Captcha.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
+  import { login } from '$lib/api/account'
+  import { goto } from '$app/navigation'
+  import { showMessage, toast } from '$lib/stores/toast'
 
   let schema = z.object({
     account: z
@@ -24,27 +27,49 @@
       .trim()
       .min(8, { message: $i18n.t('account.passwordTooShort') })
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/, { message: $i18n.t('account.passwordTooWeak') }),
-    captchaId: z.string().trim(),
-    captchaAnswer: z
+    captcha_id: z.string().trim(),
+    captcha_answer: z
       .string()
       .trim()
       .min(1, { message: $i18n.t('account.captchaIsRequired') }),
   })
-
-  const { form, errors } = createForm({
+  let loading = false
+  let captcha: Captcha | null
+  const { form, data, touched, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(_values, _context) {
-      // console.log("submitting", values, context)
+    onSubmit(values, _context) {
+      loading = true
+      return login({ ...values })
     },
-    onSuccess(_response, _context) {
-      // console.log("success", response, context)
+    onSuccess(response, _context) {
+      loading = false
+      if ((response as Response).status !== 200) {
+        ;(response as Response).text().then((reason) => {
+          showMessage('error', $i18n.t('account.loginFailed') + ': ' + reason, 5000)
+          captcha?.refreshAll()
+        })
+        return
+      }
       // Do something with the returned value from `onSubmit`.
-    },
-    onError(_err, _context) {
-      // console.log("error", err, context)
-      // Do something with the error thrown from `onSubmit`.
+      goto('/')
     },
   })
+
+  const captchaAnswerValue = $data.captcha_answer
+  $: {
+    // console.log('answer', captchaAnswerValue, $data.captcha_answer)
+    if (captchaAnswerValue !== $data.captcha_answer) {
+      $touched.captcha_answer = true
+    }
+  }
+
+  const captchaIdValue = $data.captcha_id
+  $: {
+    // console.log('id', captchaIdValue, $data.captcha_id)
+    if (captchaIdValue !== $data.captcha_id) {
+      $touched.captcha_id = true
+    }
+  }
 </script>
 
 <svelte:head><title>{$i18n.t('account.login')} - {$platform.name}</title></svelte:head>
@@ -85,9 +110,15 @@
             autocomplete="current-password"
           />
         </RxFormItem>
-        <Captcha hasError={$errors.captchaAnswer !== null} errors={$errors.captchaAnswer || ''} />
+        <Captcha
+          bind:this={captcha}
+          hasError={$errors.captcha_answer !== null}
+          errors={$errors.captcha_answer || ''}
+          bind:captchaId={$data.captcha_id}
+          bind:captchaAnswer={$data.captcha_answer}
+        />
         <RxFormItem name="submitAction" label="">
-          <RxButton class="w-full" level="primary" type="submit">{$i18n.t('account.login')}</RxButton>
+          <RxButton class="w-full" level="primary" type="submit" {loading}>{$i18n.t('account.login')}</RxButton>
         </RxFormItem>
       </RxForm>
     </div>

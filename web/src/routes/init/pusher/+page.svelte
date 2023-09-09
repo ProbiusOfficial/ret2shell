@@ -37,7 +37,7 @@
       return Promise.resolve()
     },
     onSuccess(_response, _context) {
-      console.log($initConfig.config)
+      // console.log($initConfig.config)
       setPlatformConfig(
         {
           id: 0,
@@ -45,7 +45,7 @@
         },
         $initConfig.token
       ).then((res) => {
-        console.log(res)
+        // console.log(res)
         window.location.assign('/')
       })
     },

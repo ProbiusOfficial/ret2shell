@@ -1,7 +1,7 @@
-import type { Validator } from "./config"
+import type { Validator } from './config'
 
 export interface Captcha {
-    id: string
-    validator: Validator
-    challenge: string
+  id: string
+  validator: Validator
+  challenge: string
 }

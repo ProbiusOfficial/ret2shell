@@ -113,7 +113,8 @@
   {/if}
 
   <textarea
-  {id} {name}
+    {id}
+    {name}
     bind:this={textarea}
     class={textareaClasses}
     {placeholder}

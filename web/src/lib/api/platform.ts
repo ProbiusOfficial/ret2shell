@@ -6,9 +6,13 @@ export async function getPlatformInfo() {
 }
 
 export async function testToken(token: string) {
-  return await api.HEAD(`${api_root}/platform/config`, undefined, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } })
+  return await api.HEAD(`${api_root}/platform/config`, undefined, {
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  })
 }
 
 export async function setPlatformConfig(config: Config, token: string) {
-  return await api.POST(`${api_root}/platform/config`, config, { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } })
+  return await api.POST(`${api_root}/platform/config`, config, {
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+  })
 }

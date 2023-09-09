@@ -6,14 +6,7 @@
 </script>
 
 <label class="label cursor-pointer space-x-4">
-  <input
-    {id}
-    {name}
-    type="checkbox"
-    class="checkbox"
-    {...$$restProps}
-    bind:checked
-  />
+  <input {id} {name} type="checkbox" class="checkbox" {...$$restProps} bind:checked />
   <slot>
     <span class="label-text">{label}</span>
   </slot>

@@ -13,6 +13,9 @@
   import { page } from '$app/stores'
   import { getPlatformInfo } from '$lib/api/platform'
   import { goto } from '$app/navigation'
+  import { showMessage } from '$lib/stores/toast'
+  import { i18n } from '$lib/i18n'
+  import GlobalToast from '$lib/blocks/GlobalToast.svelte'
 
   let platformTyped = ''
   let animation = $page.route.id === '/'
@@ -22,7 +25,7 @@
       goto('/init')
       return
     } else if (!data.ok) {
-      // TODO: warn user
+      showMessage('error', $i18n.t('global.backendOffline'))
     }
     data.json().then((data) => {
       platform.update((value) => {
@@ -31,7 +34,22 @@
     })
   })
 
+  function acceptCookiePolicy() {
+    $platform.accept_cookies = true
+  }
+
   onMount(() => {
+    if (!$platform.accept_cookies) {
+      showMessage(
+        'info',
+        $i18n.t('global.cookieAlert'),
+        undefined,
+        acceptCookiePolicy,
+        $i18n.t('action.ok'),
+        acceptCookiePolicy,
+        $i18n.t('action.yes')
+      )
+    }
     if (!animation) return
     setTimeout(() => {
       let platformLast = `\xa0\xa0[ ${$platform.name} ] `
@@ -69,6 +87,7 @@
     <slot />
   </div>
 </OverlayScrollbarsComponent>
+<GlobalToast />
 
 {#if animation}
   <div class="fixed top-0 left-0 w-screen h-screen bg-base-100 z-50" transition:fade={{ duration: 300 }}>

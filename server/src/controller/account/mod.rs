@@ -49,7 +49,7 @@ async fn login(
         .map_err(|err| {
             warn!("failed to get user by account: {:?}", err);
             match err {
-                DbErr::RecordNotFound(_) => (StatusCode::NOT_FOUND, "account does not exist"),
+                DbErr::RecordNotFound(_) => (StatusCode::FORBIDDEN, "account or password is wrong"),
                 _ => (
                     StatusCode::INTERNAL_SERVER_ERROR,
                     "failed to get user by account",
@@ -71,7 +71,7 @@ async fn login(
 
             Ok(StatusCode::OK)
         }
-        Ok(false) => Err((StatusCode::UNAUTHORIZED, "wrong password")),
+        Ok(false) => Err((StatusCode::FORBIDDEN, "account or password is wrong")),
         Err(err) => {
             warn!("failed to verify password: {:?}", err);
             Err((

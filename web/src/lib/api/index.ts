@@ -17,7 +17,7 @@ export class api {
     } else {
       headers = { 'Content-Type': 'application/json', ...init?.headers }
     }
-    console.log(headers, init)
+    // console.log(headers, init)
     let resp = await fetch(input, { method, headers, body: JSON.stringify(body), ...init })
     if (resp.headers.get('Set-Token')) {
       user.update((value) => {

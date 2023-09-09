@@ -66,21 +66,21 @@ macro_rules! captcha_protected {
                 return Err((axum::http::StatusCode::UNAUTHORIZED, "hey robot"));
             }
             Err(crate::captcha::CaptchaError::Unknown) => {
-                debug!("captcha check failed with unknown reason");
+                tracing::error!("captcha check failed with unknown reason");
                 return Err((
                     axum::http::StatusCode::INTERNAL_SERVER_ERROR,
                     "captcha check failed with unknown reason",
                 ));
             }
             Err(crate::captcha::CaptchaError::CacheError(err)) => {
-                debug!("encountered captcha cache error: {:?}", err);
+                tracing::warn!("encountered captcha cache error: {:?}", err);
                 return Err((
                     axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                    "encountered captcha cache error",
+                    "captcha is outdate",
                 ));
             }
             Err(crate::captcha::CaptchaError::BuilderError) => {
-                debug!("failed to build captcha validator");
+                tracing::error!("failed to build captcha validator");
                 return Err((
                     axum::http::StatusCode::INTERNAL_SERVER_ERROR,
                     "failed to build captcha validator",

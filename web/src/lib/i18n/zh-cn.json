@@ -17,7 +17,8 @@
     "settings": "用户设置",
     "profile": "用户信息",
     "registerTips": "还没有账号？立即注册！",
-    "3rdAuth": "统一身份认证"
+    "3rdAuth": "统一身份认证",
+    "loginFailed": "登录失败"
   },
   "announcements": {
     "title": "公告",
@@ -59,10 +60,13 @@
     "loadingCaptcha": "验证码加载中...",
     "reloadCaptcha": "重新加载验证码",
     "powing": "计算中...",
-    "captcha": "验证码"
+    "captcha": "验证码",
+    "fetchingPow": "获取中..."
   },
   "global": {
-    "imageBroken": "图片已损坏"
+    "imageBroken": "图片已损坏",
+    "backendOffline": "后端似乎离线了，如果刷新几次后持续看到此消息，请联系管理员。",
+    "cookieAlert": "我们不使用小饼干，无须担心。"
   },
   "errors": {
     "401": "请先登录",
@@ -199,5 +203,9 @@
     "pusherTokenPlaceholder": "请输入密钥，最好是随机字符串",
     "submit": "提交",
     "pusherTokenRequired": "请输入推送密钥"
+  },
+  "action": {
+    "ok": "好的",
+    "yes": "确定"
   }
 }

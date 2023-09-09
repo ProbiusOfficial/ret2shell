@@ -12,7 +12,9 @@
   import RxButton from '$lib/components/RxButton.svelte'
 </script>
 
-<div class="navbar w-auto backdrop-blur shadow bg-neutral/80 transition-shadow z-40 print:hidden px-2 py-0 sticky top-0">
+<div
+  class="navbar w-auto backdrop-blur shadow bg-neutral/80 transition-shadow z-40 print:hidden px-2 py-0 sticky top-0"
+>
   {#if $initConfig.processing}
     <RxPopup class="btn-square btn-ghost xl:hidden" name="navPopup" popupWidth={64}>
       <span slot="button" class="icon-[fluent--navigation-16-regular] w-5 h-5" />

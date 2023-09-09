@@ -20,7 +20,7 @@ impl CaptchaValidator for PowValidator {
         Ok(Captcha {
             id,
             validator: Validator::Pow,
-            challenge: format!("{}#{}", challenge, difficulty),
+            challenge: format!("{}#{}", difficulty, challenge),
             answer: "".to_string(),
         })
     }
