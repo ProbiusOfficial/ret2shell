@@ -9,6 +9,7 @@
   import { onMount } from 'svelte'
   import { getCalendarList } from '$lib/api/calendar'
   import { showMessage } from '$lib/stores/toast'
+    import type { AxiosError } from 'axios'
 
   let calendars: Calendar[] = []
 
@@ -84,17 +85,9 @@
       Math.floor(new Date(year, month - 1).getTime() / 1000),
       Math.floor(new Date(year, month).getTime() / 1000)
     ).then((response) => {
-      if (response.ok && response.status === 200) {
-        response.json().then((data) => {
-          // console.log(data)
-          calendars = data
-        })
-      } else {
-        response.text().then((text) => {
-          // console.error(text)
-          showMessage('error', `${$i18n.t('calendar.failedToFetch')}: ${text}`, 5000)
-        })
-      }
+      calendars = response.sort((a, b) => a.start_time - b.start_time)
+    }).catch((err) => {
+      showMessage('error', $i18n.t('calendar.failedToFetch') + ': ' + (err as AxiosError).response?.data, 5000)
     })
   }
 
