@@ -12,7 +12,7 @@
   let announcements: Announcement[] = []
   let loading = false
   let page = 1
-  let perPage = 10
+  let perPage = 12
   let total = 0
 
   function refresh(page: number, perPage: number) {
