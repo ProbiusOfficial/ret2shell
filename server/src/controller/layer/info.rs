@@ -10,7 +10,7 @@ use axum::{
     response::IntoResponse,
     Extension,
 };
-use sea_orm::DatabaseConnection;
+use sea_orm::{DatabaseConnection, DbErr};
 use tracing::error;
 
 pub async fn prepare_platform_info<B>(
@@ -41,6 +41,7 @@ pub async fn prepare_user_full_info<B>(
         Ok(user_full) => {
             req.extensions_mut().insert(user_full);
         }
+        Err(DbErr::RecordNotFound(_)) => {}
         Err(err) => {
             error!("failed to get user: {}", err);
         }
