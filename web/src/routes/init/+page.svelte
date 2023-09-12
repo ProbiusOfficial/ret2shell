@@ -23,12 +23,12 @@
   let loading = false
   const { form, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(values, _context) {
+    onSubmit(values) {
       tokenStored = values.init_token
       loading = true
       return testToken(values.init_token)
     },
-    onSuccess(response, context) {
+    onSuccess() {
       loading = false
       // Do something with the returned value from `onSubmit`.
       initConfig.update((config) => {
@@ -38,7 +38,7 @@
       })
       goto('/init/info')
     },
-    onError(_errors, _context) {
+    onError() {
       loading = false
       // Do something with the errors.
       showMessage('error', $i18n.t('init.tokenInvalid'), 5000)

@@ -16,7 +16,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
@@ -35,7 +35,6 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-
 ::selection {
-  @apply bg-base-content text-base-100
+  @apply bg-base-content text-base-100;
 }

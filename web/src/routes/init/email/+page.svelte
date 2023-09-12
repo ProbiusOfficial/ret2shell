@@ -39,7 +39,7 @@
       .trim()
       .min(1, { message: $i18n.t('init.emailPasswordRequired') }),
     tls: z.enum(['none', 'starttls', 'tls'], {
-      errorMap: (issue, ctx) => ({ message: $i18n.t('init.tlsOptionInvalid') }),
+      errorMap: () => ({ message: $i18n.t('init.tlsOptionInvalid') }),
     }),
     reset_password_email_body: z
       .string()
@@ -61,7 +61,7 @@
 
   const { form, data, touched, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(values, _context) {
+    onSubmit(values) {
       initConfig.update((data) => {
         data = {
           ...data,
@@ -74,7 +74,7 @@
       })
       return Promise.resolve()
     },
-    onSuccess(_response, _context) {
+    onSuccess() {
       goto('/init/media')
     },
   })

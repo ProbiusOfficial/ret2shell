@@ -203,6 +203,7 @@
                   {#await gameDescription}
                     <RxButton ghost loading>{$i18n.t('calendar.fetching')}</RxButton>
                   {:then desc}
+                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                     {@html desc}
                   {/await}
                 </article>

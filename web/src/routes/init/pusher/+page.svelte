@@ -12,7 +12,6 @@
   import RxCheckBox from '$lib/components/RxCheckBox.svelte'
   import { nanoid } from 'nanoid'
   import { setPlatformConfig } from '$lib/api/platform'
-  import { goto } from '$app/navigation'
 
   let schema = z.object({
     enabled: z.boolean(),
@@ -23,7 +22,7 @@
 
   const { form, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(values, _context) {
+    onSubmit(values) {
       initConfig.update((data) => {
         data = {
           ...data,
@@ -36,7 +35,7 @@
       })
       return Promise.resolve()
     },
-    onSuccess(_response, _context) {
+    onSuccess() {
       // console.log($initConfig.config)
       setPlatformConfig(
         {
@@ -44,7 +43,7 @@
           ...$initConfig.config,
         },
         $initConfig.token
-      ).then((res) => {
+      ).then(() => {
         // console.log(res)
         window.location.assign('/')
       })

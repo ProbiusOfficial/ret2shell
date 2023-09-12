@@ -119,6 +119,7 @@
         <span class="loading loading-spinner loading-sm" />
         <span>{$i18n.t('wiki.rendering')}</span>
       {:then desc}
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html desc}
       {/await}
     </article>

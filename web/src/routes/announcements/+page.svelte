@@ -1,9 +1,9 @@
 <script lang="ts">
   import { platform } from '$lib/stores/platform'
   import { i18n } from '$lib/i18n'
-  import type { Announcement } from '$lib/models/announcement'
+  // import type { Announcement } from '$lib/models/announcement'
 
-  let announcements: Announcement[] = []
+  // let announcements: Announcement[] = []
 </script>
 
 <svelte:head><title>{$i18n.t('announcements.title')} - {$platform.name}</title></svelte:head>

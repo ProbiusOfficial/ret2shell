@@ -227,7 +227,10 @@
     "pusherToken": "Message push API token",
     "pusherTokenPlaceholder": "Please enter a token, preferably a random string",
     "submit": "Submit",
-    "pusherTokenRequired": "Please enter push token"
+    "pusherTokenRequired": "Please enter push token",
+    "signingKeyRequired": "Please fill in the signing key",
+    "bufferTimeLimit": "Buffer time is too short",
+    "expiresTimeLimit": "Expiration time is too short"
   },
   "action": {
     "ok": "OK",

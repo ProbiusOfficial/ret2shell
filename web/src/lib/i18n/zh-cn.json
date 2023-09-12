@@ -227,7 +227,10 @@
     "pusherToken": "消息推送API密钥",
     "pusherTokenPlaceholder": "请输入密钥，最好是随机字符串",
     "submit": "提交",
-    "pusherTokenRequired": "请输入推送密钥"
+    "pusherTokenRequired": "请输入推送密钥",
+    "signingKeyRequired": "请填写签发密钥",
+    "bufferTimeLimit": "缓冲时间过短",
+    "expiresTimeLimit": "过期时间过短"
   },
   "action": {
     "ok": "好的",

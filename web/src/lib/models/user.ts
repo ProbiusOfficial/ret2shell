@@ -43,7 +43,7 @@ export function getUserRole(level: number): string {
 
 export interface Token {
   id: number
-  name: string,
+  name: string
   permissions: Permission[]
   exp: number
 }

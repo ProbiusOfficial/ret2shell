@@ -27,23 +27,23 @@ api.interceptors.request.use(
   },
   (error: unknown) => {
     return Promise.reject(error)
-  },
+  }
 )
 
-api.interceptors.response.use((response: AxiosResponse): AxiosResponse => {
-  const headers: ExtractNewTokenHeaders =
-    response.headers as ExtractNewTokenHeaders
-  if (headers['set-token']) {
-    userExtractToken(headers['set-token'])
-  }
-  return response
-},
+api.interceptors.response.use(
+  (response: AxiosResponse): AxiosResponse => {
+    const headers: ExtractNewTokenHeaders = response.headers as ExtractNewTokenHeaders
+    if (headers['set-token']) {
+      userExtractToken(headers['set-token'])
+    }
+    return response
+  },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       userReset()
     }
     return Promise.reject(error)
-  },
+  }
 )
 
 export { api }

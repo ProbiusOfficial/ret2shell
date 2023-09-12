@@ -39,7 +39,7 @@
   })
   const { form, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(values, _context) {
+    onSubmit(values) {
       initConfig.update((data) => {
         data = {
           ...data,
@@ -52,7 +52,7 @@
       })
       return Promise.resolve()
     },
-    onSuccess(_response, _context) {
+    onSuccess() {
       goto('/init/auth')
     },
   })

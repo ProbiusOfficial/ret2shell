@@ -2,9 +2,9 @@
   import { platform } from '$lib/stores/platform'
   import { i18n } from '$lib/i18n'
   import RxButton from '$lib/components/RxButton.svelte'
-  import type { Game } from '$lib/models/game'
+  // import type { Game } from '$lib/models/game'
 
-  let games: Game[] = []
+  // let games: Game[] = []
 </script>
 
 <svelte:head><title>{$i18n.t('games.title')} - {$platform.name}</title></svelte:head>

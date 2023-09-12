@@ -73,6 +73,8 @@
     dispatch('blur')
   }
 
+  // we need this unused var to trigger refreshHeight with svelte reactivities
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function refreshHeight(_value: string) {
     if (textarea) {
       if ('style' in textarea) {

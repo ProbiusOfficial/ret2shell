@@ -5,4 +5,6 @@ export interface MarkToHtmlOptions {
   prism?: boolean
 }
 
-export type MarkToTerminalOptions = {}
+export type MarkToTerminalOptions = {
+  image?: boolean
+}

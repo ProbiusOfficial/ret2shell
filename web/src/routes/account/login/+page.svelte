@@ -14,7 +14,7 @@
   import RxLink from '$lib/components/RxLink.svelte'
   import { login } from '$lib/api/account'
   import { goto } from '$app/navigation'
-  import { showMessage, toast } from '$lib/stores/toast'
+  import { showMessage } from '$lib/stores/toast'
     import type { AxiosError } from 'axios'
 
   let schema = z.object({
@@ -38,16 +38,16 @@
   let captcha: Captcha | null
   const { form, data, touched, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(values, _context) {
+    onSubmit(values) {
       loading = true
       return login({ ...values })
     },
-    onSuccess(response, _context) {
+    onSuccess() {
       loading = false
       showMessage('success', $i18n.t('account.loginSuccess'), 5000)
       goto('/')
     },
-    onError(error, _context) {
+    onError(error) {
       loading = false
         showMessage('error', $i18n.t('account.loginFailed') + ': ' + (error as AxiosError).response?.data, 5000)
           captcha?.refreshAll()

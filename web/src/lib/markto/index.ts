@@ -9,9 +9,10 @@ type IParams = { type: 'html'; options?: MarkToHtmlOptions } | { type: 'terminal
 export class MarkTo {
   private processor: Processor | undefined
 
-  public constructor() { }
+  public constructor() {}
 
-  public async init (params: IParams) {
+  public async init(params: IParams) {
+    // @ts-expect-error remark has not updated
     this.processor = unified().use(remarkParse)
     switch (params.type) {
       case 'html':
@@ -23,31 +24,34 @@ export class MarkTo {
     }
   }
 
-  public async render (markdown: string) {
+  public async render(markdown: string) {
     // console.log(this.processor?.attachers)
     const result = await this.processor?.process(markdown)
     return result?.toString()
   }
 
-  private async initHtml (options?: MarkToHtmlOptions) {
+  private async initHtml(options?: MarkToHtmlOptions) {
     const [remarkRehype, rehypeStringify] = await Promise.all([import('remark-rehype'), import('rehype-stringify')])
     /* remark */ {
       if (options?.katex) {
         const remarkMath = await import('remark-math')
+        // @ts-expect-error remark has not updated
         this.processor?.use(remarkMath.default)
       }
     }
-
+    // @ts-expect-error remark has not updated
     this.processor?.use(remarkRehype.default)
 
     /* rehype */ {
       if (options?.katex) {
         const rehypeKatex = await import('rehype-katex')
+        // @ts-expect-error remark has not updated
         this.processor?.use(rehypeKatex.default)
       }
       if (options?.prism) {
         const rehypePrismPlus = await import('rehype-prism-plus/common')
         await import('$lib/styles/prism.scss')
+        // @ts-expect-error remark has not updated
         this.processor?.use(rehypePrismPlus.default, { ignoreMissing: true })
       }
       this.processor?.use(rehypeSlug)
@@ -56,5 +60,7 @@ export class MarkTo {
     }
   }
 
-  private async initTerminal (_options?: MarkToTerminalOptions) { }
+  private async initTerminal(options?: MarkToTerminalOptions) {
+    console.log(options)
+  }
 }

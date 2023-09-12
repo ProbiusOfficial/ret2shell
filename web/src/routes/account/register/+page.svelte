@@ -4,17 +4,15 @@
   import RxForm from '$lib/components/RxForm.svelte'
   import RxFormItem from '$lib/components/RxFormItem.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
-  import Logo from '$lib/assets/logo.svg'
   import { platform } from '$lib/stores/platform'
   import { i18n } from '$lib/i18n'
   import { z } from 'zod'
   import { validator } from '@felte/validator-zod'
   import { createForm } from 'felte'
   import Captcha from '$lib/blocks/Captcha.svelte'
-  import RxLink from '$lib/components/RxLink.svelte'
   import { register } from '$lib/api/account'
   import { goto } from '$app/navigation'
-  import { showMessage, toast } from '$lib/stores/toast'
+  import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
 
   let schema = z.object({
@@ -43,15 +41,15 @@
   let captcha: Captcha | null
   const { form, data, touched, errors } = createForm({
     extend: validator({ schema }),
-    onSubmit(values, _context) {
+    onSubmit(values) {
       loading = true
       return register({ ...values })
     },
-    onSuccess(_response, _context) {
+    onSuccess() {
       loading = false
       goto('/account/login')
     },
-    onError(error, _context) {
+    onError(error) {
       loading = false
       showMessage('error', $i18n.t('account.registerFailed') + ': ' + (error as AxiosError).response?.data, 5000)
       captcha?.refreshAll()
