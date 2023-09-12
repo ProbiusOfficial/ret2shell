@@ -1,0 +1,29 @@
+import type { Announcement } from '$lib/models/announcement'
+import { api, api_root } from '.'
+
+export interface AnnouncementListResponse {
+  announcements: Announcement[]
+  total: number
+}
+
+export async function getAnnouncementList(page: number, per_page: number) {
+  const response = await api.get(`${api_root}/announcement?page=${page}&per_page=${per_page}`)
+  return Promise.resolve(response.data as AnnouncementListResponse)
+}
+
+export async function getAnnouncement(id: number) {
+  const response = await api.get(`${api_root}/announcement/${id}`)
+  return Promise.resolve(response.data as Announcement)
+}
+
+export async function createAnnouncement(announcement: Announcement) {
+  return api.post(`${api_root}/announcement`, announcement)
+}
+
+export async function updateAnnouncement(id: number, announcement: Announcement) {
+  return api.patch(`${api_root}/announcement/${id}`, announcement)
+}
+
+export async function deleteAnnouncement(id: number) {
+  return api.delete(`${api_root}/announcement/${id}`)
+}

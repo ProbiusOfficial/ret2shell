@@ -29,7 +29,8 @@
   },
   "announcements": {
     "title": "公告",
-    "titleLoadingPlaceholder": "公告加载中"
+    "titleLoadingPlaceholder": "公告加载中",
+    "fetchFailed": "获取公告失败"
   },
   "playground": {
     "title": "练习",
@@ -242,5 +243,11 @@
   },
   "component": {
     "uploadTips": "拖放文件到此处上传"
+  },
+  "announcement": {
+    "author": "发布者",
+    "unknownAuthor": "[未知]",
+    "updatedAt": "更新于",
+    "publishedAt": "发布于"
   }
 }

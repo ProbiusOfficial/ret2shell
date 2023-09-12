@@ -45,6 +45,7 @@ export class MarkTo {
     /* rehype */ {
       if (options?.katex) {
         const rehypeKatex = await import('rehype-katex')
+        await import('katex/dist/katex.css')
         // @ts-expect-error remark has not updated
         this.processor?.use(rehypeKatex.default)
       }

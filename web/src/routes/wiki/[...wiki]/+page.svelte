@@ -110,7 +110,7 @@
       {#if wiki.published_at !== wiki.updated_at}
         <p>
           <span class="text-base opacity-80">{$i18n.t('wiki.updatedAt')}</span>:
-          <span class="text-base opacity-80">{new Date(wiki.published_at * 1000).toLocaleString()}</span>
+          <span class="text-base opacity-80">{new Date(wiki.updated_at * 1000).toLocaleString()}</span>
         </p>
       {/if}
     </div>
