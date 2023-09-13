@@ -3,6 +3,7 @@
 use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
 use chrono::{DateTime, Utc};
 use num_derive::{FromPrimitive, ToPrimitive};
+use sea_orm::QueryOrder;
 use sea_orm::{entity::prelude::*, FromJsonQueryResult};
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -66,6 +67,15 @@ pub struct Model {
     pub last_active_at: DateTime<Utc>,
 }
 
+impl Model {
+    pub fn desensitize(&self) -> Self {
+        Self {
+            token: Some(String::new()),
+            ..self.clone()
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
@@ -107,3 +117,44 @@ impl Related<super::user2_team::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+pub async fn get_scoreboard(
+    conn: &DatabaseConnection,
+    game_id: i64,
+    page: u64,
+    per_page: u64,
+    all: Option<bool>,
+    institute: Option<i64>,
+) -> Result<(Vec<Model>, u64), DbErr> {
+    let mut sql = Entity::find()
+        .filter(Column::GameId.eq(game_id))
+        .order_by_desc(Column::Score)
+        .order_by_asc(Column::LastActiveAt);
+    if let Some(institute) = institute {
+        sql = sql.filter(Column::InstituteId.eq(institute));
+    }
+    match all {
+        Some(true) => sql = sql.filter(Column::State.gte(State::Normal)),
+        _ => sql = sql.filter(Column::State.eq(State::Normal)),
+    }
+    let paginator = sql.paginate(conn, per_page);
+    let num_pages = paginator.num_pages().await?;
+    let teams = paginator.fetch_page(page - 1).await?;
+    let teams = teams.into_iter().map(|team| team.desensitize()).collect();
+    Ok((teams, num_pages))
+}
+
+// pub async fn get_team_members(
+//     conn: &DatabaseConnection,
+//     id: i64,
+// ) -> anyhow::Result<Vec<user::Model>> {
+//     let team = Entity::find_by_id(id).one(conn).await?;
+//     if let Some(team) = team {
+//         let users = team.find_related(user2_team::Entity).all(conn).await?;
+//         let mut users: Vec<user::Model> = users.into_iter().map(|user| user.desensitize()).collect();
+//         users.sort_by(|a, b| a.id.cmp(&b.id));
+//         Ok(users)
+//     } else {
+//         anyhow::bail!("team not found")
+//     }
+// }
