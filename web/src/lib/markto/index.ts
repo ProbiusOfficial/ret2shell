@@ -18,9 +18,6 @@ export class MarkTo {
       case 'html':
         await this.initHtml(params.options as MarkToHtmlOptions)
         break
-      case 'terminal':
-        await this.initTerminal(params.options as MarkToTerminalOptions)
-        break
     }
   }
 
@@ -59,9 +56,5 @@ export class MarkTo {
       this.processor?.use(rehypeAutolinkHeadings, { behavior: 'wrap' })
       this.processor?.use(rehypeStringify.default)
     }
-  }
-
-  private async initTerminal(options?: MarkToTerminalOptions) {
-    console.log(options)
   }
 }

@@ -1,6 +1,51 @@
 <script lang="ts">
+  import PlaygroundSidebar from '$lib/blocks/PlaygroundSidebar.svelte'
+  import RxButton from '$lib/components/RxButton.svelte'
+  import { quintOut } from 'svelte/easing'
+  import { fly } from 'svelte/transition'
+
+  let screenWidth: number
+  let toggleSidebar = false
+  $: showSidebar = screenWidth > 1024 // lg
 </script>
 
-<div class="flex-1 flex flex-row justify-center">
+<svelte:window bind:innerWidth={screenWidth} />
+
+<div class="flex-1 flex flex-row">
+  {#if showSidebar}
+    <div
+      class="fixed w-1/5 h-[calc(100vh_-_4rem)] min-w-[24rem] max-w-[32rem] bg-base-100/60 backdrop-blur border-r border-r-base-content/10"
+    >
+      <PlaygroundSidebar />
+    </div>
+    <div class="w-1/5 min-w-[24rem] max-w-[32rem] flex-shrink-0" />
+  {:else}
+    <RxButton
+      size="lg"
+      class="fixed right-6 bottom-6"
+      on:click={() => {
+        toggleSidebar = !toggleSidebar
+      }}
+    >
+      <span class="icon-[fluent--navigation-16-regular] w-5 h-5" />
+    </RxButton>
+  {/if}
   <slot />
+  {#if toggleSidebar && !showSidebar}
+    <div
+      class="fixed w-full max-w-[24rem] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-r border-r-base-content/10"
+      transition:fly={{ delay: 100, duration: 300, x: -256, y: 0, opacity: 0, easing: quintOut }}
+    >
+      <PlaygroundSidebar />
+    </div>
+    <RxButton
+      size="lg"
+      class="fixed right-6 bottom-6"
+      on:click={() => {
+        toggleSidebar = !toggleSidebar
+      }}
+    >
+      <span class="icon-[fluent--dismiss-16-regular] w-5 h-5" />
+    </RxButton>
+  {/if}
 </div>

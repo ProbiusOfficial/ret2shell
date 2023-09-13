@@ -10,12 +10,14 @@
   import { showMessage } from '$lib/stores/toast'
   import { i18n } from '$lib/i18n'
   import { page } from '$app/stores'
+  import Error from '$lib/blocks/Error.svelte'
 
   let toggleSidebar = false
   let screenWidth: number
   let activeChains: number[] = []
   let wikiEntries: WikiEntry[] = []
   let loading = false
+  let error = 200
 
   // give path:  /wiki/1/2/3/4 ...
   // we should loop through the path and request-and-insert the path children into the tree
@@ -47,10 +49,11 @@
     getWikiList()
       .then((data) => {
         wikiEntries = transformToWikiEntry(data)
+        error = 200
       })
       .catch((err) => {
-        let error = err as AxiosError
-        showMessage('error', `${$i18n.t('wiki.fetchFailed')}: ${error.response?.data}`)
+        showMessage('error', `${$i18n.t('wiki.fetchFailed')}: ${err.response?.data}`)
+        error = (err as AxiosError).response?.status || 500
       })
       .finally(() => {
         if (!$page.params['wiki']) {
@@ -91,7 +94,7 @@
 <div class="flex-1 flex flex-row">
   {#if showSidebar}
     <div
-      class="fixed w-1/5 h-[calc(100vh_-_4rem)] min-w-[24rem] max-w-[32rem] bg-base-100/60 backdrop-blur border-r border-r-base-content/5 shadow"
+      class="fixed w-1/5 h-[calc(100vh_-_4rem)] min-w-[24rem] max-w-[32rem] bg-base-100/60 backdrop-blur border-r border-r-base-content/10"
     >
       <WikiSidebar bind:wiki={wikiEntries} {activeChains} {loading} />
     </div>
@@ -107,12 +110,14 @@
       <span class="icon-[fluent--navigation-16-regular] w-5 h-5" />
     </RxButton>
   {/if}
-  <div class="flex-1 min-w-0">
-      <slot />
-  </div>
+  {#if error - 200 < 100}
+    <slot />
+  {:else}
+    <Error status={error} />
+  {/if}
   {#if toggleSidebar && !showSidebar}
     <div
-      class="fixed w-full max-w-[24rem] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-r border-r-base-content/5 shadow"
+      class="fixed w-full max-w-[24rem] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-r border-r-base-content/10"
       transition:fly={{ delay: 100, duration: 300, x: -256, y: 0, opacity: 0, easing: quintOut }}
     >
       <WikiSidebar bind:wiki={wikiEntries} {activeChains} {loading} />

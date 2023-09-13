@@ -35,7 +35,7 @@
     justify && `justify-${justify}`,
     !uppercase && 'normal-case',
     square && 'btn-square',
-    (exactlyMatched ? $page.route.id === href : $page.route.id?.startsWith(href)) && 'text-primary',
+    (exactlyMatched ? $page.url.pathname === href : $page.url.pathname.startsWith(href)) && 'text-primary',
     clazz,
   ]
     .filter(Boolean)

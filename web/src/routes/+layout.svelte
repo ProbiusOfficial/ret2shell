@@ -19,7 +19,7 @@
   import type { AxiosError } from 'axios'
 
   let platformTyped = ''
-  let animation = $page.route.id === '/'
+  let animation = $page.url.pathname === '/'
 
   getPlatformInfo()
     .then((data) => {

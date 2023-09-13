@@ -8,9 +8,11 @@
   import type { AxiosError } from 'axios'
   import { getUserInfo } from '$lib/api/user'
   import type { User } from '$lib/models/user'
+  import Error from '$lib/blocks/Error.svelte'
   import '$lib/styles/article.scss'
 
   let loading = true
+  let error = 200
   let wiki: Wiki = {
     id: 0,
     title: $i18n.t('wiki.fetchingContent'),
@@ -72,9 +74,11 @@
                 banned: true,
               }
             })
+            error = 200
         })
         .catch((err) => {
-          showMessage('error', `${$i18n.t('wiki.fetchFailed')}: ${(err as AxiosError).response?.data}`)
+          showMessage('error', `${$i18n.t('wiki.fetchContentFailed')}: ${(err as AxiosError).response?.data}`)
+          error = (err as AxiosError).response?.status || 500
         })
         .finally(() => {
           loading = false
@@ -95,35 +99,37 @@
       <span class="loading loading-spinner loading-sm" />
       <span class="text-base">{$i18n.t('wiki.fetchingContent')}</span>
     </div>
+  {:else if error - 200 >= 100}
+    <Error status={error} />
   {:else}
-      <h1 class="text-3xl font-bold h-16 mt-12 flex justify-center items-center">
-        {wiki.title}
-      </h1>
-      <div class="flex flex-row space-x-4 flex-wrap">
+    <h1 class="text-3xl font-bold h-16 mt-12 flex justify-center items-center">
+      {wiki.title}
+    </h1>
+    <div class="flex flex-row space-x-4 flex-wrap">
+      <p>
+        <span class="text-base opacity-80">{$i18n.t('wiki.author')}</span>:
+        <span class="text-base opacity-80">{user?.name || $i18n.t('wiki.unknownAuthor')}</span>
+      </p>
+      <p>
+        <span class="text-base opacity-80">{$i18n.t('wiki.publishedAt')}</span>:
+        <span class="text-base opacity-80">{new Date(wiki.published_at * 1000).toLocaleString()}</span>
+      </p>
+      {#if wiki.published_at !== wiki.updated_at}
         <p>
-          <span class="text-base opacity-80">{$i18n.t('wiki.author')}</span>:
-          <span class="text-base opacity-80">{user?.name || $i18n.t('wiki.unknownAuthor')}</span>
+          <span class="text-base opacity-80">{$i18n.t('wiki.updatedAt')}</span>:
+          <span class="text-base opacity-80">{new Date(wiki.updated_at * 1000).toLocaleString()}</span>
         </p>
-        <p>
-          <span class="text-base opacity-80">{$i18n.t('wiki.publishedAt')}</span>:
-          <span class="text-base opacity-80">{new Date(wiki.published_at * 1000).toLocaleString()}</span>
-        </p>
-        {#if wiki.published_at !== wiki.updated_at}
-          <p>
-            <span class="text-base opacity-80">{$i18n.t('wiki.updatedAt')}</span>:
-            <span class="text-base opacity-80">{new Date(wiki.updated_at * 1000).toLocaleString()}</span>
-          </p>
-        {/if}
-      </div>
-      <article class="prose w-full max-w-5xl p-6 pt-12">
-        {#await contentRendered}
-          <span class="loading loading-spinner loading-sm" />
-          <span>{$i18n.t('wiki.rendering')}</span>
-        {:then desc}
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html desc}
-        {/await}
-      </article>
-      <div class="h-32" />
+      {/if}
+    </div>
+    <article class="prose w-full max-w-5xl p-6 pt-12">
+      {#await contentRendered}
+        <span class="loading loading-spinner loading-sm" />
+        <span>{$i18n.t('wiki.rendering')}</span>
+      {:then desc}
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+        {@html desc}
+      {/await}
+    </article>
+    <div class="h-32" />
   {/if}
 </div>

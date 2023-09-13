@@ -29,7 +29,11 @@
   },
   "playground": {
     "title": "Playground",
-    "searchPlaceholder": "Search Challenges / Games ..."
+    "searchPlaceholder": "Search Challenges / Games ...",
+    "sideToc": "Playground",
+    "persistTitle": "Resident practice",
+    "gamesTitle": "Previous games",
+    "emptyCategory": "There's nothing here"
   },
   "games": {
     "title": "Games"
@@ -105,7 +109,8 @@
     "unknownAuthor": "[UNKNOWN]",
     "welcomeTitle": "Welcome to the wiki!",
     "guide": "Please select the article you want to read in the table of contents on the left",
-    "rendering": "Rendering..."
+    "rendering": "Rendering...",
+    "fetchContentFailed": "Failed to obtain article content"
   },
   "calendar": {
     "0": "Sun.",

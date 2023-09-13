@@ -35,7 +35,11 @@
   },
   "playground": {
     "title": "练习",
-    "searchPlaceholder": "搜索 题目 / 赛事 ..."
+    "searchPlaceholder": "搜索 题目 / 赛事 ...",
+    "sideToc": "练习场",
+    "persistTitle": "常驻练习",
+    "gamesTitle": "以往赛事",
+    "emptyCategory": "这里什么也没有哦"
   },
   "games": {
     "title": "赛事"
@@ -105,7 +109,8 @@
     "updatedAt": "更新于",
     "welcomeTitle": "欢迎来到知识库！",
     "guide": "请在左侧目录中选择你想阅读的文章",
-    "rendering": "渲染中..."
+    "rendering": "渲染中...",
+    "fetchContentFailed": "获取文章内容失败"
   },
   "calendar": {
     "0": "日",
