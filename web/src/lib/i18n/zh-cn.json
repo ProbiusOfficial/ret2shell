@@ -47,7 +47,16 @@
     "gameIntro": "赛事介绍",
     "challengeList": "题目列表",
     "returnToList": "回到练习场列表",
-    "loadMore": "加载更多..."
+    "loadMore": "加载更多...",
+    "fetchPlaygroundFailed": "获取常驻练习失败",
+    "fetchGamesFailed": "获取归档赛事失败",
+    "fetchChallengesFailed": "获取题目列表失败",
+    "fetchTagsFailed": "获取题目标签失败",
+    "fetchSelfSubmissionsFailed": "获取以前的做题记录失败",
+    "gameLoading": "加载信息中...",
+    "noMoreChallenges": "没有更多的题目了",
+    "noMorePlaygrounds": "没有更多的常驻练习了",
+    "noMoreGames": "没有更多的归档赛事了"
   },
   "games": {
     "title": "赛事"
@@ -263,5 +272,9 @@
     "unknownAuthor": "[未知]",
     "updatedAt": "更新于",
     "publishedAt": "发布于"
+  },
+  "permissions": {
+    "beVerifiedToView": "请先验证邮箱后访问",
+    "beLoggedInToView": "请先登录"
   }
 }

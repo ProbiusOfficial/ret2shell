@@ -1,5 +1,8 @@
 use super::{
-    layer::{auth, info},
+    layer::{
+        auth::{self, Token},
+        info,
+    },
     GlobalState,
 };
 use crate::entity::{
@@ -41,14 +44,21 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     Permission::Organize
                 )))
                 .route("/submission", get(get_game_submission_list))
+                // NOTE: maybe we should return submissions for different permssions?
+                // EDIT: no, the models are different.
                 .route_layer(middleware::from_fn(auth::permission_required_any!(
                     Permission::Organize,
                     Permission::Devops,
                     Permission::Audit
                 )))
+                .route("/submission/self", get(get_self_submission))
                 .route("/", get(get_game))
                 .route("/scoreboard", get(get_scoreboard))
                 .route("/team-solved", get(get_team_solved))
+                .route_layer(middleware::from_fn_with_state(
+                    state.clone(),
+                    info::prepare_user_full_info,
+                ))
                 .route_layer(middleware::from_fn(auth::permission_required_any!(
                     Permission::Verified,
                     Permission::Statistics
@@ -240,6 +250,23 @@ async fn get_team_solved(
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "failed to get team solved challenges",
+            ))
+        }
+    }
+}
+
+pub async fn get_self_submission(
+    State(ref conn): State<DatabaseConnection>,
+    Extension(token): Extension<Token>,
+    Path(game_id): Path<i64>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    match submission::get_solved_submission_of_user(conn, game_id, token.id).await {
+        Ok(submissions) => Ok(Json(submissions)),
+        Err(err) => {
+            error!("Failed to get self submission: {}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to get self submission",
             ))
         }
     }

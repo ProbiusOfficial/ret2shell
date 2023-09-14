@@ -126,13 +126,7 @@ pub async fn get_solved_submission_of_team(
         .filter(super::challenge::Column::GameId.eq(game_id))
         .filter(Column::Solved.eq(true))
         .filter(Column::WithScore.eq(true))
-        .distinct_on([
-            (Entity, Column::UserId),
-            (
-                Entity,
-                Column::ChallengeId,
-            ),
-        ]);
+        .distinct_on([(Entity, Column::UserId), (Entity, Column::ChallengeId)]);
     let mut cond = Condition::any();
     for user in members {
         cond = cond.add(Column::UserId.eq(user.id))
@@ -152,8 +146,21 @@ pub async fn get_solved_submission_of_team(
         .into_model::<ModelWithUserAndChallengeSolvedInfo>()
         .all(conn)
         .await?;
-    resp.sort_by(|a, b| {
-        a.created_at.cmp(&b.created_at)
-    });
+    resp.sort_by(|a, b| a.created_at.cmp(&b.created_at));
     Ok(resp)
+}
+
+pub async fn get_solved_submission_of_user(
+    db: &DatabaseConnection,
+    game_id: i64,
+    user_id: i64,
+) -> Result<Vec<Model>, DbErr> {
+    let mut sql = Entity::find();
+    sql = sql
+        .join(JoinType::InnerJoin, Relation::Challenge.def())
+        .filter(Column::UserId.eq(user_id))
+        .filter(Column::Solved.eq(true))
+        .filter(super::challenge::Column::GameId.eq(game_id))
+        .distinct_on([(Entity, Column::UserId), (Entity, Column::ChallengeId)]);
+    sql.into_model().all(db).await
 }

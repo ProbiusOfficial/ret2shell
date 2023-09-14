@@ -41,6 +41,7 @@ api.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       userReset()
+      window.location.reload()
     }
     return Promise.reject(error)
   }

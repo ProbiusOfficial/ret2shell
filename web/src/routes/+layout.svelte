@@ -24,7 +24,10 @@
   getPlatformInfo()
     .then((data) => {
       platform.update((value) => {
-        return { ...data, ...value }
+        return {
+          accept_cookies: value.accept_cookies,
+          ...data,
+        }
       })
     })
     .catch((err) => {
