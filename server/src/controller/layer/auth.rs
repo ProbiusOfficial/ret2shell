@@ -57,10 +57,10 @@ pub async fn decode_token(token: &str, key: &str) -> Token {
     token_data.claims
 }
 
-async fn distribute_token(token: Token, key: &str, expires_time: i64) -> String {
+async fn distribute_token(token: &Token, key: &str, expires_time: i64) -> String {
     let new_token = Token {
         exp: Local::now().timestamp() + expires_time,
-        ..token
+        ..token.clone()
     };
     let token = encode(
         &Header::default(),
@@ -127,9 +127,9 @@ pub async fn extract_user_info<B>(
             .load(std::sync::atomic::Ordering::Relaxed)
         {
             cache::Token::revoke(cache, &auth_header).await.ok();
-            let old_token = token_tracker.token.lock().await.clone();
-            let new_token = distribute_token(old_token, signing_key, expires_time).await;
-            cache::Token::store(cache, token.id, &new_token)
+            let token_stored = token_tracker.token.lock().await.clone();
+            let token_str = distribute_token(&token_stored, signing_key, expires_time).await;
+            cache::Token::store(cache, token_stored.id, &token_str)
                 .await
                 .map_err(|err| {
                     error!("failed to store new token: {:?}", err);
@@ -137,7 +137,7 @@ pub async fn extract_user_info<B>(
                 .ok();
             resp.headers_mut().insert(
                 "Set-Token",
-                new_token.parse().expect("failed to parse token"),
+                token_str.parse().expect("failed to parse token"),
             );
         }
 
