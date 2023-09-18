@@ -101,7 +101,9 @@
     "loading": "加载中...",
     "exit": "退出",
     "challengeList": "题目列表",
-    "copyInviteLink": "复制组队邀请链接"
+    "copyInviteLink": "复制组队邀请链接",
+    "takePartIn": "报名参赛",
+    "cantTakePartIn": "当前赛事不可参与"
   },
   "certs": {
     "title": "证书"

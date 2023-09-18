@@ -17,7 +17,7 @@ use tracing::error;
 
 mod institute;
 
-pub fn router(_state: &GlobalState) -> Router<GlobalState> {
+pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/:id", patch(update_user).delete(delete_user))
         .route_layer(middleware::from_fn(auth::permission_required_all!(
@@ -29,9 +29,10 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
         )))
         .route("/:id", get(get_user_info))
         .route_layer(middleware::from_fn_with_state(
-            _state.clone(),
+            state.clone(),
             info::prepare_user_full_info,
         ))
+        .nest("/institute", institute::router(state))
 }
 
 #[derive(Deserialize)]

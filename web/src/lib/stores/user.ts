@@ -1,7 +1,8 @@
-import { writable } from 'svelte/store'
+import { get, writable } from 'svelte/store'
 import { browser } from '$app/environment'
 import type { Permission, Token, User } from '$lib/models/user'
 import { fromBase64 } from 'js-base64'
+import { getUserInfo } from '$lib/api/user'
 
 class UserStore {
   token = ''
@@ -9,7 +10,7 @@ class UserStore {
   name = ''
   permissions: Permission[] = []
   isLoggedIn = false
-  info: User = {} as User
+  info: User | null = null
 
   constructor() {
     if (browser) {
@@ -34,7 +35,7 @@ user.subscribe((value) => {
   if (browser) localStorage.setItem('user', JSON.stringify(value))
 })
 
-export function userReset() {
+export function userReset () {
   user.update((value) => {
     value.token = ''
     value.id = -1
@@ -46,7 +47,7 @@ export function userReset() {
   })
 }
 
-export function userExtractToken(token: string) {
+export function userExtractToken (token: string) {
   user.update((value) => {
     value.token = token
     const tokenRaw = fromBase64(token.split('.')[1])
@@ -57,4 +58,20 @@ export function userExtractToken(token: string) {
     value.isLoggedIn = true
     return value
   })
+}
+
+async function _fetchUserInfo () {
+  let response = await getUserInfo(get(user).id)
+  user.update((value) => {
+    value.info = response
+    return value
+  })
+  return Promise.resolve()
+}
+
+export async function userInfo() {
+  if (get(user).info === null) {
+    await _fetchUserInfo()
+  }
+  return get(user).info
 }

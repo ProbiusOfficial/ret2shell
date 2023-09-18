@@ -46,3 +46,14 @@ impl Related<super::user::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+pub async fn get_institute_list(db: &DatabaseConnection) -> Result<Vec<Model>, DbErr> {
+    let institutes = Entity::find().all(db).await?;
+    Ok(institutes)
+}
+
+#[allow(dead_code)]
+pub async fn get_institute_info(db: &DatabaseConnection, id: i64) -> Result<Option<Model>, DbErr> {
+    let institute = Entity::find_by_id(id).one(db).await?;
+    Ok(institute)
+}

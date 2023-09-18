@@ -4,6 +4,8 @@
   import { i18n } from '$lib/i18n'
   import RxArticle from '$lib/components/RxArticle.svelte'
   import RxTag from '$lib/components/RxTag.svelte'
+  import { canTakePartInGame } from '$lib/utils/auth'
+  import { onDestroy } from 'svelte'
 
   let isStarted = false
   let isEnded = false
@@ -40,7 +42,22 @@
     seconds = Math.floor(diff - hours * 3600 - minutes * 60)
   }
 
-  $: canTakePartIn = true
+  let canTakePartIn = false
+
+  let gameUnsubscribe = game.subscribe((value) => {
+    if (value) {
+      canTakePartInGame().then((res) => {
+        canTakePartIn = res
+      })
+      if (value.current?.institute_id) {
+        
+      }
+    }
+  })
+
+  onDestroy(() => {
+    gameUnsubscribe()
+  })
 </script>
 
 <div class="h-48 bg-base-content/5 backdrop-blur relative">

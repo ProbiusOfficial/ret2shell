@@ -5,6 +5,8 @@
     "loading": "Loading...",
     "exit": "Exit",
     "challengeList": "Challenge list",
-    "copyInviteLink": "Copy the team invitation link"
+    "copyInviteLink": "Copy the team invitation link",
+    "takePartIn": "Take part in",
+    "cantTakePartIn": "Not available for participation"
   }
 }
