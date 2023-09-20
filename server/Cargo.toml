@@ -98,3 +98,5 @@ lettre = { version = "0.10", features = [
 async-nats = "0.31"
 # Captcha
 biosvg = "0.1"
+# Version Control and Storage
+wsvc = "0.1"
