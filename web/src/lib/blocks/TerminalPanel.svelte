@@ -56,6 +56,8 @@
     fontSize: 16,
     lineHeight: 1.2,
     linkHandler: linkHandler,
+    customGlyphs: true,
+    letterSpacing: 0,
   } as ITerminalOptions)
 
   const fitAddon = new FitAddon()

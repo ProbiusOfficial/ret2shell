@@ -11,7 +11,8 @@
 
   function scrollToView() {
     setTimeout(() => {
-      document.getElementById(decodeURI(location.hash.replace('#', '')))?.scrollIntoView({ behavior: 'smooth' })
+      if (location.hash.replace('#', '').length > 0)
+        document.getElementById(decodeURI(location.hash.replace('#', '')))?.scrollIntoView({ behavior: 'smooth' })
     }, 100)
   }
 

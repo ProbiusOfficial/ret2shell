@@ -1,4 +1,4 @@
-<svg class="fixed right-0 top-0 print:hidden" viewBox="0 0 960 1080" height="100vh" xmlns="http://www.w3.org/2000/svg">
+<svg class="fixed right-0 top-0 print:hidden h-screen" viewBox="0 0 960 1080" xmlns="http://www.w3.org/2000/svg">
   <g fill="none" stroke="#0078d6" stroke-width="2" stroke-opacity="0.3">
     <g
       clip-path="url(#b)"
