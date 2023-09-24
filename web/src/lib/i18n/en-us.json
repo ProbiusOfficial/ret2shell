@@ -344,9 +344,21 @@
     "noHint": "No hints yet"
   },
   "shell": {
-    "commandInvalid": "Command is invalid",
+    "helpWelcome": "Welcome to {{terminal}} environment terminal！",
+    "helpTips": "Please enter {{command}} to view the usage help. If you have any questions, you can contact the platform administrator for resolution.",
+    "helpCommands": "Within the environment, you have the following commands available:",
+    "helpExit": "If you have any questions, you can contact the platform administrator for resolution.",
+    "clear": {
+      "man": "Clear current terminal"
+    },
+    "echo": {
+      "man": "display a line of text"
+    },
+    "help": {
+      "man": "Display this help"
+    },
+    "commandInvalid": "Invalid command",
     "commandNotFound": "Command not found: {{command}}",
-    "welcome": "Welcome to Rnix Shell!",
-    "help": "Please enter {{command}} to view the help, if you have any questions, you can contact the platform administrator to solve it."
+    "welcome": "Welcome to Rnix Shell!"
   }
 }

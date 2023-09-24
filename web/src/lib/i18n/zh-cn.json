@@ -347,6 +347,18 @@
     "commandInvalid": "命令无效",
     "commandNotFound": "命令未找到: {{command}}",
     "welcome": "欢迎使用 Rnix Shell！",
-    "help": "请输入 {{command}} 查看使用帮助，如有疑问，可以联系平台管理员进行解决。"
+    "helpTips": "请输入 {{command}} 查看使用帮助，如有疑问，可以联系平台管理员进行解决。",
+    "helpWelcome": "欢迎使用 {{terminal}} 题目环境控制终端！",
+    "helpCommands": "在环境之内，你有如下命令可以使用：",
+    "helpExit": "如有疑问，可以联系平台管理员进行解决。",
+    "clear": {
+      "man": "清空当前终端"
+    },
+    "echo": {
+      "man": "显示你输入的一行文字"
+    },
+    "help": {
+      "man": "显示这份帮助"
+    }
   }
 }
