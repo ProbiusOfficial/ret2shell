@@ -375,7 +375,16 @@
       "downloading": "downloading",
       "failed": "download failed",
       "success": "download successful",
-      "usage": "Usage: wget filename"
+      "usage": "Usage: wget filename",
+      "man": "Download challenge attachment"
+    },
+    "cd": {
+      "notFound": "Challenge not found",
+      "usage": "Usage: cd challenge name",
+      "man": "Enter the challenge directory"
+    },
+    "ls": {
+      "man": "List all challenge in the current game"
     }
   }
 }

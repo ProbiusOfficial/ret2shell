@@ -10,7 +10,7 @@ import { submitFlag } from '$lib/api/challenge'
 
 export class Submit implements Command {
   name = 'submit'
-  man = 'submit'
+  man = get(i18n).t('shell.submit.man')
   func = async (io: RnixStdio, _args: ParseEntry[], origin: string, envp: RnixEnv) => {
     if (envp.game == null) {
       io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.submit.no_game'))}`)

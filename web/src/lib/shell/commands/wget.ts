@@ -9,7 +9,7 @@ import { downloadChallengeAttachment } from '$lib/api/challenge'
 
 export class Wget implements Command {
   name = 'wget'
-  man = 'wget'
+  man = get(i18n).t('shell.wget.man')
   func = async (io: RnixStdio, args: ParseEntry[], _origin: string, envp: RnixEnv) => {
     if (args.length != 1) {
       io.println(`${get(i18n).t('shell.wget.usage')}`)

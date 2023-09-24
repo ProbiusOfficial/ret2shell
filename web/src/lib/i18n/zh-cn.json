@@ -368,13 +368,23 @@
       "waiting": "正在提交",
       "right": "flag正确",
       "wrong": "flag错误",
-      "error": "提交失败"
+      "error": "提交失败",
+      "man": "提交flag"
     },
     "wget": {
       "downloading": "正在下载",
       "failed": "下载失败",
       "success": "下载成功",
-      "usage": "用法: wget 文件名"
+      "usage": "用法: wget 文件名",
+      "man": "下载题目附件"
+    },
+    "cd": {
+      "notFound": "题目未找到",
+      "usage": "用法: cd 题目名",
+      "man": "进入题目目录"
+    },
+    "ls": {
+      "man": "列出当前比赛的所有题目"
     }
   }
 }
