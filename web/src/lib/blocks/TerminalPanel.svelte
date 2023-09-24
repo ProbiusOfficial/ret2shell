@@ -52,7 +52,7 @@
       green: '#36D399',
       red: '#F83030',
     },
-    fontFamily: 'JetBrains Mono Regular, monospace',
+    fontFamily: 'JetBrains Mono',
     fontSize: 16,
     lineHeight: 1.2,
     linkHandler: linkHandler,
