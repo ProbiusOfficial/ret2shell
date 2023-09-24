@@ -60,41 +60,43 @@ pub async fn check_captcha(
 
 macro_rules! captcha_protected {
     ($cache_config:expr, $cache:expr, $id:expr, $answer:expr) => {
-        match crate::captcha::check_captcha(
-            &$cache_config.validator,
-            $cache,
-            &$cache_config.difficulty,
-            $id,
-            $answer,
-        )
-        .await
-        {
-            Ok(true) => {}
-            Ok(false) => {
-                return Err((axum::http::StatusCode::UNAUTHORIZED, "hey robot"));
+        if $cache_config.enabled {
+            match crate::captcha::check_captcha(
+                &$cache_config.validator,
+                $cache,
+                &$cache_config.difficulty,
+                $id,
+                $answer,
+            )
+            .await
+            {
+                Ok(true) => {}
+                Ok(false) => {
+                    return Err((axum::http::StatusCode::UNAUTHORIZED, "hey robot"));
+                }
+                Err(crate::captcha::CaptchaError::Unknown) => {
+                    tracing::error!("captcha check failed with unknown reason");
+                    return Err((
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        "captcha check failed with unknown reason",
+                    ));
+                }
+                Err(crate::captcha::CaptchaError::CacheError(err)) => {
+                    tracing::warn!("encountered captcha cache error: {:?}", err);
+                    return Err((
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        "captcha is outdate",
+                    ));
+                }
+                Err(crate::captcha::CaptchaError::BuilderError) => {
+                    tracing::error!("failed to build captcha validator");
+                    return Err((
+                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        "failed to build captcha validator",
+                    ));
+                }
             }
-            Err(crate::captcha::CaptchaError::Unknown) => {
-                tracing::error!("captcha check failed with unknown reason");
-                return Err((
-                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                    "captcha check failed with unknown reason",
-                ));
-            }
-            Err(crate::captcha::CaptchaError::CacheError(err)) => {
-                tracing::warn!("encountered captcha cache error: {:?}", err);
-                return Err((
-                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                    "captcha is outdate",
-                ));
-            }
-            Err(crate::captcha::CaptchaError::BuilderError) => {
-                tracing::error!("failed to build captcha validator");
-                return Err((
-                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
-                    "failed to build captcha validator",
-                ));
-            }
-        }
+        };
     };
 }
 

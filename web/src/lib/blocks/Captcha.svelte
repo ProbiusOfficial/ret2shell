@@ -18,11 +18,11 @@
   export let captchaAnswer: string | unknown | undefined = undefined
   let loading = true
   let failed = false
-  export let enabled = true
   let powing = true
   let fetchingPow = true
   let fetchingImg = true
-  let captcha: Captcha
+  let captcha: Captcha | null = null
+  $: enabled = captcha?.validator !== Validator.None
 
   function refreshImg() {
     fetchingImg = true
@@ -75,19 +75,26 @@
         worker.terminate()
       }
     }
-  }
 
+
+  }
+ $: {
+  if (!enabled) {
+      captchaId = 'disabled'
+      captchaAnswer = 'disabled'
+    }
+ }
   onMount(() => {
     refresh()
   })
 </script>
 
-<RxFormItem label={$i18n.t('form.captcha')} name="captcha_answer" class="" {hasError} {errors}>
+<RxFormItem label={enabled ? $i18n.t('form.captcha') : ''} name="captcha_answer" class="" {hasError} {errors}>
   {#if loading || failed}
     <RxButton {loading} class="w-full" disabled={loading} on:click={refreshAll}>
       {loading ? $i18n.t('form.loadingCaptcha') : $i18n.t('form.reloadCaptcha')}
     </RxButton>
-  {:else if enabled && !loading && !failed && captcha.validator === Validator.Pow}
+  {:else if enabled && !loading && !failed && captcha?.validator === Validator.Pow}
     <RxInput
       icon="icon-[fluent--beaker-16-regular]"
       class="w-full"
@@ -109,7 +116,7 @@
         {/if}
       </RxButton>
     </RxInput>
-  {:else if enabled && !loading && !failed && captcha.validator === Validator.Image}
+  {:else if enabled && !loading && !failed && captcha?.validator === Validator.Image}
     <RxInput icon="icon-[fluent--beaker-16-regular]" class="w-full" type="text" {hasError} bind:value={captchaAnswer}>
       <RxButton
         class="border-none w-24 p-0 overflow-hidden join-item ml-0"
@@ -119,7 +126,7 @@
         <RxImage
           class="w-full object-scale-down"
           loading={fetchingImg}
-          src={`data:image/svg+xml;base64,${encode(captcha.challenge, false)}`}
+          src={`data:image/svg+xml;base64,${encode(captcha?.challenge, false)}`}
         />
       </RxButton>
     </RxInput>
