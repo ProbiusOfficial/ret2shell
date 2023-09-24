@@ -352,6 +352,8 @@
     "helpWelcome": "欢迎使用 {{terminal}} 题目环境控制终端！",
     "helpCommands": "在环境之内，你有如下命令可以使用：",
     "helpExit": "如有疑问，可以联系平台管理员进行解决。",
+    "noGameSpecified": "终端中未指明比赛",
+    "noChallengeSpecified": "终端中未指明题目",
     "clear": {
       "man": "清空当前终端"
     },
@@ -362,8 +364,6 @@
       "man": "显示这份帮助"
     },
     "submit": {
-      "no_game": "终端中未指明比赛",
-      "no_challenge": "终端中未指明题目",
       "usage": "用法： submit flag",
       "waiting": "正在提交",
       "right": "flag正确",

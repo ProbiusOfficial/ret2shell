@@ -6,11 +6,19 @@ import { get } from 'svelte/store'
 import { AxiosError } from 'axios'
 import type { RnixEnv } from '../shell'
 import { downloadChallengeAttachment } from '$lib/api/challenge'
+import ansiColors from 'ansi-colors'
 
 export class Wget implements Command {
   name = 'wget'
   man = get(i18n).t('shell.wget.man')
   func = async (io: RnixStdio, args: ParseEntry[], _origin: string, envp: RnixEnv) => {
+    if (envp.game == null) {
+      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noGameSpecified'))}`)
+      return 1
+    } else if (envp.challenge == null) {
+      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noChallengeSpecified'))}`)
+      return 1
+    }
     if (args.length != 1) {
       io.println(`${get(i18n).t('shell.wget.usage')}`)
       return 1
