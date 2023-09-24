@@ -20,7 +20,7 @@
     {
       name: $i18n.t('admin.statisticsSummary'),
       icon: 'icon-[fluent--data-histogram-24-regular]',
-      link: '/admin/statistics',
+      link: '/admin/statistics/overview',
     },
     {
       name: $i18n.t('admin.serverLogs'),
@@ -33,7 +33,7 @@
     {
       name: $i18n.t('admin.basicInfoSettings'),
       icon: 'icon-[fluent--info-24-regular]',
-      link: '/admin/platform',
+      link: '/admin/platform/info',
     },
     {
       name: $i18n.t('admin.captchaSettings'),
@@ -52,7 +52,7 @@
     },
     {
       name: $i18n.t('admin.pusherSettings'),
-      icon: 'icon-[fluent--image-24-regular]',
+      icon: 'icon-[fluent--bot-24-regular]',
       link: '/admin/platform/pusher',
     },
   ] as RouteItem[]
