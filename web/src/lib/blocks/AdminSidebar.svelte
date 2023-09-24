@@ -19,14 +19,90 @@
   let statisticsRoutes = [
     {
       name: $i18n.t('admin.statisticsSummary'),
-      icon: 'fluent--data-pie-24-regular',
+      icon: 'icon-[fluent--data-histogram-24-regular]',
       link: '/admin/statistics',
     },
+    {
+      name: $i18n.t('admin.serverLogs'),
+      icon: 'icon-[fluent--code-24-regular]',
+      link: '/admin/statistics/logs',
+    },
   ] as RouteItem[]
+
+  let platformRoutes = [
+    {
+      name: $i18n.t('admin.basicInfoSettings'),
+      icon: 'icon-[fluent--info-24-regular]',
+      link: '/admin/platform',
+    },
+    {
+      name: $i18n.t('admin.captchaSettings'),
+      icon: 'icon-[fluent--beaker-24-regular]',
+      link: '/admin/platform/captcha',
+    },
+    {
+      name: $i18n.t('admin.emailSettings'),
+      icon: 'icon-[fluent--mail-24-regular]',
+      link: '/admin/platform/email',
+    },
+    {
+      name: $i18n.t('admin.mediaSettings'),
+      icon: 'icon-[fluent--image-24-regular]',
+      link: '/admin/platform/media',
+    },
+    {
+      name: $i18n.t('admin.pusherSettings'),
+      icon: 'icon-[fluent--image-24-regular]',
+      link: '/admin/platform/pusher',
+    },
+  ] as RouteItem[]
+
+  let currentRoutes: RouteItem[] = []
+  let secondTitle = ''
+  let haveSecondLevel = false
 
   const pageUnsubscribe = page.subscribe((value) => {
     if (value.url.pathname) {
       if (value.url.pathname.startsWith('/admin/statistics')) {
+        currentRoutes = statisticsRoutes
+        firstLevelExpanded = false
+        haveSecondLevel = true
+        secondTitle = $i18n.t('admin.statistics')
+      } else if (value.url.pathname.startsWith('/admin/platform')) {
+        currentRoutes = platformRoutes
+        firstLevelExpanded = false
+        haveSecondLevel = true
+        secondTitle = $i18n.t('admin.platformSettings')
+      } else if (value.url.pathname === '/admin/games') {
+        currentRoutes = []
+        firstLevelExpanded = true
+        haveSecondLevel = false
+        // show games, when user choose it then we construct the second level
+      } else if (value.url.pathname.startsWith('/admin/announcements')) {
+        currentRoutes = []
+        firstLevelExpanded = true
+        haveSecondLevel = false
+        secondTitle = $i18n.t('admin.announcementsSettings')
+      } else if (value.url.pathname.startsWith('/admin/calendar')) {
+        currentRoutes = []
+        firstLevelExpanded = true
+        haveSecondLevel = false
+        secondTitle = $i18n.t('admin.calendarSettings')
+      } else if (value.url.pathname.startsWith('/admin/wiki')) {
+        currentRoutes = []
+        firstLevelExpanded = false
+        haveSecondLevel = true
+        secondTitle = $i18n.t('admin.wikiSettings')
+      } else if (value.url.pathname === '/admin/users') {
+        currentRoutes = []
+        firstLevelExpanded = false
+        haveSecondLevel = true
+        secondTitle = $i18n.t('admin.usersSettings')
+      } else {
+        currentRoutes = []
+        firstLevelExpanded = true
+        haveSecondLevel = false
+        secondTitle = ''
       }
     }
   })
@@ -55,6 +131,7 @@
         square
         ghost
         class="join-item"
+        disabled={!haveSecondLevel}
         on:click={() => {
           firstLevelExpanded = !firstLevelExpanded
         }}
@@ -165,5 +242,25 @@
       </RxLink>
     {/if}
   </div>
-  <div class={`${secondLevelExpanded ? 'w-[20rem]' : 'w-0'} transition-all flex flex-col duration-200`}></div>
+  <div class={`${secondLevelExpanded ? 'w-[20rem]' : 'w-0'} transition-all flex flex-col duration-200`}>
+    <div class="h-16 bg-base-100 border-b border-b-base-content/5 flex flex-row px-4 items-center">
+      <h2 class="font-bold text-base flex flex-row space-x-2 items-center justify-center w-full overflow-hidden">
+        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{secondTitle}</span>
+      </h2>
+    </div>
+    <div class="flex-1 flex flex-col space-y-2 p-2">
+      {#each currentRoutes as item}
+        <RxLink
+          class="flex-nowrap overflow-hidden"
+          href={item.link}
+          ghost
+          justify="start"
+          exactlyMatched={item.link === $page.url.pathname}
+        >
+          <span class={`${item.icon} w-6 h-6 flex-shrink-0`} />
+          <span class="text-ellipsis whitespace-nowrap overflow-hidden">{item.name}</span>
+        </RxLink>
+      {/each}
+    </div>
+  </div>
 </div>

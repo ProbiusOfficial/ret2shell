@@ -127,7 +127,14 @@
     "announcementsSettings": "Platform announcement",
     "statistics": "Statistics & Logs",
     "wikiSettings": "Wiki management",
-    "calendarSettings": "Game Calendar"
+    "calendarSettings": "Game Calendar",
+    "statisticsSummary": "Information overview",
+    "serverLogs": "Server logs",
+    "basicInfoSettings": "Basic information",
+    "captchaSettings": "Captcha Verification",
+    "emailSettings": "Email validation & notification",
+    "mediaSettings": "Media upload settings",
+    "pusherSettings": "Message push settings"
   },
   "docs": {
     "title": "Documents"
