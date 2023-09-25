@@ -340,7 +340,8 @@
   },
   "action": {
     "ok": "好的",
-    "yes": "确定"
+    "yes": "确定",
+    "create": "创建"
   },
   "user": {
     "anonymous": "[已删除]",

@@ -2,6 +2,7 @@
   import { getAnnouncementList } from '$lib/api/announcement'
   import type { DTColumnAction, DTColumnsDef, DTDataEntry } from '$lib/blocks/DataTable'
   import DataTable from '$lib/blocks/DataTable.svelte'
+  import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
   import type { Announcement } from '$lib/models/announcement'
   import { showMessage } from '$lib/stores/toast'
@@ -111,6 +112,13 @@
 
 <div class="flex-1 flex flex-col items-center">
   <div class="w-full max-w-5xl flex flex-col p-4 lg:p-6">
+    <div class="h-16 flex flex-row items-center">
+      <h2 class="text-base font-bold flex-1">{$i18n.t('admin.announcementsSettings')}</h2>
+      <RxLink size="sm" level="info" href="/admin/announcements/create">
+        <span class="icon-[fluent--add-16-regular] w-6 h-6" />
+        <span class="text-base">{$i18n.t('action.create')}</span>
+      </RxLink>
+    </div>
     <DataTable {actions} data={announcements} {colDef} bind:page {total} {loading} />
   </div>
 </div>

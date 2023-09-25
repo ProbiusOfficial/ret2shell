@@ -340,7 +340,8 @@
   },
   "action": {
     "ok": "OK",
-    "yes": "YES"
+    "yes": "YES",
+    "create": "Create"
   },
   "user": {
     "anonymous": "[DELETED]",
