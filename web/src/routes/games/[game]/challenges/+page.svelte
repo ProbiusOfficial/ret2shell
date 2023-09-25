@@ -46,7 +46,17 @@
     if ($game.current?.id) {
       getChallengeList($game.current?.id, challengePage, challengePageSize)
         .then((res) => {
-          $game.challenges = $game.challenges.concat(res.challenges)
+          $game.challenges = $game.challenges
+            .concat(res.challenges)
+            .toSorted((a, b) =>
+              a.current_score - b.current_score === 0
+                ? a.name > b.name
+                  ? 1
+                  : a.name === b.name
+                  ? 0
+                  : -1
+                : a.current_score - b.current_score
+            )
           challengeTotalPages = res.total
         })
         .catch((err) => {
@@ -95,7 +105,7 @@
       getSelfSubmissions()
       getTagList()
         .then((res) => {
-          tags = res
+          tags = res.toSorted((a, b) => (a.name > b.name ? 1 : a.name === b.name ? 0 : -1))
         })
         .catch((err) => {
           showMessage('error', `${$i18n.t('playground.fetchTagsFailed')}: ${(err as AxiosError).response?.data}`, 5000)

@@ -49,7 +49,7 @@ export class RnixShell {
 
   public greet() {
     this.stdio.println(ansiColors.blueBright(get(i18n).t('shell.welcome')))
-    this.stdio.println(
+    this.stdio.logInfo(
       get(i18n).t('shell.helpTips', { command: ansiEscapes.link(ansiColors.green('help'), 'rnix-cmd://help') })
     )
     this.stdio.println('')
@@ -131,15 +131,16 @@ export class RnixShell {
       if (this.inputBuffer.trim() === 'exit') break
       this.history.push(stripAnsi(this.inputBuffer))
       this.code = await this.exec.exec(this.stdio, parse(this.inputBuffer), this.env, this.inputBuffer)
+      this.stdio.print('\n')
       this.buildPrompt()
     }
   }
 
   private buildPrompt() {
-    this.prompt.head = `${ansiColors.green(this.env.user?.name || 'guest')}@${ansiColors.blue(
+    this.prompt.head = `${ansiColors.green(this.env.user?.name || 'guest')} ${ansiColors.dim('at')} ${ansiColors.blue(
       this.env.game?.name || 'unknown'
-    )} in ${ansiColors.yellow(this.env.challenge?.name || '/')} ${
-      this.code === 0 ? '' : ansiColors.redBright('   -- Error(' + this.code.toString() + ')')
+    )} ${ansiColors.dim('in')} ${ansiColors.yellow(this.env.challenge?.name || '/')} ${
+      this.code === 0 ? '' : ansiColors.redBright('[' + this.code.toString() + ']')
     }\n${this.code === 0 ? ansiColors.greenBright.bold('$') : ansiColors.redBright.bold('$')} `
   }
 }

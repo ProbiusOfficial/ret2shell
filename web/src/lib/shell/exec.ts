@@ -22,7 +22,7 @@ export class Exec {
   public async exec(io: RnixStdio, args: ParseEntry[], env: RnixEnv, origin: string) {
     let cmd = args[0]
     if (typeof cmd !== 'string') {
-      io.println(ansiColors.red('[x] ') + get(i18n).t('shell.commandInvalid'))
+      io.logError(get(i18n).t('shell.commandInvalid'))
       return -127
     }
     cmd = cmd.trim()
@@ -30,9 +30,8 @@ export class Exec {
     if (this.commands.has(cmd)) {
       return await this.commands.get(cmd)!.func(io, args.slice(1), origin, env)
     } else {
-      io.println(ansiColors.red('[x] ') + get(i18n).t('shell.commandNotFound', { command: cmd }))
+      io.logError(get(i18n).t('shell.commandNotFound', { command: cmd }))
       return -127
     }
-    return 0
   }
 }

@@ -36,15 +36,19 @@ export class RnixStdio {
   }
 
   public logError(text: string) {
-    this.println(ansiColors.red('[-] ') + ansiColors.dim.underline(text))
+    this.println(ansiColors.red('[!] ' + ansiColors.bold(text)))
   }
 
   public logSuccess(text: string) {
-    this.println(ansiColors.green('[+] ') + ansiColors.dim.underline(text))
+    this.println(ansiColors.green('[+] ' + ansiColors.bold(text)))
   }
 
   public logInfo(text: string) {
-    this.println(ansiColors.blue('[*] ') + ansiColors.dim.underline(text))
+    this.println(ansiColors.blue('[*] ') + text)
+  }
+
+  public termWidth() {
+    return this.termCursor.cols()
   }
 
   public clearInput() {

@@ -267,7 +267,7 @@ function stringToArray(str: string) {
   return str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\uD800-\uDFFF]/g) || []
 }
 
-export function length(str: string) {
+export function unicodeStrDisplayLength(str: string) {
   const characters = stringToArray(str)
   let len = 0
   for (let i = 0; i < characters.length; i++) {
@@ -277,7 +277,7 @@ export function length(str: string) {
 }
 
 export function slice(text: string, start: number | null, end: number | null) {
-  const textLen = length(text)
+  const textLen = unicodeStrDisplayLength(text)
   start = start === null ? 0 : start
   end = end === null ? 1 : end
   if (start < 0) {
@@ -291,7 +291,7 @@ export function slice(text: string, start: number | null, end: number | null) {
   const chars = stringToArray(text)
   for (let i = 0; i < chars.length; i++) {
     const char = chars[i]
-    const charLen = length(char)
+    const charLen = unicodeStrDisplayLength(char)
     if (eawLen >= start - (charLen === 2 ? 1 : 0)) {
       if (eawLen + charLen <= end) {
         result += char
