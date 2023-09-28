@@ -18,7 +18,7 @@
   $: renderedAnnouncements = announcements.map((a) => {
     return {
       ...a,
-      title: `${a.title}|${encodeURI(`#${a.id}`)}`,
+      title: `${encodeURI(a.title)}|${encodeURI(`#${a.id}`)}`,
     }
   })
 

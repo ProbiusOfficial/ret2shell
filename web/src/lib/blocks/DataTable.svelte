@@ -76,14 +76,16 @@
           {#each Object.keys(dataEntry) as key}
             {#if types[key] == 'plain'}
               <td
-                title={dataEntry[key]?.toString()}
+                title={dataEntry[key]?.toString().includes('|')
+                  ? decodeURI(dataEntry[key]?.toString().split('|')[0] || '')
+                  : decodeURI(dataEntry[key]?.toString() || '')}
                 class={`truncate ${colDef[key].sizePolicy === 'shrink' ? 'w-0' : 'w-full max-w-0'} ${
                   colDef[key].justify && colDef[key].justify
                 } ${colDef[key].dimmed && 'opacity-60'}`}
               >
                 {#if dataEntry[key]?.toString().includes('|')}
-                  <a class="hover:underline" href={dataEntry[key]?.toString().split('|')[1]}>
-                    {dataEntry[key]?.toString().split('|')[0]}
+                  <a class="hover:underline w-full" href={dataEntry[key]?.toString().split('|')[1]}>
+                    {decodeURI(dataEntry[key]?.toString().split('|')[0] || '')}
                   </a>
                 {:else}
                   <span>{dataEntry[key]?.toString()}</span>
