@@ -4,9 +4,11 @@
   import 'ace-builds/esm-resolver'
   import '$lib/styles/codeeditor.scss'
   import { onDestroy, onMount } from 'svelte'
+  import { blur } from 'svelte/transition'
   export let value: string
   export let lang: string = 'markdown'
   export let readonly: boolean = false
+  export let loading = false
   let clazz = ''
   export { clazz as class }
 
@@ -22,18 +24,27 @@
     }
   }
 
+  $: watchReadonly(readonly)
+  function watchReadonly(val: boolean) {
+    if (editor) {
+      editor.setReadOnly(val)
+    }
+  }
+
   $: classes = ['w-full', 'h-full', 'overflow-scroll', 'bg-base-100/80', 'backdrop-blur', 'relative', '', clazz].join(
     ' '
   )
 
   onMount(() => {
-    initEditor()
+    setTimeout(() => {
+      initEditor()
+    })
   })
 
   function initEditor() {
     editor = ace.edit(editorElement, {
       mode: `ace/mode/${lang}`,
-      theme: `ace/theme/${$theme.colorScheme === 'light' ? 'github' : 'twilight'}`,
+      theme: `ace/theme/${$theme.colorScheme === 'light' ? 'kuroir' : 'twilight'}`,
       readOnly: readonly,
       showPrintMargin: false,
       highlightActiveLine: false,
@@ -63,7 +74,7 @@
   }
 
   const unsubscribe = theme.subscribe((value) => {
-    if (editor) editor.setTheme(`ace/theme/${value.colorScheme === 'light' ? 'github' : 'twilight'}`)
+    if (editor) editor.setTheme(`ace/theme/${value.colorScheme === 'light' ? 'kuroir' : 'twilight'}`)
   })
 
   onDestroy(() => {
@@ -73,6 +84,14 @@
 </script>
 
 <div class={classes}>
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 bg-base-100/80 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
+    </div>
+  {/if}
   <div class="absolute left-0 top-0 bottom-0 right-0 p-4">
     <pre class="w-full min-h-full relative bg-transparent" bind:this={editorElement}></pre>
   </div>

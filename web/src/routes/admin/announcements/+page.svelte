@@ -16,6 +16,7 @@
   let perPage: number = 15
   let total: number = 0
   let loading = false
+  let loadingAnnouncement = false
   let announcements: Announcement[] = []
   let showCreatePanel = false
 
@@ -133,8 +134,10 @@
   }
   const unsubscribe = page.subscribe((val) => {
     if (val.url.hash && val.url.hash.replace('#', '')) {
+      loadingAnnouncement = true
       const id = parseInt(val.url.hash.replace('#', ''))
-      if (id && !Number.isNaN(id))
+      showCreatePanel = true
+      if (id && !Number.isNaN(id)) {
         getAnnouncement(id)
           .then((res) => {
             activeAnnouncement = res
@@ -143,7 +146,10 @@
           .catch((err) => {
             showMessage('error', `${$i18n.t('announcements.fetchFailed')}: ${(err as AxiosError).response?.data}`, 5000)
           })
-      else if (Number.isNaN(id)) {
+          .finally(() => {
+            loadingAnnouncement = false
+          })
+      } else if (Number.isNaN(id)) {
         activeAnnouncement = {
           id: -1,
           title: '',
@@ -153,10 +159,19 @@
           publisher_id: $user.id,
           updated_at: 0,
         }
-        showCreatePanel = true
+        loadingAnnouncement = false
       }
     } else {
       showCreatePanel = false
+      activeAnnouncement = {
+        id: -1,
+        title: '',
+        content: '',
+        pinned: false,
+        published_at: 0,
+        publisher_id: $user.id,
+        updated_at: 0,
+      }
     }
   })
 
@@ -189,8 +204,9 @@
     }}
   />
   <CreatePanel
-    class={`transition-all ${showCreatePanel ? 'h-3/4' : 'h-0'}`}
+    class={`transition-all ${showCreatePanel ? 'h-full' : 'h-0'}`}
     bind:announcement={activeAnnouncement}
+    loading={loadingAnnouncement}
     on:close={() => {
       window.location.hash = ''
     }}

@@ -7,6 +7,8 @@
   import { createEventDispatcher } from 'svelte'
 
   export let announcement: Announcement
+  export let loading = false
+  export let submitting = false
 
   let clazz = ''
   export { clazz as class }
@@ -18,7 +20,7 @@
 
 <div class={classes}>
   <div
-    class="h-16 min-h-16 border-y border-y-base-content/10 backdrop-blur bg-base-100/80 flex flex-row px-2 items-center space-x-2"
+    class="h-16 min-h-16 border-b border-b-base-content/5 backdrop-blur bg-base-100 flex flex-row px-2 items-center space-x-2"
   >
     <div class="join flex-1">
       <RxButton
@@ -26,17 +28,28 @@
           announcement.pinned = !announcement.pinned
         }}
         ghost
+        {loading}
         class="join-item"
       >
-        <span class={`icon-[fluent--pin-16-regular] w-5 h-5 ${announcement.pinned ? 'text-error' : 'opacity-60'}`}
-        ></span>
+        {#if !loading}
+          <span class={`icon-[fluent--pin-16-regular] w-5 h-5 ${announcement.pinned ? 'text-error' : 'opacity-60'}`} />
+        {/if}
       </RxButton>
-      <RxInput ghost class="flex-1 join-item" label="Title" placeholder="Title" bind:value={announcement.title} />
+      <RxInput
+        ghost
+        class="flex-1 join-item"
+        label="Title"
+        placeholder="Title"
+        disabled={loading || submitting}
+        bind:value={announcement.title}
+      />
     </div>
     <div class="join">
       <RxButton
         ghost
         level="primary"
+        disabled={loading || submitting}
+        loading={submitting}
         class="join-item"
         on:click={() => {
           dispatch('submit', announcement)
@@ -54,5 +67,11 @@
       </RxButton>
     </div>
   </div>
-  <RxCodearea class="flex-1" lang="markdown" readonly={false} bind:value={announcement.content} />
+  <RxCodearea
+    class="flex-1"
+    lang="markdown"
+    {loading}
+    readonly={loading || submitting}
+    bind:value={announcement.content}
+  />
 </div>
