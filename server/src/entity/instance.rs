@@ -24,6 +24,20 @@ pub struct Model {
     pub started_at: DateTime<Utc>,
     pub user_id: Option<i64>,
     pub challenge_id: i64,
+    pub running: bool,
+}
+
+impl Model {
+    pub fn should_stop(&self) -> bool {
+        self.started_at.timestamp() + ((self.renew_count * 3600) as i64) < Utc::now().timestamp()
+    }
+    pub fn desentialize(&self) -> Self {
+        Self {
+            addr: String::new(),
+            flag: String::new(),
+            ..self.clone()
+        }
+    }
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -60,7 +74,7 @@ impl Related<super::user::Entity> for Entity {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-pub async fn get_user_current_instance(
+pub async fn get_instance_by_user_id(
     conn: &DatabaseConnection,
     user_id: i64,
 ) -> Result<Option<Model>, DbErr> {
@@ -82,4 +96,16 @@ pub async fn get_user_current_instance(
             }
         },
     ))
+}
+
+pub async fn get_instance_by_wsrx(
+    conn: &DatabaseConnection,
+    wsrx: &str,
+) -> Result<Option<Model>, DbErr> {
+    let instance = Entity::find()
+        .filter(Column::Wsrx.eq(wsrx))
+        .one(conn)
+        .await?;
+
+    Ok(instance)
 }

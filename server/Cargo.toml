@@ -101,3 +101,13 @@ async-nats = "0.32"
 biosvg = "0.1"
 # Version Control and Storage
 wsvc = "0.1"
+# WebSocket Reflector
+wsrx = "0.1"
+# Kubernetes
+kube = { version = "0.86", features = [
+    "client",
+    "rustls-tls",
+    "runtime",
+    "derive",
+] }
+k8s-openapi = { version = "0.20", features = ["v1_28"] }
