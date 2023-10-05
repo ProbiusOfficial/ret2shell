@@ -11,6 +11,7 @@
   import type { AxiosError } from 'axios'
   import { onMount } from 'svelte'
   import RxArticle from '$lib/components/RxArticle.svelte'
+  import RxButton from '$lib/components/RxButton.svelte'
   let loading = true
   let error = 200
   let user: User | undefined = undefined
@@ -22,6 +23,11 @@
     publisher_id: 0,
     content: '',
     pinned: false,
+  }
+
+  function scrollToTop() {
+    let pageTop = document.getElementById("page-top")
+    pageTop?.scrollIntoView({behavior: 'smooth'})
   }
 
   onMount(() => {
@@ -82,6 +88,12 @@
       {/if}
     </div>
     <RxArticle content={announcement.content} headingAnchors={true} class="p-6 pt-12" />
+    <RxButton square class="fixed bottom-12 left-auto right-12 print:hidden" on:click={() => history.back()}>
+      <span class="icon-[fluent--arrow-hook-down-left-24-regular] w-6 h-6"></span>
+    </RxButton>
+    <RxButton square class="fixed bottom-28 left-auto right-12 print:hidden" on:click={scrollToTop}>
+      <span class="icon-[fluent--chevron-up-24-regular] w-6 h-6"></span>
+    </RxButton>
     <div class="h-32" />
   {/if}
 </div>
