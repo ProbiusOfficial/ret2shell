@@ -2,7 +2,7 @@
   import { i18n } from '$lib/i18n'
   import { page } from '$app/stores'
   import type { Wiki } from '$lib/models/wiki'
-  import { createWiki, editWiki, getWiki } from '$lib/api/wiki'
+  import { createWiki, deleteWiki, editWiki, getWiki } from '$lib/api/wiki'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
   import { onDestroy } from 'svelte'
@@ -34,6 +34,7 @@
     author_id: 0,
   }
 
+  let deleteModalOpened = false
   const unsubscribe = page.subscribe((value) => {
     const arr = value.params['wiki'].split('/')
     // console.log(arr)
@@ -99,6 +100,24 @@
       loading = false
     }
   })
+  
+  function handleDeleteWiki() {
+    deleteWiki(wiki.id)
+      .then(() => {
+        showMessage('success', $i18n.t('announcement.deleteSuccess'), 5000)
+        deleteModalOpened = false
+        if (wiki.parent != null) {
+          let pathArr = $page.url.pathname.split('/').filter((item) => item !== '')
+          pathArr.pop()
+          goto(`/${pathArr.join('/')}#edit`)
+        } else {
+          goto("/admin/wiki/0#create")
+        }
+      })
+      .catch((err) => {
+        showMessage('error', `${$i18n.t('announcement.deleteFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+      })
+  }
 
   onDestroy(unsubscribe)
 
@@ -146,7 +165,9 @@
         })
     }
   }
-  function deleteWikiItem() {}
+  function deleteWikiItem() {
+    deleteModalOpened = true
+  }
 </script>
 
 <div
@@ -169,3 +190,19 @@
   {/if}
 </div>
 <RxCodearea class="flex-1" lang="markdown" bind:value={editedWiki.content} droppable={true}></RxCodearea>
+{#if deleteModalOpened}
+    <div
+      class="fixed top-0 left-0 w-full h-full bg-base-100/60 z-50 flex flex-col items-center justify-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <div class="rounded-box p-4 flex flex-col space-y-4 bg-neutral w-64">
+        <h1 class="text-base font-bold">
+          {$i18n.t('form.deleteConfirm', { item: decodeURI(wiki.title.split('|')[0]) })}
+        </h1>
+        <div class="flex flex-row justify-end space-x-4">
+          <RxButton size="sm" on:click={() => (deleteModalOpened = false)}>{$i18n.t('form.cancel')}</RxButton>
+          <RxButton size="sm" level="error" on:click={handleDeleteWiki}>{$i18n.t('form.confirm')}</RxButton>
+        </div>
+      </div>
+    </div>
+  {/if}

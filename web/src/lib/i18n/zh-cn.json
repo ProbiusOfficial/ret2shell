@@ -191,7 +191,8 @@
     "create": "创建",
     "wikiGuide": "欢迎来到知识库！请在左侧选择你想编辑的文章，或装创建一篇新的。",
     "enter": "进入",
-    "update": "更新"
+    "update": "更新",
+    "instituteListSettings": "组织管理"
   },
   "docs": {
     "title": "技术文档"
@@ -531,5 +532,8 @@
   },
   "institutes": {
     "fetchFailed": "获取组织列表失败"
+  },
+  "institute": {
+    "name": "组织名"
   }
 }

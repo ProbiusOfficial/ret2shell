@@ -191,7 +191,8 @@
     "wikiGuide": "Welcome to the knowledge base! \nPlease select the article you want to edit on the left, or create a new one.",
     "create": "Create",
     "enter": "Enter",
-    "update": "Update"
+    "update": "Update",
+    "instituteListSettings": "Institute management"
   },
   "docs": {
     "title": "Documents"
@@ -531,5 +532,8 @@
   },
   "institutes": {
     "fetchFailed": "Failed to get list of institutes"
+  },
+  "institute": {
+    "name": "Institute name"
   }
 }
