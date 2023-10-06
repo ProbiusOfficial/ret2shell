@@ -42,7 +42,9 @@
     "infoSetting": "Basic info",
     "passwordSetting": "Password Reset",
     "instituteSetting": "Institute",
-    "dangerousSetting": "Delete account"
+    "dangerousSetting": "Delete account",
+    "userIntroPlaceholder": "Introduce yourself in one sentence",
+    "fetchFailed": "Failed to get basic info"
   },
   "playground": {
     "title": "Playground",
@@ -429,7 +431,10 @@
     "permissions": "Permissions",
     "intro": "Intro",
     "coverPath": "Cover",
-    "institute_id": "Institute"
+    "institute_id": "Institute",
+    "emailInvalid": "Invalid email",
+    "emailRequired": "Please enter your email",
+    "nameRequired": "please enter username"
   },
   "component": {
     "uploadTips": "Drag and drop files here to upload"

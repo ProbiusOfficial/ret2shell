@@ -42,7 +42,9 @@
     "infoSetting": "基本信息",
     "passwordSetting": "重置密码",
     "instituteSetting": "组织认证",
-    "dangerousSetting": "删号跑路"
+    "dangerousSetting": "删号跑路",
+    "userIntroPlaceholder": "一句话介绍一下自己",
+    "fetchFailed": "获取基本信息失败"
   },
   "announcements": {
     "title": "公告",
@@ -429,7 +431,10 @@
     "permissions": "权限",
     "intro": "简介",
     "coverPath": "头像图片",
-    "institute_id": "所属组织"
+    "institute_id": "所属组织",
+    "emailInvalid": "无效的邮箱",
+    "emailRequired": "请输入你的邮箱",
+    "nameRequired": "请输入用户名"
   },
   "component": {
     "uploadTips": "拖放文件到此处上传"
