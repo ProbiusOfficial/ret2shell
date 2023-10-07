@@ -30,6 +30,7 @@ mod captcha;
 mod checker;
 mod config;
 mod controller;
+mod email;
 mod entity;
 mod logging;
 mod media;
@@ -128,6 +129,8 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     let cache = cache::initialize(&config).await?;
     info!("Loading module: < Message Queue >");
     let queue = queue::initialize(&config).await?;
+    info!("Loading module: < Email >");
+    email::initialize(&config, &db, &queue).await?;
     let state = GlobalState {
         config: config.clone(),
         auditor,
