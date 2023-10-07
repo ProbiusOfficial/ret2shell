@@ -33,7 +33,7 @@ pub struct Email {
 /// # Returns
 ///
 /// * A `Message` containing the constructed email.
-pub async fn construct_email(
+async fn construct_email(
     email: &Email,
     sender: impl AsRef<str>,
     username: impl AsRef<str>,
