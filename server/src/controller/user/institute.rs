@@ -1,18 +1,11 @@
-use axum::{
-    extract::State,
-    http::StatusCode,
-    response::IntoResponse,
-    routing::get,
-    Json, Router,
-};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use sea_orm::DatabaseConnection;
 use tracing::error;
 
 use crate::{controller::GlobalState, entity::institute};
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
-    Router::new()
-        .route("/", get(get_institute_list))
+    Router::new().route("/", get(get_institute_list))
 }
 
 async fn get_institute_list(

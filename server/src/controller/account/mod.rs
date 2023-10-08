@@ -8,7 +8,7 @@ use axum::{
 };
 use sea_orm::{DatabaseConnection, DbErr};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, warn, info};
+use tracing::{debug, error, info, warn};
 
 use super::layer::auth::{permission_required_all, Token, TokenTracker};
 use super::layer::info;
@@ -249,7 +249,7 @@ async fn change_password(
             return Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "failed to verify password with server error",
-            ))
+            ));
         }
     }
     let password = bcrypt::hash(body.new_password, bcrypt::DEFAULT_COST).map_err(|err| {
@@ -269,11 +269,11 @@ async fn change_password(
                 })?;
             }
             Ok(StatusCode::OK)
-        },
+        }
         Err(DbErr::RecordNotFound(_)) => {
             error!("failed to update password: user {} not found", user.name);
             Err((StatusCode::NOT_FOUND, "user not found"))
-        },
+        }
         Err(err) => {
             error!("failed to update password: {:?}", err);
             Err((

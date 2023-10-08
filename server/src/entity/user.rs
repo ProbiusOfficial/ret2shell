@@ -365,7 +365,11 @@ pub async fn delete_user(db: &DatabaseConnection, id: i64) -> Result<(), DbErr> 
     Ok(())
 }
 
-pub async fn update_user_password(db: &DatabaseConnection, id: i64, password: String) -> Result<Model, DbErr> {
+pub async fn update_user_password(
+    db: &DatabaseConnection,
+    id: i64,
+    password: String,
+) -> Result<Model, DbErr> {
     match Entity::find_by_id(id).one(db).await? {
         Some(user) => {
             let mut active_model: ActiveModel = user.into();

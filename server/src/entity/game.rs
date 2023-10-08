@@ -144,7 +144,10 @@ pub async fn get_game_page(
     if filter_hidden {
         sql = sql.filter(Column::Hidden.eq(false));
     }
-    let paginator = sql.order_by_desc(Column::StartTime).into_model().paginate(conn, per_page);
+    let paginator = sql
+        .order_by_desc(Column::StartTime)
+        .into_model()
+        .paginate(conn, per_page);
     let resp = paginator.fetch_page(page - 1).await?;
     let num_pages = paginator.num_pages().await?;
     Ok((resp, num_pages))
