@@ -11,6 +11,7 @@
   export let lang = 'markdown'
   export let loading = false
   export let readonly = false
+  export let droppable = false
   $: classes = [
     'textarea',
     'relative',
@@ -29,5 +30,5 @@
 </script>
 
 <div class={classes}>
-  <RxCodearea class="bg-transparent" bind:value {name} {placeholder} {lang} {loading} {readonly} />
+  <RxCodearea class="bg-transparent" bind:value {name} {placeholder} {lang} {loading} {readonly} {droppable} />
 </div>

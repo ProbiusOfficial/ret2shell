@@ -158,17 +158,18 @@
 <div class={classes}>
   {#if droppable && showDropTips}
     <div class="alert alert-info shadow-lg rounded-lg absolute top-0 left-0 w-full z-10">
-      <div>
+      <div class="flex flex-row items-center space-x-2">
         <span class="icon-[fluent--cloud-arrow-up-24-regular] w-6 h-6" />
         <span>{$i18n.t('form.uploadTips')}</span>
       </div>
     </div>
   {/if}
   {#if droppable && $progress && $progress !== 100 && $progress !== 0}
-    <div class="alert shadow-lg rounded-lg absolute top-0 left-0 w-full z-10">
-      <div class="w-full">
+    <div class="alert alert-info shadow-lg rounded-lg absolute top-0 left-0 w-full z-10 flex flex-row">
+      <div class="flex-1 flex flex-row items-center space-x-4">
         <span class="icon-[fluent--cloud-arrow-up-24-regular] w-6 h-6" />
-        <progress class="progress progress-info w-full" value={$progress} max="100"></progress>
+        <progress class="progress flex-1" value={$progress} max="100"></progress>
+        <span class="loading loading-spinner loading-sm"></span>
       </div>
     </div>
   {/if}
