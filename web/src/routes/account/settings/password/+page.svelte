@@ -23,8 +23,7 @@
       old_password: z
         .string()
         .trim()
-        .min(2, { message: $i18n.t('account.accountTooShort') })
-        .max(32, { message: $i18n.t('account.accountTooLong') }),
+        .min(8, { message: $i18n.t('account.passwordTooShort') }),
       new_password: z
         .string()
         .trim()
@@ -101,8 +100,8 @@
     <RxFormItem
       name="old_password"
       label={$i18n.t('account.oldPassword')}
-      hasError={$errors.password !== null}
-      errors={$errors.password || ''}
+      hasError={$errors.old_password !== null}
+      errors={$errors.old_password || ''}
     >
       <RxInput
         icon="icon-[fluent--lock-16-regular]"
