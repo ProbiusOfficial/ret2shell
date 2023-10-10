@@ -2,7 +2,6 @@ import { get } from 'svelte/store'
 import { user, userExtractToken, userReset } from '$lib/stores/user'
 import type { AxiosError, AxiosRequestHeaders, AxiosResponse } from 'axios'
 import axios from 'axios'
-import { goto } from '$app/navigation'
 
 const api = axios.create()
 

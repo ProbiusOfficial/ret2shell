@@ -8,14 +8,14 @@ use self::manager::RedisPool;
 
 pub mod captcha;
 pub mod cluster;
+pub mod email;
 pub mod manager;
 pub mod platform;
 pub mod token;
-pub mod email;
 
 pub use captcha::Captcha;
-pub use token::Token;
 pub use email::Email;
+pub use token::Token;
 
 /// Init the cache manager.
 pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<RedisPool> {

@@ -38,8 +38,8 @@ export async function updateSelfSetting(data: User) {
 }
 
 export interface ChangeUserPasswordRequest {
-  old_password: string,
-  new_password: string,
+  old_password: string
+  new_password: string
   captcha_id: string
   captcha_answer: string
 }
@@ -48,7 +48,7 @@ export async function changeUserPassword(request: ChangeUserPasswordRequest) {
   return await api.patch(`${api_root}/account/change-password`, request)
 }
 
-export async function resendEmailVerification () {
+export async function resendEmailVerification() {
   return api.post(`${api_root}/account/send-verification-email`)
 }
 
@@ -57,7 +57,7 @@ export interface VerifyEmailRequest {
   token: string
 }
 
-export async function verifyEmail (request: VerifyEmailRequest) {
+export async function verifyEmail(request: VerifyEmailRequest) {
   return api.post(`${api_root}/account/verify-email`, request)
 }
 
@@ -67,7 +67,7 @@ export interface SendResetEmailRequest {
   captcha_answer: string
 }
 
-export async function sendResetEmail (request: SendResetEmailRequest) {
+export async function sendResetEmail(request: SendResetEmailRequest) {
   return api.post(`${api_root}/account/send-reset-email`, request)
 }
 
@@ -79,6 +79,6 @@ export interface ResetPasswordRequest {
   captcha_answer: string
 }
 
-export async function resetPassword (request: ResetPasswordRequest) {
+export async function resetPassword(request: ResetPasswordRequest) {
   return api.post(`${api_root}/account/reset-password`, request)
 }

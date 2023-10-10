@@ -529,7 +529,13 @@ async fn resend_verification_email(
         }
     }
     let verification_id = nanoid!(21, &alphabet::SAFE);
-    match cache::Email::add_validation(cache, &verification_id, &user.email.clone().unwrap_or_default()).await {
+    match cache::Email::add_validation(
+        cache,
+        &verification_id,
+        &user.email.clone().unwrap_or_default(),
+    )
+    .await
+    {
         Ok(_) => {}
         Err(err) => {
             error!("Failed to add email validation: {}", err);
