@@ -76,16 +76,16 @@
   {#if error - 200 < 100}
     <div class="flex-1 flex flex-col items-center p-4 lg:p-6">
       <div class="w-full max-w-5xl flex flex-col">
-        <h2 class="h-12 text-base font-bold flex flex-row space-x-2 items-center border-b border-b-base-content/10">
+        <h2 class="h-12 text-base font-bold flex flex-row space-x-2 items-center border-b-2 border-b-base-content/5">
           <span class="icon-[fluent--notepad-20-regular] w-5 h-5"></span>
-          <span>{$i18n.t('account.intro')}</span>
+          <span class="text-base font-bold">{$i18n.t('account.intro')}</span>
         </h2>
         <RxArticle class="mt-4" content={$user.info?.intro || $i18n.t('account.noIntro')}></RxArticle>
         <h2
-          class="h-12 text-base font-bold flex flex-row space-x-2 items-center mt-4 border-b border-b-base-content/10"
+          class="h-12 text-base font-bold flex flex-row space-x-2 items-center mt-4 border-b-2 border-b-base-content/5"
         >
           <span class="icon-[fluent--data-bar-vertical-ascending-16-regular] w-5 h-5"></span>
-          <span>{$i18n.t('account.recentActivities')}</span>
+          <span class="text-base font-bold">{$i18n.t('account.recentActivities')}</span>
         </h2>
         <p class="flex flex-col space-y-2">
           {#each teams as team}

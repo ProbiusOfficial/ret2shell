@@ -30,6 +30,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             state.clone(),
             info::prepare_user_full_info,
         ))
+        .route("/delete", post(delete_self))
         .route("/logout", post(logout))
         .route_layer(middleware::from_fn(permission_required_all!(
             Permission::Basic
@@ -82,6 +83,10 @@ async fn login(
                 ),
             }
         })?;
+
+    if user.banned {
+        return Err((StatusCode::FORBIDDEN, "account is banned"));
+    }
 
     match bcrypt::verify(body.password, &user.password.unwrap_or(String::new())) {
         Ok(true) => {
@@ -359,7 +364,11 @@ async fn send_reset_email(
     }
 
     match user::get_user_by_account(conn, &body.email).await {
-        Ok(_) => {}
+        Ok(user) => {
+            if user.banned {
+                return Err((StatusCode::FORBIDDEN, "account is banned"));
+            }
+        }
         Err(err) => {
             error!("failed to get user by email: {}", err);
             return Err((
@@ -368,7 +377,6 @@ async fn send_reset_email(
             ));
         }
     };
-
     let reset_id = nanoid!(21, &alphabet::SAFE);
     match cache::Email::add_validation(cache, reset_id.as_str(), &body.email).await {
         Ok(_) => {}
@@ -652,4 +660,62 @@ async fn verify_email(
         .store(true, std::sync::atomic::Ordering::Relaxed);
 
     Ok(StatusCode::OK)
+}
+
+async fn delete_self(
+    State(ref conn): State<DatabaseConnection>,
+    State(ref mut cache): State<RedisPool>,
+    Extension(token): Extension<Token>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let mut user = user::get_user(conn, token.id).await.map_err(|err| {
+        error!("failed to get user: {:?}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "failed to get user with database error",
+        )
+    })?;
+    let user_count = user::count_activated_user(conn).await.map_err(|err| {
+        error!("failed to count user: {:?}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "failed to count user with database error",
+        )
+    })?;
+    if user_count == 1 {
+        return Err((
+            StatusCode::FORBIDDEN,
+            "you are the only one in this platform.",
+        ));
+    }
+    user.name = format!("[DELETED]{}", user.id);
+    user.email = Some(format!(
+        "{}.deleted",
+        user.email.unwrap_or("deleted@ret2shell".to_owned())
+    ));
+    user.institute_id = None;
+    user.institute_info = None;
+    user.intro = Some(String::new());
+    user.permissions = Permissions::default();
+    user.hidden = true;
+    user.banned = true;
+    user.cover_path = None;
+    cache::Token::delete_all(cache, user.id)
+        .await
+        .map_err(|err| {
+            error!("failed to delete all token: {:?}", err);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to delete all token with cache error",
+            )
+        })?;
+    match user::update_user(conn, user.id, user).await {
+        Ok(_) => Ok(StatusCode::OK),
+        Err(err) => {
+            error!("failed to update user: {:?}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to update user with database error",
+            ))
+        }
+    }
 }

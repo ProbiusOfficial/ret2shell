@@ -127,22 +127,7 @@
         <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
       </div>
       <RxForm {form}>
-        <div class="flex">
-          <RxFormItem
-            name="name"
-            label={$i18n.t('account.name')}
-            hasError={$errors.name !== null}
-            errors={$errors.name || ''}
-          >
-            <RxInput
-              icon="icon-[fluent--person-16-regular]"
-              class="w-full"
-              id="name"
-              name="name"
-              hasError={$errors.name !== null}
-              value={userSetting.name}
-            />
-          </RxFormItem>
+        <div class="flex flex-row space-x-4">
           <RxFormItem
             name="cover_path"
             label=""
@@ -152,7 +137,7 @@
           >
             <input name="cover_path" class="hidden" value={userSetting?.cover_path} />
             <input class="hidden" type="file" bind:this={fileInput} accept="image/*" on:change={uploadAvatar} />
-            <div class="avatar mx-4">
+            <div class="avatar">
               <div
                 class="w-16 h-16 rounded-full ring-2 ring-offset-base-100 ring-offset-2 !flex flex-col justify-center items-center relative"
               >
@@ -181,6 +166,21 @@
                 </RxButton>
               </div>
             </div>
+          </RxFormItem>
+          <RxFormItem
+            name="name"
+            label={$i18n.t('account.name')}
+            hasError={$errors.name !== null}
+            errors={$errors.name || ''}
+          >
+            <RxInput
+              icon="icon-[fluent--person-16-regular]"
+              class="w-full"
+              id="name"
+              name="name"
+              hasError={$errors.name !== null}
+              value={userSetting.name}
+            />
           </RxFormItem>
         </div>
         <RxFormItem

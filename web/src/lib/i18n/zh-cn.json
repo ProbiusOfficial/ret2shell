@@ -62,7 +62,19 @@
     "verifyEmail": "邮箱验证",
     "sendResetEmail": "发送密码重置邮件",
     "forgotPassword": "忘记密码",
-    "submit": "提交"
+    "submit": "提交",
+    "loading": "加载中...",
+    "deleteAccountTitle": "警告！账号停用后不可恢复！",
+    "deleteAccountTipsTitle1": "请明确你的账户并不是真的被删除了，而是被置于删除并无法恢复的状态，以下操作将被执行：",
+    "deleteAccountTips1": "请明确你的账户并不是真的被删除了，而是被置于停用并无法恢复的状态，以下操作将被执行：",
+    "deleteAccountTipsList1": "你的账户将被重命名为 [DELETED]_<hash>；",
+    "deleteAccountTipsList2": "你的账户将被移除所有权限并禁止登录，也不能通过邮箱找回，邮箱可以用于注册另一个账号；",
+    "deleteAccountTipsList3": "账户隐私信息将被移除，但是公开发布的内容将保留；",
+    "deleteAccountTipsList4": "与账户绑定的竞赛成绩、数据等会留存，但无法提供信息来证明这是你的。",
+    "deleteAccountTips2": "请认真阅读并确定上述内容！如果你真的确定要停用账户，请在下方输入你的完整用户名以确认：",
+    "deleteAccountTips3": "请注意，由于删除了身份验证相关的隐私信息，即使你联系管理/运维人员，也无法恢复被停用的账号，请三思而后行。",
+    "bye": "再见",
+    "deleteAccountFailed": "账户停用失败"
   },
   "announcements": {
     "title": "公告",
@@ -220,7 +232,8 @@
     "deleteWikiConfirm": "确认删除 {{item}} ？该文章下的所有子文章将一并删除（如果有）。",
     "userInfo": "用户信息",
     "userStatistics": "数据统计",
-    "userGames": "已参与赛事"
+    "userGames": "已参与赛事",
+    "userIpAddresses": "使用过的 IP 地址"
   },
   "docs": {
     "title": "技术文档"

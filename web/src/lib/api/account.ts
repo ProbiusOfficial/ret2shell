@@ -82,3 +82,7 @@ export interface ResetPasswordRequest {
 export async function resetPassword(request: ResetPasswordRequest) {
   return api.post(`${api_root}/account/reset-password`, request)
 }
+
+export async function deactivateAccount() {
+  return api.post(`${api_root}/account/delete`)
+}

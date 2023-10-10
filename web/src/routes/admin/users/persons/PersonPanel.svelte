@@ -5,7 +5,6 @@
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import { createEventDispatcher } from 'svelte'
   import Info from './Info.svelte'
-  import Games from './Games.svelte'
   import Statistics from './Statistics.svelte'
   import { i18n } from '$lib/i18n'
   import { blur } from 'svelte/transition'
@@ -48,9 +47,6 @@
         <RxButton ghost on:click={() => (activeTab = 'statistics')} active={activeTab === 'statistics'}>
           {$i18n.t('admin.userStatistics')}
         </RxButton>
-        <RxButton ghost on:click={() => (activeTab = 'games')} active={activeTab === 'games'}>
-          {$i18n.t('admin.userGames')}
-        </RxButton>
       </div>
       <RxButton
         ghost
@@ -65,8 +61,6 @@
     </div>
     {#if activeTab === 'info'}
       <Info {user} />
-    {:else if activeTab === 'games'}
-      <Games {user} />
     {:else if activeTab === 'statistics'}
       <Statistics {user} />
     {/if}

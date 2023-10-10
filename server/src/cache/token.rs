@@ -36,7 +36,6 @@ impl Token {
         Ok(())
     }
 
-    #[allow(dead_code)]
     pub async fn delete_all(
         conn: &mut RedisPool,
         user_id: i64,

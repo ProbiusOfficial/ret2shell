@@ -1,5 +1,26 @@
 <script lang="ts">
+  import { deactivateAccount } from '$lib/api/account'
+  import RxButton from '$lib/components/RxButton.svelte'
+  import RxInput from '$lib/components/RxInput.svelte'
   import { i18n } from '$lib/i18n'
+  import { showMessage } from '$lib/stores/toast'
+  import { user, userReset } from '$lib/stores/user'
+  import type { AxiosError } from 'axios'
+
+  let name: string = ''
+  $: canDelete = name === $user.name
+
+  function handleDeactivate() {
+    if (canDelete) {
+      deactivateAccount()
+        .then(() => {
+          userReset()
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('account.deleteAccountFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        })
+    }
+  }
 </script>
 
 <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">
@@ -8,5 +29,28 @@
       <span class="icon-[fluent--warning-24-filled] text-error w-24 h-24"></span>
     </div>
     <h1 class="text-center text-lg font-bold text-error">{$i18n.t('account.deleteAccountTitle')}</h1>
+    <div class="divider"></div>
+    <article class="prose max-w-5xl self-center mt-4">
+      <p><strong>{$i18n.t('account.deleteAccountTips1')}</strong></p>
+      <ul>
+        <li>{$i18n.t('account.deleteAccountTipsList1')}</li>
+        <li>{$i18n.t('account.deleteAccountTipsList2')}</li>
+        <li>{$i18n.t('account.deleteAccountTipsList3')}</li>
+        <li>{$i18n.t('account.deleteAccountTipsList4')}</li>
+      </ul>
+      <p><strong>{$i18n.t('account.deleteAccountTips3')}</strong></p>
+      <p class="text-error">{$i18n.t('account.deleteAccountTips2')}</p>
+    </article>
+    <div class="divider"></div>
+    <div class="w-full max-w-5xl self-center flex flex-row items-center justify-center">
+      <RxInput icon="icon-[fluent--person-24-regular] w-6 h-6 min-w-0" bind:value={name}>
+        <RxButton class="join-item ml-0 text-error" disabled={!canDelete} on:click={handleDeactivate}>
+          <span class="icon-[fluent--arrow-exit-20-regular] w-6 h-6"></span>
+          <span class="icon-[fluent--person-walking-24-regular] w-6 h-6"></span>
+          <span class="hidden md:inline">{$i18n.t('account.bye')}</span>
+        </RxButton>
+      </RxInput>
+    </div>
+    <div class="divider"></div>
   </div>
 </div>

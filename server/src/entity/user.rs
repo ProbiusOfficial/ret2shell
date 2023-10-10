@@ -250,6 +250,13 @@ pub async fn count_user(db: &DatabaseConnection) -> Result<u64, DbErr> {
     Entity::find().count(db).await
 }
 
+pub async fn count_activated_user(db: &DatabaseConnection) -> Result<u64, DbErr> {
+    Entity::find()
+        .filter(Column::Banned.eq(false))
+        .count(db)
+        .await
+}
+
 pub async fn get_user_page(
     db: &DatabaseConnection,
     page: u64,

@@ -48,7 +48,7 @@
     !ghost && 'backdrop-blur',
     'ml-0',
     ghost ? 'bg-transparent' : 'bg-base-content/5',
-    'min-w-0',
+    'w-0',
     'flex-1',
     // input-xs input-sm input-md input-lg
     `input-${size}`,

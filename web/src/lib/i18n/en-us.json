@@ -62,7 +62,19 @@
     "verifyEmail": "Email verification",
     "sendResetEmail": "Send password reset email",
     "forgotPassword": "Forgot password",
-    "submit": "submit"
+    "submit": "submit",
+    "loading": "loading...",
+    "deleteAccountTitle": "warn! \nOnce the account is deactivated, it cannot be restored!",
+    "deleteAccountTipsTitle1": "Please make it clear that your account is not really deleted, but is placed in a state where it is deleted and cannot be recovered. The following operations will be performed:",
+    "deleteAccountTips1": "Please make it clear that your account is not really deleted, but is placed in a deactivated and unrecoverable state. The following operations will be performed:",
+    "deleteAccountTipsList1": "Your account will be renamed [DELETED]_<hash>;",
+    "deleteAccountTipsList2": "Your account will have all permissions removed and will be prohibited from logging in. It cannot be retrieved through your email address, which can be used to register another account;",
+    "deleteAccountTipsList3": "Private account information will be removed, but publicly posted content will remain;",
+    "deleteAccountTipsList4": "Game prizes, data, etc. bound to the account will be retained, but information cannot be provided to prove that it is yours.",
+    "deleteAccountTips2": "Please read carefully and confirm the above content! \nIf you're really sure you want to deactivate your account, please confirm by entering your full username below:",
+    "bye": "Bye.",
+    "deleteAccountFailed": "Account deactivation failed",
+    "deleteAccountTips3": "Please note that due to the deletion of identity verification-related private information, even if you contact management/operation and maintenance personnel, you cannot recover the deactivated account, so please think twice before doing so."
   },
   "playground": {
     "title": "Playground",
@@ -220,7 +232,8 @@
     "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any).",
     "userInfo": "User Info",
     "userStatistics": "Statistics",
-    "userGames": "Participated Games"
+    "userGames": "Participated Games",
+    "userIpAddresses": "IP address used"
   },
   "docs": {
     "title": "Documents"
