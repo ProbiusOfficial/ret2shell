@@ -33,10 +33,12 @@
 
 <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">
   <div class="flex-1 flex flex-col max-w-5xl">
-    <div class="p-12 flex flex-row justify-center">
-      <span class="icon-[fluent--warning-24-filled] text-error w-24 h-24"></span>
+    <div class="pt-4 md:p-12 md:pb-4 flex flex-row md:flex-col items-center justify-center">
+      <span class="icon-[fluent--warning-24-filled] text-error w-6 h-6 md:w-24 md:h-24"></span>
+      <h1 class="text-center text-lg font-bold text-error ml-4 md:ml-0 md:mt-4">
+        {$i18n.t('account.deleteAccountTitle')}
+      </h1>
     </div>
-    <h1 class="text-center text-lg font-bold text-error">{$i18n.t('account.deleteAccountTitle')}</h1>
     <div class="divider"></div>
     <article class="prose w-full max-w-5xl self-center mt-4">
       <p><strong>{$i18n.t('account.deleteAccountTips1')}</strong></p>
@@ -51,7 +53,7 @@
     </article>
     <div class="divider"></div>
     <div class="w-full max-w-5xl self-center flex flex-row items-center justify-center">
-      <RxInput icon="icon-[fluent--person-24-regular] w-6 h-6 min-w-0" bind:value={name}>
+      <RxInput icon="icon-[fluent--person-24-regular] w-6 h-6" class="w-0" bind:value={name}>
         <RxButton class="join-item ml-0 text-error" disabled={!canDelete} on:click={handleDeactivate}>
           <span class="icon-[fluent--arrow-exit-20-regular] w-6 h-6"></span>
           <span class="icon-[fluent--person-walking-24-regular] w-6 h-6"></span>
