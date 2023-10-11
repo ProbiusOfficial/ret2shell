@@ -565,7 +565,7 @@ async fn resend_verification_email(
                     verification_id
                 ),
             )
-            .replace("%NAME%", &user.name),
+            .replace("%USER%", &user.name),
     };
     match send_email(&email, queue).await {
         Ok(_) => Ok(StatusCode::OK),
