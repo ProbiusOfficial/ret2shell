@@ -159,7 +159,8 @@
     "challenges": "Challenges",
     "intro": "Intro",
     "teamAsAdmin": "Administrator test",
-    "teamAsAdminTips": "Not allowed to participate and will not be included in the score calculation"
+    "teamAsAdminTips": "Not allowed to participate and will not be included in the score calculation",
+    "submitWriteup": "Submit Write-Up"
   },
   "announcements": {
     "title": "Announcements",
@@ -602,5 +603,28 @@
   },
   "challenge": {
     "gankAuthor": "One-click hammer reveals the questioner"
+  },
+  "tutorial": {
+    "welcome": "Welcome to the world of CTF!",
+    "start": "Start the platform entry journey",
+    "skip": "I am a CTF veteran, I don’t need your teaching.",
+    "whatIsCTF": "is generally translated as Capture the Flag in Chinese. In the field of network security, it refers to a form of technical competition among network security technicians.",
+    "whatIsFlag": "Through offensive and defensive confrontations, program analysis, etc., the participating teams are the first to obtain a string or other content in a certain format from the competition environment given by the organizer, and submit it to the organizer to win points. \nFor convenience of naming, we call such content \"Flag\". \nThe general format of Flag is a uniform starting name plus curly brackets, such as flag{hello_world} or moectf{welcome!}",
+    "next": "I know, next step",
+    "whatIsF12": "Participating in CTF events usually requires you to have a deep understanding of computers. If you don't have one - it doesn't matter, you can start here! \nLearning CTF may be different from other subjects. There is no textbook and no teacher to follow step by step. \nBut don’t be afraid, search engines and various forum materials are your best learning tools!",
+    "tryF12Flag": "There is a flag on the webpage you are looking at now. Try using the developer tools to select the spinning thing on the left! \nDon’t know what developer tools are? \nYou can first use a search engine to search for \"browser developer tools\", and then try to open your browser developer tools (the shortcut key for some browsers is F12, and some are Ctrl Shift I), and look for this \nIs there any hidden content on the page?",
+    "inputFlagAndNext": "Enter the Flag string you found here in the format of flag{...}. If it is correct, the next button on the right will light up.",
+    "whatIsCTFTitle": "What is CTF?",
+    "whatIsF12Title": "So how to learn CTF? \nHow to solve the challenge? \nLet me see!",
+    "F12Ok": "Marvelous! \nYou did it!",
+    "futherLearningTitle": "So what to study next?",
+    "futherLearning1": "When you first meet CTF, there are generally five major learning directions, namely software reverse engineering (Reverse), binary vulnerability audit (Pwn), Web penetration audit and testing (Web), modern cryptography (Crypto), and miscellaneous (Misc) ( \nEncoding, steganography, forensics and traffic analysis). In future studies, emerging technical directions and more detailed technical categories such as domain penetration, blockchain security, etc. will be added. \nBut these are all things for later, you can start from the document below!",
+    "platformInfoTitle": "Next let’s see what’s available on this platform!",
+    "platformInfoWiki": "Here is the knowledge base! \nWe'll be posting about CTF here! \nIt performs the same function as the CTF Wiki, and all CTF-related knowledge can be consulted here. \nIf there is any missing content here, please give us feedback. During the learning process, it is also recommended to consult the previously recommended CTF knowledge website and search engine.",
+    "platformInfoPlatform": "This is the playground! \nThe practice field contains many, many questions covering various CTF tracks. \nAfter all competitions held on this platform are archived, you can come to the practice field to continue to reproduce the challenges. \nAt the same time, the training ground will also release some practice challenges from time to time for everyone to learn.",
+    "platformInfoGames": "Here is the event list! \nYou can participate in various games held on this platform here!",
+    "platformInfoAnnouncements": "Here is the platform announcement! \nSome notices will be released, etc. Special notes about the competition, important events, and daily platform maintenance information will be here, so stay tuned!",
+    "theEnd": "Okay, that’s the brief introduction to CTF, but we still have a long, long road to learn... The rest of the time is entirely up to you!",
+    "end": "End of journey"
   }
 }

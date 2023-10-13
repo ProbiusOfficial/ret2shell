@@ -29,6 +29,10 @@
       <span class="w-6 h-6 icon-[fluent--copy-16-regular] text-success" />
       {$i18n.t('games.copyInviteLink')}
     </RxButton>
+    <RxButton justify="start" ghost>
+      <span class="w-6 h-6 icon-[fluent--arrow-upload-16-regular] text-success" />
+      {$i18n.t('games.submitWriteup')}
+    </RxButton>
   {:else if $user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
     <RxButton disabled justify="start">
       <span class="w-6 h-6 icon-[fluent--thumb-dislike-16-regular]" />
