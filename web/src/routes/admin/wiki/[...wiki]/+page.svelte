@@ -37,7 +37,7 @@
   let deleteModalOpened = false
   const unsubscribe = page.subscribe((value) => {
     const arr = value.params['wiki'].split('/')
-    console.log(arr)
+    // console.log(arr)
     const id = parseInt(arr[arr.length - 1])
     if (isNaN(id)) {
       loading = false
