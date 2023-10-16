@@ -58,6 +58,11 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
 }
 
 #[derive(Deserialize)]
+struct TeamIDQuery {
+    pub team_id: i64,
+}
+
+#[derive(Deserialize)]
 struct ListParams {
     pub page: Option<u64>,
     pub per_page: Option<u64>,
@@ -306,8 +311,9 @@ async fn get_self_team_rank(
 async fn get_team_info(
     State(ref conn): State<DatabaseConnection>,
     Extension(op_user): Extension<user::Model>,
-    Query(team_id): Query<i64>,
+    Query(query): Query<TeamIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let team_id = query.team_id;
     match team::get_team(conn, team_id).await {
         Ok(Some(team)) => {
             if op_user.permissions.0.contains(&Permission::Devops)
@@ -329,8 +335,9 @@ async fn get_team_info(
 
 async fn get_team_teammates(
     State(ref conn): State<DatabaseConnection>,
-    Query(team_id): Query<i64>,
+    Query(query): Query<TeamIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let team_id = query.team_id;
     team::get_team_members(conn, team_id)
         .await
         .map(Json)
@@ -345,9 +352,10 @@ async fn get_team_teammates(
 
 async fn update_team_info(
     State(ref conn): State<DatabaseConnection>,
-    Query(team_id): Query<i64>,
+    Query(query): Query<TeamIDQuery>,
     Json(data): Json<team::Model>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let team_id = query.team_id;
     match team::update_team(conn, team_id, data).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
@@ -357,14 +365,11 @@ async fn update_team_info(
     }
 }
 
-#[derive(Deserialize)]
-struct ChangeTeamAuditQuery {
-    team_id: i64,
-}
+
 
 async fn change_team_audit(
     State(ref conn): State<DatabaseConnection>,
-    Query(query): Query<ChangeTeamAuditQuery>,
+    Query(query): Query<TeamIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     let team_id = query.team_id;
     let mut current_team = match team::get_team(conn, team_id).await {
