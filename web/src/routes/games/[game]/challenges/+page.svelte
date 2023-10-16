@@ -263,7 +263,7 @@
           </RxLink>
         </div>
         <div
-          class="flex-1 flex flex-row items-center pr-2 space-x-2 backdrop-blur relative overflow-x-scroll flex-shrink-0 h-16 overflow-y-hidden"
+          class="flex-1 flex flex-row items-center pr-2 space-x-2 relative overflow-x-scroll flex-shrink-0 h-16 overflow-y-hidden"
           on:wheel={(e) => {
             e.currentTarget.scrollLeft += e.deltaY
           }}

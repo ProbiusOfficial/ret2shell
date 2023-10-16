@@ -571,7 +571,8 @@
     "base64": {
       "man": "base系列编码工具",
       "needArgs": "参数错误",
-      "usage": "使用方法：base64 [-d|-e] \"content\""
+      "usage": "使用方法：base64 [-d|-e] \"content\"",
+      "invalid": "编解码出错"
     }
   },
   "table": {

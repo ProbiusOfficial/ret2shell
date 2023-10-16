@@ -88,7 +88,7 @@ redis = { version = "0.23", features = [
 bb8 = "0.8"
 bb8-redis = "0.13"
 # Email
-lettre = { version = "0.10", features = [
+lettre = { version = "0.11", features = [
     "smtp-transport",
     "tokio1-rustls-tls",
     "hostname",

@@ -571,7 +571,8 @@
     "base64": {
       "man": "base series coding tools",
       "needArgs": "Parameters error",
-      "usage": "Usage: base64 [-d|-e] \"content\""
+      "usage": "Usage: base64 [-d|-e] \"content\"",
+      "invalid": "Codec error"
     }
   },
   "table": {

@@ -189,7 +189,7 @@
   {/if}
 </div>
 <div
-  class="flex flex-col w-full max-w-5xl px-6 flex-1"
+  class="flex flex-col w-full px-6 flex-1"
   on:wheel={(e) => {
     if (e.deltaY > 0) {
       challengeScrollExpanded = false
@@ -200,6 +200,9 @@
     }
   }}
 >
-  <RxArticle class="mt-12" content={challenge?.content || $i18n.t('playground.emptyContent')} />
+  <RxArticle
+    class="mt-12 w-full max-w-5xl self-center px-6"
+    content={challenge?.content || $i18n.t('playground.emptyContent')}
+  />
   <div class="h-12" />
 </div>

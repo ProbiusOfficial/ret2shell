@@ -15,13 +15,18 @@ export class Base64 implements Command {
     }
     const mode = args[0].toString().trim()
     const content = args[1].toString().trim()
-    if (mode === '-d') {
-      io.logInfo(atob(content))
-    } else if (mode === '-e') {
-      io.logInfo(btoa(content))
-    } else {
-      io.logError(get(i18n).t('shell.base64.needArgs'))
-      io.logInfo(get(i18n).t('shell.base64.usage'))
+    try {
+      if (mode === '-d') {
+        io.println(atob(content))
+      } else if (mode === '-e') {
+        io.println(btoa(content))
+      } else {
+        io.logError(get(i18n).t('shell.base64.needArgs'))
+        io.logInfo(get(i18n).t('shell.base64.usage'))
+        return 1
+      }
+    } catch {
+      io.logError(get(i18n).t('shell.base64.invalid'))
       return 1
     }
     return 0
