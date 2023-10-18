@@ -8,6 +8,7 @@
   import { admin } from '$lib/stores/admin'
   import type { Game, Notification } from '$lib/models/game'
   import { getGameNotifications } from '$lib/api/game'
+  import RxLink from '$lib/components/RxLink.svelte'
 
   let currentPage: number = 1
   let perPage: number = 15
@@ -98,6 +99,10 @@
   <div class="w-full flex-1 flex flex-col px-6 lg:px-12">
     <div class="h-16 flex flex-row items-center space-x-2">
       <h2 class="text-base font-bold flex-1">{$i18n.t('admin.NotificationListSettings')}</h2>
+      <RxLink size="sm" level="info" href="#create">
+        <span class="icon-[fluent--add-20-regular]"></span>
+        <span>{$i18n.t('challenge.create')}</span>
+      </RxLink>
     </div>
     <DataTable
       class="flex-1"

@@ -77,6 +77,9 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                 .route("/attachment", get(download_challenge_attachment))
                 .nest("/env", env::router(state))
                 .nest("/submission", submission::router(state))
+                .route("/solved", get(get_solved_user_list))
+                .nest("/hint", hint::router(state))
+                .nest("/answer", answer::router(state))
                 .route_layer(middleware::from_fn_with_state(
                     state.clone(),
                     auth::challenge_privilege_required,
@@ -89,9 +92,6 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     state.clone(),
                     info::prepare_user_full_info,
                 ))
-                .route("/solved", get(get_solved_user_list))
-                .nest("/hint", hint::router(state))
-                .nest("/answer", answer::router(state))
                 .route_layer(middleware::from_fn(auth::permission_required_all!(
                     Permission::Verified
                 ))),
@@ -112,16 +112,16 @@ struct SolvedUserList {
 
 async fn get_solved_user_list(
     State(ref conn): State<DatabaseConnection>,
-    Path(challenge_id): Path<i64>,
+    Extension(challenge): Extension<challenge::Model>,
     Query(params): Query<SolvedUserListQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     let page = params.page.unwrap_or(1);
-    let per_page = params.per_page.unwrap_or(10);
+    let per_page = params.per_page.unwrap_or(20);
     if page < 1 || per_page < 1 {
         error!("Invalid page={} or per_page={}", page, per_page);
         return Err((StatusCode::BAD_REQUEST, "invalid paginate parameters"));
     }
-    match submission_entity::get_solved_user_page(conn, challenge_id, page, per_page).await {
+    match submission_entity::get_solved_user_page(conn, challenge.id, page, per_page).await {
         Ok((users, total)) => Ok(Json(SolvedUserList { users, total })),
         Err(err) => {
             error!("get_solved_user_list error: {}", err);

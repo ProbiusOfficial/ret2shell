@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { getChallenge, getChallengeHints } from '$lib/api/challenge'
+  import { getChallenge, getChallengeAnwser, getChallengeHints } from '$lib/api/challenge'
   import { getGame, getGameSelfSubmission } from '$lib/api/game'
   import AnswerPanel from '$lib/blocks/challenge/AnswerPanel.svelte'
   import HintsPanel from '$lib/blocks/challenge/HintsPanel.svelte'
@@ -24,6 +24,7 @@
   import type { Hint } from '$lib/models/hint'
   import ChallengePanel from '$lib/blocks/challenge/ChallengePanel.svelte'
   import SolvedPanel from '$lib/blocks/challenge/SolvedPanel.svelte'
+  import type { Answer } from '$lib/models/answer'
 
   onMount(() => {
     Split(['#info-stack', '#work-stack'], {
@@ -68,6 +69,7 @@
   let loadingPlaceHolder: HTMLDivElement
   let openedTabDivRecord: Record<number, HTMLDivElement> = {}
   let hints: Hint[] = []
+  let answer: Answer | null = null
 
   function getSelfSubmissions() {
     if ($game.current?.id)
@@ -83,7 +85,33 @@
           )
         })
   }
-
+  $: watchChallenge(activeChallenge)
+  function watchChallenge(challenge: Challenge | null) {
+    if (challenge?.id) {
+      getChallengeHints(challenge.id)
+        .then((res) => {
+          hints = res
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('playground.fetchHintsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        })
+      getChallengeAnwser(challenge.id)
+        .then((res) => {
+          answer = res
+        })
+        .catch((err) => {
+          if (err.response?.status === 404) {
+            answer = null
+          } else {
+            showMessage(
+              'error',
+              `${$i18n.t('playground.fetchAnswerFailed')}: ${(err as AxiosError).response?.data}`,
+              5000
+            )
+          }
+        })
+    } else hints = []
+  }
   let unsubscribe = page.subscribe((value) => {
     let challengeId = value.url.hash ? parseInt(value.url.hash.slice(1)) || null : null
     if (challengeId && challengeId !== activeChallenge?.id) {
@@ -115,13 +143,6 @@
         })
         .finally(() => {
           loadingNewChallenge = false
-        })
-      getChallengeHints(challengeId)
-        .then((res) => {
-          hints = res
-        })
-        .catch((err) => {
-          showMessage('error', `${$i18n.t('playground.fetchHintsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
         })
     } else {
       activeChallenge = null
@@ -297,7 +318,7 @@
         }}
       />
       <HintsPanel {hints} class={bottomTab === 1 ? '' : 'hidden'} />
-      <AnswerPanel class={bottomTab === 2 ? '' : 'hidden'} />
+      <AnswerPanel class={bottomTab === 2 ? '' : 'hidden'} {answer} />
       <SolvedPanel class={bottomTab === 3 ? '' : 'hidden'} challenge={activeChallenge} />
     </div>
   </div>

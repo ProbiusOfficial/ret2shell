@@ -129,7 +129,10 @@
     "challengeSolves": "已解出",
     "noNotifications": "暂时没有通知",
     "currentEnvNotMatch": "有另一道题目的环境正在运行...",
-    "launch": "容器，启动！"
+    "launch": "容器，启动！",
+    "fetchAnswerFailed": "获取题解失败",
+    "challengeAnswerWarning": "在这里放上题解是为了在你实在没有思路的时候提供一些帮助，请尽量独立做题，不要依赖题解，更不要利用题解进行刷分、刷解题记录等行为哦！",
+    "challengeSolvedWarning": "仅显示前20名解出的同学，不包括被隐藏与禁用的用户；鼠标悬停在用户名上可以查看解题时间。"
   },
   "games": {
     "title": "赛事",
@@ -227,7 +230,9 @@
       "gameInfo": "比赛信息",
       "gameChallenges": "题目管理",
       "gameNotifications": "通知管理",
-      "gameTeams": "队伍管理"
+      "gameTeams": "队伍管理",
+      "gameWriteups": "Write-Up审核",
+      "writeups": "Write-Up审核"
     },
     "currentPage": "当前",
     "userListSettings": "用户管理",

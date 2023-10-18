@@ -146,6 +146,19 @@
   let openedTabDivRecord: Record<number, HTMLDivElement> = {}
   let hints: Hint[] = []
 
+  $: watchChallenge(activeChallenge)
+  function watchChallenge(challenge: Challenge | null) {
+    if (challenge?.id)
+      getChallengeHints(challenge.id)
+        .then((res) => {
+          hints = res
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('playground.fetchHintsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        })
+    else hints = []
+  }
+
   let unsubscribe = page.subscribe((value) => {
     let challengeId = value.url.hash ? parseInt(value.url.hash.slice(1)) || null : null
     if (challengeId && challengeId !== activeChallenge?.id) {
@@ -177,13 +190,6 @@
         })
         .finally(() => {
           loadingNewChallenge = false
-        })
-      getChallengeHints(challengeId)
-        .then((res) => {
-          hints = res
-        })
-        .catch((err) => {
-          showMessage('error', `${$i18n.t('playground.fetchHintsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
         })
     } else {
       activeChallenge = null

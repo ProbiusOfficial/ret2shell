@@ -30,6 +30,11 @@
       icon: 'icon-[fluent--people-20-regular]',
       link: `/admin/games/${$admin.game?.id}/teams`,
     },
+    {
+      name: $i18n.t('admin.routes.writeups'),
+      icon: 'icon-[fluent--people-20-regular]',
+      link: `/admin/games/${$admin.game?.id}/writeups`,
+    },
   ]
 </script>
 

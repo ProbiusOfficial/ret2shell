@@ -1,3 +1,4 @@
+import type { Answer } from '$lib/models/answer'
 import type { Challenge, Tag } from '$lib/models/challenge'
 import type { Hint } from '$lib/models/hint'
 import type { Submission, SubmissionOnlyUserInfo } from '$lib/models/submission'
@@ -60,4 +61,8 @@ export async function getChallengeSolvedUser(id: number, page?: number, per_page
     uri += `?page=${page}&per_page=${per_page}`
   }
   return (await api.get(uri)).data as { users: SubmissionOnlyUserInfo[]; total: number }
+}
+
+export async function getChallengeAnwser(id: number) {
+  return (await api.get(`${api_root}/challenge/${id}/answer`)).data as Answer
 }

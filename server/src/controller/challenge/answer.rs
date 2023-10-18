@@ -1,12 +1,12 @@
 use crate::{
     controller::{layer::auth, GlobalState},
     entity::{
-        answer, game,
+        answer, challenge, game,
         user::{self, Permission},
     },
 };
 use axum::{
-    extract::{Path, Query, State},
+    extract::{Path, State},
     middleware,
     response::IntoResponse,
     routing::{get, post},
@@ -14,7 +14,6 @@ use axum::{
 };
 use hyper::StatusCode;
 use sea_orm::DatabaseConnection;
-use serde::Deserialize;
 use tracing::error;
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
@@ -25,8 +24,9 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
                 .patch(update_challenge_answer)
                 .delete(delete_challenge_answer),
         )
-        .route_layer(middleware::from_fn(auth::permission_required_all!(
-            Permission::Publish
+        .route_layer(middleware::from_fn(auth::permission_required_any!(
+            Permission::Publish,
+            Permission::Organize
         )))
         .route("/", get(get_challenge_answer))
         .route_layer(middleware::from_fn(auth::permission_required_all!(
@@ -34,29 +34,15 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
         )))
 }
 
-#[derive(Deserialize)]
-struct GameIDQuery {
-    pub game_id: i64,
-}
-
 async fn get_challenge_answer(
     State(ref conn): State<DatabaseConnection>,
-    Query(query): Query<GameIDQuery>,
-    Path(challenge_id): Path<i64>,
+    Extension(game): Extension<game::Model>,
+    Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let game_id = query.game_id;
-    let game = match game::get_game(conn, game_id).await {
-        Ok(Some(game)) => game,
-        Ok(None) => return Err((StatusCode::NOT_FOUND, "Game not found")),
-        Err(err) => {
-            error!("Failed to get game: {}", err);
-            return Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to get game"));
-        }
-    };
     if game.host_as_game && !game.end_and_archive() {
         return Err((StatusCode::FORBIDDEN, "answer can not be seen in this time"));
     }
-    match answer::get_answer_by_challenge_id(conn, challenge_id).await {
+    match answer::get_answer_by_challenge_id(conn, challenge.id).await {
         Ok(Some(answer)) => Ok(Json(answer)),
         Ok(None) => Err((StatusCode::NOT_FOUND, "Answer not found")),
         Err(err) => {
@@ -69,10 +55,10 @@ async fn get_challenge_answer(
 async fn create_challenge_answer(
     State(ref conn): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
-    Path(challenge_id): Path<i64>,
+    Extension(challenge): Extension<challenge::Model>,
     Json(data): Json<answer::Model>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    match answer::create_answer(conn, user.id, challenge_id, data).await {
+    match answer::create_answer(conn, user.id, challenge.id, data).await {
         Ok(_) => Ok(StatusCode::CREATED),
         Err(err) => {
             error!("Failed to create answer: {}", err);
@@ -84,10 +70,10 @@ async fn create_challenge_answer(
 async fn update_challenge_answer(
     State(ref conn): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
-    Path(challenge_id): Path<i64>,
+    Extension(challenge): Extension<challenge::Model>,
     Json(data): Json<answer::Model>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    match answer::update_answer(conn, user.id, challenge_id, data).await {
+    match answer::update_answer(conn, user.id, challenge.id, data).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             error!("Failed to update answer: {}", err);

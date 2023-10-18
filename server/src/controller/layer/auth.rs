@@ -255,6 +255,8 @@ pub async fn init_token_or_permission_required<B>(
     }
 }
 
+/// Check if user has permission to access the challenge.
+/// ensure: `Extension<challenge::Model>` and `Extension<game::Model>` exists
 pub async fn challenge_privilege_required<B>(
     State(ref db): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
@@ -280,7 +282,8 @@ pub async fn challenge_privilege_required<B>(
     Ok(resp.into_response())
 }
 
-// can take part in a game
+/// Check if user has permission to take part in the game.
+/// ensure: `Extension<game::Model>` exists
 pub async fn game_participate_privilege_required<B>(
     State(ref db): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
@@ -341,6 +344,8 @@ pub async fn game_participate_privilege_required<B>(
     }
 }
 
+/// Check if user has permission to access the challenge and other verified resources in this game.
+/// ensure: `Extension<game::Model>` exists
 pub async fn game_player_privilege_required<B>(
     State(ref db): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,

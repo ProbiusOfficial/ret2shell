@@ -30,7 +30,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
 
 #[derive(Deserialize)]
 struct TagIDQuery {
-    pub tag_id: i64,
+    pub hint_id: i64,
 }
 
 async fn create_hint(
@@ -65,8 +65,8 @@ async fn delete_hint(
     State(ref conn): State<DatabaseConnection>,
     Query(query): Query<TagIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let tag_id = query.tag_id;
-    match hint::delete_hint(conn, tag_id).await {
+    let hint_id = query.hint_id;
+    match hint::delete_hint(conn, hint_id).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "Hint not found")),
         Err(e) => {

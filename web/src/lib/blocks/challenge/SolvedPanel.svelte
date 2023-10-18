@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getChallengeSolvedUser } from '$lib/api/challenge'
   import RxTag from '$lib/components/RxTag.svelte'
+  import RxToast from '$lib/components/RxToast.svelte'
   import { i18n } from '$lib/i18n'
   import type { Challenge } from '$lib/models/challenge'
   import type { SubmissionOnlyUserInfo } from '$lib/models/submission'
@@ -34,8 +35,14 @@
           {$i18n.t('playground.emptyContent')}
         </p>
       {:else}
-        <div class="flex flex-col">
-          <div class="flex flex-wrap p-6">
+        <div class="flex flex-col p-4 space-y-2">
+          <div class="flex flex-row items-center space-x-2 bg-warning/5 border-l-4 border-l-warning p-4 rounded-lg">
+            <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning flex-shrink-0" />
+            <span>
+              {$i18n.t('playground.challengeSolvedWarning')}
+            </span>
+          </div>
+          <div class="flex flex-wrap">
             {#each solved as item}
               <RxTag class="m-2" title={new Date(item.created_at * 1000).toLocaleString()}>
                 <a class="hover:underline" href={`/users/${item.user_id}`}>{item.user_name}</a>

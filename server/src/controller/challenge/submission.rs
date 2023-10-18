@@ -1,8 +1,5 @@
 use crate::{
-    controller::{
-        layer::{auth, info},
-        GlobalState,
-    },
+    controller::{layer::auth, GlobalState},
     entity::{
         challenge, game, submission,
         user::{self, Permission},
@@ -29,17 +26,6 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
             Permission::Audit
         )))
         .route("/", post(submit_flag))
-        .route_layer(middleware::from_fn_with_state(
-            _state.clone(),
-            info::prepare_challenge_info,
-        ))
-        .route_layer(middleware::from_fn_with_state(
-            _state.clone(),
-            info::prepare_user_full_info,
-        ))
-        .route_layer(middleware::from_fn(auth::permission_required_all!(
-            Permission::Verified
-        )))
 }
 
 #[derive(Deserialize)]
