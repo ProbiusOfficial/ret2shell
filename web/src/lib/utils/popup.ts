@@ -26,7 +26,7 @@ export interface Middleware {
 
 export interface PopupSettings {
   /** Provide the event type. */
-  event: 'click' | 'hover' | 'focus-blur' | 'focus-click'
+  event: 'click' | 'hover' | 'focus-blur' | 'focus-click' | 'click-blur'
   /** Match the popup data value `data-popup="targetNameHere"` */
   target: string
   /** Set the placement position. Defaults 'bottom'. */
@@ -155,6 +155,10 @@ export function popup(triggerNode: HTMLElement, args: PopupSettings) {
       close()
       return
     }
+    if (args.event === 'click-blur' || args.event === 'focus-click') {
+      // do not close window
+      return
+    }
     // Handle Close Query State
     const closeQueryString: string = args.closeQuery === undefined ? 'a[href], button' : args.closeQuery
     const closableMenuElements = elemPopup?.querySelectorAll(closeQueryString)
@@ -197,6 +201,10 @@ export function popup(triggerNode: HTMLElement, args: PopupSettings) {
     case 'hover':
       triggerNode.addEventListener('mouseover', open, true)
       triggerNode.addEventListener('mouseleave', () => close(), true)
+      break
+    case 'click-blur':
+      triggerNode.addEventListener('click', open, true)
+      window.addEventListener('click', onWindowClick, true)
       break
     case 'focus-blur':
       triggerNode.addEventListener('focus', toggle, true)

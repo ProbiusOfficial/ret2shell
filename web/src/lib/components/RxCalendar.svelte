@@ -17,6 +17,11 @@
 
   const dispatch = createEventDispatcher()
 
+  $: if (selectedDays.length > 0) {
+    year = selectedDays[0].getFullYear()
+    month = selectedDays[0].getMonth() + 1
+  }
+
   function handleSelectDate(date: Date) {
     dispatch('select', date)
   }

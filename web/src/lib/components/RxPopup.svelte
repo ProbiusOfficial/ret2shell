@@ -4,7 +4,7 @@
 
   export let name: string
   export let placement: Placement = 'bottom'
-  export let event: 'click' | 'hover' | 'focus-blur' | 'focus-click' = 'click'
+  export let event: 'click' | 'hover' | 'focus-blur' | 'focus-click' | 'click-blur' = 'click'
   export let offset = 16
   export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'md'
   export let disabled = false

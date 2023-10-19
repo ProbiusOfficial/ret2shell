@@ -315,7 +315,9 @@
     "deleteConfirm": "确认删除 {{item}} ？",
     "confirm": "确认",
     "cancel": "取消",
-    "upload": "上传图片"
+    "upload": "上传图片",
+    "hour": "时",
+    "minute": "分"
   },
   "platform": {
     "backendOffline": "后端服务似乎离线了，请尝试刷新页面，如果多次尝试仍旧出错，请联系网站管理员。",
@@ -570,7 +572,11 @@
     "nameRequired": "赛事名称不能为空",
     "briefRequired": "赛事简介不能为空",
     "introductionRequired": "赛事介绍不能为空",
-    "teamSizeLimitRequired": "队伍人数限制不能为空"
+    "teamSizeLimitRequired": "队伍人数限制不能为空",
+    "startTime": "比赛开始时间（本地时区）",
+    "endTime": "比赛结束时间（本地时区）",
+    "registerTime": "开放注册时间（本地时区）",
+    "archiveTime": "比赛归档时间（本地时区）"
   },
   "challenges": {
     "noHint": "暂无提示信息",

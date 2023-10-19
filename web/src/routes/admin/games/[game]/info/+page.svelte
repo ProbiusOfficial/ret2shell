@@ -10,7 +10,6 @@
   import RxButton from '$lib/components/RxButton.svelte'
   import RxImageUpload from '$lib/components/RxImageUpload.svelte'
   import { showMessage } from '$lib/stores/toast'
-  import { getPlatformConfig, setPlatformConfig } from '$lib/api/platform'
   import { onMount } from 'svelte'
   import type { AxiosError } from 'axios'
   import type { Obj } from '@felte/core'
@@ -18,15 +17,12 @@
   import { getGame, updateGame } from '$lib/api/game'
   import { admin } from '$lib/stores/admin'
   import type { Game } from '$lib/models/game'
-  import { uploadMedia } from '$lib/api/media'
-  import { getMediaPath } from '$lib/models/media'
-  import RxCodearea from '$lib/components/RxCodearea.svelte'
   import RxCodeBox from '$lib/components/RxCodeBox.svelte'
   import RxSelect from '$lib/components/RxSelect.svelte'
-  import { load } from '../../../../account/login/+page'
   import { getInstituteList } from '$lib/api/user'
   import type { Institute } from '$lib/models/institute'
   import RxCheckBox from '$lib/components/RxCheckBox.svelte'
+  import RxTimePicker from '$lib/components/RxTimePicker.svelte'
 
   let schema = z.object({
     name: z
@@ -49,6 +45,10 @@
     host_as_game: z.boolean(),
     enable_team_audit: z.boolean(),
     can_register_after_started: z.boolean(),
+    start_time: z.number(),
+    end_time: z.number(),
+    register_time: z.number(),
+    archive_time: z.number(),
   })
   let loading = false
   let submitting = false
@@ -194,7 +194,42 @@
             <RxImageUpload class="h-36" name="cover_path" value={game.cover_path || ''}></RxImageUpload>
           </RxFormItem>
         </div>
-
+        <div class="flex flex-row space-x-4">
+          <RxFormItem
+            name="start_time"
+            label={$i18n.t('game.startTime')}
+            hasError={$errors.start_time !== null}
+            errors={$errors.start_time || ''}
+          >
+            <RxTimePicker name="start_time" value={game.start_time}></RxTimePicker>
+          </RxFormItem>
+          <RxFormItem
+            name="end_time"
+            label={$i18n.t('game.endTime')}
+            hasError={$errors.end_time !== null}
+            errors={$errors.end_time || ''}
+          >
+            <RxTimePicker name="end_time" value={game.end_time}></RxTimePicker>
+          </RxFormItem>
+        </div>
+        <div class="flex flex-row space-x-4">
+          <RxFormItem
+            name="register_time"
+            label={$i18n.t('game.registerTime')}
+            hasError={$errors.register_time !== null}
+            errors={$errors.register_time || ''}
+          >
+            <RxTimePicker name="register_time" value={game.register_time}></RxTimePicker>
+          </RxFormItem>
+          <RxFormItem
+            name="archive_time"
+            label={$i18n.t('game.archiveTime')}
+            hasError={$errors.archive_time !== null}
+            errors={$errors.archive_time || ''}
+          >
+            <RxTimePicker name="archive_time" value={game.archive_time}></RxTimePicker>
+          </RxFormItem>
+        </div>
         <RxFormItem
           name="introduction"
           label={$i18n.t('game.introduction')}

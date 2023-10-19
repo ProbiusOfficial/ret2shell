@@ -315,7 +315,9 @@
     "deleteConfirm": "confirm deletion of {{item}} ?",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "upload": "Upload Image"
+    "upload": "Upload Image",
+    "hour": "Hour",
+    "minute": "min"
   },
   "platform": {
     "backendOffline": "The backend service seems to be offline. Please try refreshing the page. If the error persists after multiple attempts, please contact the website administrator.",
@@ -570,7 +572,11 @@
     "nameRequired": "Game name cannot be empty",
     "briefRequired": "Game brief cannot be empty",
     "introductionRequired": "Game introduction cannot be empty",
-    "teamSizeLimitRequired": "Team size limit cannot be empty"
+    "teamSizeLimitRequired": "Team size limit cannot be empty",
+    "startTime": "Game start time (local time zone)",
+    "endTime": "Match end time (local time zone)",
+    "registerTime": "Open registration time (local time zone)",
+    "archiveTime": "Match archive time (local time zone)"
   },
   "challenges": {
     "noHint": "No hints yet",
