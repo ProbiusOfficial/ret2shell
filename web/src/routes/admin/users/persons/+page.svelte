@@ -152,7 +152,7 @@
   })
 
   $: {
-    if (currentPage) {
+    if (currentPage && !showPersonPanel) {
       fetchUsers()
     }
   }
