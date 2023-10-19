@@ -152,7 +152,7 @@
   })
 
   $: {
-    if (currentPage) {
+    if (currentPage && !showPersonPanel) {
       fetchUsers()
     }
   }
@@ -167,8 +167,7 @@
         showPersonPanel = false
         return
       }
-      if (id === currentUser?.id) {
-        showPersonPanel = true
+      if (id === currentUser?.id && showPersonPanel === true) {
         return
       }
       loadingUser = true
