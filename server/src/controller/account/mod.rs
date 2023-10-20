@@ -84,7 +84,7 @@ async fn login(
             }
         })?;
 
-    if user.banned {
+    if user.banned || !user.permissions.0.contains(&Permission::Basic) {
         return Err((StatusCode::FORBIDDEN, "account is banned"));
     }
 
@@ -149,7 +149,7 @@ async fn register(
         (StatusCode::INTERNAL_SERVER_ERROR, "failed to hash password")
     })?;
 
-    let permissions = match count_user(db).await.map_err(|err| {
+    let mut permissions = match count_user(db).await.map_err(|err| {
         error!("failed to count user: {:?}", err);
         (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -169,6 +169,9 @@ async fn register(
         ]),
         _ => Permissions(vec![Permission::Basic]),
     };
+    if !config.email.enabled {
+        permissions.0.push(Permission::Verified);
+    }
     let email = body.email.clone();
     let new_user = user::Model {
         name: body.name,
@@ -190,6 +193,9 @@ async fn register(
             ));
         }
     };
+    if !config.email.enabled {
+        return Ok(StatusCode::OK);
+    }
     let verification_id = nanoid!(21, &alphabet::SAFE);
     match cache::Email::add_validation(cache, verification_id.as_str(), &email).await {
         Ok(_) => {}

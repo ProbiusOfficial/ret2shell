@@ -657,7 +657,15 @@
     "devops": "DevOps",
     "statistics": "Statistics",
     "calendar": "Calendar",
-    "certificates": "Cert Publish"
+    "certificates": "Cert Publish",
+    "basicIntro": "All registered users have basic permissions. Only users with this permission can log in and use platform functions. \nUsers without this permission are equivalent to having their accounts frozen. Generally speaking, this item will be missing from the account only when the user deactivates the account.",
+    "verifiedIntro": "The basic permissions that users have after passing email verification. If the platform does not configure or turn off the email verification function, users will obtain this permission immediately after registration. \nWith this permission, you can have normal access to all user functions of the platform, such as normal participation in competitions, use of the driving range, etc. \nAdding verification permissions mainly prevents resource consumption attacks.",
+    "statisticsIntro": "You can view platform statistics and detailed statistics for each game. \nWith this permission, you can view some privacy-related information such as the organization to which the user belongs, but you do not have write permission.",
+    "calendarIntro": "Competition information can be published in the competition calendar at the bottom of the homepage, and events within and outside the platform can be written here.",
+    "publishIntro": "Public content is allowed to be published on the platform, such as announcements, problem solutions, knowledge bases, etc. \nUsers with this permission do not go through the audit system when posting content.",
+    "auditIntro": "Content posted by users can be audited. \nThe platform has a built-in lightweight content security audit system, and content posted by users who have not passed the audit will not be displayed by default. \nAdministrators with audit permissions can manually audit this content and decide whether to publicly display/block it.",
+    "organizeIntro": "It is allowed to hold competitions, maintain practice fields, publish questions, etc., and can access and control most platform resources, as well as view data statistics.",
+    "devopsIntro": "Allows access to and operation of sensitive server resources and provides a web server asset control panel."
   },
   "users": {
     "fetchFailed": "Failed to get user list",
