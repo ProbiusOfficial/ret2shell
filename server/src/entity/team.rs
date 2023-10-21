@@ -41,6 +41,7 @@ pub struct TeamScoreHistory {
     #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
     pub time: DateTime<Utc>,
     pub challenge_id: Option<i64>,
+    pub blood_state: Option<i32>,
 }
 
 #[derive(Clone, Debug, PartialEq, Default, Eq, Serialize, Deserialize, FromJsonQueryResult)]
