@@ -460,7 +460,7 @@
     "emailHostPlaceholder": "Please enter IP address or domain name",
     "emailPort": "Port",
     "emailPortPlaceholder": "The port number",
-    "emailTls": "ICMP TLS type",
+    "emailTls": "SMTP TLS type",
     "emailNoneTls": "None",
     "emailCommonTls": "Implicit TLS",
     "emailStartTls": "StartTLS",
