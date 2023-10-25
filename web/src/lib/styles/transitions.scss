@@ -24,7 +24,11 @@
 }
 
 .animate-spin-slow {
-  animation: spin 5s linear infinite;
+  animation: spin 10s linear infinite;
+
+  &:hover {
+    animation: spin 0.3s linear infinite;
+  }
 }
 
 @keyframes spin {

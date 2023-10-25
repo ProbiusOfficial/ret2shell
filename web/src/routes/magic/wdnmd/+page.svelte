@@ -134,9 +134,7 @@
   <div
     class="w-1/5 min-w-[24rem] max-w-[32rem] bg-neutral/20 backdrop-blur border-r border-r-base-content/10 flex flex-col"
   >
-    <div
-      class="h-16 flex flex-col items-center justify-center bg-neutral/10 backdrop-blur border-b border-b-base-content/5"
-    >
+    <div class="h-16 flex flex-col items-center justify-center border-b border-b-base-content/5">
       <h1 class="text-base font-bold text-center">{$i18n.t('surprise.jswdnmd.title')}</h1>
     </div>
     <div class="flex-1 flex flex-col p-4 space-y-2">

@@ -190,7 +190,6 @@
     "emailSettings": "邮件验证与通知",
     "mediaSettings": "媒体上传设置",
     "pusherSettings": "消息主动推送设置",
-    "serverLogs": "服务器日志",
     "statisticsSummary": "数据概览",
     "config": {
       "update": "更新",
@@ -224,7 +223,7 @@
       "info": "平台基础信息",
       "overview": "数据概览",
       "games": "赛事管理",
-      "logs": "服务器日志",
+      "logs": "服务器监控",
       "persons": "用户管理",
       "institutes": "组织管理",
       "permissions": "权限详情",

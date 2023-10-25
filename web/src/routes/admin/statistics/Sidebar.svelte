@@ -10,7 +10,7 @@
       link: '/admin/statistics/overview',
     },
     {
-      name: $i18n.t('admin.serverLogs'),
+      name: $i18n.t('admin.routes.logs'),
       icon: 'icon-[fluent--code-20-regular]',
       link: '/admin/statistics/logs',
     },
