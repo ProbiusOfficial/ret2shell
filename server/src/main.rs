@@ -129,6 +129,8 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     let cache = cache::initialize(&config).await?;
     info!("Loading module: < Message Queue >");
     let queue = queue::initialize(&config).await?;
+    info!("Loading module: < Kubernetes >");
+    let cluster = service::initialize(&config).await?;
     info!("Loading module: < Email >");
     email::initialize(&config, &db, &queue).await?;
     let state = GlobalState {
@@ -137,6 +139,7 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
         db,
         cache,
         queue,
+        cluster,
     };
     let router = controller::initialize(&config, state).await?;
     info!("Router constructed.");

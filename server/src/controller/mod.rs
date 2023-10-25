@@ -46,6 +46,7 @@ pub struct GlobalState {
     pub cache: RedisPool,
     pub auditor: Auditor,
     pub queue: async_nats::jetstream::Context,
+    pub cluster: kube::Client,
 }
 
 pub async fn initialize(config: &GlobalConfig, state: GlobalState) -> anyhow::Result<Router> {

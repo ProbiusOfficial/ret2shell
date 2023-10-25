@@ -111,6 +111,7 @@ wsvc = "0.1"
 wsrx = "0.1"
 # Kubernetes
 kube = { version = "0.86", features = [
+    "config",
     "client",
     "rustls-tls",
     "runtime",

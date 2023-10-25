@@ -88,3 +88,86 @@ export interface PlatformStat {
   disks: Disk[]
   uptime: number
 }
+
+export interface ClusterInfo {
+  default_namespace: string
+  configs: {
+    items: {
+      apiVersion: string
+      data?: {
+        since?: string
+        clusterDNS?: string
+        clusterDomain?: string
+      }
+    }[]
+  }
+  version: {
+    buildDate: string
+    compiler: string
+    gitCommit: string
+    gitTreeState: string
+    gitVersion: string
+    goVersion: string
+    major: string
+    minor: string
+    platform: string
+  }
+  nodes: {
+    metadata: {
+      resourceVersion: string
+    }
+    items: {
+      apiVersion: string
+      kind: string
+      metadata: {
+        createTimestamp: string
+        name: string
+        resourceVersion: string
+        uid: string
+      }
+      spec: {
+        podCIDR: string
+        podCIDRs: string[]
+        providerID: string
+      }
+      status: {
+        addresses: {
+          address: string
+          type: string
+        }[]
+        allocatable: {
+          cpu: string
+          'ephemeral-storage': string
+          memory: string
+          pods: string
+        }
+        capacity: {
+          cpu: string
+          'ephemeral-storage': string
+          memory: string
+          pods: string
+        }
+        conditions: {
+          lastHeartbeatTime: string
+          lastTransitionTime: string
+          message: string
+          reason: string
+          status: string
+          type: string
+        }[]
+        nodeInfo: {
+          architecture: string
+          bootID: string
+          containerRuntimeVersion: string
+          kernelVersion: string
+          kubeProxyVersion: string
+          kubeletVersion: string
+          machineID: string
+          operatingSystem: string
+          osImage: string
+          systemUUID: string
+        }
+      }
+    }[]
+  }
+}

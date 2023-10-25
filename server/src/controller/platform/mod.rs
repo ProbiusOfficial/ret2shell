@@ -4,6 +4,10 @@ use axum::middleware::{self, from_fn_with_state};
 use axum::{extract::Extension, Json};
 use axum::{response::IntoResponse, routing::get, Router};
 use git_version::git_version;
+use k8s_openapi::api::core::v1::{ConfigMap, Node};
+use kube::api::ListParams;
+use kube::core::ObjectList;
+use kube::Api;
 use sea_orm::DatabaseConnection;
 use serde::Serialize;
 use systemstat::{CPULoad, Filesystem, Memory, Platform, Swap, System};
@@ -32,6 +36,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .nest(
             "/",
             Router::new()
+                .route("/cluster", get(get_cluster_stat))
                 .route("/stat", get(get_platform_stat))
                 .route_layer(middleware::from_fn(auth::permission_required_all!(
                     Permission::Devops
@@ -215,6 +220,49 @@ async fn set_platform_config(
 
 async fn test_platform_init_token() -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     Ok(StatusCode::OK)
+}
+
+#[derive(Serialize)]
+struct ClusterInfo {
+    pub version: k8s_openapi::apimachinery::pkg::version::Info,
+    pub default_namespace: String,
+    pub nodes: ObjectList<Node>,
+    pub configs: ObjectList<ConfigMap>,
+}
+
+async fn get_cluster_stat(
+    State(cluster): State<kube::Client>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let version = cluster.apiserver_version().await.map_err(|err| {
+        error!("failed to get cluster stat error: {:?}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "failed to get cluster stat error",
+        )
+    })?;
+    let default_namespace = String::from(cluster.default_namespace());
+    let cms = Api::<ConfigMap>::all(cluster.clone());
+    let configs = cms.list(&ListParams::default()).await.map_err(|err| {
+        error!("failed to get cluster stat error: {:?}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "failed to get cluster stat error",
+        )
+    })?;
+    let api: Api<Node> = Api::all(cluster);
+    let nodes = api.list(&ListParams::default()).await.map_err(|err| {
+        error!("failed to get cluster stat error: {:?}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "failed to get cluster stat error",
+        )
+    })?;
+    Ok(Json(ClusterInfo {
+        version,
+        default_namespace,
+        nodes,
+        configs,
+    }))
 }
 
 #[cfg(test)]

@@ -262,7 +262,14 @@
     "calendarIntro": "新增并管理赛事日历",
     "wikiIntro": "在知识库中编写并发布技术文档与知识文章",
     "usersIntro": "管理用户与机构",
-    "gameInfo": "比赛信息"
+    "gameInfo": "比赛信息",
+    "cluster": {
+      "since": "集群启动时间",
+      "clusterDNS": "DNS",
+      "clusterDomain": "域名",
+      "activeNodes": "存活节点",
+      "basicInfo": "集群信息"
+    }
   },
   "docs": {
     "title": "技术文档"

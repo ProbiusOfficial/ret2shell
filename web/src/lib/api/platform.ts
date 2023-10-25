@@ -1,4 +1,4 @@
-import type { Config, Platform, PlatformStat } from '$lib/models/config'
+import type { ClusterInfo, Config, Platform, PlatformStat } from '$lib/models/config'
 import { api, api_root } from '.'
 
 export async function getPlatformInfo() {
@@ -27,4 +27,8 @@ export async function setPlatformConfig(config: Config, token: string) {
 
 export async function getPlatformStat() {
   return (await api.get(`${api_root}/platform/stat`)).data as PlatformStat
+}
+
+export async function getPlatformClusterInfo() {
+  return (await api.get(`${api_root}/platform/cluster`)).data as ClusterInfo
 }

@@ -262,7 +262,14 @@
     "calendarIntro": "Create or manage game calendar",
     "wikiIntro": "Write and publish technical documentation and knowledge articles in the wiki",
     "usersIntro": "Manage users and organizations",
-    "gameInfo": "Game info"
+    "gameInfo": "Game info",
+    "cluster": {
+      "since": "Cluster startup time",
+      "clusterDNS": "DNS",
+      "clusterDomain": "Domain",
+      "activeNodes": "Active Nodes",
+      "basicInfo": "Cluster Info"
+    }
   },
   "docs": {
     "title": "Documents"

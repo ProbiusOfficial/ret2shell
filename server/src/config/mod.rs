@@ -32,12 +32,12 @@ pub mod audit;
 pub mod bucket;
 pub mod cache;
 pub mod captcha;
+pub mod cluster;
 pub mod database;
 pub mod logging;
 pub mod media;
 pub mod queue;
 pub mod server;
-pub mod service;
 
 /// Represents the configuration for the whole application.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -58,6 +58,8 @@ pub struct GlobalConfig {
     pub queue: queue::QueueConfig,
     /// The configuration for the server.
     pub server: server::ServerConfig,
+    /// The configuration for the k3s cluster.
+    pub cluster: cluster::ClusterConfig,
 
     /// The file path of the configuration file, not serialized or deserialized.
     #[serde(skip_serializing)]
