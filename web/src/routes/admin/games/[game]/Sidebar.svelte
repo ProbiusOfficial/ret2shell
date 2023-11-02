@@ -16,9 +16,14 @@
       link: `/admin/games/${$admin.game?.id}/info`,
     },
     {
-      name: $i18n.t('admin.routes.gameChallenges'),
+      name: $i18n.t('admin.routes.challenges'),
       icon: 'icon-[fluent--flag-20-regular]',
       link: `/admin/games/${$admin.game?.id}/challenges`,
+    },
+    {
+      name: $i18n.t('admin.routes.tags'),
+      icon: 'icon-[fluent--tag-20-regular]',
+      link: `/admin/games/${$admin.game?.id}/tags`,
     },
     {
       name: $i18n.t('admin.routes.gameNotifications'),

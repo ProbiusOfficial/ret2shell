@@ -234,7 +234,9 @@
       "gameWriteups": "Write-Up审核",
       "writeups": "Write-Up审核",
       "cluster": "集群情况",
-      "about": "关于"
+      "about": "关于",
+      "gameTags": "标签管理",
+      "tags": "标签管理"
     },
     "currentPage": "当前",
     "userListSettings": "用户管理",

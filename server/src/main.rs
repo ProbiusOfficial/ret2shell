@@ -31,6 +31,7 @@ mod config;
 mod controller;
 mod email;
 mod entity;
+mod feature;
 mod logging;
 mod media;
 mod migrator;
