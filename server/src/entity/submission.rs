@@ -35,6 +35,8 @@ pub struct ModelWithInfo {
     pub user_name: String,
     pub challenge_name: String,
     pub tag_name: String,
+    pub content: String,
+    pub solved: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize, FromQueryResult)]
@@ -113,8 +115,11 @@ pub async fn get_submission_page(
     let mut sql = Entity::find();
     sql = sql
         .join(JoinType::InnerJoin, Relation::Challenge.def())
-        .join(JoinType::InnerJoin, Relation::User.def());
+        .join(JoinType::InnerJoin, Relation::User.def())
+        .join(JoinType::InnerJoin, super::challenge::Relation::Tag.def());
     sql = sql
+        .column(Column::Content)
+        .column(Column::Solved)
         .column_as(super::challenge::Column::Name, "challenge_name")
         .column_as(super::user::Column::Name, "user_name")
         .column_as(super::challenge::Column::GameId, "game_id")
