@@ -817,7 +817,8 @@
   "submission": {
     "user_name": "提交者",
     "challenge_name": "题目名",
-    "content": "内容"
+    "content": "内容",
+    "created_at": "提交时间"
   },
   "submissions": {
     "fetchFailed": "获取提交记录失败"

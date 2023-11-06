@@ -817,7 +817,8 @@
   "submission": {
     "user_name": "Submitter",
     "challenge_name": "Challenge name",
-    "content": "Content"
+    "content": "Content",
+    "created_at": "Submit time"
   },
   "submissions": {
     "fetchFailed": "Failed to get submission record"
