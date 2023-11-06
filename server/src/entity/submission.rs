@@ -254,9 +254,15 @@ pub async fn count_solves(conn: &DatabaseConnection, challenge_id: i64) -> Resul
         .await
 }
 
-pub async fn count_submissions(conn: &DatabaseConnection, challenge_id: i64) -> Result<u64, DbErr> {
-    Entity::find()
-        .filter(Column::ChallengeId.eq(challenge_id))
-        .count(conn)
-        .await
+pub async fn count_submissions(
+    conn: &DatabaseConnection,
+    challenge_id: i64,
+    solved: Option<bool>,
+) -> Result<u64, DbErr> {
+    let mut sql = Entity::find().filter(Column::ChallengeId.eq(challenge_id));
+    if let Some(solved) = solved {
+        sql = sql.filter(Column::Solved.eq(solved));
+    }
+
+    sql.count(conn).await
 }

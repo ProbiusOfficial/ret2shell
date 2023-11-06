@@ -339,7 +339,7 @@ async fn get_challenge_statistics(
     State(ref db): State<DatabaseConnection>,
     Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let submissions_count = submission_entity::count_submissions(db, challenge.id)
+    let submissions_count = submission_entity::count_submissions(db, challenge.id, None)
         .await
         .map_err(|err| {
             error!("failed to get submissions count: {}", err);
@@ -348,7 +348,7 @@ async fn get_challenge_statistics(
                 "failed to get submissions count",
             )
         })?;
-    let solves_count = submission_entity::count_solves(db, challenge.id)
+    let solves_count = submission_entity::count_submissions(db, challenge.id, Some(true))
         .await
         .map_err(|err| {
             error!("failed to get solves count: {}", err);
