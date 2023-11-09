@@ -91,15 +91,20 @@ pub async fn update_answer(
     challenge_id: i64,
     answer: Model,
 ) -> Result<Model, DbErr> {
-    let active_model = ActiveModel {
-        id: ActiveValue::NotSet,
-        challenge_id: ActiveValue::Unchanged(challenge_id),
-        published_at: ActiveValue::NotSet,
-        updated_at: ActiveValue::Set(Utc::now()),
-        author_id: ActiveValue::Set(Some(user_id)),
-        ..answer.into_active_model().reset_all()
-    };
-    active_model.update(conn).await
+    match get_answer_by_challenge_id(conn, challenge_id).await? {
+        Some(old_answer) => {
+            let active_model = ActiveModel {
+                id: ActiveValue::set(old_answer.id),
+                challenge_id: ActiveValue::Unchanged(challenge_id),
+                published_at: ActiveValue::NotSet,
+                updated_at: ActiveValue::Set(Utc::now()),
+                author_id: ActiveValue::Set(Some(user_id)),
+                ..answer.into_active_model().reset_all()
+            };
+            active_model.update(conn).await
+        }
+        None => return Err(DbErr::RecordNotFound("answer".to_string())),
+    }
 }
 
 pub async fn delete_answer_by_challenge_id(
