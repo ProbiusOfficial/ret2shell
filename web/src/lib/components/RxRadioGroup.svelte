@@ -16,7 +16,7 @@
 <div class={classes}>
   {#each items as item}
     <RxRadioButton
-      class="flex-1 m-2 flex-shrink-0"
+      class="m-2 flex-shrink-0"
       {value}
       preset={item.value}
       label={item.label}
