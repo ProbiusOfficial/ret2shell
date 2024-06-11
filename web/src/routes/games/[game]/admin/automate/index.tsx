@@ -16,7 +16,10 @@ export default function () {
     return (
         <div class="flex-1 flex flex-col items-center">
             <div class="flex-1 flex flex-col w-full max-w-5xl p-3 lg:p-6">
-                <label class="font-bold">{t("game.admin.automate.title")} API</label>
+                <h2 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
+                    <span class="icon-[fluent--cloud-flow-20-regular] w-5 h-5" />
+                    <span>{t("game.admin.automate.title")} API</span>
+                </h2>
                 <Card level="info" class="mt-2" contentClass="py-2 px-4">
                     <p class="opacity-60 inline">
                         <span>{t("game.admin.automate.tips1")}</span>
@@ -38,8 +41,11 @@ export default function () {
                     class="w-full mt-2"
                     value={`${window.origin.replace("http", "ws")}/api/event/connect?game_id=${gameStore.current?.id}&token=${gameStore.current?.token || undefined}`}
                 />
-                <label class="font-bold mt-3 lg:mt-8">{t("game.admin.automate.linkedDevices")}</label>
-                <Divider class="mt-2" />
+                <div class="h-4" />
+                <h2 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
+                    <span class="icon-[fluent--developer-board-lightning-20-regular] w-5 h-5" />
+                    <span>{t("game.admin.automate.linkedDevices")}</span>
+                </h2>
                 <For
                     each={linkedDevices()}
                     fallback={

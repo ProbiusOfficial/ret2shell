@@ -535,5 +535,10 @@
     "forVersion": "適用於版本",
     "title": "開發者文檔",
     "intro": "簡介"
+  },
+  "user": {
+    "introductionTitle": "個人介紹",
+    "joinedGamesTitle": "比賽經歷",
+    "noDescription": "這位大嘿客什麼都沒有留下..."
   }
 }

@@ -13,7 +13,7 @@ import { HostType } from "@models/game";
 import { Permission } from "@models/user";
 import { useLocation, useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import { canAccessChallenges, gameStore, isGameAdmin, setGameStore } from "@storage/game";
+import { canAccessChallenges, gameStore, isGameAdmin } from "@storage/game";
 import { Title, setupTitleResolver } from "@storage/header";
 import { platformStore, setPlatformStore } from "@storage/platform";
 import { t } from "@storage/theme";
@@ -508,7 +508,6 @@ export default function (props: { children?: JSX.Element }) {
         });
     return (
         <>
-            <Title title={platformStore.config.name || t("platform.name")!} />
             <Background />
             <TitleBar />
             {props.children}

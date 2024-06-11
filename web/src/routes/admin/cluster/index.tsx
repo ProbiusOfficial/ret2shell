@@ -89,7 +89,7 @@ export default function () {
                 </div>
                 <Divider />
                 <Show when={loading()}>
-                    <div class="h-8 flex flex-row space-x-4 items-center px-4">
+                    <div class="h-20 lg:h-12 flex flex-row space-x-4 items-center px-4">
                         <LoadingTips />
                     </div>
                     <Divider />

@@ -1,20 +1,31 @@
 use axum::{
     extract::{Query, State},
+    middleware,
     response::IntoResponse,
     routing::get,
-    Extension, Router,
+    Extension, Json, Router,
 };
-use r2s_database::user;
+use r2s_database::user::{self, Permission};
 use r2s_migrator::Database;
 use serde::Deserialize;
 
 use crate::{
-    middleware::auth::Token,
+    middleware::{auth::Token, data},
     traits::{GlobalState, ResponseError},
 };
 
-pub fn router(_state: &GlobalState) -> Router<GlobalState> {
-    Router::new().route("/", get(get_user_list))
+pub fn router(state: &GlobalState) -> Router<GlobalState> {
+    Router::new()
+        .nest(
+            "/:user",
+            Router::new()
+                .route("/", get(get_user))
+                .route_layer(middleware::from_fn_with_state(
+                    state.clone(),
+                    data::prepare_data!(user, false),
+                )),
+        )
+        .route("/", get(get_user_list))
 }
 
 #[derive(Deserialize)]
@@ -40,5 +51,22 @@ async fn get_user_list(
         query.with_institute_id,
     )
     .await?;
-    Ok(axum::Json(results))
+    if token.permissions.0.contains(&Permission::User) {
+        Ok(Json(results))
+    } else {
+        Ok(Json((
+            results.0.into_iter().map(|r| r.desensitize()).collect(),
+            results.1,
+        )))
+    }
+}
+
+async fn get_user(
+    Extension(user): Extension<user::Model>, Extension(token): Extension<Token>,
+) -> Result<impl IntoResponse, ResponseError> {
+    if token.permissions.0.contains(&Permission::User) {
+        Ok(Json(user))
+    } else {
+        Ok(Json(user.desensitize()))
+    }
 }

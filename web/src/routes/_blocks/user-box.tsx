@@ -108,6 +108,7 @@ export default function UserBox() {
                                 class="w-10 h-10"
                                 src={accountStore.info?.avatar || undefined}
                                 fallback={accountStore.info?.account || undefined}
+                                loading={loading()}
                             />
                             <div class="flex flex-col justify-center items-start">
                                 <h2 class="font-bold">{accountStore.info?.nickname}</h2>
@@ -199,9 +200,17 @@ export default function UserBox() {
                                             gameStore.current?.admins.includes(accountStore.id!))
                                     }
                                 >
-                                    <Button size="sm" justify="start" class="flex-1" disabled>
+                                    <Button
+                                        size="sm"
+                                        justify="start"
+                                        class="flex-1 overflow-hidden"
+                                        title={t("game.adminCanNotTakePartIn")}
+                                        disabled
+                                    >
                                         <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
-                                        <span>{t("game.adminCanNotTakePartIn")}</span>
+                                        <span class="flex-1 truncate text-start">
+                                            {t("game.adminCanNotTakePartIn")}
+                                        </span>
                                     </Button>
                                 </Match>
                             </Switch>

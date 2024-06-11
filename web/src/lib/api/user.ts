@@ -23,3 +23,7 @@ export async function getUserList(
         })
         .json<[User[], number]>();
 }
+
+export async function getUser(id: number) {
+    return await api.get(`${api_root}/user/${id}`).json<User>();
+}

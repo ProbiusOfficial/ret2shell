@@ -535,5 +535,10 @@
     "forVersion": "バージョンに適用されます",
     "title": "開発者向けドキュメント",
     "intro": "導入"
+  },
+  "user": {
+    "introductionTitle": "自己紹介",
+    "joinedGamesTitle": "競技経験",
+    "noDescription": "大ハッカーは何も残さなかった..."
   }
 }

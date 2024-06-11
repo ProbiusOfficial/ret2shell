@@ -535,5 +535,10 @@
     "forVersion": "For version",
     "title": "Developer Docs",
     "intro": "Introduction"
+  },
+  "user": {
+    "introductionTitle": "Self introduction",
+    "joinedGamesTitle": "Game experience",
+    "noDescription": "This big hacker left nothing behind..."
   }
 }

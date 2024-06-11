@@ -11,7 +11,7 @@ export default function () {
     return (
         <section
             id="other-games"
-            class="lg:h-full lg:min-h-full lg:overflow-scroll lg:snap-center flex flex-col relative items-center justify-center space-y-8"
+            class="lg:h-full lg:min-h-full lg:overflow-scroll lg:snap-center hidden lg:flex flex-col relative items-center justify-center space-y-8"
         >
             <img class="rounded-xl" src={rxSticker} alt=">ω<" width={256} height={256} />
             <h1 class="font-bold text-3xl space-x-4">
