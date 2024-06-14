@@ -46,7 +46,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
         Ok(license) => license,
         Err(err) => {
             error!("License check failed: {}", err.to_string().red());
-            error!("Please contact tech support <ret2shell@woooo.tech>.");
+            error!("Please contact tech support <ret2shell@private.ret.sh.cn>.");
             return Err(err.into());
         }
     };

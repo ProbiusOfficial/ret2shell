@@ -94,6 +94,7 @@ export default function () {
                                             <Button
                                                 class="!rounded-none"
                                                 square
+                                                type="button"
                                                 disabled={customDisabled()}
                                                 onClick={() => {
                                                     generateRandomName(generator()).then((name: string) => {
@@ -106,6 +107,7 @@ export default function () {
                                             <Popover
                                                 class="!rounded-l-none"
                                                 square
+                                                type="button"
                                                 disabled={customDisabled()}
                                                 btnContent={<span class="icon-[fluent--settings-20-regular] w-5 h-5" />}
                                             >
@@ -114,6 +116,7 @@ export default function () {
                                                         ghost
                                                         size="sm"
                                                         justify="start"
+                                                        type="button"
                                                         onClick={() => setGenerator("hacker")}
                                                     >
                                                         <span
@@ -125,6 +128,7 @@ export default function () {
                                                         ghost
                                                         size="sm"
                                                         justify="start"
+                                                        type="button"
                                                         onClick={() => setGenerator("chuunibyou")}
                                                     >
                                                         <span

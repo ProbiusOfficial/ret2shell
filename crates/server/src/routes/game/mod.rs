@@ -179,7 +179,7 @@ async fn update_game(
         .take_shot(
             ":construction: update game config",
             "platform",
-            "platform@woooo.tech",
+            "platform@private.ret.sh.cn",
         )
         .await?;
     txn.commit().await?;
@@ -261,7 +261,7 @@ async fn update_game_intro(
         .set_introduction(&result.clone().content.unwrap_or("NO CONTENT".into()))
         .await?;
     game_bucket
-        .take_shot(":memo: update README.md", "platform", "platform@woooo.tech")
+        .take_shot(":memo: update README.md", "platform", "platform@private.ret.sh.cn")
         .await?;
     txn.commit().await?;
 

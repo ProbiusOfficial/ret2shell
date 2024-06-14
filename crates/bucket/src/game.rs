@@ -26,7 +26,7 @@ pub struct GameBucket {
 #[repr(i32)]
 pub enum HostType {
     CTFTraining = 0,
-    CTFGame     = 1,
+    CTFGame = 1,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -89,8 +89,12 @@ impl GameBucket {
         )
         .await?;
         write(game_path.join(".gitignore"), ".lock").await?;
-        git.take_shot(":tada: game created", "platform", "platform@woooo.tech")
-            .await?;
+        git.take_shot(
+            ":tada: game created",
+            "platform",
+            "platform@private.ret.sh.cn",
+        )
+        .await?;
 
         Ok(Self {
             name: game_bucket_name.as_ref().to_owned(),

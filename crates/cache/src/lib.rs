@@ -44,7 +44,7 @@ impl Cache {
     /// from the cache.
     ///
     /// ```rust
-    /// cache.at("email").set("example@woooo.tech", "114514").await?;
+    /// cache.at("email").set("example@private.ret.sh.cn", "114514").await?;
     /// ```
     ///
     /// or scope it in a function:
@@ -69,7 +69,8 @@ impl Cache {
         &self, key: impl Into<RedisKey> + Send + Display,
     ) -> Result<Option<T>, CacheError>
     where
-        T: for<'de> Deserialize<'de>, {
+        T: for<'de> Deserialize<'de>,
+    {
         let domain_key = with_domain!(self.domain, key);
         let result = self.client.get::<Option<Value>, _>(domain_key).await?;
         match result {
@@ -82,7 +83,8 @@ impl Cache {
         &self, key: impl Into<RedisKey> + Send + Display,
     ) -> Result<Option<T>, CacheError>
     where
-        T: for<'de> Deserialize<'de>, {
+        T: for<'de> Deserialize<'de>,
+    {
         let domain_key = with_domain!(self.domain, key);
         let result = self.client.getdel::<Option<Value>, _>(domain_key).await?;
         match result {
@@ -159,7 +161,8 @@ impl Cache {
         &self, key: impl Into<RedisKey> + Send + Display,
     ) -> Result<Option<T>, CacheError>
     where
-        T: for<'de> Deserialize<'de>, {
+        T: for<'de> Deserialize<'de>,
+    {
         let domain_key = with_domain!(self.domain, key);
         let result = self
             .client
