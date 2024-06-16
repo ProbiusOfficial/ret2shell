@@ -14,6 +14,12 @@ pub struct EventManager {
     tx: broadcast::Sender<EventContainer>,
 }
 
+impl Default for EventManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EventManager {
     pub fn new() -> Self {
         let (tx, _) = broadcast::channel(128);

@@ -192,7 +192,7 @@ async fn update_challenge(
     txn.commit().await?;
     if prev_challenge.hidden != challenge.hidden {
         let event = EventContainer {
-            game_id: game.id.clone(),
+            game_id: game.id,
             event: Event::Challenge(ChallengeEvent {
                 event_type: if prev_challenge.hidden {
                     ChallengeEventType::Up

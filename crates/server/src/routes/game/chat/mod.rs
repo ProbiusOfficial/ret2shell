@@ -69,7 +69,7 @@ async fn player_get_chat_session(
     Extension(team): Extension<team::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
     let last_chat = chat::get_last(&db.conn, team.id, challenge.id).await?;
-    if last_chat.is_some_and(|c| c.is_admin == true && c.checked == false) {
+    if last_chat.is_some_and(|c| c.is_admin && !c.checked) {
         chat::mark_checked(&db.conn, team.id, challenge.id).await?;
     }
     let chats = chat::get_list(&db.conn, team.id, challenge.id).await?;
@@ -84,7 +84,7 @@ async fn player_send_chat(
 ) -> Result<impl IntoResponse, ResponseError> {
     let last_chat = chat::get_last(&db.conn, team.id, challenge.id).await?;
     if let Some(last_chat) = last_chat {
-        if last_chat.is_admin == false {
+        if !last_chat.is_admin {
             return Err(ResponseError::TooManyRequests(
                 "please wait for administrator's reply".into(),
                 format!(
@@ -143,7 +143,7 @@ async fn admin_get_chat_session(
     State(ref db): State<Database>, Query(query): Query<AdminSessionQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
     let last_chat = chat::get_last(&db.conn, query.team_id, query.challenge_id).await?;
-    if last_chat.is_some_and(|c| c.is_admin == false && c.checked == false) {
+    if last_chat.is_some_and(|c| !c.is_admin && !c.checked) {
         chat::mark_checked(&db.conn, query.team_id, query.challenge_id).await?;
     }
     let chats = chat::get_list(&db.conn, query.team_id, query.challenge_id).await?;
