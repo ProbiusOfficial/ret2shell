@@ -13,9 +13,15 @@ fn main() {
         .to_uppercase(),
         rustc_version::version().unwrap()
     );
+    let full_version = format!(
+        "{version}-{}-{}-{}",
+        build_target::target_arch().unwrap(),
+        build_target::target_os().unwrap(),
+        build_target::target_env().unwrap(),
+    );
     fs::write(
         &dest_path,
-        format!("pub const RET2SHELL_FULL_VERSION: &'static str = \"{version}\";\n"),
+        format!("pub const R2S_VERSION: &'static str = \"{version}\";\npub const R2S_FULL_VERSION: &'static str = \"{full_version}\";\n"),
     )
     .unwrap();
 }

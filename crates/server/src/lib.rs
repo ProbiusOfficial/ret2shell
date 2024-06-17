@@ -21,7 +21,7 @@ pub fn greet() {
     println!(
         "[START UP] {} {}",
         "Ret 2 Shell".bold(),
-        RET2SHELL_FULL_VERSION.dimmed()
+        R2S_FULL_VERSION.dimmed()
     );
     println!(
         "----------------------------- {} -----------------------------",
@@ -95,7 +95,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
         cluster,
         checker,
         media,
-        version: RET2SHELL_FULL_VERSION.to_string(),
+        version: R2S_VERSION.to_string(),
     };
     info!("Modules loaded, constructing router...");
 
