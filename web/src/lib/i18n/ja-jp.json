@@ -35,7 +35,8 @@
       "recordTitle": "中国工業情報化部の登録番号",
       "hideMaker": "開発者情報を非表示にする",
       "hideMakerDisabled": "お使いのライセンスでは、開発者情報を隠すことは許可されていません"
-    }
+    },
+    "return": "戻る"
   },
   "wiki": {
     "title": "知識",

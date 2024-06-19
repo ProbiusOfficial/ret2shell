@@ -12,7 +12,7 @@ import Link from "@widgets/link";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 export default function Playgrounds() {
     const [playgrounds, setPlaygrounds] = createSignal([] as Game[]);
@@ -131,7 +131,16 @@ export default function Playgrounds() {
                         }
                     >
                         {(item) => (
-                            <Link ghost href={`/training/${item.id}`} activeMatch="partial" justify="start">
+                            <Link
+                                ghost
+                                href={
+                                    accountStore.token
+                                        ? `/training/${item.id}`
+                                        : `/account/login?redirect=/training/${item.id}`
+                                }
+                                activeMatch="partial"
+                                justify="start"
+                            >
                                 <span class="icon-[fluent--dumbbell-20-regular] w-5 h-5" />
                                 <span class="flex-1 text-start">{item.name}</span>
                                 <div class="w-2 h-2 rounded-full bg-info" />
@@ -179,7 +188,11 @@ export default function Playgrounds() {
                         {(item) => (
                             <Link
                                 ghost
-                                href={`/training/${item.id}`}
+                                href={
+                                    accountStore.token
+                                        ? `/training/${item.id}`
+                                        : `/account/login?redirect=/training/${item.id}`
+                                }
                                 activeMatch="partial"
                                 justify="start"
                                 disabled={item.archive_at > DateTime.now()}

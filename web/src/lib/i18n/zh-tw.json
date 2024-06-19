@@ -35,7 +35,8 @@
       "recordTitle": "中國工信部備案號",
       "hideMaker": "隱藏開發者訊息",
       "hideMakerDisabled": "你的許可證不允許隱藏開發者訊息"
-    }
+    },
+    "return": "返回"
   },
   "wiki": {
     "title": "知識",

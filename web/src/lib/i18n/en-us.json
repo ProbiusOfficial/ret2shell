@@ -35,7 +35,8 @@
       "recordTitle": "China Ministry of Industry and Information Technology registration number",
       "hideMaker": "Hide developer information",
       "hideMakerDisabled": "Your license does not allow hiding developer information"
-    }
+    },
+    "return": "Return"
   },
   "wiki": {
     "title": "Wiki",

@@ -28,19 +28,22 @@ export default function SideBar() {
     });
     return (
         <div class="flex flex-col overflow-hidden w-full h-full">
-            <div class="border-b border-b-layer-content/10 px-2 h-16 flex items-center justify-center">
+            <div class="border-b border-b-layer-content/10 px-2 h-16 flex space-x-2 items-center">
                 <Show
                     when={gameStore.current}
                     fallback={
-                        <Link class="w-full" ghost justify="start" href="/training">
+                        <Link class="flex-1" ghost justify="start" href="/training">
                             <span class="icon-[fluent--dumbbell-20-filled] w-5 h-5 text-primary" />
                             <span>{t("training.list")}</span>
                         </Link>
                     }
                 >
-                    <Link class="w-full" ghost justify="start" href={`/training/${gameStore.current?.id}`}>
+                    <Link class="flex-1" ghost justify="start" href={`/training/${gameStore.current?.id}`}>
                         <span class="icon-[fluent--dumbbell-20-filled] w-5 h-5 text-primary" />
                         <span>{gameStore.current?.name}</span>
+                    </Link>
+                    <Link square ghost href="/training" title={t("platform.return")}>
+                        <span class="icon-[fluent--arrow-hook-up-left-20-regular] w-5 h-5 text-warning" />
                     </Link>
                 </Show>
             </div>
