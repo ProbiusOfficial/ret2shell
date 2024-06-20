@@ -82,7 +82,14 @@
     "gameNotArchived": "比赛尚未归档",
     "challenge": {
       "welcome": "练习场简介"
-    }
+    },
+    "briefRequired": "请填写练习场简介",
+    "briefPlaceholder": "练习场简介",
+    "create": "新建",
+    "nameRequired": "请填写练习场名称",
+    "namePlaceholder": "练习场名称",
+    "createSuccess": "练习场 {{name}} 创建成功",
+    "openForever": "永久开放"
   },
   "errors": {
     "401": "请先登录",

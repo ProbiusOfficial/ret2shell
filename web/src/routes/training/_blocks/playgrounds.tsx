@@ -143,6 +143,9 @@ export default function Playgrounds() {
                             >
                                 <span class="icon-[fluent--dumbbell-20-regular] w-5 h-5" />
                                 <span class="flex-1 text-start">{item.name}</span>
+                                <Show when={item.hidden}>
+                                    <span class="icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning mx-2" />
+                                </Show>
                                 <div class="w-2 h-2 rounded-full bg-info" />
                             </Link>
                         )}
@@ -200,6 +203,9 @@ export default function Playgrounds() {
                             >
                                 <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
                                 <span class="flex-1 text-start">{item.name}</span>
+                                <Show when={item.hidden}>
+                                    <span class="icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning mx-2" />
+                                </Show>
                                 <div
                                     class={`w-2 h-2 rounded-full ${
                                         item.archive_at > DateTime.now() ? "bg-error" : "bg-success"

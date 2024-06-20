@@ -82,7 +82,14 @@
     "gameNotArchived": "比賽尚未歸檔",
     "challenge": {
       "welcome": "練習場簡介"
-    }
+    },
+    "briefRequired": "請填寫練習場簡介",
+    "briefPlaceholder": "練習場簡介",
+    "create": "新建",
+    "nameRequired": "請填寫練習場名稱",
+    "namePlaceholder": "練習場名稱",
+    "createSuccess": "練習場 {{name}} 創建成功",
+    "openForever": "永久開放"
   },
   "game": {
     "title": "賽事",

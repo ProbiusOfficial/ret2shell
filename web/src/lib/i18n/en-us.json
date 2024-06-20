@@ -82,7 +82,14 @@
     "gameNotArchived": "The game has not been archived yet",
     "challenge": {
       "welcome": "Playground introduction"
-    }
+    },
+    "briefRequired": "Please fill in the playground introduction",
+    "briefPlaceholder": "Playground introduction",
+    "create": "New",
+    "nameRequired": "Please fill in the name of the playground",
+    "namePlaceholder": "Playground name",
+    "createSuccess": "Playground {{name}} was created successfully",
+    "openForever": "Permanently open"
   },
   "game": {
     "title": "Games",

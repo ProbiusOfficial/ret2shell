@@ -340,22 +340,36 @@ function TitleBar() {
                     <div class="flex flex-row space-x-2">
                         <div class="hidden xl:flex flex-row space-x-2">
                             <Show when={platformStore.isOnline && accountStore.token !== null && gameStore.current}>
-                                <Show
-                                    when={
-                                        gameStore.current &&
-                                        gameStore.current.start_at < DateTime.now() &&
-                                        gameStore.current.end_at > DateTime.now()
-                                    }
-                                >
-                                    <div class="flex flex-col items-center justify-center px-4 relative">
-                                        <Timer end={gameStore.current!.end_at} />
-                                        <TimeProgress
-                                            class="w-full"
-                                            startAt={gameStore.current!.start_at}
-                                            endAt={gameStore.current!.end_at}
-                                        />
-                                    </div>
-                                </Show>
+                                <Switch>
+                                    <Match
+                                        when={gameStore.current && gameStore.current.host_type === HostType.CTFTraining}
+                                    >
+                                        <div class="flex flex-col items-center justify-center px-4 relative">
+                                            <span>{t("training.openForever")}</span>
+                                            <TimeProgress
+                                                class="w-full"
+                                                startAt={gameStore.current!.start_at}
+                                                endAt={gameStore.current!.start_at}
+                                            />
+                                        </div>
+                                    </Match>
+                                    <Match
+                                        when={
+                                            gameStore.current &&
+                                            gameStore.current.start_at < DateTime.now() &&
+                                            gameStore.current.end_at > DateTime.now()
+                                        }
+                                    >
+                                        <div class="flex flex-col items-center justify-center px-4 relative">
+                                            <Timer end={gameStore.current!.end_at} />
+                                            <TimeProgress
+                                                class="w-full"
+                                                startAt={gameStore.current!.start_at}
+                                                endAt={gameStore.current!.end_at}
+                                            />
+                                        </div>
+                                    </Match>
+                                </Switch>
                                 <InstanceBox />
                             </Show>
                             <NotificationBox />

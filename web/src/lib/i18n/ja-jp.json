@@ -82,7 +82,14 @@
     "gameNotArchived": "試合はまだアーカイブされていません",
     "challenge": {
       "welcome": "ドライビングレンジの紹介"
-    }
+    },
+    "briefRequired": "ゴルフ練習場の紹介をご記入ください",
+    "briefPlaceholder": "ドライビングレンジの紹介",
+    "create": "新しい",
+    "nameRequired": "ゴルフ練習場の名前を入力してください",
+    "namePlaceholder": "ゴルフ練習場の名前",
+    "createSuccess": "ゴルフ練習場 {{name}} が正常に作成されました",
+    "openForever": "常設営業"
   },
   "game": {
     "title": "コンペ",

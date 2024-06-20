@@ -12,10 +12,16 @@ export default function TimeProgress(
     const interval = setInterval(() => {
         setNow(DateTime.now());
     }, 1000);
-    const progress = () =>
-        (progressProps.startAt.diff(now()).milliseconds /
-            progressProps.startAt.diff(progressProps.endAt).milliseconds) *
-        100;
+    const progress = () => {
+        if (progressProps.startAt.diff(progressProps.endAt).milliseconds <= 0) {
+            return 0;
+        }
+        return (
+            (progressProps.startAt.diff(now()).milliseconds /
+                progressProps.startAt.diff(progressProps.endAt).milliseconds) *
+            100
+        );
+    };
     const cleanup = () => clearInterval(interval);
     onCleanup(cleanup);
     createEffect(() => {

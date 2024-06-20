@@ -4,7 +4,7 @@ import { mediaPath } from "@lib/utils/media";
 import { useLocation, useNavigate } from "@solidjs/router";
 import { gameStore } from "@storage/game";
 import LoadingTips from "@widgets/loading-tips";
-import { type ComponentProps, Show, createEffect, createSignal } from "solid-js";
+import { type ComponentProps, Show, createEffect, createSignal, untrack } from "solid-js";
 
 export default function (props: ComponentProps<"div">) {
     const location = useLocation();
@@ -17,14 +17,23 @@ export default function (props: ComponentProps<"div">) {
             setExpanded(true);
         }
     });
+    let cachedId = 0;
     createEffect(() => {
+        // when the first navigate happens, we will fetch the game details that same with preload one,
+        // this effect will be triggered in second times either, we don't want that. so we cache it.
         if (gameStore.current && expanded()) {
-            setTimeout(() => {
-                navigate(`/games/${gameStore.current?.id}`);
-            }, 2000);
-            setTimeout(() => {
-                setExpanded(false);
-            }, 3000);
+            untrack(() => {
+                if (cachedId === gameStore.current!.id) {
+                    return;
+                }
+                cachedId = gameStore.current!.id;
+                setTimeout(() => {
+                    navigate(`/games/${gameStore.current?.id}`);
+                }, 2000);
+                setTimeout(() => {
+                    setExpanded(false);
+                }, 3000);
+            });
         }
     });
     return (

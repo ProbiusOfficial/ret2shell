@@ -21,6 +21,7 @@ export default function SideBar() {
                         setGameStore({ current: resp });
                     })
                     .catch((err: HTTPError) => {
+                        console.error(err);
                         navigate(`/sigtrap/${err.response.status}`, { replace: true });
                     });
             });
@@ -40,7 +41,10 @@ export default function SideBar() {
                 >
                     <Link class="flex-1" ghost justify="start" href={`/training/${gameStore.current?.id}`}>
                         <span class="icon-[fluent--dumbbell-20-filled] w-5 h-5 text-primary" />
-                        <span>{gameStore.current?.name}</span>
+                        <span class="flex-1 text-start">{gameStore.current?.name}</span>
+                        <Show when={gameStore.current?.hidden}>
+                            <span class="icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning" />
+                        </Show>
                     </Link>
                     <Link square ghost href="/training" title={t("platform.return")}>
                         <span class="icon-[fluent--arrow-hook-up-left-20-regular] w-5 h-5 text-warning" />
