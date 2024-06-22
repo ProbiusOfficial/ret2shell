@@ -413,7 +413,7 @@ export default function TimePicker(props: TimerPickerProps & ComponentProps<"div
         }
     });
     return (
-        <div class={`flex flex-col ${props.class}`}>
+        <div class={`flex flex-col ${props.class}`.trim()}>
             <input class="hidden" type="number" value={props.value} name={props.name} />
             <Show when={props.range}>
                 <input

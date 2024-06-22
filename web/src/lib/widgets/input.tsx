@@ -26,7 +26,7 @@ export default function (props: TextInputProps & ComponentProps<"input">) {
             Object.keys(props.classList)
                 .filter((k) => props.classList?.[k])
                 .join(" ")
-        }`;
+        }`.trim();
 
     const [type, setType] = createSignal(props.type);
     return (
@@ -45,7 +45,7 @@ export default function (props: TextInputProps & ComponentProps<"input">) {
                                 size === "md" ? "lg" : "md"
                             } flex flex-shrink-0 flex-row items-center justify-center ${
                                 size === "md" ? "h-12 w-12" : "h-8 w-8"
-                            } bg-layer-content/10`}
+                            } bg-layer-content/10`.trim()}
                         >
                             {props.icon}
                         </div>
@@ -62,7 +62,7 @@ export default function (props: TextInputProps & ComponentProps<"input">) {
                         <button
                             class={`btn !rounded-l-none btn-${size} justify-center ${
                                 props.extraBtn ? "!rounded-none" : ""
-                            }`}
+                            }`.trim()}
                             onClick={() => setType(type() === "password" ? "text" : "password")}
                             type="button"
                         >
@@ -77,7 +77,7 @@ export default function (props: TextInputProps & ComponentProps<"input">) {
             </Popover.Anchor>
             <Portal>
                 <Popover.Positioner>
-                    <Popover.Content class={`card ${props.error ? "card-error" : ""}`}>
+                    <Popover.Content class={`card ${props.error ? "card-error" : ""}`.trim()}>
                         <p class="card-content px-4 p-2">{props.error}</p>
                     </Popover.Content>
                 </Popover.Positioner>

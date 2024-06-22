@@ -116,7 +116,7 @@ export default function () {
                     {(game) => (
                         <Link
                             ghost
-                            class={`w-4/5 ${selectedGameId() === game.id && !showCreate() ? "btn-active" : ""}`}
+                            class={`w-4/5 ${selectedGameId() === game.id && !showCreate() ? "btn-active" : ""}`.trim()}
                             justify="start"
                             href={`/games?selected=${game.id}`}
                         >
@@ -199,7 +199,7 @@ export default function () {
                             {(game) => (
                                 <Link
                                     ghost
-                                    class={`${selectedGameId() === game.id ? "btn-active" : ""}`}
+                                    class={`${selectedGameId() === game.id ? "btn-active" : ""}`.trim()}
                                     justify="start"
                                     href={`/games?selected=${game.id}`}
                                 >

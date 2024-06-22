@@ -94,9 +94,9 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
     });
 
     return (
-        <div {...native} class={`relative ${native.class}`}>
+        <div {...native} class={`relative ${native.class}`.trim()}>
             <div class="absolute left-0 top-0 bottom-0 right-0 p-2">
-                <pre class={"w-full min-h-full relative bg-transparent"} ref={editorElement!} />
+                <pre class="w-full min-h-full relative bg-transparent" ref={editorElement!} />
             </div>
             <Show when={editorProps.error}>
                 <Card class="absolute bottom-2 left-2 right-2" level="error" contentClass="z-50 px-4 p-2">
@@ -126,7 +126,7 @@ export default function Editor(props: EditorProps & ComponentProps<"div">) {
     const cardClasses = () =>
         `flex-1 card-field ${editorProps.error ? "card-error" : ""} ${focused() ? "card-focused" : ""}`.trim();
     return (
-        <div {...nativeProps} class={`flex flex-col space-y-1 ${nativeProps.class}`}>
+        <div {...nativeProps} class={`flex flex-col space-y-1 ${nativeProps.class}`.trim()}>
             <label class="label" for={editorProps.name}>
                 {editorProps.title || editorProps.placeholder}
             </label>

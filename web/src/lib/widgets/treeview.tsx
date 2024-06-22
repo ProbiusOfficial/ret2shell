@@ -53,7 +53,7 @@ export default function TreeView(props: TreeViewProps) {
                             justify="start"
                             ghost
                             title={node.name}
-                            class={`w-full overflow-hidden ${node.extraClasses}`}
+                            class={`w-full overflow-hidden ${node.extraClasses}`.trim()}
                             href={node.type === "item" && node.link ? node.link : "#"}
                             activeMatch={props.activeMatch}
                             active={
@@ -75,7 +75,7 @@ export default function TreeView(props: TreeViewProps) {
                         title={node.name}
                         size={props.size}
                         justify="start"
-                        class={`w-full overflow-hidden ${node.extraClasses}`}
+                        class={`w-full overflow-hidden ${node.extraClasses}`.trim()}
                         onClick={() => {
                             setShowChildren(!showChildren());
                         }}
@@ -85,7 +85,7 @@ export default function TreeView(props: TreeViewProps) {
                         <span
                             class={`icon-[fluent--chevron-right-20-regular] w-5 h-5 transition-transform ${
                                 showChildren() ? "rotate-90" : "rotate-0"
-                            }`}
+                            }`.trim()}
                         />
                     </Button>
                 </Show>

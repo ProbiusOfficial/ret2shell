@@ -519,7 +519,7 @@ export default function () {
                                     ) && !(selectedDay() === day)
                                 }
                                 square
-                                class={`relative ${day.month === month() ? "" : "opacity-30"}`}
+                                class={`relative ${day.month === month() ? "" : "opacity-30"}`.trim()}
                                 onClick={() => {
                                     setSelectedDay(day);
                                     setSearchParams({ event: null });
@@ -560,7 +560,7 @@ export default function () {
                         <Link
                             ghost
                             justify="start"
-                            class={`mt-2 ${item.id === selectedEventId() ? "btn-active" : ""}`}
+                            class={`mt-2 ${item.id === selectedEventId() ? "btn-active" : ""}`.trim()}
                             href={`/?event=${item.id}`}
                             onClick={() => {
                                 setSelectedDay(null);

@@ -3,7 +3,7 @@ import { For } from "solid-js";
 
 export default function (props: PaginationRootProps) {
     return (
-        <Pagination.Root {...props} class={`flex flex-row space-x-2 items-center justify-center ${props.class}`}>
+        <Pagination.Root {...props} class={`flex flex-row space-x-2 items-center justify-center ${props.class}`.trim()}>
             <Pagination.PrevTrigger class="btn btn-md btn-square btn-ghost justify-center">
                 <span class="icon-[fluent--chevron-double-left-20-regular] w-5 h-5" />
             </Pagination.PrevTrigger>
@@ -16,7 +16,7 @@ export default function (props: PaginationRootProps) {
                                     {...page}
                                     class={`btn btn-square btn-md justify-center ${
                                         page.value === api().page ? "btn-primary" : ""
-                                    }`}
+                                    }`.trim()}
                                 >
                                     {page.value}
                                 </Pagination.Item>

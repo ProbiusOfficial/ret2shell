@@ -7,7 +7,7 @@ export type TagProps = {
 export default function Tag(props: { children?: JSX.Element } & TagProps & ComponentProps<"div">) {
     const [tagProps, others] = splitProps(props, ["children", "level"]);
     return (
-        <div {...others} class={`tag ${others.class}`}>
+        <div {...others} class={`tag ${others.class}`.trim()}>
             <div class="tag-content">
                 {/* bg-info bg-success bg-warning bg-error */}
                 <span class={`tag-dot bg-${tagProps.level}`} />

@@ -49,7 +49,7 @@ export default function (props: ComponentProps<"button"> & ButtonProps & { child
     const size = buttonProps.size === "sm" ? 16 : 20;
 
     return (
-        <button {...nativeProps} class={`${className()} ${nativeProps.class}`}>
+        <button {...nativeProps} class={`${className()} ${nativeProps.class}`.trim()}>
             <Show when={props.loading}>
                 <Spin width={size} height={size} />
             </Show>

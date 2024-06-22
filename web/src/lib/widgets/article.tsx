@@ -83,7 +83,7 @@ export default function (props: ComponentProps<"article"> & ArticleProps) {
         <Show
             when={ready()}
             fallback={
-                <article {...nativeProps} class={`article !max-w-5xl w-full ${nativeProps.class}`}>
+                <article {...nativeProps} class={`article !max-w-5xl w-full ${nativeProps.class}`.trim()}>
                     <p>
                         <LoadingTips />
                     </p>
@@ -92,7 +92,7 @@ export default function (props: ComponentProps<"article"> & ArticleProps) {
         >
             <article
                 {...nativeProps}
-                class={`article !max-w-5xl w-full ${nativeProps.class}`}
+                class={`article !max-w-5xl w-full ${nativeProps.class}`.trim()}
                 innerHTML={markdown()?.html()}
             />
             <Show when={!articleProps.noExtraPaddings}>

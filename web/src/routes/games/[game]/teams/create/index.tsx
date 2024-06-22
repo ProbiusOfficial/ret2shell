@@ -118,7 +118,7 @@ export default function () {
                                                         onClick={() => setGenerator("hacker")}
                                                     >
                                                         <span
-                                                            class={`icon-[fluent--diversity-20-regular] w-5 h-5 ${generator() === "hacker" ? "text-primary" : ""}`}
+                                                            class={`icon-[fluent--diversity-20-regular] w-5 h-5 ${generator() === "hacker" ? "text-primary" : ""}`.trim()}
                                                         />
                                                         <span>Hacker Names</span>
                                                     </Button>
@@ -130,7 +130,7 @@ export default function () {
                                                         onClick={() => setGenerator("chuunibyou")}
                                                     >
                                                         <span
-                                                            class={`icon-[fluent--diversity-20-regular] w-5 h-5 ${generator() === "chuunibyou" ? "text-primary" : ""}`}
+                                                            class={`icon-[fluent--diversity-20-regular] w-5 h-5 ${generator() === "chuunibyou" ? "text-primary" : ""}`.trim()}
                                                         />
                                                         <span>{t("game.team.create.chuunibyouGenerator")}</span>
                                                     </Button>

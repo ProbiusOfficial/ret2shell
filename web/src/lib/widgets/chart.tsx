@@ -202,7 +202,7 @@ export default function Chart(props: EChartsBaseProps) {
         <div
             id={id}
             style={props.style}
-            class={`w-full h-full ${props.class}`}
+            class={`w-full h-full ${props.class}`.trim()}
             ref={mergeRefs(props.ref, (el) => {
                 chartElement = el;
             })}

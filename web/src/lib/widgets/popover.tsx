@@ -50,7 +50,11 @@ export default function (
                 setOpened(detail.open);
             }}
         >
-            <Popover.Trigger {...nativeProps} class={`${mergedClass()} ${nativeProps.class}`} title={nativeProps.title}>
+            <Popover.Trigger
+                {...nativeProps}
+                class={`${mergedClass()} ${nativeProps.class}`.trim()}
+                title={nativeProps.title}
+            >
                 {props.btnContent}
             </Popover.Trigger>
             <Portal>

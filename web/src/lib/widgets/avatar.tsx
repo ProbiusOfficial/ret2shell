@@ -16,7 +16,7 @@ export default function (props: AvatarProps) {
     const [children, root] = splitProps(_1, ["children"]);
     const [imageLoading, setImageLoading] = createSignal(true);
     return (
-        <Avatar.Root class={`avatar ${root.class}`}>
+        <Avatar.Root class={`avatar ${root.class}`.trim()}>
             <Avatar.Fallback class="avatar-fallback">
                 {avatarFunctionProps.fallback?.slice(0, 2).toUpperCase()}
             </Avatar.Fallback>

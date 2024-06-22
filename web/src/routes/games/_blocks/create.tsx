@@ -139,7 +139,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                                             <span
                                                 class={`icon-[fluent--accessibility-checkmark-20-${
                                                     field.value ? "filled" : "regular"
-                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`}
+                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`.trim()}
                                             />
                                         </Button>
                                     </>
@@ -162,7 +162,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                                             <span
                                                 class={`icon-[fluent--wifi-off-20-${
                                                     field.value ? "filled" : "regular"
-                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`}
+                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`.trim()}
                                             />
                                         </Button>
                                     </>
@@ -185,7 +185,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                                             <span
                                                 class={`icon-[fluent--people-audience-20-${
                                                     field.value ? "filled" : "regular"
-                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`}
+                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`.trim()}
                                             />
                                         </Button>
                                     </>
@@ -204,7 +204,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                                     <Button
                                         type="button"
                                         square
-                                        class={`!rounded-r-none ${field.value === 1 ? "text-primary" : ""}`}
+                                        class={`!rounded-r-none ${field.value === 1 ? "text-primary" : ""}`.trim()}
                                         onClick={() => {
                                             setValue(form, "weight", 1);
                                         }}
@@ -214,7 +214,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                                     <Button
                                         type="button"
                                         square
-                                        class={`!rounded-none ${field.value === 2 ? "text-primary" : ""}`}
+                                        class={`!rounded-none ${field.value === 2 ? "text-primary" : ""}`.trim()}
                                         onClick={() => {
                                             setValue(form, "weight", 2);
                                         }}
@@ -224,7 +224,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                                     <Button
                                         type="button"
                                         square
-                                        class={`!rounded-l-none ${field.value === 3 ? "text-primary" : ""}`}
+                                        class={`!rounded-l-none ${field.value === 3 ? "text-primary" : ""}`.trim()}
                                         onClick={() => {
                                             setValue(form, "weight", 3);
                                         }}

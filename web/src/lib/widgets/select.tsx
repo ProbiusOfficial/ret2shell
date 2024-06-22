@@ -34,7 +34,7 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
                 <Select.Trigger
                     class={`btn flex flex-row ${
                         selectProps.size === "sm" ? "px-0" : "px-2"
-                    } gap-0 items-center w-full btn-${selectProps.size} ${selectProps.ghost ? "btn-ghost" : ""}`}
+                    } gap-0 items-center w-full btn-${selectProps.size} ${selectProps.ghost ? "btn-ghost" : ""}`.trim()}
                 >
                     <Select.ValueText class="px-4 flex-1 text-start truncate" placeholder={selectProps.placeholder} />
                     <Select.Indicator class="btn btn-sm btn-square btn-ghost items-center justify-center">
@@ -53,12 +53,12 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
                                 {(item) => (
                                     <Select.Item
                                         item={item().value}
-                                        class={"btn btn-ghost btn-sm items-center overflow-hidden"}
+                                        class="btn btn-ghost btn-sm items-center overflow-hidden"
                                         title={item().label}
                                     >
                                         <Select.ItemText class="flex-1 text-start flex flex-row space-x-2 items-center overflow-hidden">
                                             <Show when={item().icon}>
-                                                <span class={`${item().icon} flex-shrink-0`} />
+                                                <span class={`${item().icon} flex-shrink-0`.trim()} />
                                             </Show>
                                             <span class="truncate">{item().label}</span>
                                         </Select.ItemText>

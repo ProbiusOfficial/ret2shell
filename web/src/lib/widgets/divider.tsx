@@ -7,6 +7,9 @@ export default function (props: ComponentProps<"div"> & DividerProps) {
     const isVertical = dividerProps.direction === "vertical";
     // divider-vertical
     return (
-        <div {...nativeProps} class={`divider ${isVertical ? "divider-vertical" : ""} ${nativeProps.class || ""}`} />
+        <div
+            {...nativeProps}
+            class={`divider ${isVertical ? "divider-vertical" : ""} ${nativeProps.class || ""}`.trim()}
+        />
     );
 }

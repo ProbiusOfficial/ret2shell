@@ -7,7 +7,7 @@ export default function (props: ComponentProps<"span">) {
     const timer = setInterval(() => setTips(randomTips(tips())), 700);
     onCleanup(() => clearInterval(timer));
     return (
-        <span {...props} class={`flex flex-row items-center space-x-2 ${props.class}`}>
+        <span {...props} class={`flex flex-row items-center space-x-2 ${props.class}`.trim()}>
             <Spin width={16} height={16} />
             <span>{tips()}</span>
         </span>

@@ -21,7 +21,7 @@ export default function () {
                     alt=""
                     class={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${
                         themeStore.colorScheme === "dark" ? "opacity-100" : "opacity-0"
-                    }`}
+                    }`.trim()}
                     onContextMenu={() => {
                         return false;
                     }}
@@ -31,7 +31,7 @@ export default function () {
                     alt=""
                     class={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${
                         themeStore.colorScheme === "light" ? "opacity-100" : "opacity-0"
-                    }`}
+                    }`.trim()}
                     onContextMenu={() => {
                         return false;
                     }}

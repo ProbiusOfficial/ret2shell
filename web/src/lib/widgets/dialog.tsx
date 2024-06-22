@@ -63,7 +63,11 @@ export default function (
             .join(" ");
     return (
         <Dialog.Root {...dialogRootProps} lazyMount unmountOnExit>
-            <Dialog.Trigger {...nativeProps} class={`${mergedClass()} ${nativeProps.class}`} title={nativeProps.title}>
+            <Dialog.Trigger
+                {...nativeProps}
+                class={`${mergedClass()} ${nativeProps.class}`.trim()}
+                title={nativeProps.title}
+            >
                 {contents.btnContent}
             </Dialog.Trigger>
             <Portal>

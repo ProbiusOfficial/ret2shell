@@ -248,7 +248,7 @@ function TitleBar() {
                                                                 ? "text-success"
                                                                 : "text-warning"
                                                             : ""
-                                                    }`}
+                                                    }`.trim()}
                                                 />
                                                 <span>{t("instance.box")}</span>
                                             </Button>

@@ -108,7 +108,7 @@ export default function (props: {
                                                 <span
                                                     class={`w-5 h-5 icon-[fluent--pin-20-${
                                                         (field.value || 0) > 0 ? "filled" : "regular"
-                                                    }] ${(field.value || 0) > 0 ? "text-primary" : ""}`}
+                                                    }] ${(field.value || 0) > 0 ? "text-primary" : ""}`.trim()}
                                                 />
                                             </Button>
                                         </>
@@ -136,7 +136,7 @@ export default function (props: {
                                                 <span
                                                     class={`w-5 h-5 icon-[fluent--chat-20-${
                                                         field.value ? "filled" : "regular"
-                                                    }] ${field.value ? "text-primary" : ""}`}
+                                                    }] ${field.value ? "text-primary" : ""}`.trim()}
                                                 />
                                             </Button>
                                         </>

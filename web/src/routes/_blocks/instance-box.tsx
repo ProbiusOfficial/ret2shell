@@ -100,7 +100,7 @@ export function InstanceBoxContent() {
                     <span
                         class={`icon-[fluent--settings-20-${showSettings() ? "filled" : "regular"}] w-5 h-5 ${
                             showSettings() ? "text-primary" : ""
-                        }`}
+                        }`.trim()}
                     />
                 </Button>
                 <Link

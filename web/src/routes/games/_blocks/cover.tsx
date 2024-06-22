@@ -48,13 +48,13 @@ export default function (props: ComponentProps<"div">) {
             {...props}
             class={`fixed w-full top-0 left-0 overflow-hidden lg:overflow-clip transition-all ease-in-out z-50 duration-500 ${
                 expanded() ? "h-full" : "h-0"
-            } ${props.class}`}
+            } ${props.class}`.trim()}
         >
             <div class="w-screen h-screen relative">
                 <img
                     class={`w-screen h-screen transition-all ease-out duration-[2000ms] ${
                         expanded() ? "scale-125 blur-md" : ""
-                    }`}
+                    }`.trim()}
                     alt="Cover"
                     src={
                         (gameStore.preload?.cover && mediaPath(gameStore.preload.cover)) ||
@@ -62,11 +62,7 @@ export default function (props: ComponentProps<"div">) {
                         bgGameDefault
                     }
                 />
-                <div
-                    class={
-                        "absolute top-0 left-0 w-screen h-screen bg-layer/80 flex flex-col items-center justify-center"
-                    }
-                >
+                <div class="absolute top-0 left-0 w-screen h-screen bg-layer/80 flex flex-col items-center justify-center">
                     <div
                         class={`aspect-square h-48 transition-all ease-out duration-500 delay-500 ${
                             expanded() ? "" : "scale-150 blur-xl opacity-0 rotate-90"

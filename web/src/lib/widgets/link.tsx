@@ -38,7 +38,7 @@ export default function (props: ComponentProps<"a"> & ButtonProps & LinkProps & 
             {...props}
             href={props.disabled ? "#" : props.href ?? "#"}
             type={props.type}
-            class={`${className()} ${props.class}`}
+            class={`${className()} ${props.class}`.trim()}
         >
             <Show when={props.loading}>
                 <Spin />
