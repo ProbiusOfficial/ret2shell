@@ -543,7 +543,8 @@
     "minLength": "验证码至少4位",
     "calculating": "计算中...",
     "placeholder": "验证码",
-    "reload": "看不清？换一个"
+    "reload": "看不清？换一个",
+    "enabled": "启用验证码保护"
   },
   "article": {
     "loading": "少女祈祷中...",

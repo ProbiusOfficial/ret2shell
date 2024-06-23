@@ -1,3 +1,4 @@
+import IconCheckbox from "@/lib/widgets/icon-checkbox";
 import { createBulletin, updateBulletin } from "@api/bulletin";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValue, setValues } from "@modular-forms/solid";
@@ -15,7 +16,7 @@ type BulletinForm = {
     title: string;
     content: string;
     enable_comment: boolean;
-    weight: number;
+    weight: boolean;
 };
 
 export default function (props: {
@@ -31,7 +32,7 @@ export default function (props: {
                     title: props.editSource?.title || "",
                     content: props.editSource?.content || "",
                     enable_comment: props.editSource?.enable_comment || false,
-                    weight: props.editSource?.weight || 3,
+                    weight: !!props.editSource?.weight,
                 });
             });
         } else {
@@ -40,7 +41,7 @@ export default function (props: {
                     title: undefined,
                     content: undefined,
                     enable_comment: true,
-                    weight: 0,
+                    weight: false,
                 });
             });
         }
@@ -49,6 +50,7 @@ export default function (props: {
         setLoading(true);
         (props.editSource ? updateBulletin : createBulletin)({
             ...result,
+            weight: result.weight ? 1 : 0,
             id: props.editSource?.id || 0,
             created_at: props.editSource?.created_at || DateTime.now(),
             updated_at: props.editSource?.updated_at || DateTime.now(),
@@ -86,60 +88,31 @@ export default function (props: {
                         required
                         extraBtn={
                             <>
-                                <Field name="weight" type="number">
+                                <Field name="weight" type="boolean">
                                     {(field, props) => (
-                                        <>
-                                            <input
-                                                type="number"
-                                                {...props}
-                                                name="weight"
-                                                value={field.value}
-                                                class="hidden"
-                                            />
-                                            <Button
-                                                class="!rounded-none"
-                                                title={t("bulletin.pinned")}
-                                                type="button"
-                                                onClick={() => {
-                                                    setValue(form, "weight", field.value && true ? 0 : 1);
-                                                }}
-                                            >
-                                                {/* icon-[fluent--pin-20-regular] icon-[fluent--pin-20-filled] */}
-                                                <span
-                                                    class={`w-5 h-5 icon-[fluent--pin-20-${
-                                                        (field.value || 0) > 0 ? "filled" : "regular"
-                                                    }] ${(field.value || 0) > 0 ? "text-primary" : ""}`.trim()}
-                                                />
-                                            </Button>
-                                        </>
+                                        <IconCheckbox
+                                            class="!rounded-none"
+                                            uncheckedIcon="icon-[fluent--pin-20-regular]"
+                                            checkedIcon="icon-[fluent--pin-20-filled]"
+                                            inputProps={props}
+                                            checked={field.value}
+                                            error={field.error}
+                                            name="weight"
+                                        />
                                     )}
                                 </Field>
                                 <Field name="enable_comment" type="boolean">
                                     {(field, props) => (
-                                        <>
-                                            <input
-                                                type="checkbox"
-                                                {...props}
-                                                name="enable_comment"
-                                                checked={field.value}
-                                                class="hidden"
-                                            />
-                                            <Button
-                                                class="!rounded-l-none"
-                                                title={t("bulletin.enableComment")}
-                                                type="button"
-                                                onClick={() => {
-                                                    setValue(form, "enable_comment", !field.value);
-                                                }}
-                                            >
-                                                {/* icon-[fluent--chat-20-regular] icon-[fluent--chat-20-filled] */}
-                                                <span
-                                                    class={`w-5 h-5 icon-[fluent--chat-20-${
-                                                        field.value ? "filled" : "regular"
-                                                    }] ${field.value ? "text-primary" : ""}`.trim()}
-                                                />
-                                            </Button>
-                                        </>
+                                        <IconCheckbox
+                                            class="!rounded-l-none"
+                                            title={t("bulletin.enableComment")}
+                                            uncheckedIcon="icon-[fluent--chat-20-regular]"
+                                            checkedIcon="icon-[fluent--chat-20-filled]"
+                                            inputProps={props}
+                                            checked={field.value}
+                                            error={field.error}
+                                            name="enable_comment"
+                                        />
                                     )}
                                 </Field>
                             </>

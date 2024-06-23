@@ -1,7 +1,8 @@
+import Checkbox from "@/lib/widgets/checkbox";
 import { getPlatformConfig, updatePlatformConfig } from "@api/platform";
 import LogoAnimate from "@assets/animates/logo-animate";
 import type { Config } from "@models/config";
-import { createForm, setValue, setValues } from "@modular-forms/solid";
+import { createForm, custom, setValue, setValues } from "@modular-forms/solid";
 import { Title } from "@storage/header";
 import { platformStore, setPlatformStore } from "@storage/platform";
 import { t } from "@storage/theme";
@@ -165,29 +166,27 @@ export default function () {
                                 />
                             )}
                         </Field>
-                        <Field name="hide_maker" type="boolean">
+                        <Field
+                            name="hide_maker"
+                            type="boolean"
+                            validate={[
+                                custom((value) => {
+                                    if (platformStore.license?.level !== "enterprise" && value) {
+                                        return false;
+                                    }
+                                    return true;
+                                }, t("platform.form.hideMakerDisabled")!),
+                            ]}
+                        >
                             {(field, props) => (
-                                <div class="flex flex-col justify-end">
-                                    <input type="checkbox" class="hidden" {...props} checked={field.value} />
-                                    <Button
-                                        type="button"
-                                        onClick={() => setValue(form, "hide_maker", !field.value)}
-                                        disabled={platformStore.license?.level !== "enterprise"}
-                                        title={
-                                            platformStore.license?.level !== "enterprise"
-                                                ? t("platform.form.hideMakerDisabled")
-                                                : undefined
-                                        }
-                                    >
-                                        <Show
-                                            when={field.value}
-                                            fallback={<span class="icon-[fluent--circle-20-regular] w-5 h-5" />}
-                                        >
-                                            <span class="icon-[fluent--checkmark-circle-20-filled] w-5 h-5 text-primary" />
-                                        </Show>
-                                        <span>{t("platform.form.hideMaker")}</span>
-                                    </Button>
-                                </div>
+                                <Checkbox
+                                    inputProps={props}
+                                    checked={field.value}
+                                    error={field.error}
+                                    title={t("platform.form.hideMaker")}
+                                >
+                                    <span>{t("platform.form.hideMaker")}</span>
+                                </Checkbox>
                             )}
                         </Field>
                     </div>

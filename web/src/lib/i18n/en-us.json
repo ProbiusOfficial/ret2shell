@@ -526,7 +526,8 @@
     "minLength": "Captcha must be at least 4 chars",
     "calculating": "Calculating...",
     "placeholder": "Verification code",
-    "reload": "Can't see clearly? "
+    "reload": "Can't see clearly? ",
+    "enabled": "Enable captcha protection"
   },
   "article": {
     "loading": "The girl is praying...",

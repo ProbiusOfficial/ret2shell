@@ -1,3 +1,4 @@
+import IconCheckbox from "@/lib/widgets/icon-checkbox";
 import { createGame } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { createForm, maxRange, minRange, required, setValue, setValues } from "@modular-forms/solid";
@@ -124,71 +125,44 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                         <div class="flex flex-row">
                             <Field name="can_register_after_started" type="boolean">
                                 {(field, props) => (
-                                    <>
-                                        <input type="checkbox" class="hidden" {...props} checked={field.value} />
-                                        <Button
-                                            title={t("game.canRegisterAfterStarted")}
-                                            type="button"
-                                            class="!rounded-r-none"
-                                            square
-                                            onClick={() => {
-                                                setValue(form, "can_register_after_started", !field.value);
-                                            }}
-                                        >
-                                            {/* icon-[fluent--accessibility-checkmark-20-regular] icon-[fluent--accessibility-checkmark-20-filled] */}
-                                            <span
-                                                class={`icon-[fluent--accessibility-checkmark-20-${
-                                                    field.value ? "filled" : "regular"
-                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`.trim()}
-                                            />
-                                        </Button>
-                                    </>
+                                    <IconCheckbox
+                                        class="!rounded-r-none"
+                                        title={t("game.canRegisterAfterStarted")}
+                                        uncheckedIcon="icon-[fluent--accessibility-checkmark-20-regular]"
+                                        checkedIcon="icon-[fluent--accessibility-checkmark-20-filled]"
+                                        inputProps={props}
+                                        checked={field.value}
+                                        error={field.error}
+                                        name="can_register_after_started"
+                                    />
                                 )}
                             </Field>
                             <Field name="offline" type="boolean">
                                 {(field, props) => (
-                                    <>
-                                        <input type="checkbox" class="hidden" {...props} checked={field.value} />
-                                        <Button
-                                            title={t("game.offline")}
-                                            type="button"
-                                            class="!rounded-none"
-                                            square
-                                            onClick={() => {
-                                                setValue(form, "offline", !field.value);
-                                            }}
-                                        >
-                                            {/* icon-[fluent--wifi-off-20-regular] icon-[fluent--wifi-off-20-filled] */}
-                                            <span
-                                                class={`icon-[fluent--wifi-off-20-${
-                                                    field.value ? "filled" : "regular"
-                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`.trim()}
-                                            />
-                                        </Button>
-                                    </>
+                                    <IconCheckbox
+                                        class="!rounded-none"
+                                        title={t("game.offline")}
+                                        uncheckedIcon="icon-[fluent--wifi-off-20-regular]"
+                                        checkedIcon="icon-[fluent--wifi-off-20-filled]"
+                                        inputProps={props}
+                                        checked={field.value}
+                                        error={field.error}
+                                        name="offline"
+                                    />
                                 )}
                             </Field>
                             <Field name="enable_audit" type="boolean">
                                 {(field, props) => (
-                                    <>
-                                        <input type="checkbox" class="hidden" {...props} checked={field.value} />
-                                        <Button
-                                            title={t("game.enableAudit")}
-                                            type="button"
-                                            class="!rounded-l-none"
-                                            square
-                                            onClick={() => {
-                                                setValue(form, "enable_audit", !field.value);
-                                            }}
-                                        >
-                                            {/* icon-[fluent--people-audience-20-regular] icon-[fluent--people-audience-20-filled] */}
-                                            <span
-                                                class={`icon-[fluent--people-audience-20-${
-                                                    field.value ? "filled" : "regular"
-                                                }] w-5 h-5 ${field.value ? "text-primary" : ""}`.trim()}
-                                            />
-                                        </Button>
-                                    </>
+                                    <IconCheckbox
+                                        class="!rounded-l-none"
+                                        title={t("game.enableAudit")}
+                                        uncheckedIcon="icon-[fluent--people-audience-20-regular]"
+                                        checkedIcon="icon-[fluent--people-audience-20-filled]"
+                                        inputProps={props}
+                                        checked={field.value}
+                                        error={field.error}
+                                        name="enable_audit"
+                                    />
                                 )}
                             </Field>
                         </div>

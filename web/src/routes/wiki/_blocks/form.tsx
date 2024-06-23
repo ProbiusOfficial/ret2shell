@@ -1,3 +1,4 @@
+import IconCheckbox from "@/lib/widgets/icon-checkbox";
 import { createWiki, updateWiki } from "@api/wiki";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValue, setValues } from "@modular-forms/solid";
@@ -94,86 +95,44 @@ export default function (props: {
                             <>
                                 <Field name="enable_comment" type="boolean">
                                     {(field, props) => (
-                                        <>
-                                            <input
-                                                type="checkbox"
-                                                {...props}
-                                                name="enable_comment"
-                                                checked={field.value}
-                                                class="hidden"
-                                            />
-                                            <Button
-                                                class="!rounded-none"
-                                                title={t("wiki.enableComment")}
-                                                type="button"
-                                                onClick={() => {
-                                                    setValue(form, "enable_comment", !field.value);
-                                                }}
-                                            >
-                                                {/* icon-[fluent--chat-20-regular] icon-[fluent--chat-20-filled] */}
-                                                <span
-                                                    class={`w-5 h-5 icon-[fluent--chat-20-${
-                                                        field.value ? "filled" : "regular"
-                                                    }] ${field.value ? "text-primary" : ""}`.trim()}
-                                                />
-                                            </Button>
-                                        </>
+                                        <IconCheckbox
+                                            title={t("wiki.enableComment")}
+                                            class="!rounded-none"
+                                            uncheckedIcon="icon-[fluent--chat-20-regular]"
+                                            checkedIcon="icon-[fluent--chat-20-filled]"
+                                            inputProps={props}
+                                            checked={field.value}
+                                            error={field.error}
+                                            name="enable_comment"
+                                        />
                                     )}
                                 </Field>
                                 <Field name="draft" type="boolean">
                                     {(field, props) => (
-                                        <>
-                                            <input
-                                                type="checkbox"
-                                                {...props}
-                                                name="draft"
-                                                checked={field.value}
-                                                class="hidden"
-                                            />
-                                            <Button
-                                                class="!rounded-none"
-                                                title={t("wiki.draft")}
-                                                type="button"
-                                                onClick={() => {
-                                                    setValue(form, "draft", !field.value);
-                                                }}
-                                            >
-                                                {/* icon-[fluent--edit-20-regular] icon-[fluent--edit-20-filled] */}
-                                                <span
-                                                    class={`w-5 h-5 icon-[fluent--edit-20-${
-                                                        field.value ? "filled" : "regular"
-                                                    }] ${field.value ? "text-primary" : ""}`.trim()}
-                                                />
-                                            </Button>
-                                        </>
+                                        <IconCheckbox
+                                            title={t("wiki.draft")}
+                                            class="!rounded-none"
+                                            uncheckedIcon="icon-[fluent--edit-20-regular]"
+                                            checkedIcon="icon-[fluent--edit-20-filled]"
+                                            inputProps={props}
+                                            checked={field.value}
+                                            error={field.error}
+                                            name="draft"
+                                        />
                                     )}
                                 </Field>
                                 <Field name="published" type="boolean">
                                     {(field, props) => (
-                                        <>
-                                            <input
-                                                type="checkbox"
-                                                {...props}
-                                                name="published"
-                                                checked={field.value}
-                                                class="hidden"
-                                            />
-                                            <Button
-                                                class="!rounded-l-none"
-                                                title={t("wiki.published")}
-                                                type="button"
-                                                onClick={() => {
-                                                    setValue(form, "published", !field.value);
-                                                }}
-                                            >
-                                                {/* icon-[fluent--megaphone-loud-20-regular] icon-[fluent--megaphone-loud-20-filled] */}
-                                                <span
-                                                    class={`w-5 h-5 icon-[fluent--megaphone-loud-20-${
-                                                        field.value ? "filled" : "regular"
-                                                    }] ${field.value ? "text-primary" : ""}`.trim()}
-                                                />
-                                            </Button>
-                                        </>
+                                        <IconCheckbox
+                                            title={t("wiki.published")}
+                                            class="!rounded-l-none"
+                                            uncheckedIcon="icon-[fluent--megaphone-loud-20-regular]"
+                                            checkedIcon="icon-[fluent--megaphone-loud-20-filled]"
+                                            inputProps={props}
+                                            checked={field.value}
+                                            error={field.error}
+                                            name="published"
+                                        />
                                     )}
                                 </Field>
                             </>
