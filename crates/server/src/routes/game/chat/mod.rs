@@ -49,10 +49,6 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route("/check", get(check_unread_chats))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
-            data::prepare_team_info,
-        ))
-        .route_layer(middleware::from_fn_with_state(
-            state.clone(),
             auth::game_access_required,
         ))
 }

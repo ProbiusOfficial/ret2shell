@@ -18,7 +18,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/:article", patch(update_bulletin).delete(delete_bulletin))
         .route("/", post(create_bulletin))
-        .layer(middleware::from_fn(auth::permission_required_all!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Bulletin
         )))
         .route("/:article", get(get_bulletin))

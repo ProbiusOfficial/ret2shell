@@ -134,3 +134,28 @@ macro_rules! prepare_data {
 }
 
 pub(crate) use prepare_data;
+
+macro_rules! extract_team {
+    ($game:expr, $team_ext: expr, $token: expr) => {{
+        let team = if $game.in_progress()
+        && !($game.admins.0.contains(&$token.id) && $token.permissions.0.contains(&r2s_database::user::Permission::Game))
+        {
+            if let Some(axum::extract::Extension(team)) = $team_ext {
+                Some(team)
+            } else {
+                return Err(crate::traits::ResponseError::Forbidden(
+                    "please take part in first".to_owned(),
+                    format!(
+                       "user {}:'{}' ({}) wants to access in-progress game {}:'{}' without take part in it",
+                       $token.id, $token.account, $token.nickname, $game.id, $game.name
+                   ),
+                ));
+            }
+        } else {
+            None
+        };
+        team
+    }}
+}
+
+pub(crate) use extract_team;

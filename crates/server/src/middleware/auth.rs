@@ -15,7 +15,6 @@ use r2s_database::{
     challenge, config, game, team,
     user::{Permission, Permissions},
 };
-use r2s_migrator::Database;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
 use tracing::{debug, error};
@@ -248,6 +247,8 @@ pub(crate) use permission_required_all;
 #[allow(unused_imports)]
 pub(crate) use permission_required_any;
 
+use super::data::extract_team;
+
 pub async fn game_admin_required(
     Extension(token): Extension<Token>, Extension(game): Extension<game::Model>, req: Request,
     next: Next,
@@ -266,8 +267,8 @@ pub async fn game_admin_required(
 }
 
 pub async fn game_access_required(
-    State(ref db): State<Database>, Extension(token): Extension<Token>,
-    Extension(game): Extension<game::Model>, req: Request, next: Next,
+    Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
+    team_ext: Option<Extension<team::Model>>, req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
     if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
         return Ok(next.run(req).await);
@@ -287,7 +288,13 @@ pub async fn game_access_required(
     if game.archive_at < Utc::now() {
         return Ok(next.run(req).await);
     }
-    let team = team::get_by_user_id(&db.conn, game.id, token.id).await?;
+
+    let team = if let Some(Extension(team)) = team_ext {
+        Some(team)
+    } else {
+        None
+    };
+
     if team.is_none() || team.is_some_and(|team| team.state == team::State::Banned) {
         return Err(ResponseError::Forbidden(
             "permission denied".to_owned(),
@@ -302,7 +309,8 @@ pub async fn game_access_required(
 
 pub async fn challenge_access_required(
     Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
-    Extension(challenge): Extension<challenge::Model>, req: Request, next: Next,
+    Extension(challenge): Extension<challenge::Model>, team_ext: Option<Extension<team::Model>>,
+    req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
     if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
         return Ok(next.run(req).await);
@@ -322,5 +330,11 @@ pub async fn challenge_access_required(
             ),
         ));
     }
+    if game.start_at < Utc::now() {
+        return Err(ResponseError::PreconditionFailed(
+            "game has not started".to_owned(),
+        ));
+    }
+    let _team = extract_team!(game, team_ext, token);
     Ok(next.run(req).await)
 }

@@ -10,7 +10,7 @@ use axum::{
 use chrono::Utc;
 use r2s_bucket::{challenge::ChallengeBucket, Bucket};
 use r2s_database::{
-    challenge, extra, game, hint, team,
+    challenge, extra, game, hint, submission, team,
     user::{self, Permission},
 };
 use r2s_event::{
@@ -27,7 +27,7 @@ use tracing::debug;
 use crate::{
     middleware::{
         auth::{self, Token},
-        data,
+        data::{self, extract_team},
     },
     traits::{GlobalState, ResponseError},
 };
@@ -66,10 +66,6 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         )
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
-            data::prepare_team_info,
-        ))
-        .route_layer(middleware::from_fn_with_state(
-            state.clone(),
             auth::game_access_required,
         ))
 }
@@ -101,9 +97,10 @@ async fn get_challenge(
     Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
     Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-    if challenge.hidden
-        && !(token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id))
-    {
+    if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+        return Ok(Json(challenge));
+    }
+    if challenge.hidden {
         return Err(ResponseError::Forbidden(
             "permission denied".to_owned(),
             format!(
@@ -112,9 +109,7 @@ async fn get_challenge(
             ),
         ));
     }
-    if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
-        return Ok(Json(challenge));
-    }
+
     Ok(Json(challenge.desensitize()))
 }
 
@@ -273,8 +268,38 @@ async fn delete_challenge(
     Ok(())
 }
 
-async fn submit_flag() -> Result<impl IntoResponse, ResponseError> {
-    Ok("not implemented")
+#[derive(Deserialize)]
+struct SubmitRequest {
+    pub content: String,
+}
+
+async fn submit_flag(
+    State(ref db): State<Database>, State(_bucket): State<Bucket>, State(ref _queue): State<Queue>,
+    Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
+    team_ext: Option<Extension<team::Model>>, Extension(challenge): Extension<challenge::Model>,
+    Json(req): Json<SubmitRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+    // Only game in progress and has a team, the submission record will be marked as
+    // team's. otherwise the submission will only be marked as user-solved.
+    let team = extract_team!(game, team_ext, token);
+    let submission = submission::Model {
+        id: 0,
+        created_at: Utc::now(),
+        challenge_id: challenge.id.clone(),
+        content: Some(req.content),
+        solved: false,
+        team_id: if let Some(team) = team {
+            Some(team.id.clone())
+        } else {
+            None
+        },
+        user_id: token.id.clone(),
+    };
+    submission::create(&db.conn, submission).await?;
+    // TODO: publish solved event
+    // TODO: update scoreboard
+    // TODO: check flag
+    Ok("TODO: check flag")
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Eq)]
@@ -297,9 +322,9 @@ struct FileResponse {
 }
 
 async fn get_player_attachment(
-    State(ref db): State<Database>, State(ref bucket): State<Bucket>,
-    Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
-    Extension(token): Extension<Token>, Query(query): Query<FileRequest>,
+    State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+    Extension(challenge): Extension<challenge::Model>, Extension(token): Extension<Token>,
+    team_ext: Option<Extension<team::Model>>, Query(query): Query<FileRequest>,
 ) -> Result<Response, ResponseError> {
     let challenge_bucket = bucket
         .at(&game
@@ -318,7 +343,16 @@ async fn get_player_attachment(
                 game.id, game.name
             )))?)
         .await?;
-    let files = get_files(db, &challenge_bucket, game, token).await?;
+    let team = extract_team!(game, team_ext, token);
+    let files = get_files(
+        &challenge_bucket,
+        if let Some(team) = team {
+            team.id
+        } else {
+            token.id
+        },
+    )
+    .await?;
     if query.file.is_none() || query.folder.is_none() {
         Ok(Json(files).into_response())
     } else {
@@ -340,31 +374,11 @@ async fn get_player_attachment(
     }
 }
 
-async fn get_files(
-    db: &Database, bucket: &ChallengeBucket, game: game::Model, token: Token,
-) -> Result<Vec<FileResponse>, ResponseError> {
+async fn get_files(bucket: &ChallengeBucket, id: i64) -> Result<Vec<FileResponse>, ResponseError> {
     let static_files = bucket.get_static_files().await?;
     debug!("files: {:?}", static_files);
-    let mapped_file = if game.in_progress() {
-        let team = team::get_by_user_id(&db.conn, game.id, token.id).await?;
-        if team.is_none()
-            || team
-                .clone()
-                .is_some_and(|team| team.state == team::State::Banned)
-        {
-            return Err(ResponseError::Forbidden(
-                "permission denied".to_owned(),
-                format!(
-                    "user {}:'{}' ({}) want to access game {}:'{}' api with out participation or banned",
-                    token.id, token.account, token.nickname, game.id, game.name
-                ),
-            ));
-        }
-        let team = team.unwrap();
-        bucket.get_mapped_file(team.id).await?
-    } else {
-        bucket.get_mapped_file(token.id).await?
-    };
+
+    let mapped_file = bucket.get_mapped_file(id).await?;
     let mut files: Vec<FileResponse> = static_files
         .into_iter()
         .map(|file| FileResponse {
@@ -392,23 +406,7 @@ async fn get_challenge_hints(
             format!("user {}:'{}' ({}) wants to access challenge {}:'{}' hint before game {}:'{}' start", token.id, token.account, token.nickname, challenge.id, challenge.name, game.id, game.name))
         );
     }
-    let team = if game.in_progress()
-        && !(game.admins.0.contains(&token.id) && token.permissions.0.contains(&Permission::Game))
-    {
-        if let Some(Extension(team)) = team_ext {
-            Some(team)
-        } else {
-            return Err(ResponseError::Forbidden(
-                "please take part in first".to_owned(),
-                format!(
-                    "user {}:'{}' ({}) wants to access challenge {}:'{}' hint without permission",
-                    token.id, token.account, token.nickname, challenge.id, challenge.name
-                ),
-            ));
-        }
-    } else {
-        None
-    };
+    let team = extract_team!(game, team_ext, token);
     let hints = hint::get_list(&db.conn, challenge.id).await?;
     if let Some(team) = team {
         let extras = extra::get_list(&db.conn, team.id).await?;

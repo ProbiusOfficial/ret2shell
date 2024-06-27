@@ -30,7 +30,7 @@ mod team;
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/", post(create_game))
-        .layer(middleware::from_fn(auth::permission_required_all!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Host
         )))
         .nest(
@@ -38,14 +38,18 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             Router::new()
                 .route("/introduction", patch(update_game_intro))
                 .route("/", patch(update_game).delete(delete_game))
-                .layer(middleware::from_fn(auth::game_admin_required))
+                .route_layer(middleware::from_fn(auth::game_admin_required))
                 .nest("/challenge", challenge::router(state))
                 .nest("/team", team::router(state))
                 .nest("/notification", notification::router(state))
                 .nest("/chat", chat::router(state))
                 .route("/introduction", get(get_game_intro))
                 .route("/", get(get_game))
-                .layer(middleware::from_fn_with_state(
+                .route_layer(middleware::from_fn_with_state(
+                    state.clone(),
+                    data::prepare_team_info,
+                ))
+                .route_layer(middleware::from_fn_with_state(
                     state.clone(),
                     data::prepare_data!(game, true),
                 )),
