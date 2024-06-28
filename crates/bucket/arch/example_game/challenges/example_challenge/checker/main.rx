@@ -1,4 +1,5 @@
 use ret2api::audit;
+use ret2api::utils;
 
 /// Check flag submitted by user.
 /// 
@@ -10,13 +11,35 @@ use ret2api::audit;
 /// Returns: (bool, string, Option<{peer_team: i64, reason: string}>)
 /// means (correct, msg, audit: { peer_team, reason }), when audit is not None, the team will be treated as cheated,
 /// and the platform will publish a event to administrators.
+///
+/// The audit message will be validate again in the platform, so don't worry about false positives.
 pub async fn check(bucket, user, team, submission) {
-  let id = audit::decode("you_said_right_but_you_should_play_genshin_impact", "what_the_f*ck", submission.content)?;
-  if id != team.id {
-    return Ok((false, "Incorrect!", Some(#{peer_team: id, reason: `team ${team.id}:'${team.name}' may cheated with team ${id}`})));
+  let flag = utils::Flag::parse(submission.content)?;
+
+  let enc_id = if let Some(id) = team.get(id) {
+    id
   } else {
+    user.id
+  };
+
+  let correct_content = audit::encode("you_said_right_but_you_should_play_genshin_impact", "kamisato_ayaka", enc_id);
+
+  if correct_content == flag.content() {
     return Ok((true, "Correct!", None));
   }
+
+  // the flag is wrong, we try extract peer_team id here.
+  let dec_id = audit::decode("you_said_right_but_you_should_play_genshin_impact", "kamisato_ayaka", flag.content())?;
+  if let Some(id) = team.get(id) {
+    if dec_id != id {
+      return Ok((false, "Incorrect!", Some(#{
+        peer_team: dec_id,
+        reason: `team ${team.id}:'${team.name}' may cheated with team ${dec_id}`
+      })));
+    }
+  }
+
+  Ok((false, "Incorrect!", None))
 }
 
 /// Provides the environment variables when user starts the challenge container.
@@ -27,8 +50,13 @@ pub async fn check(bucket, user, team, submission) {
 /// 
 /// Returns: { key: string, value: string }[]
 pub async fn environ(bucket, user, team) {
+  let enc_id = if let Some(id) = team.get(id) {
+    id
+  } else {
+    user.id
+  };
+  let content = audit::encode("you_said_right_but_you_should_play_genshin_impact", "kamisato_ayaka", enc_id);
   Ok(#{
-    flag: audit::encode("you_said_right_but_you_should_play_genshin_impact", "what_the_f*ck", team.id),
+    FLAG: utils::Flag::new().with_prefix("flag").with_content(content).to_string(),
   })
 }
-
