@@ -55,13 +55,11 @@ pub async fn prepare_team_info(
     Extension(game): Extension<game::Model>, mut req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
     let team = r2s_database::team::get_by_user_id(&db.conn, game.id, token.id).await?;
-    match team {
-        Some(team) => {
-            req.extensions_mut()
-                .insert::<r2s_database::team::Model>(team);
-        }
-        None => (),
+    if let Some(team) = team {
+        req.extensions_mut()
+            .insert::<r2s_database::team::Model>(team);
     }
+
     Ok(next.run(req).await)
 }
 

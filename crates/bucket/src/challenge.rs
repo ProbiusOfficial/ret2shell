@@ -163,7 +163,7 @@ impl ChallengeBucket {
         let mut dir = read_dir(&self.path.join("static")).await?;
         while let Some(entry) = dir.next_entry().await? {
             let entry_file = entry.file_name().to_string_lossy().to_string();
-            if entry_file.starts_with(".") {
+            if entry_file.starts_with('.') {
                 continue;
             }
             files.push(entry_file);
@@ -176,7 +176,7 @@ impl ChallengeBucket {
         let mut dir = read_dir(&self.path.join("mapped")).await?;
         while let Some(entry) = dir.next_entry().await? {
             let entry_file = entry.file_name().to_string_lossy().to_string();
-            if entry_file.starts_with(".") {
+            if entry_file.starts_with('.') {
                 continue;
             }
             files.push(entry_file);

@@ -273,6 +273,7 @@ struct SubmitRequest {
     pub content: String,
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn submit_flag(
     State(ref db): State<Database>, State(_bucket): State<Bucket>, State(ref _queue): State<Queue>,
     Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
@@ -285,15 +286,15 @@ async fn submit_flag(
     let submission = submission::Model {
         id: 0,
         created_at: Utc::now(),
-        challenge_id: challenge.id.clone(),
+        challenge_id: challenge.id,
         content: Some(req.content),
         solved: false,
         team_id: if let Some(team) = team {
-            Some(team.id.clone())
+            Some(team.id)
         } else {
             None
         },
-        user_id: token.id.clone(),
+        user_id: token.id,
     };
     submission::create(&db.conn, submission).await?;
     // TODO: publish solved event
@@ -413,7 +414,7 @@ async fn get_challenge_hints(
         let hints = hints
             .iter()
             .map(|h| {
-                if h.cost > 0 && extras.iter().find(|e| e.hint_id == Some(h.id)).is_none() {
+                if h.cost > 0 && !extras.iter().any(|e| e.hint_id == Some(h.id)) {
                     h.clone().desensitize()
                 } else {
                     h.clone()

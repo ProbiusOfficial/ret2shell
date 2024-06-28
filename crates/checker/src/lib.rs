@@ -10,7 +10,7 @@ use rune::{
 };
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
-use tracing::{debug, error, info};
+use tracing::{debug, error};
 use traits::CheckerError;
 
 pub mod modules;
