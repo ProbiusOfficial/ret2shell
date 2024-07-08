@@ -15,7 +15,7 @@
         "@solid-primitives/media": "^2.2.9",
         "@solid-primitives/platform": "^0.1.2",
         "@solid-primitives/refs": "^1.0.8",
-        "@solid-primitives/resize-observer": "^2.0.25",
+        "@solid-primitives/resize-observer": "^2.0.26",
         "@solid-primitives/storage": "^3.7.1",
         "@solidjs/router": "^0.13.6",
         "@xterm/addon-canvas": "^0.7.0",
