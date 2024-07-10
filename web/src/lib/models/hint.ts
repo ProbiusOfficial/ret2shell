@@ -6,6 +6,4 @@ export type Hint = {
     challenge_id: number;
     content: string;
     cost: number;
-    release_at: DateTime;
-    no_solves_only: boolean;
 };
