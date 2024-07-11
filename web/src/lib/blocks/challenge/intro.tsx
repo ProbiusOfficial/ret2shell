@@ -171,7 +171,6 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                                         </Match>
                                     </Switch>
                                 </h3>
-
                                 <div class="flex flex-row space-x-2">
                                     <Switch
                                         fallback={
