@@ -16,7 +16,7 @@ type CreatePlaygroundForm = {
 };
 
 export default function CreatePlayground(props: { onDone: (game: Game) => void }) {
-    const [form, { Form, Field }] = createForm<CreatePlaygroundForm>();
+    const [_, { Form, Field }] = createForm<CreatePlaygroundForm>();
     const [loading, setLoading] = createSignal(false);
     function onSubmit(result: CreatePlaygroundForm) {
         setLoading(true);

@@ -5,7 +5,7 @@ import { type Team, TeamState } from "@models/team";
 import type { SearchParamsOption } from "ky";
 import api, { api_root } from ".";
 import type { Hint } from "../models/hint";
-import { Extra } from "../models/extra";
+import type { Extra } from "../models/extra";
 
 export async function getGames(page?: number, page_size?: number, host_type?: HostType, weight?: number) {
     return (

@@ -1,4 +1,4 @@
-import { createChallengeHint, getChallengeHint, getTeamExtras } from "@/lib/api/game";
+import { createChallengeHint, deleteChallengeHint, getChallengeHint, getTeamExtras } from "@/lib/api/game";
 import type { Challenge } from "@/lib/models/challenge";
 import { addToast } from "@/lib/storage/toast";
 import type { Extra } from "@models/extra";
@@ -40,7 +40,7 @@ export default function (props: { challenge?: Challenge }) {
             created_at: DateTime.now(),
             challenge_id: props.challenge!.id,
             content: result.content,
-            cost: result.cost ?? 0,
+            cost: result.cost || 0,
         } as Hint;
         createChallengeHint(props.challenge!.game_id, props.challenge!.id, hint)
             .then(() => {
@@ -56,6 +56,7 @@ export default function (props: { challenge?: Challenge }) {
                     addToast({
                         level: "error",
                         description: `${t("form.createFailed")}: ${text}`,
+                        duration: 5000,
                     });
                 });
             });
@@ -101,11 +102,26 @@ export default function (props: { challenge?: Challenge }) {
             });
         }
     });
+
+    function handleDeleteHint(id: number) {
+        deleteChallengeHint(gameStore.current!.id, props.challenge!.id, id)
+            .then(() => {
+                refreshHint();
+            })
+            .catch((e: HTTPError) => {
+                e.response.text().then((text) => {
+                    addToast({
+                        level: "error",
+                        description: `${t("form.deleteFailed")}: ${text}`,
+                    });
+                });
+            });
+    }
     return (
         <div class="flex flex-col p-3 lg:p-6">
             <For each={hints()}>
                 {(hint) => (
-                    <div class="px-2 min-h-12 border-b border-b-layer-content/10 flex items-center space-x-2">
+                    <div class="px-2 min-h-12 py-1 border-b border-b-layer-content/10 flex items-center space-x-2">
                         <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary flex-shrink-0" />
                         <Show
                             when={isGameAdmin() || hint.cost === 0 || extras().find((e) => e.hint_id === hint.id)}
@@ -139,7 +155,24 @@ export default function (props: { challenge?: Challenge }) {
                                 </>
                             }
                         >
-                            <span>{hint.content}</span>
+                            <span class="flex-1 text-start">{hint.content}</span>
+                            <Show when={hint.cost > 0}>
+                                <span class="text-success">-{hint.cost}</span>
+                                <span class="opacity-60 text-success">pts</span>
+                                <span class="icon-[fluent--lock-open-20-regular] w-5 h-5 text-success" />
+                            </Show>
+                        </Show>
+                        <Show when={isGameAdmin()}>
+                            <Button
+                                size="sm"
+                                ghost
+                                square
+                                onClick={() => {
+                                    handleDeleteHint(hint.id);
+                                }}
+                            >
+                                <span class="icon-[fluent--delete-20-regular] w-5 h-5" />
+                            </Button>
                         </Show>
                     </div>
                 )}

@@ -330,7 +330,7 @@ pub async fn challenge_access_required(
             ),
         ));
     }
-    if game.start_at < Utc::now() {
+    if game.start_at > Utc::now() {
         return Err(ResponseError::PreconditionFailed(
             "game has not started".to_owned(),
         ));

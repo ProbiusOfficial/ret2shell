@@ -576,6 +576,7 @@
         "saveFailed": "保存失败",
         "createSuccess": "创建成功",
         "createFailed": "创建失败",
+        "deleteFailed": "删除失败",
         "edit": "编辑",
         "delete": "删除",
         "changeAvatar": "封面",

@@ -434,12 +434,6 @@ async fn get_challenge_hints(
     Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
     team_ext: Option<Extension<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
-    if game.start_at < Utc::now() {
-        return Err(ResponseError::Forbidden(
-            "game is not start".to_owned(),
-            format!("user {}:'{}' ({}) wants to access challenge {}:'{}' hint before game {}:'{}' start", token.id, token.account, token.nickname, challenge.id, challenge.name, game.id, game.name))
-        );
-    }
     let team = extract_team!(game, team_ext, token);
     let hints = hint::get_list(&db.conn, challenge.id).await?;
     if let Some(team) = team {
