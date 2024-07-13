@@ -13,7 +13,6 @@ use tokio::sync::RwLock;
 use tracing::{debug, error};
 use traits::CheckerError;
 
-pub mod modules;
 pub mod traits;
 
 type CheckerContext = (Arc<Unit>, Arc<RuntimeContext>, DateTime<Utc>);
@@ -80,6 +79,7 @@ impl Checker {
             context.install(ret2script::modules::bucket::module(true)?)?;
             context.install(ret2script::modules::audit::module(true)?)?;
             context.install(ret2script::modules::utils::module(true)?)?;
+            context.install(ret2script::modules::regex::module(true)?)?;
             let mut sources = Sources::new();
             sources.insert(Source::from_path(script_folder.join("main.rx"))?)?;
             debug!("Preloading checker script: {}", script_folder.display());
