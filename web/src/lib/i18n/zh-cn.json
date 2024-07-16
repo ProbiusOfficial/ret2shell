@@ -36,7 +36,8 @@
       "hideMaker": "隐藏开发者信息",
       "hideMakerDisabled": "你的许可证不允许隐藏开发者信息"
     },
-    "return": "返回"
+    "return": "返回",
+    "versionMismatch": "服务版本不匹配（{{frontend}} != {{backend}}），服务器可能工作不正常，请联系运维排查。"
   },
   "wiki": {
     "title": "知识",

@@ -470,6 +470,15 @@ export default function (props: { children?: JSX.Element }) {
   getVersion()
     .then((version) => {
       setPlatformStore({ version });
+      if (!version.startsWith(import.meta.env.VITE_COMPAT_VERSION)) {
+        addToast({
+          level: "warning",
+          description: t("platform.versionMismatch", {
+            frontend: import.meta.env.VITE_COMPAT_VERSION,
+            backend: version,
+          })!,
+        });
+      }
       console.log(
         `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - 2024 %cRet 2 Shell%c, All rights reserved.\n`,
         "color: #0078D6; font-weight: bold; font-size: 1.5rem;",

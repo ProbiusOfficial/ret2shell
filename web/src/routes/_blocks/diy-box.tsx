@@ -18,24 +18,22 @@ export function DiyBoxContent() {
               <span>简</span>
             </Button>
           </li>
-          {/* 
-                    <li>
-                        <Button square onClick={() => setLocale("zh_tw")} ghost justify="center" size="sm">
-                            <span>繁</span>
-                        </Button>
-                    </li>
-                    <li>
-                        <Button square onClick={() => setLocale("en_us")} ghost justify="center" size="sm">
-                            <span>En</span>
-                        </Button>
-                    </li>
-                    <li>
-                        <Button square onClick={() => setLocale("ja_jp")} ghost justify="center" size="sm">
-                            <span>な</span>
-                        </Button>
-                    </li>
-                    */}
-          <li class="w-16" />
+
+          <li>
+            <Button square onClick={() => setLocale("zh_tw")} ghost justify="center" size="sm">
+              <span>繁</span>
+            </Button>
+          </li>
+          <li>
+            <Button square onClick={() => setLocale("en_us")} ghost justify="center" size="sm">
+              <span>En</span>
+            </Button>
+          </li>
+          <li>
+            <Button square onClick={() => setLocale("ja_jp")} ghost justify="center" size="sm">
+              <span>な</span>
+            </Button>
+          </li>
           <li>
             <Button
               size="sm"

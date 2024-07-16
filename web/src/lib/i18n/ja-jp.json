@@ -1,0 +1,740 @@
+{
+  "about": {
+    "contactTips": "",
+    "donate": "",
+    "source": ""
+  },
+  "account": {
+    "box": "",
+    "bye": "",
+    "code": {
+      "confirmWarn": "",
+      "null": "",
+      "refresh": "",
+      "title": "",
+      "warn": ""
+    },
+    "deleteAccountFailed": "",
+    "deleteAccountTips1": "",
+    "deleteAccountTips2": "",
+    "deleteAccountTips3": "",
+    "deleteAccountTipsList1": "",
+    "deleteAccountTipsList2": "",
+    "deleteAccountTipsList3": "",
+    "deleteAccountTipsList4": "",
+    "deleteAccountTipsTitle1": "",
+    "deleteAccountTitle": "",
+    "emailVerified": "",
+    "emailVerifyBroken": "",
+    "emailVerifyFailed": "",
+    "forgot": {
+      "title": ""
+    },
+    "institute": {
+      "none": ""
+    },
+    "login": {
+      "accountMascotTip": "",
+      "accountMinLength": "",
+      "accountPlaceholder": "",
+      "accountRequired": "",
+      "captchaPlaceholder": "",
+      "failMascotTip": "",
+      "passwordMascotTip": "",
+      "passwordMinLength": "",
+      "passwordPlaceholder": "",
+      "passwordRequired": "",
+      "passwordTooWeak": "",
+      "success": "",
+      "successMascotTip": "",
+      "title": ""
+    },
+    "logout": "",
+    "oauth": {
+      "xdu": {
+        "title": ""
+      }
+    },
+    "register": {
+      "accountMaxLength": "",
+      "accountMinLength": "",
+      "accountPattern": "",
+      "accountPlaceholder": "",
+      "accountRequired": "",
+      "emailInvalid": "",
+      "emailPlaceholder": "",
+      "emailRequired": "",
+      "nicknameMaxLength": "",
+      "nicknameMinLength": "",
+      "nicknamePlaceholder": "",
+      "nicknameRequired": "",
+      "passwordMinLength": "",
+      "passwordPlaceholder": "",
+      "passwordRequired": "",
+      "passwordTooWeak": "",
+      "success": "",
+      "tips": "",
+      "title": ""
+    },
+    "resendVerifyEmail": "",
+    "settings": {
+      "delete": {
+        "title": ""
+      },
+      "info": {
+        "account": "",
+        "avatarUploadFailed": "",
+        "description": "",
+        "email": "",
+        "emailInvalid": "",
+        "emailNotVerified": "",
+        "emailRequired": "",
+        "nickname": "",
+        "nicknameRequired": "",
+        "title": ""
+      },
+      "institute": {
+        "title": ""
+      },
+      "oauth": {
+        "title": ""
+      },
+      "password": {
+        "confirmPassword": "",
+        "confirmPasswordMismatch": "",
+        "confirmPasswordRequired": "",
+        "newPassword": "",
+        "newPasswordRequired": "",
+        "oldPassword": "",
+        "oldPasswordRequired": "",
+        "success": "",
+        "title": ""
+      },
+      "title": ""
+    },
+    "verifyingEmail": ""
+  },
+  "admin": {
+    "about": {
+      "failedToFetchLicense": "",
+      "title": ""
+    },
+    "captcha": {
+      "difficulty": "",
+      "image": "",
+      "pow": "",
+      "select": "",
+      "title": "",
+      "validator": "",
+      "validatorRequired": ""
+    },
+    "cluster": {
+      "available": "",
+      "data": {
+        "nodeInfo": {
+          "architecture": "",
+          "bootID": "",
+          "containerRuntimeVersion": "",
+          "kernelVersion": "",
+          "kubeProxyVersion": "",
+          "kubeletVersion": "",
+          "machineID": "",
+          "operatingSystem": "",
+          "osImage": "",
+          "systemUUID": ""
+        }
+      },
+      "disconnectNode": "",
+      "failedToFetchNodes": "",
+      "nodeInfo": "",
+      "nodeNetwork": "",
+      "nodeResources": "",
+      "refreshNode": "",
+      "selectNode": "",
+      "title": "",
+      "unavailable": "",
+      "updateNode": ""
+    },
+    "description": "",
+    "edit": {
+      "title": ""
+    },
+    "email": {
+      "enabled": "",
+      "host": "",
+      "hostRequired": "",
+      "password": "",
+      "passwordRequired": "",
+      "port": "",
+      "portRangeNotMatch": "",
+      "portRequired": "",
+      "resetEmailBody": "",
+      "resetEmailBodyRequired": "",
+      "resetEmailSubject": "",
+      "resetEmailSubjectRequired": "",
+      "sender": "",
+      "senderRequired": "",
+      "title": "",
+      "tls": "",
+      "tlsRequired": "",
+      "username": "",
+      "usernameRequired": "",
+      "verifyEmailBody": "",
+      "verifyEmailBodyRequired": "",
+      "verifyEmailSubject": "",
+      "verifyEmailSubjectRequired": ""
+    },
+    "logs": {
+      "empty": "",
+      "emptyTips": "",
+      "failedToFetchLogsList": "",
+      "socketClosed": "",
+      "start": "",
+      "stop": "",
+      "streamingEnabled": "",
+      "title": ""
+    },
+    "media": {
+      "title": ""
+    },
+    "oauth": {
+      "title": ""
+    },
+    "permissionDenied": "",
+    "platform": {
+      "fetchNotReady": "",
+      "updateFailed": "",
+      "updateSuccess": ""
+    },
+    "statistics": {
+      "challenges": "",
+      "comingGames": "",
+      "endedGames": "",
+      "fetchFailed": "",
+      "games": "",
+      "inGameChallenges": "",
+      "inProgressGames": "",
+      "instituteUsers": "",
+      "others": "",
+      "pendingGames": "",
+      "solvedSubmissions": "",
+      "submissions": "",
+      "title": "",
+      "totalChallenges": "",
+      "totalGames": "",
+      "totalSubmissions": "",
+      "totalUsers": "",
+      "trainings": "",
+      "users": "",
+      "validUsers": ""
+    },
+    "sync": {
+      "title": ""
+    },
+    "title": "",
+    "users": {
+      "title": ""
+    }
+  },
+  "article": {
+    "by": "",
+    "createdAt": "",
+    "loading": "",
+    "unknownPublisher": "",
+    "updatedAt": ""
+  },
+  "bulletin": {
+    "contentPlaceholder": "",
+    "contentRequired": "",
+    "create": "",
+    "deleteSuccess": "",
+    "enableComment": "",
+    "fetchFailed": "",
+    "loading": "",
+    "noMore": "",
+    "pinned": "",
+    "title": "",
+    "titlePlaceholder": "",
+    "titleRequired": ""
+  },
+  "calendar": {
+    "addBy": "",
+    "create": "",
+    "createEvent": "",
+    "createFailed": "",
+    "createSuccess": "",
+    "day": {
+      "fri": "",
+      "mon": "",
+      "sat": "",
+      "sun": "",
+      "thu": "",
+      "tue": "",
+      "wed": ""
+    },
+    "delete": "",
+    "deleteFailed": "",
+    "deleteSuccess": "",
+    "edit": "",
+    "editEvent": "",
+    "endAtRequired": "",
+    "endTime": "",
+    "eventLinkPlaceholder": "",
+    "eventLinkRequired": "",
+    "eventNamePlaceholder": "",
+    "eventNameRequired": "",
+    "fetchFailed": "",
+    "games": "",
+    "gotoEventHomePage": "",
+    "introPlaceholder": "",
+    "introRequired": "",
+    "jumpToNextMonth": "",
+    "jumpToNextYear": "",
+    "jumpToPrevMonth": "",
+    "jumpToPrevYear": "",
+    "jumpToToday": "",
+    "noGames": "",
+    "save": "",
+    "saveFailed": "",
+    "saveSuccess": "",
+    "scrollToView": "",
+    "selectGameToSeeDetail": "",
+    "startAtRequired": "",
+    "startEndTime": "",
+    "startTime": "",
+    "unknown": ""
+  },
+  "captcha": {
+    "calculating": "",
+    "enabled": "",
+    "loadFailed": "",
+    "loading": "",
+    "minLength": "",
+    "placeholder": "",
+    "reload": "",
+    "required": ""
+  },
+  "docs": {
+    "forVersion": "",
+    "intro": "",
+    "title": "",
+    "titleTips": ""
+  },
+  "errors": {
+    "401": "",
+    "403": "",
+    "404": "",
+    "412": "",
+    "418": "",
+    "500": "",
+    "502": "",
+    "401Tip": "",
+    "403Tip": "",
+    "404Tip": "",
+    "412Tip": "",
+    "418Tip": "",
+    "500Tip": "",
+    "502Tip": "",
+    "gotoDocs": "",
+    "unknown": "",
+    "unknownTip": ""
+  },
+  "form": {
+    "changeAvatar": "",
+    "copy": "",
+    "cover": "",
+    "create": "",
+    "createFailed": "",
+    "createSuccess": "",
+    "delete": "",
+    "deleteFailed": "",
+    "edit": "",
+    "loading": "",
+    "logo": "",
+    "print": "",
+    "save": "",
+    "saveFailed": "",
+    "saveSuccess": ""
+  },
+  "game": {
+    "accessPolicy": {
+      "open": ""
+    },
+    "admin": {
+      "automate": {
+        "linkedDevices": "",
+        "noDevicesLinked": "",
+        "tips1": "",
+        "tips2": "",
+        "title": ""
+      },
+      "awardRate": "",
+      "briefPlaceholder": "",
+      "canRegisterAfterStarted": "",
+      "description": "",
+      "edit": {
+        "title": ""
+      },
+      "enableAudit": "",
+      "events": {
+        "title": ""
+      },
+      "frozen": "",
+      "hammer": {
+        "shouldGoto": "",
+        "title": ""
+      },
+      "hidden": "",
+      "manageChallenges": "",
+      "namePlaceholder": "",
+      "offline": "",
+      "statistics": {
+        "title": ""
+      },
+      "teamSizePlaceholder": "",
+      "teams": {
+        "title": ""
+      },
+      "title": ""
+    },
+    "adminCanNotTakePartIn": "",
+    "adminMode": "",
+    "archive": "",
+    "archiveAtRequired": "",
+    "archivedGotoTraining": "",
+    "briefPlaceholder": "",
+    "briefRequired": "",
+    "canNotParticipate": "",
+    "canRegisterAfterStarted": "",
+    "challenge": {
+      "answer": "",
+      "confirmUnlockHint": "",
+      "content": "",
+      "contentRequired": "",
+      "create": "",
+      "createFailed": "",
+      "createHint": "",
+      "createHintCost": "",
+      "enter": "",
+      "envIsRunning": "",
+      "envNotStart": "",
+      "fetchChallengeFailed": "",
+      "fetchEnvFailed": "",
+      "fetchFailed": "",
+      "fetchFilesFailed": "",
+      "fetchHintFailed": "",
+      "files": "",
+      "hammer": "",
+      "hammerInput": "",
+      "hammerTips": "",
+      "hammerTips2": "",
+      "hint": "",
+      "hintRequired": "",
+      "info": "",
+      "instances": "",
+      "list": "",
+      "maxScore": "",
+      "minScore": "",
+      "name": "",
+      "nameRequired": "",
+      "noChallenges": "",
+      "notStarted": "",
+      "otherChallengeEnvIsRunning": "",
+      "scoreDecay": "",
+      "scoreRange": "",
+      "settings": "",
+      "solved": "",
+      "startEnv": "",
+      "statistics": "",
+      "tag": "",
+      "tagPlaceholder": "",
+      "tagRequired": "",
+      "terminal": "",
+      "title": "",
+      "unknownTag": "",
+      "unlockHintFailed": "",
+      "welcome": ""
+    },
+    "cover": {
+      "uploadFailed": "",
+      "uploaded": ""
+    },
+    "create": "",
+    "createFailed": "",
+    "enableAudit": "",
+    "end": "",
+    "endAtRequired": "",
+    "ended": "",
+    "exit": "",
+    "fetchFailed": "",
+    "frozen": "",
+    "hidden": "",
+    "introPlaceholder": "",
+    "introRequired": "",
+    "introduction": {
+      "empty": "",
+      "fetchFailed": "",
+      "title": "",
+      "updateFailed": ""
+    },
+    "loading": "",
+    "logo": {
+      "uploadFailed": "",
+      "uploaded": ""
+    },
+    "miscSettings": "",
+    "namePlaceholder": "",
+    "nameRequired": "",
+    "noGameHosted": "",
+    "noNotifications": "",
+    "notification": {
+      "contentPlaceholder": "",
+      "contentRequired": "",
+      "createFailed": "",
+      "createSuccess": "",
+      "deleteFailed": "",
+      "deleteSuccess": "",
+      "fetchFailed": "",
+      "titlePlaceholder": "",
+      "titleRequired": ""
+    },
+    "offline": "",
+    "otherGames": "",
+    "pending": "",
+    "register": "",
+    "registerArchiveTime": "",
+    "registerAtRequired": "",
+    "registerEnded": "",
+    "registerNotStarted": "",
+    "scoreboard": {
+      "fetchError": "",
+      "selectInstitute": "",
+      "title": ""
+    },
+    "seeOtherInteresting": "",
+    "start": "",
+    "startAtRequired": "",
+    "startEndTime": "",
+    "started": "",
+    "team": {
+      "canNotJoin": "",
+      "collab": "",
+      "coming": "",
+      "create": {
+        "accept": "",
+        "acceptRules": "",
+        "accepted": "",
+        "acceptedRequired": "",
+        "chuunibyouGenerator": "",
+        "customDisabled": "",
+        "failed": "",
+        "name": "",
+        "nameMaxLength": "",
+        "namePlaceholder": "",
+        "nameRequired": "",
+        "reject": "",
+        "rulesTitle": "",
+        "title": ""
+      },
+      "join": {
+        "title": ""
+      },
+      "joinFirst": "",
+      "joinGame": "",
+      "joinTips": "",
+      "loginThenBack": "",
+      "manage": {
+        "title": ""
+      },
+      "noTeamParticipated": "",
+      "sizeMaxExceeded": "",
+      "sizeMinExceeded": "",
+      "sizeRequired": "",
+      "solo": "",
+      "title": ""
+    },
+    "teamSizePlaceholder": "",
+    "timerTips": "",
+    "title": "",
+    "unknown": "",
+    "weight": "",
+    "writeup": {
+      "title": ""
+    },
+    "writeupsOnlyOpenWhenArchived": ""
+  },
+  "instance": {
+    "box": "",
+    "connected": "",
+    "connecting": "",
+    "copyLocalAddr": "",
+    "copyWsrxAddr": "",
+    "defaultApiAddr": "",
+    "disconnected": "",
+    "downloadWsrx": "",
+    "instanceCount": "",
+    "needLocalDaemon": "",
+    "openLocalAddr": "",
+    "pending": "",
+    "renew": "",
+    "retryLinkWsrx": "",
+    "stop": "",
+    "wsrxDisconnected": "",
+    "wsrxSettings": ""
+  },
+  "loading": {
+    "0": "",
+    "1": "",
+    "2": "",
+    "3": "",
+    "4": "",
+    "5": "",
+    "6": "",
+    "7": "",
+    "8": "",
+    "9": "",
+    "10": "",
+    "11": "",
+    "12": "",
+    "13": "",
+    "14": "",
+    "15": ""
+  },
+  "magic": {
+    "illustration": "",
+    "source": ""
+  },
+  "permission": {
+    "basic": "",
+    "bulletin": "",
+    "calendar": "",
+    "devOps": "",
+    "game": "",
+    "host": "",
+    "statistics": "",
+    "user": "",
+    "verified": "",
+    "wiki": ""
+  },
+  "platform": {
+    "accept": "",
+    "clearNotifications": "",
+    "cookiePolicy": "",
+    "diyBox": "",
+    "error": "",
+    "followSystem": "",
+    "form": {
+      "footerInfoPlaceholder": "",
+      "footerInfoTitle": "",
+      "footerUrlPlaceholder": "",
+      "footerUrlTitle": "",
+      "hideMaker": "",
+      "hideMakerDisabled": "",
+      "nameTitle": "",
+      "recordPlaceholder": "",
+      "recordTitle": "",
+      "subjectInfoTitle": "",
+      "subjectUrlTitle": ""
+    },
+    "hello": "",
+    "name": "",
+    "noNotifications": "",
+    "notImplemented": "",
+    "notImplementedTips": "",
+    "notImplementedTips1": "",
+    "notImplementedTips2": "",
+    "notImplementedTips3": "",
+    "notificationBox": "",
+    "offline": "",
+    "ok": "",
+    "reject": "",
+    "return": "",
+    "subject": "",
+    "systemTheme": "",
+    "unavailable": "",
+    "underMaintenance": "",
+    "versionMismatch": "",
+    "yes": ""
+  },
+  "shell": {
+    "clear": {
+      "man": ""
+    },
+    "commandInvalid": "",
+    "commandNotFound": "",
+    "echo": {
+      "man": ""
+    },
+    "help": {
+      "man": ""
+    },
+    "helpCommands": "",
+    "helpTips": "",
+    "ls": {
+      "error": "",
+      "man": ""
+    },
+    "noChallengeSpecified": "",
+    "noChallengeSpecifiedTips": "",
+    "noGameSpecified": "",
+    "noGameSpecifiedTips": "",
+    "welcome": "",
+    "wget": {
+      "downloading": "",
+      "failed": "",
+      "fileNotFound": "",
+      "man": "",
+      "success": "",
+      "usage": ""
+    }
+  },
+  "theme": {
+    "colorScheme": "",
+    "language": ""
+  },
+  "training": {
+    "briefPlaceholder": "",
+    "briefRequired": "",
+    "challenge": {
+      "welcome": ""
+    },
+    "create": "",
+    "createSuccess": "",
+    "failedToFetchGames": "",
+    "failedToFetchPlaygrounds": "",
+    "gameNotArchived": "",
+    "list": "",
+    "namePlaceholder": "",
+    "nameRequired": "",
+    "noArchivedGames": "",
+    "noPlaygrounds": "",
+    "openForever": "",
+    "selectPlayground": "",
+    "title": ""
+  },
+  "user": {
+    "fetchTeamsFailed": "",
+    "gameJournal": "",
+    "introductionTitle": "",
+    "joinedGamesTitle": "",
+    "moreJournal": "",
+    "noDescription": "",
+    "noInstitute": "",
+    "registeredAt": ""
+  },
+  "wiki": {
+    "contentPlaceholder": "",
+    "contentRequired": "",
+    "deleteSuccess": "",
+    "draft": "",
+    "enableComment": "",
+    "fetchTocFailed": "",
+    "pathPlaceholder": "",
+    "pathRequired": "",
+    "published": "",
+    "selectWikiToRead": "",
+    "title": "",
+    "titlePlaceholder": "",
+    "titleRequired": ""
+  }
+}

@@ -116,7 +116,7 @@ export class Stdio {
 
   private writeInput(data: string) {
     const ord = data.charAt(0);
-    console.log(ord, data);
+    // console.log(ord, data);
     if (ord === "\u001B") {
       switch (data) {
         case cursorUp1:
@@ -180,7 +180,7 @@ export class Stdio {
   }
 
   private moveInputCursor(offset: number) {
-    console.log("move cursor: ", offset);
+    // console.log("move cursor: ", offset);
     const newCursor = this.inputCursor + offset;
     this.setInputCursor(newCursor);
   }

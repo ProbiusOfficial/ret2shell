@@ -3,7 +3,7 @@ import type { Team } from "@models/team";
 import { type Size, createElementSize } from "@solid-primitives/resize-observer";
 import { useSearchParams } from "@solidjs/router";
 import { accountStore, refreshInstitutes } from "@storage/account";
-import { gameStore } from "@storage/game";
+import { gameStore, refreshChallenges } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -170,6 +170,12 @@ export default function () {
     setPageSize(p);
   });
 
+  createEffect(() => {
+    if (gameStore.current && gameStore.challenges.length === 0) {
+      untrack(refreshChallenges);
+    }
+  });
+
   return (
     <>
       <Title title={`${t("game.scoreboard.title")} - ${gameStore.current?.name || "CTF"}`} />
@@ -302,7 +308,7 @@ export default function () {
             </Show>
             <Switch>
               <Match when={!showChallengeDetail() && !showLargePanel()}>
-                <TeamDetails topTeams={topTeams().slice(0, 3)} challenges={[]} />
+                <TeamDetails topTeams={topTeams().slice(0, 3)} challenges={gameStore.challenges} />
               </Match>
               <Match when={showChallengeDetail()}>
                 <TeamRanks
