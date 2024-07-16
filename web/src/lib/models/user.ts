@@ -1,4 +1,5 @@
 import type { DateTime } from "luxon";
+import { t } from "../storage/theme";
 
 export enum Permission {
   Basic = 0,
@@ -27,6 +28,31 @@ export type User = {
   hidden: boolean;
   banned: boolean;
 };
+
+export function permissionToString(permission: Permission): string {
+  switch (permission) {
+    case Permission.Basic:
+      return t("permission.basic")!;
+    case Permission.Verified:
+      return t("permission.verified")!;
+    case Permission.Calendar:
+      return t("permission.calendar")!;
+    case Permission.Wiki:
+      return t("permission.wiki")!;
+    case Permission.Bulletin:
+      return t("permission.bulletin")!;
+    case Permission.Game:
+      return t("permission.game")!;
+    case Permission.Host:
+      return t("permission.host")!;
+    case Permission.User:
+      return t("permission.user")!;
+    case Permission.Statistics:
+      return t("permission.statistics")!;
+    case Permission.DevOps:
+      return t("permission.devOps")!;
+  }
+}
 
 export type Token = {
   id: number;

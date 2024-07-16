@@ -67,3 +67,13 @@ export function initTheme() {
 
 const [dict] = createResource(themeStore.locale || "zh_cn", fetchDictionary);
 export const t = translator(dict, resolveTemplate);
+export const colorPalette = {
+  fg: () => (themeStore.colorScheme === "dark" ? "#eee" : "#121212"),
+  primary: "#0991ed",
+  secondary: "#bd63c5",
+  accent: "#699f08",
+  info: "#0991ed",
+  success: "#17a750",
+  warning: "#db640e",
+  error: "#e05864",
+};

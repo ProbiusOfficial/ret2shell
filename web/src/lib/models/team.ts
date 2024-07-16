@@ -18,6 +18,7 @@ export type Team = {
   id: number;
   name: string;
   game_id: number;
+  game_name?: string;
   token: string | null;
   state: TeamState;
   institute_id: number | null;

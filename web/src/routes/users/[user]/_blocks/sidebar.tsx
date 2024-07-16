@@ -1,8 +1,10 @@
-import type { User } from "@models/user";
-import { fullTheme } from "@storage/theme";
+import Tag from "@/lib/widgets/tag";
+import { type User, permissionToString } from "@models/user";
+import { fullTheme, t } from "@storage/theme";
 import Avatar from "@widgets/avatar";
 import Divider from "@widgets/divider";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
+import { For } from "solid-js";
 
 export default function (props: { user: User | null; loading?: boolean }) {
   return (
@@ -17,7 +19,7 @@ export default function (props: { user: User | null; loading?: boolean }) {
         class="relative w-full h-full print:h-auto print:overflow-auto"
         defer
       >
-        <div class="flex flex-col space-y-2 p-3 lg:p-6">
+        <div class="flex flex-col min-h-full space-y-2 p-3 lg:p-6">
           <div class="flex flex-row space-x-4 lg:space-x-6 p-2 lg:p-4 items-center">
             <Avatar
               class="w-12 h-12"
@@ -35,6 +37,36 @@ export default function (props: { user: User | null; loading?: boolean }) {
             </div>
           </div>
           <Divider />
+          <div class="flex flex-row space-x-2 items-center px-2 py-2">
+            <span class="icon-[fluent--mail-20-regular] w-5 h-5" />
+            <a
+              class={`font-bold ${props.user?.email ? "hover:underline" : "blur pointer-events-none"}`.trim()}
+              href={`mailto:${props.user?.email}`}
+            >
+              {props.user?.email ?? "fake.email@ret.sh.cn"}
+            </a>
+          </div>
+          <Divider />
+          <div class="flex flex-row space-x-2 items-center px-2 py-2">
+            <span class="icon-[fluent--hat-graduation-20-regular] w-5 h-5" />
+            <span class="font-bold">{props.user?.institute_name ?? t("user.noInstitute")}</span>
+          </div>
+          <Divider />
+          <div class="flex flex-row flex-wrap">
+            <For each={props.user?.permissions || []}>
+              {(permission) => (
+                <Tag level="info" class="m-1">
+                  <span>{permissionToString(permission)}</span>
+                </Tag>
+              )}
+            </For>
+          </div>
+          <div class="flex-1" />
+          <div class="h-12 flex items-center justify-center">
+            <span class="opacity-60">
+              {t("user.registeredAt", { time: props.user?.registered_at.toFormat("yyyy-MM-dd") || "UNKNOWN" })}
+            </span>
+          </div>
         </div>
       </OverlayScrollbarsComponent>
     </div>

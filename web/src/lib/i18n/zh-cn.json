@@ -644,6 +644,55 @@
   "user": {
     "introductionTitle": "个人介绍",
     "joinedGamesTitle": "比赛经历",
-    "noDescription": "这位大嘿客什么也没有留下..."
+    "noDescription": "这位大嘿客什么也没有留下...",
+    "gameJournal": "作为 {{team}} 成员参与了 {{game}}。",
+    "fetchTeamsFailed": "获取参赛经历失败",
+    "moreJournal": "生命不息，探索不止……",
+    "noInstitute": "没有加入任何组织",
+    "registeredAt": "在 {{time}} 加入"
+  },
+  "shell": {
+    "commandInvalid": "命令存在语法错误",
+    "commandNotFound": "未知的命令: {{command}}",
+    "ls": {
+      "man": "列出当前题目的文件。",
+      "error": "无法获取到文件列表。"
+    },
+    "noGameSpecified": "不在任何赛事中。",
+    "noGameSpecifiedTips": "Shell 只有在题目环境中才能使用。",
+    "welcome": "欢迎使用 {{shell}}!",
+    "helpTips": "在此终端中直接输入符合格式的 {{flag}} 即可提交，你可以输入 {{help}} 来获取更多的使用帮助。",
+    "echo": {
+      "man": "原样输出你的任何输入。"
+    },
+    "help": {
+      "man": "输出帮助信息。"
+    },
+    "helpCommands": "你有如下命令可以使用：",
+    "clear": {
+      "man": "清空终端的输出内容并重新开始。"
+    },
+    "wget": {
+      "man": "下载指定的文件。",
+      "usage": "使用方法： wget \"<文件名>\"",
+      "failed": "下载文件失败",
+      "success": "下载成功，请在浏览器弹出窗口保存文件。",
+      "downloading": "下载进度",
+      "fileNotFound": "文件不存在。"
+    },
+    "noChallengeSpecified": "不在题目中。",
+    "noChallengeSpecifiedTips": "只有在题目环境中才能下载附件。"
+  },
+  "permission": {
+    "basic": "用户",
+    "verified": "已验证",
+    "calendar": "赛事日历发布",
+    "wiki": "知识库管理",
+    "bulletin": "公告发布",
+    "game": "比赛管理",
+    "host": "比赛举办",
+    "user": "用户管理",
+    "statistics": "统计数据",
+    "devOps": "运维"
   }
 }

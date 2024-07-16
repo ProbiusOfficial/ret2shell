@@ -1,3 +1,4 @@
+import type { Team } from "@models/team";
 import type { User } from "@models/user";
 import type { SearchParamsOption } from "ky";
 import api, { api_root } from ".";
@@ -26,4 +27,8 @@ export async function getUserList(
 
 export async function getUser(id: number) {
   return await api.get(`${api_root}/user/${id}`).json<User>();
+}
+
+export async function getUserTeams(id: number) {
+  return await api.get(`${api_root}/user/${id}/team`).json<Team[]>();
 }

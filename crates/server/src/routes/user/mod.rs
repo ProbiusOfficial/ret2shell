@@ -5,7 +5,10 @@ use axum::{
   routing::get,
   Extension, Json, Router,
 };
-use r2s_database::user::{self, Permission};
+use r2s_database::{
+  team,
+  user::{self, Permission},
+};
 use r2s_migrator::Database;
 use serde::Deserialize;
 
@@ -20,6 +23,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       "/:user",
       Router::new()
         .route("/", get(get_user))
+        .route("/team", get(get_teams))
         .route_layer(middleware::from_fn_with_state(
           state.clone(),
           data::prepare_data!(user, false),
@@ -69,4 +73,16 @@ async fn get_user(
   } else {
     Ok(Json(user.desensitize()))
   }
+}
+
+async fn get_teams(
+  State(ref db): State<Database>, Extension(user): Extension<user::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let teams = team::get_list_by_user_id_ex(&db.conn, user.id).await?;
+  Ok(Json(
+    teams
+      .into_iter()
+      .map(|t| t.desensitize())
+      .collect::<Vec<_>>(),
+  ))
 }

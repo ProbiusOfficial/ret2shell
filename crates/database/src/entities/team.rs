@@ -6,14 +6,14 @@ use chrono::{serde::ts_seconds, DateTime, Utc};
 use num_derive::{FromPrimitive, ToPrimitive};
 use sea_orm::{
   entity::prelude::*, ActiveValue, Condition, FromJsonQueryResult, FromQueryResult,
-  IntoActiveModel, JoinType, Order, QueryOrder, QuerySelect,
+  IntoActiveModel, Iterable, JoinType, Order, QueryOrder, QuerySelect,
 };
 use sea_query::Func;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use super::user;
-use crate::institute;
+use crate::{game, institute, user2_team};
 
 #[derive(
   Clone,
@@ -91,6 +91,7 @@ pub struct ExModel {
   pub id: i64,
   pub name: String,
   pub game_id: i64,
+  pub game_name: Option<String>,
   pub token: Option<String>,
   pub state: State,
   pub institute_id: Option<i64>,
@@ -116,6 +117,7 @@ impl From<Model> for ExModel {
       id: model.id,
       name: model.name,
       game_id: model.game_id,
+      game_name: None,
       token: model.token,
       state: model.state,
       institute_id: model.institute_id,
@@ -245,6 +247,36 @@ where
     }
   };
   Ok(team)
+}
+
+pub async fn get_list_by_user_id<C>(db: &C, user_id: i64) -> Result<Vec<Model>, DbErr>
+where
+  C: ConnectionTrait,
+{
+  user2_team::Entity::find()
+    .filter(user2_team::Column::UserId.eq(user_id))
+    .join(JoinType::InnerJoin, user2_team::Relation::Team.def())
+    .into_model()
+    .all(db)
+    .await
+}
+
+pub async fn get_list_by_user_id_ex<C>(db: &C, user_id: i64) -> Result<Vec<ExModel>, DbErr>
+where
+  C: ConnectionTrait,
+{
+  user2_team::Entity::find()
+    .select_only()
+    .columns(Column::iter().filter(|c| !matches!(c, Column::Token)))
+    .filter(user2_team::Column::UserId.eq(user_id))
+    .join(JoinType::LeftJoin, user2_team::Relation::Team.def())
+    .join(JoinType::LeftJoin, Relation::Institute.def())
+    .join(JoinType::LeftJoin, Relation::Game.def())
+    .column_as(institute::Column::Name, "institute_name")
+    .column_as(game::Column::Name, "game_name")
+    .into_model()
+    .all(db)
+    .await
 }
 
 #[allow(clippy::too_many_arguments)]

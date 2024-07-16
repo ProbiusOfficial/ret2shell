@@ -1,0 +1,96 @@
+import { CanvasAddon } from "@xterm/addon-canvas";
+import { FitAddon } from "@xterm/addon-fit";
+import { WebLinksAddon } from "@xterm/addon-web-links";
+import { type ITerminalOptions, Terminal } from "@xterm/xterm";
+import { type ComponentProps, createEffect, onCleanup, onMount, splitProps, untrack } from "solid-js";
+import type { Challenge } from "../models/challenge";
+import { colorPalette } from "../storage/theme";
+import { Shell } from "./shell";
+import "@xterm/xterm/css/xterm.css";
+
+export default function (
+  props: ComponentProps<"div"> & {
+    challenge?: Challenge;
+  }
+) {
+  const [shellProps, others] = splitProps(props, ["challenge"]);
+  let terminal: HTMLDivElement;
+  const linkHandler = {
+    activate(_event: MouseEvent, text: string) {
+      if (text.startsWith("http://") || text.startsWith("https://")) {
+        window.open(text, "_blank");
+      } else if (text.startsWith("rnix://")) {
+        // dispatch rnix events.
+        if (text.startsWith("rnix://command/")) {
+          const command = text.replace("rnix://command/", "");
+          shell?.emulateCommand(command);
+        }
+      } else if (text.startsWith("wsrx://")) {
+        window.open(text, "_blank");
+      }
+    },
+    allowNonHttpProtocols: true,
+  };
+  const term = new Terminal({
+    convertEol: true,
+    allowTransparency: true,
+    cursorBlink: true,
+    cursorStyle: "underline",
+    drawBoldTextInBrightColors: false,
+    theme: {
+      foreground: colorPalette.fg(),
+      background: "#00000000",
+      cursor: colorPalette.primary,
+      selectionBackground: "#88888840",
+      blue: colorPalette.info,
+      yellow: colorPalette.warning,
+      green: colorPalette.success,
+      red: colorPalette.error,
+    },
+    fontFamily: "JetBrains Mono",
+    fontSize: 16,
+    lineHeight: 1.2,
+    linkHandler: linkHandler,
+    customGlyphs: true,
+    letterSpacing: 0,
+  } as ITerminalOptions);
+
+  const fitAddon = new FitAddon();
+  const webLinksAddon = new WebLinksAddon();
+  const canvasAddon = new CanvasAddon();
+  let shell = null as null | Shell;
+
+  term.loadAddon(fitAddon);
+  term.loadAddon(canvasAddon);
+  term.loadAddon(webLinksAddon);
+
+  onMount(() => {
+    term.open(terminal);
+    term.focus();
+    fitAddon.fit();
+
+    const resizeObserver = new ResizeObserver(() => {
+      fitAddon.fit();
+    });
+    resizeObserver.observe(terminal);
+
+    shell = new Shell(term, (_cmd, _code) => {});
+    shell.run();
+  });
+
+  createEffect(() => {
+    if (shellProps.challenge) {
+      untrack(() => shell?.setChallenge(shellProps.challenge || null));
+    }
+  });
+
+  onCleanup(() => {
+    shell?.emulateCommand("exit");
+  });
+
+  return (
+    <div {...others} class={`flex-1 relative overflow-hidden h-full backdrop-blur p-3 lg:p-6 ${others.class}`.trim()}>
+      <div class="w-full h-full overflow-hidden" ref={terminal!} id="terminal" />
+    </div>
+  );
+}
