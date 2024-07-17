@@ -698,7 +698,12 @@
     "commandNotFound": "未知的命令: {{command}}",
     "ls": {
       "man": "列出当前题目的文件。",
-      "error": "无法获取到文件列表。"
+      "error": "无法获取到文件列表。",
+      "tooManyArgs": "参数过多。",
+      "noSuchFileOrDirectory": "文件不存在。",
+      "invalidPath": "远程主机拒绝了目录穿越。",
+      "permissionDenied": "权限不足，拒绝访问。",
+      "invalidOption": "未知选项: `{{option}}`；请注意 ls 命令是 /bin/ls -l 的别名，不接收其他参数选项。"
     },
     "noGameSpecified": "不在任何赛事中。",
     "noGameSpecifiedTips": "Shell 只有在题目环境中才能使用。",
@@ -729,7 +734,11 @@
       "noFileSpecified": "没有指定文件。",
       "tooManyFiles": "参数过多。",
       "error": "读取文件出错。",
-      "fileNotFound": "文件不存在。"
+      "fileNotFound": "文件不存在。",
+      "permissionDenied": "权限不足，拒绝访问。"
+    },
+    "whoami": {
+      "man": "显示与当前的有效用户 ID 相关联的用户名。"
     }
   },
   "permission": {

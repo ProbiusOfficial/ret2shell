@@ -17,15 +17,18 @@ export default function (
   let terminal: HTMLDivElement;
   const linkHandler = {
     activate(_event: MouseEvent, text: string) {
-      if (text.startsWith("http://") || text.startsWith("https://")) {
-        window.open(text, "_blank");
-      } else if (text.startsWith("rnix://")) {
+      if (text.startsWith("rnix://")) {
         // dispatch rnix events.
         if (text.startsWith("rnix://command/")) {
           const command = text.replace("rnix://command/", "");
           shell?.emulateCommand(command);
         }
-      } else if (text.startsWith("wsrx://")) {
+      } else if (
+        text.startsWith("wsrx://") ||
+        text.startsWith("http://") ||
+        text.startsWith("https://") ||
+        text.startsWith("mailto:")
+      ) {
         window.open(text, "_blank");
       }
     },

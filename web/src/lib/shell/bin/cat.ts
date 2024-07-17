@@ -25,6 +25,9 @@ export class Cat implements Command {
     const file = args[0].toString().trim();
     if (file === "README.md") {
       io.println(challenge.content || "");
+    } else if (file.startsWith("checkers/")) {
+      io.error(t("shell.cat.permissionDenied")!);
+      return 1;
     } else {
       try {
         const files = await getChallengeAttachments(gameStore.current!.id, challenge.id);

@@ -1,0 +1,24 @@
+import type { Challenge } from "@/lib/models/challenge";
+import { accountStore } from "@/lib/storage/account";
+import { t } from "@/lib/storage/theme";
+import ansiColors from "ansi-colors";
+import type { ParseEntry } from "shell-quote";
+import { link } from "../escapes";
+import type { Stdio } from "../stdio";
+import type { Command } from "./interface";
+
+export class Whoami implements Command {
+  name = "whoami";
+  man = t("shell.whoami.man")!;
+  func = async (io: Stdio, _challenge: Challenge, _args: ParseEntry[], _origin: string) => {
+    const email = ansiColors.dim(
+      link(accountStore.info?.email || "guest@private.ret.sh.cn", `mailto:${accountStore.info?.email}`)
+    );
+    io.println(
+      `${ansiColors.blue(accountStore.account || "guest")} (${accountStore.nickname}) ${ansiColors.dim("<")}${ansiColors.dim(
+        email
+      )}${ansiColors.dim(">")}`
+    );
+    return 0;
+  };
+}
