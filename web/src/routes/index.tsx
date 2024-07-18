@@ -68,15 +68,25 @@ export default function () {
                   </a>
                 </Show>
               </Button>
-              <Button
-                ghost
-                onClick={() => {
-                  document.getElementById("index-calendar")?.scrollIntoView({ behavior: "smooth" });
-                }}
+              <Show
+                when={platformStore.isOnline}
+                fallback={
+                  <Link href="/docs" ghost>
+                    <span class="icon-[fluent--book-20-regular] w-5 h-5" />
+                    <span>{t("docs.title")}</span>
+                  </Link>
+                }
               >
-                <span>{t("calendar.scrollToView")}</span>
-                <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" />
-              </Button>
+                <Button
+                  ghost
+                  onClick={() => {
+                    document.getElementById("index-calendar")?.scrollIntoView({ behavior: "smooth" });
+                  }}
+                >
+                  <span>{t("calendar.scrollToView")}</span>
+                  <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" />
+                </Button>
+              </Show>
               <Show when={!platformStore.config.hide_maker}>
                 <Link square href="/magic/sakana" ghost>
                   <span class="icon-[fluent--gift-20-regular] w-5 h-5" />

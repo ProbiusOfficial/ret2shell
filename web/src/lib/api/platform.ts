@@ -1,7 +1,6 @@
 import type { AuthConfig, Config, ServerConfig } from "@models/config";
 import type { HostType } from "@models/game";
 import type { Institute } from "@models/institute";
-import type { SearchParamsOption } from "ky";
 import type { DateTime } from "luxon";
 import api, { api_root } from ".";
 

@@ -427,14 +427,14 @@ export default function (props: { children?: JSX.Element }) {
     .then((res) => {
       setPlatformStore({
         config: res,
-        under_maintenance: false,
         backend_online: true,
       });
+      loadVersion();
     })
     .catch((err: HTTPError) => {
       if (err.response?.status === 503) {
         setPlatformStore({ under_maintenance: true });
-        navigate("/");
+        if (!inDocs()) navigate("/");
       } else if (err.response?.status === 502 && !inDocs()) {
         addToast({
           level: "error",
@@ -467,56 +467,65 @@ export default function (props: { children?: JSX.Element }) {
         }, 1000);
       }
     });
-  getVersion()
-    .then((version) => {
-      setPlatformStore({ version });
-      if (!version.startsWith(import.meta.env.VITE_COMPAT_VERSION)) {
-        addToast({
-          level: "warning",
-          description: t("platform.versionMismatch", {
-            frontend: import.meta.env.VITE_COMPAT_VERSION,
-            backend: version,
-          })!,
-        });
-      }
-      console.log(
-        `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - 2024 %cRet 2 Shell%c, All rights reserved.\n`,
-        "color: #0078D6; font-weight: bold; font-size: 1.5rem;",
-        "color: currentColor; font-weight: bold; font-size: 1.5rem;",
-        "color: #808080; font-weight: bold; font-size: 1.5rem;",
-        "color: #f83030; font-weight: bold; font-size: 1.5rem;",
-        "color: currentColor; font-weight: bold; font-size: 1.5rem;",
-        "color: #0078D6",
-        "color: #808080",
-        "color: #808080",
-        "color: #808080;text-decoration: underline;",
-        "color: #808080;"
-      );
-      console.log(
-        "\n%cHaving issue? You can open a ticket on https://github.com/ret2shell, any bug reports or feature requests are welcome.\n",
-        "color: currentColor;"
-      );
-      console.log(
-        "\n%cIf you want to self-host CTF platforms or look for further cooperating, please contact ret2shell@woooo.tech.\n",
-        "color: currentColor;"
-      );
-    })
-    .catch(() => {
-      setPlatformStore({ version: `${frontendCompatVersion}-UNKNOWN-0.0.0` });
-    });
-  getPlatformLicense()
-    .then((resp) => {
-      setPlatformStore({ license: resp });
-    })
-    .catch((err: HTTPError) => {
-      void err.response.text().then((text) => {
-        addToast({
-          level: "error",
-          description: `${t("admin.about.failedToFetchLicense")}: ${text}`,
-          duration: 5000,
-        });
+
+  function loadVersion() {
+    getVersion()
+      .then((version) => {
+        setPlatformStore({ version });
+        if (!version.startsWith(import.meta.env.VITE_COMPAT_VERSION)) {
+          addToast({
+            level: "warning",
+            description: t("platform.versionMismatch", {
+              frontend: import.meta.env.VITE_COMPAT_VERSION,
+              backend: version,
+            })!,
+          });
+        }
+        console.log(
+          `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - 2024 %cRet 2 Shell%c, All rights reserved.\n`,
+          "color: #0078D6; font-weight: bold; font-size: 1.5rem;",
+          "color: currentColor; font-weight: bold; font-size: 1.5rem;",
+          "color: #808080; font-weight: bold; font-size: 1.5rem;",
+          "color: #f83030; font-weight: bold; font-size: 1.5rem;",
+          "color: currentColor; font-weight: bold; font-size: 1.5rem;",
+          "color: #0078D6",
+          "color: #808080",
+          "color: #808080",
+          "color: #808080;text-decoration: underline;",
+          "color: #808080;"
+        );
+        console.log(
+          "\n%cHaving issue? You can open a ticket on https://github.com/ret2shell, any bug reports or feature requests are welcome.\n",
+          "color: currentColor;"
+        );
+        console.log(
+          "\n%cIf you want to self-host CTF platforms or look for further cooperating, please contact ret2shell@woooo.tech.\n",
+          "color: currentColor;"
+        );
+
+        getPlatformLicense()
+          .then((resp) => {
+            setPlatformStore({ license: resp });
+          })
+          .catch((err: HTTPError) => {
+            void err.response.text().then((text) => {
+              addToast({
+                level: "error",
+                description: `${t("admin.about.failedToFetchLicense")}: ${text}`,
+                duration: 5000,
+              });
+            });
+          });
+      })
+      .catch((err: HTTPError) => {
+        setPlatformStore({ version: `${frontendCompatVersion}-UNKNOWN-0.0.0` });
+        if (err.response?.status === 503) {
+          setPlatformStore({ under_maintenance: true, backend_online: false });
+          navigate("/");
+        }
       });
-    });
+  }
+
   return (
     <>
       <Background />
