@@ -13,13 +13,14 @@ use k8s_openapi::{
   apimachinery::pkg::{api::resource::Quantity, version::Info},
 };
 use kube::{
-  api::{ListParams, LogParams, ObjectList, ObjectMeta},
+  api::{ListParams, LogParams, ObjectList, ObjectMeta, PartialObjectMetaExt, Patch},
   runtime::reflector::Lookup,
   Api, Client,
 };
 use tokio_util::codec::Framed;
 
 use r2s_config::cluster::ChallengeEnv;
+use tracing::{debug, error};
 
 use super::traits::ClusterError;
 
@@ -183,10 +184,87 @@ impl Cluster {
     Ok(pod)
   }
 
+  pub async fn renew_pod(&self, name: &str) -> Result<(), ClusterError> {
+    let pod = self.get_pod(name).await?;
+    let client = check_enabled!(self.client)?;
+    let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "renew pod")?);
+    let prev_renew = pod
+      .metadata
+      .labels
+      .clone()
+      .unwrap_or_default()
+      .get("ret.sh.cn/renew")
+      .map(|v| v.parse::<i32>().unwrap_or(0))
+      .unwrap_or(0);
+    let mut labels = pod.metadata.labels.clone().unwrap_or_default();
+    labels.insert("ret.sh.cn/renew".to_owned(), (prev_renew + 1).to_string());
+    let metadata = ObjectMeta {
+      labels: Some(labels),
+      ..Default::default()
+    }
+    .into_request_partial::<Pod>();
+    api
+      .patch_metadata(name, &Default::default(), &Patch::Apply(metadata))
+      .await?;
+    Ok(())
+  }
+
   pub async fn delete_pod(&self, name: &str) -> Result<(), ClusterError> {
     let client = check_enabled!(self.client)?;
     let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "delete pod")?);
     api.delete(name, &Default::default()).await?;
+    Ok(())
+  }
+
+  async fn check_outdated_pod(&self, pod: &Pod) -> Result<bool, ClusterError> {
+    let renew = pod
+      .metadata
+      .labels
+      .clone()
+      .unwrap_or_default()
+      .get("ret.sh.cn/renew")
+      .map(|v| v.parse::<i32>().unwrap_or(0))
+      .unwrap_or(0);
+    let started_at = pod
+      .metadata
+      .creation_timestamp
+      .clone()
+      .ok_or(ClusterError::MissingField("creation_timestamp".to_string()))?
+      .0
+      .timestamp();
+    let now = Utc::now().timestamp();
+    Ok(now - started_at > 3600 * (renew + 1) as i64)
+  }
+
+  pub async fn delete_outdated_pods(&self) -> Result<(), ClusterError> {
+    let client = check_enabled!(self.client)?;
+    let api: Api<Pod> = Api::namespaced(
+      client,
+      &with_namespace!(&self.namespace, "delete outdated pods")?,
+    );
+    let pods = api
+      .list(&ListParams {
+        field_selector: Some("status.phase!=Succeeded,status.phase!=Failed".to_owned()),
+        ..Default::default()
+      })
+      .await?;
+    for pod in pods.items {
+      match self.check_outdated_pod(&pod).await {
+        Ok(true) => {
+          debug!("Deleting outdated pod: {}", pod.name().unwrap());
+          api
+            .delete(&pod.name().unwrap(), &Default::default())
+            .await?;
+        }
+        Ok(false) => {
+          debug!("Pod is alive: {}", pod.name().unwrap());
+        }
+        Err(err) => {
+          error!("Failed to check outdated pod: {err:?}");
+        }
+      }
+    }
+
     Ok(())
   }
 
@@ -222,11 +300,11 @@ impl Cluster {
     env_config: ChallengeEnv,
   ) -> Result<(), ClusterError> {
     let challenge_id = labels
-      .get("challenge_id")
-      .ok_or(ClusterError::MissingField("challenge_id".to_string()))?;
+      .get("challenge")
+      .ok_or(ClusterError::MissingField("challenge".to_string()))?;
     let user_id = labels
-      .get("user_id")
-      .ok_or(ClusterError::MissingField("user_id".to_string()))?;
+      .get("user")
+      .ok_or(ClusterError::MissingField("user".to_string()))?;
     let pod_name = format!("ret2shell-{challenge_id}-{user_id}");
     let pod = Pod {
       metadata: ObjectMeta {
@@ -275,7 +353,7 @@ impl Cluster {
 
   pub async fn delete_challenge_env(&self, user_id: i64) -> Result<(), ClusterError> {
     let pod = self
-      .get_pods_by_label(&format!("ret.sh.cn/user_id={user_id}"))
+      .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
       .await?;
     for p in pod {
       self.delete_pod(p.metadata.name.as_ref().unwrap()).await?;
@@ -285,16 +363,36 @@ impl Cluster {
 
   pub async fn get_challenge_env(&self, user_id: i64) -> Result<Option<Pod>, ClusterError> {
     let pod = self
-      .get_pods_by_label(&format!("ret.sh.cn/user_id={user_id}"))
+      .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
       .await?;
     Ok(pod.first().cloned())
   }
 
   pub async fn get_challenge_env_by_team(&self, team_id: i64) -> Result<Vec<Pod>, ClusterError> {
     let pod = self
-      .get_pods_by_label(&format!("ret.sh.cn/team_id={team_id}"))
+      .get_pods_by_label(&format!("ret.sh.cn/team={team_id}"))
       .await?;
     Ok(pod)
+  }
+
+  pub async fn delay_challenge_env(&self, user_id: i64) -> Result<(), ClusterError> {
+    let pod = self
+      .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
+      .await?;
+    for p in pod {
+      self.renew_pod(p.metadata.name.as_ref().unwrap()).await?;
+    }
+    Ok(())
+  }
+
+  pub async fn stop_challenge_env(&self, user_id: i64) -> Result<(), ClusterError> {
+    let pod = self
+      .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
+      .await?;
+    for p in pod {
+      self.delete_pod(p.metadata.name.as_ref().unwrap()).await?;
+    }
+    Ok(())
   }
 
   pub async fn wsrx_link(&self, token: &str, port: u16, ws: WebSocket) -> Result<(), ClusterError> {

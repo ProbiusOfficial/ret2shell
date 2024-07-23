@@ -414,10 +414,27 @@ async fn get_self_envs(
   Ok(Json(envs))
 }
 
-async fn delay_self_env() -> Result<impl IntoResponse, ResponseError> {
-  Ok("not implemented")
+async fn delay_self_env(
+  State(cluster): State<Cluster>, Extension(token): Extension<Token>,
+) -> Result<impl IntoResponse, ResponseError> {
+  cluster
+    .at("ret2shell-challenge")
+    .delay_challenge_env(token.id)
+    .await?;
+  Ok(())
 }
 
-async fn stop_self_env() -> Result<impl IntoResponse, ResponseError> {
-  Ok("not implemented")
+async fn stop_self_env(
+  State(cluster): State<Cluster>, State(ref cache): State<Cache>,
+  Extension(token): Extension<Token>,
+) -> Result<impl IntoResponse, ResponseError> {
+  cache
+    .at("cluster")
+    .set_ex(token.id.to_string(), 1, 60)
+    .await?;
+  cluster
+    .at("ret2shell-challenge")
+    .stop_challenge_env(token.id)
+    .await?;
+  Ok(())
 }

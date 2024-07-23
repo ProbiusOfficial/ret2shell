@@ -11,6 +11,7 @@ use chrono::Utc;
 use futures::TryStreamExt;
 use nanoid::nanoid;
 use r2s_bucket::{challenge::ChallengeBucket, Bucket};
+use r2s_cache::Cache;
 use r2s_checker::Checker;
 use r2s_cluster::Cluster;
 use r2s_config::cluster::ChallengeEnv;
@@ -846,10 +847,16 @@ async fn get_challenge_env(
 }
 
 async fn start_challenge_env(
-  State(ref bucket): State<Bucket>, State(cluster): State<Cluster>,
+  State(ref bucket): State<Bucket>, State(cluster): State<Cluster>, State(ref cache): State<Cache>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Extension(token): Extension<Token>, team_ext: Option<Extension<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let calmdown = cache.at("cluster").exists(token.id.to_string()).await?;
+  if calmdown {
+    return Err(ResponseError::PreconditionFailed(
+      "please wait for rebuilding cargo crates".to_owned(),
+    ));
+  }
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge);
   let team = extract_team!(game, team_ext, token);
   if let Some(env) = challenge_bucket.env().await? {
