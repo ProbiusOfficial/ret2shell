@@ -647,7 +647,9 @@
     "defaultApiAddr": "重置为默认地址",
     "pending": "正在等待本地授权",
     "wsrxDisconnected": "WSRX 客户端离线了。",
-    "instanceCount": "{{ count }} 个容器"
+    "instanceCount": "{{ count }} 个容器",
+    "jumpToChallenge": "跳转到对应的题目",
+    "notInThisGame": "非本比赛题目，点击停止"
   },
   "magic": {
     "illustration": "插画",

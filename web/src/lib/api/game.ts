@@ -140,7 +140,15 @@ export async function getChallengeAttachments(game_id: number, challenge_id: num
 
 export type ChallengeEnv = {
   internet: boolean;
-  images: { name: string; tag: string; cpu: number; mem: string; port: number; description: string }[];
+  images: {
+    name: string;
+    tag: string;
+    cpu: number;
+    mem: string;
+    port: number;
+    service_type: "http" | "tcp";
+    description: string;
+  }[];
 };
 
 export async function getChallengeEnv(game_id: number, challenge_id: number) {

@@ -1,0 +1,785 @@
+{
+  "about": {
+    "contactTips": "Plattformsoftware unterstützt E-Mail",
+    "donate": "Spenden",
+    "source": "Unterstützung"
+  },
+  "account": {
+    "box": "Benutzerdetails",
+    "bye": "Auf Wiedersehen",
+    "code": {
+      "confirmWarn": "Ich habe es verstanden, weiter",
+      "null": "Keine temporäre Identifikationsnummer",
+      "refresh": "Generieren / Aktualisieren",
+      "title": "Temporäre Benutzerkennung",
+      "warn": "Dieser Bestätigungscode dient dazu, deine vollständigen Kontoinformationen an eine Drittpartei zu übermitteln, einschließlich deiner E-Mail-Adresse, Organisationszertifizierungsinformationen usw. Der Veranstalter des Wettbewerbs könnte diesen Bestätigungscode verwenden, um deine Identität zu bestätigen. Bitte geben Sie diesen Bestätigungscode nicht ohne bekannten Zweck willkürlich weiter!"
+    },
+    "deleteAccountFailed": "Konto-Deaktivierung fehlgeschlagen",
+    "deleteAccountTips1": "Bitte beachten Sie, dass Ihr Konto nicht wirklich gelöscht wurde, sondern in einen deaktivierten und nicht wiederherstellbaren Zustand versetzt wurde. Folgende Maßnahmen werden durchgeführt:",
+    "deleteAccountTips2": "Bitte lesen Sie die obigen Informationen sorgfältig durch und bestätigen Sie diese! Wenn Sie wirklich Ihr Konto deaktivieren möchten, geben Sie bitte unten Ihren vollständigen Benutzernamen {{name}} ein, um zu bestätigen:",
+    "deleteAccountTips3": "Bitte beachten Sie, dass aufgrund der Löschung von privat-rechtlichen Informationen im Zusammenhang mit der Identitätsüberprüfung auch bei Kontakt mit Verwaltungs-/Betriebspersonal keine Wiederherstellung eines deaktivierten Kontos möglich ist. Bitte überlegen Sie genau, bevor Sie handeln.",
+    "deleteAccountTipsList1": "Dein Konto wird in [DELETED]_<hash> umbenannt;",
+    "deleteAccountTipsList2": "Dein Konto wird alle Berechtigungen entzogen und der Login gesperrt, es kann auch nicht über die E-Mail wiederhergestellt werden; die E-Mail kann jedoch zur Registrierung eines anderen Kontos verwendet werden.",
+    "deleteAccountTipsList3": "Konto-Privatsphäre-Informationen werden entfernt, aber öffentlich veröffentlichte Inhalte bleiben erhalten;",
+    "deleteAccountTipsList4": "Die mit dem Konto verknüpften Wettbewerbsergebnisse, Daten usw. werden gespeichert, aber es kann keine Informationen bereitgestellt werden, um zu beweisen, dass dies dein Konto ist.",
+    "deleteAccountTipsTitle1": "Bitte beachten Sie, dass Ihr Konto nicht wirklich gelöscht wurde, sondern in einen Zustand versetzt wurde, in dem es gelöscht und nicht wiederhergestellt werden kann. Folgende Aktionen werden durchgeführt:",
+    "deleteAccountTitle": "Warnung! Nach der Deaktivierung des Kontos ist eine Wiederherstellung nicht möglich!",
+    "emailVerified": "E-Mail-Verifizierung erfolgreich",
+    "emailVerifyBroken": "Die Überprüfung des Links ist fehlgeschlagen. Bitte stellen Sie sicher, dass der Link in der E-Mail korrekt ist.",
+    "emailVerifyFailed": "E-Mail-Verifizierung fehlgeschlagen",
+    "forgot": {
+      "title": "Passwort vergessen"
+    },
+    "institute": {
+      "none": "Keine angehörige Organisationseinheit"
+    },
+    "login": {
+      "accountMascotTip": "Willkommen, willkommen ^_^",
+      "accountMinLength": "Benutzername/E-Mail muss mindestens 4 Zeichen lang sein.",
+      "accountPlaceholder": "Benutzername/E-Mail",
+      "accountRequired": "Bitte geben Sie Ihren Benutzernamen/E-Mail-Adresse ein.",
+      "captchaPlaceholder": "Bestätigungscode",
+      "failMascotTip": "Fehlgeschlagen, schlecht ja x_x",
+      "passwordMascotTip": "Sieh nicht, sieh nicht >_<",
+      "passwordMinLength": "Passwort mindestens 8 Zeichen",
+      "passwordPlaceholder": "Passwort",
+      "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
+      "passwordTooWeak": "Das Passwort muss zwischen 8 und 40 Zeichen lang sein, mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.",
+      "success": "Anmeldung erfolgreich, willkommen zurück",
+      "successMascotTip": "Willkommen zurück ^_^",
+      "title": "Anmelden"
+    },
+    "logout": "Abmelden",
+    "oauth": {
+      "xdu": {
+        "title": "West-Elektro Einheitliche Identitätsauthentifizierung"
+      }
+    },
+    "register": {
+      "accountMaxLength": "Benutzername maximal 32 Zeichen",
+      "accountMinLength": "Benutzername mindestens 4 Zeichen",
+      "accountPattern": "Der Benutzername muss eine Kombination aus Groß- und Kleinbuchstaben, Zahlen und Unterstrichen sein.",
+      "accountPlaceholder": "Benutzername",
+      "accountRequired": "Bitte geben Sie Ihren Benutzernamen ein.",
+      "emailInvalid": "E-Mail-Format ist nicht korrekt",
+      "emailPlaceholder": "E-Mail",
+      "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+      "nicknameMaxLength": "Spitzname maximal 32 Zeichen",
+      "nicknameMinLength": "Spitzname mindestens 2 Zeichen",
+      "nicknamePlaceholder": "Spitzname",
+      "nicknameRequired": "Bitte füllen Sie den Spitznamen aus.",
+      "passwordMinLength": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "passwordPlaceholder": "Passwort",
+      "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
+      "passwordTooWeak": "Das Passwort muss zwischen 8 und 40 Zeichen lang sein, mindestens einen Großbuchstaben, einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.",
+      "success": "Registrierung erfolgreich, willkommen in der Welt von CTF!",
+      "tips": "Noch kein Konto? Jetzt registrieren!",
+      "title": "Registrierung"
+    },
+    "resendVerifyEmail": "Erneut die Bestätigungsmail senden",
+    "settings": {
+      "delete": {
+        "title": "Konto löschen und verschwinden"
+      },
+      "info": {
+        "account": "Benutzername",
+        "avatarUploadFailed": "Profilbild-Upload fehlgeschlagen",
+        "description": "Startseiteninhalt",
+        "email": "E-Mail",
+        "emailInvalid": "E-Mail-Format ist nicht korrekt",
+        "emailNotVerified": "Deine E-Mail-Adresse wurde noch nicht verifiziert, daher sind einige Funktionen eingeschränkt.",
+        "emailRequired": "Bitte geben Sie Ihre E-Mail-Adresse ein.",
+        "nickname": "Spitzname",
+        "nicknameRequired": "Bitte geben Sie Ihren Spitznamen ein.",
+        "title": "Benutzerinformation"
+      },
+      "institute": {
+        "title": "Organisation"
+      },
+      "oauth": {
+        "title": "Drittpartei-Zertifizierung"
+      },
+      "password": {
+        "confirmPassword": "Erneut neues Passwort eingeben",
+        "confirmPasswordMismatch": "Die beiden eingegebenen Passwörter stimmen nicht überein.",
+        "confirmPasswordRequired": "Bitte geben Sie das neue Passwort erneut ein.",
+        "newPassword": "Neues Passwort",
+        "newPasswordRequired": "Bitte geben Sie das neue Passwort ein.",
+        "oldPassword": "Altes Passwort",
+        "oldPasswordRequired": "Bitte geben Sie das alte Passwort ein.",
+        "success": "Änderung erfolgreich, bitte melden Sie sich erneut an",
+        "title": "Passwort ändern"
+      },
+      "title": "Benutzereinstellungen"
+    },
+    "verifyingEmail": "E-Mail-Adresse wird überprüft"
+  },
+  "admin": {
+    "about": {
+      "failedToFetchLicense": "Plattformlizenzabruch fehlgeschlagen",
+      "title": "Über die Rückkehr zum Terminal"
+    },
+    "captcha": {
+      "difficulty": "Überprüfungsgrad",
+      "image": "Bildverarbeitung",
+      "pow": "Proof of Work",
+      "select": "Wählen Sie einen Validator",
+      "title": "Captcha-Schutz",
+      "validator": "Validator",
+      "validatorRequired": "Muss Validator angegeben werden"
+    },
+    "cluster": {
+      "available": "Normalbetrieb, Cluster-API verfügbar",
+      "data": {
+        "nodeInfo": {
+          "architecture": "Architektur",
+          "bootID": "ID starten",
+          "containerRuntimeVersion": "Container-Laufzeit",
+          "kernelVersion": "Kernel-Version",
+          "kubeProxyVersion": "Kube Proxy",
+          "kubeletVersion": "Kubelet",
+          "machineID": "Maschinen-ID",
+          "operatingSystem": "Betriebssystem",
+          "osImage": "Veröffentlichung",
+          "systemUUID": "System-UUID"
+        }
+      },
+      "disconnectNode": "Knoten trennen",
+      "failedToFetchNodes": "Fehler beim Abrufen der Cluster-Knoteninformationen",
+      "nodeInfo": "Knoteninformation",
+      "nodeNetwork": "Netzwerkzustand",
+      "nodeResources": "Knotenressourcen",
+      "refreshNode": "Aktualisieren der Knotenstatus",
+      "selectNode": "Knoten auswählen, um detaillierte Informationen zu sehen",
+      "title": "Clusterverwaltung",
+      "unavailable": "Cluster ist offline, Status nicht verfügbar",
+      "updateNode": "Aktualisierungsnode"
+    },
+    "description": "Plattformverwaltungspanel",
+    "edit": {
+      "title": "Plattformeinstellungen bearbeiten"
+    },
+    "email": {
+      "enabled": "E-Mail aktivieren",
+      "host": "E-Mail-Serveradresse",
+      "hostRequired": "Bitte geben Sie die E-Mail-Serveradresse ein.",
+      "password": "SMTP-Passwort für die Absender-E-Mail-Adresse",
+      "passwordRequired": "Bitte geben Sie Ihr Passwort ein.",
+      "port": "Port",
+      "portRangeNotMatch": "Portnummer im Bereich 1 - 65535",
+      "portRequired": "Bitte füllen Sie den Port aus.",
+      "resetEmailBody": "Passwort-Reset-E-Mail-Inhalt",
+      "resetEmailBodyRequired": "Bitte füllen Sie den Inhalt der E-Mail zum Zurücksetzen des Passworts aus.",
+      "resetEmailSubject": "Passwort-Reset-E-Mail-Titel",
+      "resetEmailSubjectRequired": "Bitte füllen Sie den Betreff der E-Mail zum Zurücksetzen des Passworts aus",
+      "sender": "Absender Name",
+      "senderRequired": "Bitte geben Sie den Namen des Absenders ein.",
+      "title": "E-Mail-Einstellungen",
+      "tls": "Verschlüsselungsmethode",
+      "tlsRequired": "Bitte wählen Sie die Verschlüsselungsmethode",
+      "username": "Absender-E-Mail",
+      "usernameRequired": "Bitte geben Sie die E-Mail-Adresse für den Versand ein.",
+      "verifyEmailBody": "Bestätigungsmail-Inhalt",
+      "verifyEmailBodyRequired": "Bitte füllen Sie den Inhalt der Bestätigungsmail aus",
+      "verifyEmailSubject": "Bestätigungsmail-Titel",
+      "verifyEmailSubjectRequired": "Bitte füllen Sie den Betreff der Bestätigungsmail aus"
+    },
+    "logs": {
+      "empty": "Nach dem Starten des Streamings werden die Protokolle hier angezeigt. Bitte öffnen Sie sie mit Vorsicht, wenn das Protokollvolumen groß ist.",
+      "emptyTips": "Zeige nur die Protokolle des heutigen Tages an, die auf dem Serverzeit basieren. Für andere Protokolle laden Sie bitte die Protokolldatei herunter, um eine Prüfung durchzuführen.",
+      "failedToFetchLogsList": "Fehler beim Abrufen der Protokollliste",
+      "socketClosed": "Protokoll-Pipeline wurde unterbrochen, die Verbindung wird automatisch wiederhergestellt...",
+      "start": "Protokollstreaming starten",
+      "stop": "Protokollstreaming beenden",
+      "streamingEnabled": "Die Protokolle werden gerade in Echtzeit gestreamt...",
+      "title": "Plattformprotokoll"
+    },
+    "media": {
+      "title": "Medienspeicher-Einstellungen"
+    },
+    "oauth": {
+      "title": "Drittanbieter-Zertifizierung"
+    },
+    "permissionDenied": "Zugriff verweigert",
+    "platform": {
+      "fetchNotReady": "Die vollständige Konfiguration wird noch abgerufen, die Aktualisierung wird verweigert.",
+      "updateFailed": "Plattformkonfigurationsaktualisierung fehlgeschlagen",
+      "updateSuccess": "Plattformkonfigurationsaktualisierung erfolgreich"
+    },
+    "statistics": {
+      "challenges": "Aufgabenzustand",
+      "comingGames": "Aktive Wettbewerbe",
+      "endedGames": "beendete Spiele",
+      "fetchFailed": "Plattformdaten konnten nicht abgerufen werden",
+      "games": "Wettkampf",
+      "inGameChallenges": "Anzahl der Aufgaben im Wettbewerb",
+      "inProgressGames": "Laufende Wettkämpfe",
+      "instituteUsers": "Benutzerorganisationsverteilung",
+      "others": "Andere",
+      "pendingGames": "Noch nicht begonnene Spiele",
+      "solvedSubmissions": "Korrekte Einreichungsanzahl",
+      "submissions": "Teilnehmerübermittlung",
+      "title": "Plattformstatistik",
+      "totalChallenges": "Gesamtthemenzahl",
+      "totalGames": "Veranstaltung durchführen",
+      "totalSubmissions": "Gesamtzahl der Einreichungen",
+      "totalUsers": "Registrierte Benutzer",
+      "trainings": "Übungsplatz",
+      "users": "Plattformbenutzer",
+      "validUsers": "Aktive Benutzer"
+    },
+    "sync": {
+      "title": "Verteilte Ressourcenfreigabe"
+    },
+    "title": "Verwaltung",
+    "users": {
+      "title": "Benutzerliste"
+    }
+  },
+  "article": {
+    "by": "Veröffentlicht von {{ name }}",
+    "createdAt": "Veröffentlicht am {{ time }}",
+    "loading": "Mädchen betet an...",
+    "unknownPublisher": "Unbekannt",
+    "updatedAt": "Aktualisiert am {{ time }}"
+  },
+  "bulletin": {
+    "contentPlaceholder": "Ankündigungsinhalt",
+    "contentRequired": "Bitte füllen Sie den Inhaltsverzeichnis des Ankündigung aus.",
+    "create": "Erstellen",
+    "deleteSuccess": "Löschung erfolgreich",
+    "enableComment": "Kommentarbereich öffnen",
+    "fetchFailed": "Das Abrufen der Ankündigungsliste ist fehlgeschlagen",
+    "loading": "Laden...",
+    "noMore": "Keine Ankündigungen, schau dir etwas anderes an",
+    "pinned": "Fixieren",
+    "title": "Ankündigung",
+    "titlePlaceholder": "Ankündigungstitel",
+    "titleRequired": "Bitte füllen Sie den Ankündigungstitel aus"
+  },
+  "calendar": {
+    "addBy": "Von {{ name }} hinzugefügt",
+    "create": "Erstellen",
+    "createEvent": "Erstellung einer Turnierbenachrichtigung",
+    "createFailed": "Erstellung fehlgeschlagen",
+    "createSuccess": "Erstellung erfolgreich",
+    "day": {
+      "fri": "fünf",
+      "mon": "Eins",
+      "sat": "Sechs",
+      "sun": "Tag",
+      "thu": "Vier",
+      "tue": "Zwei",
+      "wed": "Drei"
+    },
+    "delete": "Löschen",
+    "deleteFailed": "Löschung fehlgeschlagen",
+    "deleteSuccess": "Löschung erfolgreich",
+    "edit": "Bearbeiten",
+    "editEvent": "Wettbewerbsankündigung bearbeiten",
+    "endAtRequired": "Bitte wählen Sie die Endzeit",
+    "endTime": "Endzeit",
+    "eventLinkPlaceholder": "Wettbewerbslink",
+    "eventLinkRequired": "Bitte füllen Sie den Wettbewerbslink aus.",
+    "eventNamePlaceholder": "Wettbewerbsname",
+    "eventNameRequired": "Bitte geben Sie den Namen des Wettbewerbs ein.",
+    "fetchFailed": "Fehler beim Abrufen des Wettkampfkalenders",
+    "games": "Monatssportveranstaltung",
+    "gotoEventHomePage": "Teilnehmen",
+    "introPlaceholder": "Wettbewerbsbeschreibung",
+    "introRequired": "Bitte füllen Sie die Wettbewerbsbeschreibung aus.",
+    "jumpToNextMonth": "nächster Monat",
+    "jumpToNextYear": "nächstes Jahr",
+    "jumpToPrevMonth": "letzten Monat",
+    "jumpToPrevYear": "Vorjahr",
+    "jumpToToday": "Springen Sie zu heute",
+    "noGames": "In diesem Monat gibt es keine Wettkämpfe, genieße es also.",
+    "save": "speichern",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "saveSuccess": "Speichern erfolgreich",
+    "scrollToView": "Scrollen Sie nach unten, um den Kalender zu sehen.",
+    "selectGameToSeeDetail": "Wählen Sie auf der linken Seite ein Event aus, um Details zu sehen.",
+    "startAtRequired": "Bitte wählen Sie die Startzeit aus.",
+    "startEndTime": "Start- und Endzeit",
+    "startTime": "Startzeit",
+    "unknown": "Unbekannt"
+  },
+  "captcha": {
+    "calculating": "Berechnung läuft...",
+    "enabled": "Aktivieren Sie die Captcha-Schutz",
+    "loadFailed": "Laden fehlgeschlagen",
+    "loading": "Laden...",
+    "minLength": "Bestätigungscode mindestens 4 Stellen",
+    "placeholder": "Bestätigungscode",
+    "reload": "Unklar? Wechseln Sie",
+    "required": "Bitte geben Sie den Bestätigungscode ein."
+  },
+  "docs": {
+    "forVersion": "für die Version",
+    "intro": "Einführung",
+    "title": "Entwicklerdokumentation",
+    "titleTips": "Rückkehr zum Terminal - Entwicklerdokumentation"
+  },
+  "errors": {
+    "401": "Bitte melden Sie sich zuerst an.",
+    "403": "Berechtigung unzureichend, Zugriff verweigert",
+    "404": "Ressource nicht vorhanden",
+    "412": "Vorbedingungsfehler",
+    "418": "Ich bin eine Teekanne.",
+    "500": "Interner Serverfehler",
+    "502": "Systemabsturz",
+    "401Tip": "Auch beim Guten tun sollte man sich nennen.",
+    "403Tip": "Es gibt immer eine Tür, die für dich geschlossen ist.",
+    "404Tip": "Das Leben ist immer ein bisschen absurd.",
+    "412Tip": "Vielleicht hast du etwas vergessen?",
+    "418Tip": "Mit einer Teekanne Kaffee zu brühen, wird wirklich keinen Geschmacksverlust verursachen.",
+    "500Tip": "Der Server ist in Rauch aufgegangen.",
+    "502Tip": "Zufällig einen Ops-Mitarbeiter opfern",
+    "gotoDocs": "Wenn du Systemadministrator bist, kannst du dir das anschauen.",
+    "unknown": "Unbekannter Fehler",
+    "unknownTip": "Du bist in die Leere gestürzt."
+  },
+  "form": {
+    "changeAvatar": "Deckblatt",
+    "copy": "translate from zh-cn to de-de:\n\nKopieren",
+    "cover": "Deckblatt",
+    "create": "Erstellen",
+    "createFailed": "Erstellung fehlgeschlagen",
+    "createSuccess": "Erstellung erfolgreich",
+    "delete": "Löschen",
+    "deleteFailed": "Löschung fehlgeschlagen",
+    "edit": "Bearbeiten",
+    "loading": "Laden...",
+    "logo": "Kennzeichen",
+    "print": "Drucken",
+    "save": "speichern",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "saveSuccess": "Speichern erfolgreich"
+  },
+  "game": {
+    "accessPolicy": {
+      "open": "Offene Wettbewerbe"
+    },
+    "admin": {
+      "answer": {
+        "notAccessableWhenInGame": "Die Lösung kann erst nach Beendigung des Wettbewerbs veröffentlicht werden."
+      },
+      "automate": {
+        "linkedDevices": "Verbundene Geräte",
+        "noDevicesLinked": "Kein verbundenes Gerät",
+        "tips1": "Verbinden Sie sich mit der folgenden WebSocket-Adresse, um das Plattformereignis-API-Abonnement aufzunehmen. Hier finden Sie die Anleitung zur Integration der Ereignis-API:",
+        "tips2": "Bitte beachten Sie, dass die Event-API nur über Token authentifiziert wird. Gehen Sie sorgfältig vor, um das Leaken dieses Links zu verhindern.",
+        "title": "Ereignis-Push"
+      },
+      "awardRate": "Erstblut-Bonuspunkte-Verhältnis",
+      "briefPlaceholder": "Wettkampfübersicht",
+      "canRegisterAfterStarted": "Nach dem Start des Wettbewerbs kann teilgenommen werden.",
+      "description": "Wettkampf-Management-Panel",
+      "edit": {
+        "title": "编辑信息"
+      },
+      "enableAudit": "Team-Überprüfung aktivieren",
+      "events": {
+        "title": "Ereignis-Dashboard"
+      },
+      "frozen": "Einfrieren",
+      "hammer": {
+        "shouldGoto": "Administrator, bitte gehen Sie zum Administrationspanel, um die Spieler-Feedback-Informationen zu überprüfen.",
+        "title": "Teilnehmerfeedback"
+      },
+      "hidden": "Verstecken",
+      "manageChallenges": "Verwalten von Wettbewerbsaufgaben",
+      "namePlaceholder": "Wettkampfnamen",
+      "offline": "Aktivieren der Offline-Turnierfunktionen",
+      "statistics": {
+        "title": "Statistiken"
+      },
+      "teamSizePlaceholder": "Teammaximale Größe",
+      "teams": {
+        "title": "Teilnehmende Mannschaften"
+      },
+      "title": "Verwaltung"
+    },
+    "adminCanNotTakePartIn": "Administrator kann nicht teilnehmen.",
+    "adminMode": "Administrator-Modus",
+    "archive": "Wettbewerbsarchiv",
+    "archiveAtRequired": "Bitte wählen Sie die Archivierungszeit",
+    "archivedGotoTraining": "Archiviert, bitte gehen Sie zum Übungsplatz.",
+    "briefPlaceholder": "Wettbewerbsübersicht",
+    "briefRequired": "Bitte füllen Sie die Wettbewerbsbeschreibung aus.",
+    "canNotParticipate": "Nicht teilnahmeberechtigt",
+    "canRegisterAfterStarted": "Nach dem Spielstart Registrierung zulassen",
+    "challenge": {
+      "answer": "Lösung",
+      "calmDownBeforeStartEnv": "Die Warenkisten werden neu organisiert.",
+      "checker": "Bewertung",
+      "confirmUnlockHint": "Möchten Sie wirklich {{ cost }} Punkte ausgeben, um diese Anleitung zu entsperren?",
+      "content": "Themeninhalt",
+      "contentRequired": "Bitte geben Sie den Inhalt des Themas ein.",
+      "create": "Aufgabe erstellen",
+      "createFailed": "Erstellung der Aufgabe fehlgeschlagen",
+      "createHint": "Neue Aufforderung erstellen...",
+      "createHintCost": "Teilungsaufwand",
+      "enter": "Herausforderungen meistern",
+      "envIsRunning": "Umgebung aktiviert",
+      "envNotStart": "Titel kann Online-Umgebung öffnen",
+      "fetchChallengeFailed": "Die Aufgabenstellung konnte nicht abgerufen werden.",
+      "fetchEnvFailed": "Fehler beim Abrufen der Umgebungsinformationen für die Aufgabe",
+      "fetchFailed": "Die Abfrage der Aufgabenliste ist fehlgeschlagen.",
+      "fetchFilesFailed": "Das Abrufen des Aufgabenanhangs ist fehlgeschlagen.",
+      "fetchHintFailed": "Die Abfrage der Hinweise für die Aufgabe ist fehlgeschlagen.",
+      "files": "Datei",
+      "hammer": "Hammer",
+      "hammerInput": "Bitte geben Sie das Problem ein, das Sie melden möchten...",
+      "hammerTips": "Die hier gesendeten Nachrichten werden zusammen mit dem Status der Aufgabe an den Aufgabenersteller weitergeleitet. Der Aufgabenersteller kann hier antworten oder dich über andere Kanäle kontaktieren.",
+      "hammerTips2": "Bitte beachten Sie, dass Sie nur eine Nachricht senden können, bevor der Aufgabenersteller antwortet. Senden Sie daher Ihre Frage in einem einzigen Schritt und führen Sie hier keinen Live-Chat durch.",
+      "hint": "Hinweis",
+      "hintRequired": "Bitte füllen Sie den Hinweisinhalt aus.",
+      "info": "Grundinformationen",
+      "instances": "Beispiel",
+      "list": "Themenliste",
+      "maxScore": "Anfangspunktzahl",
+      "minScore": "Mindestpunktzahl",
+      "name": "Aufgabentitel",
+      "nameRequired": "Bitte geben Sie den Titel des Themas ein",
+      "noChallenges": "Nichts.",
+      "noHints": "Der Fragesteller hat noch keine Hinweise veröffentlicht, überlegen Sie es sich noch einmal.",
+      "notStarted": "Noch kein Spiel begonnen, bitte warten Sie ruhig.",
+      "otherChallengeEnvIsRunning": "Ein anderer Aufgabenumgebung läuft gerade.",
+      "publishChallenge": "Veröffentlichung",
+      "publishTips": "Möchten Sie diese Aufgabe wirklich veröffentlichen? Nach der Veröffentlichung können die Teilnehmer die Aufgabe beim Start lösen, und während der Veröffentlichung kann die Aufgabe nicht mehr geändert werden.",
+      "scoreDecay": "Dämpfungsanzahl",
+      "scoreRange": "Bewertungsbereich",
+      "settings": "Einstellungen",
+      "solved": "Aufgelöst",
+      "startEnv": "Starten!",
+      "statistics": "Statistik",
+      "tag": "Stichwort",
+      "tagPlaceholder": "Titel-Tags, getrennt durch `/`, wobei das erste Tag die Kategorie des Titels wird...",
+      "tagRequired": "Bitte geben Sie die Aufgabenbezeichnung ein",
+      "terminal": "Endgerät",
+      "title": "Aufgabe",
+      "unknownTag": "Unbekannt",
+      "unlockHintFailed": "Entsperrhinweis fehlgeschlagen",
+      "welcome": "Willkommen beim Wettbewerb",
+      "withdraw": "Ausfahrt",
+      "withdrawTips": "Möchten Sie diese Frage wirklich offline schalten? Nach dem Offline-Schalten können Sie den Inhalt der Frage ändern und sie erneut online stellen."
+    },
+    "cover": {
+      "uploadFailed": "Cover-Upload fehlgeschlagen",
+      "uploaded": "Aktualisierte Turnier-Cover"
+    },
+    "create": "Neu",
+    "createFailed": "Erstellung fehlgeschlagen",
+    "enableAudit": "Team-Überprüfung aktivieren",
+    "end": "Wettkampf beendet",
+    "endAtRequired": "Bitte wählen Sie die Endzeit",
+    "ended": "Beendet",
+    "exit": "Ausgang",
+    "fetchFailed": "Fehler beim Abrufen der Wettbewerbsliste",
+    "frozen": "Wettbewerb wurde eingefroren",
+    "hidden": "Wettbewerb ausgeblendet",
+    "introPlaceholder": "Wettbewerbsbeschreibung",
+    "introRequired": "Bitte füllen Sie die Wettbewerbsbeschreibung aus.",
+    "introduction": {
+      "empty": "Der Veranstalter war faul und hat nichts geschrieben.",
+      "fetchFailed": "Fehler beim Abrufen der Turnierinformationen",
+      "title": "Wettkampfregeln",
+      "updateFailed": "Aktualisierung der Turnierbeschreibung fehlgeschlagen"
+    },
+    "loading": "Laden...",
+    "logo": {
+      "uploadFailed": "Symbol-Upload fehlgeschlagen",
+      "uploaded": "Aktualisierte Turniersymbole"
+    },
+    "miscSettings": "Verschiedene Einstellungen",
+    "namePlaceholder": "Wettbewerbsname",
+    "nameRequired": "Bitte geben Sie den Namen des Wettbewerbs ein.",
+    "noGameHosted": "Noch kein Turnier veranstaltet",
+    "noNotifications": "Noch keine Benachrichtigung",
+    "notification": {
+      "contentPlaceholder": "Benachrichtigungsinhalt",
+      "contentRequired": "Bitte füllen Sie den Inhalt der Mitteilung aus.",
+      "createFailed": "Erstellung fehlgeschlagen",
+      "createSuccess": "Erstellung erfolgreich",
+      "deleteFailed": "Löschung fehlgeschlagen",
+      "deleteSuccess": "Löschung erfolgreich",
+      "fetchFailed": "Fehler beim Abrufen von Turnierbenachrichtigungen",
+      "titlePlaceholder": "Benachrichtigungstitel",
+      "titleRequired": "Bitte füllen Sie den Titel aus"
+    },
+    "offline": "Live-Wettbewerb",
+    "otherGames": "Nebensächliche Wettkämpfe",
+    "pending": "Nicht gestartet",
+    "register": "Offene Registrierung",
+    "registerArchiveTime": "Registrierungs- und Archivierungszeit",
+    "registerAtRequired": "Bitte wählen Sie die Registrierungszeit",
+    "registerEnded": "Es ist zu spät, um an dem Wettbewerb teilzunehmen.",
+    "registerNotStarted": "Registrierungszeit noch nicht erreicht",
+    "scoreboard": {
+      "fetchError": "Punkteliste konnte nicht abgerufen werden",
+      "selectInstitute": "Organisation auswählen...",
+      "title": "Punktetabelle"
+    },
+    "seeOtherInteresting": "Schau dir etwas anderes an.",
+    "start": "Wettkampf beginnt",
+    "startAtRequired": "Bitte wählen Sie die Startzeit aus.",
+    "startEndTime": "Start- und Endzeit",
+    "started": "In Bearbeitung",
+    "team": {
+      "canNotJoin": "unzulässig für die Teilnahme",
+      "collab": "{{ size }} Mann-Teams-Turnier",
+      "coming": "Auftauchen!",
+      "create": {
+        "accept": "Ich stimme den obigen Vereinbarungen zu und möchte weitermachen.",
+        "acceptRules": "Ich habe die Teilnahmeanweisungen sorgfältig gelesen und stimme den Wettbewerbsregeln zu.",
+        "accepted": "Akzeptiert, zum Schließen die Esc-Taste drücken.",
+        "acceptedRequired": "Du musst die Teilnahmebedingungen akzeptieren.",
+        "chuunibyouGenerator": "Super-Zwischenstufe-Krankheit-Generator (Vorsicht beim Gebrauch)",
+        "customDisabled": "Einzelwettbewerbe können nur mit Benutzernamen teilnehmen.",
+        "failed": "Erstellung des Teams fehlgeschlagen",
+        "name": "Teamname",
+        "nameMaxLength": "Teamname darf maximal 32 Zeichen lang sein",
+        "namePlaceholder": "Wähle einen coolen Namen aus~",
+        "nameRequired": "Bitte geben Sie den Teamnamen ein.",
+        "reject": "Geht nicht, ich habe Einwände.",
+        "rulesTitle": "Teilnahmebedingungen",
+        "title": "Mannschaft erstellen"
+      },
+      "join": {
+        "title": "Beitreten zur Mannschaft"
+      },
+      "joinFirst": "Bitte zuerst teilnehmen.",
+      "joinGame": "Anmeldung für den Wettbewerb",
+      "joinTips": "Schon in einem Team? Klicke hier, um beizutreten.",
+      "loginThenBack": "Nach dem Anmelden teilnehmen",
+      "manage": {
+        "title": "Meine Mannschaft anzeigen"
+      },
+      "noTeamParticipated": "Noch keine Mannschaft hat teilgenommen.",
+      "sizeMaxExceeded": "Teammitglieder dürfen maximal 100 sein, bitte überlegen Sie die Verwendung von gemeinsamen Konten.",
+      "sizeMinExceeded": "Teammitglieder mindestens ein",
+      "sizeRequired": "Bitte geben Sie die Teamgrößenbeschränkung ein.",
+      "solo": "Einzelturnier",
+      "title": "Team-Details"
+    },
+    "teamSizePlaceholder": "Teamgrößenbeschränkung",
+    "timerTips": "Es sind noch {{ period }}",
+    "title": "Wettkampf",
+    "unknown": "Unbekannt",
+    "weight": "Gewicht",
+    "writeup": {
+      "title": "Lösung"
+    },
+    "writeupsOnlyOpenWhenArchived": "Die Lösungen werden erst nach der Archivierung des Wettbewerbs veröffentlicht!"
+  },
+  "instance": {
+    "box": "Dynamische Umgebungsverbindung",
+    "connected": "WSRX ist verbunden",
+    "connecting": "Verbindung wird hergestellt...",
+    "copyLocalAddr": "Lokale Adresse kopieren",
+    "copyWsrxAddr": "WSRX-Adresse kopieren",
+    "defaultApiAddr": "Auf Standardadresse zurücksetzen",
+    "disconnected": "WSRX nicht verbunden",
+    "downloadWsrx": "Herunterladen von WSRX",
+    "instanceCount": "{{ count }} Container",
+    "jumpToChallenge": "Zu der entsprechenden Aufgabe springen",
+    "needLocalDaemon": "Um die lokale WSRX-Verbindung nutzen zu können, ist eine Verbindung erforderlich.",
+    "notInThisGame": "Nicht das Wettbewerbs-Thema, klicken Sie zum Stoppen.",
+    "openLocalAddr": "Direkt öffnen",
+    "pending": "Warten auf lokale Autorisierung",
+    "renew": "Zeit verlängern",
+    "retryLinkWsrx": "Versuch, Verbindung herzustellen",
+    "stop": "Umweltbeendigung",
+    "wsrxDisconnected": "WSRX-Client ist offline.",
+    "wsrxSettings": "Änderung der WSRX-Verbindungseinstellungen"
+  },
+  "loading": {
+    "0": "Wird repariert, um Bit-Flips zu beheben, die durch kosmischen Strahlung verursacht wurden...",
+    "1": "versucht zu beweisen, dass P != NP...",
+    "2": "Versucht, RSA 4096 zu zerlegen...",
+    "3": "Division durch 0...",
+    "4": "Netzwerkverbindung herstellen, um mehr physischen Speicher herunterzuladen...",
+    "5": "Sortieren von 1 und 0...",
+    "6": "Maschinelles Lernen Netzwerke werden aufgelistet...",
+    "7": "Importieren von Künstlicher Dummheit...",
+    "8": "Alice und Bob's One-Time Pads werden gerade entschlüsselt...",
+    "9": "Versuche, VIM zu verlassen...",
+    "10": "Daten werden mit einer Lupe und einem Bleistift gerettet...",
+    "11": "Emacs und Vim werden gerade zu Ed verlinkt...",
+    "12": "Trainieren des Branch-Vorhersage-Algorithmus...",
+    "13": "Treffer der zeitgesteuerten Zwischenspeicherung...",
+    "14": "Durchführung des Trickser-Algorithmus...",
+    "15": "Beitreten zum großen Sprachmodellhalluzination..."
+  },
+  "magic": {
+    "illustration": "Illustration",
+    "source": "Quelle"
+  },
+  "permission": {
+    "basic": "Benutzer",
+    "bulletin": "Ankündigung veröffentlicht",
+    "calendar": "Wettkampfkalender veröffentlicht",
+    "devOps": "Betrieb und Wartung",
+    "game": "Wettkampfmanagement",
+    "host": "Wettkampfveranstaltung",
+    "statistics": "Statistiken",
+    "user": "Benutzerverwaltung",
+    "verified": "Überprüft",
+    "wiki": "Wissensdatenbankmanagement"
+  },
+  "platform": {
+    "accept": "translate from zh-cn to de-de:\n\n好的",
+    "clearNotifications": "Nachrichten löschen",
+    "cookiePolicy": "Wir verwenden keine Cookies, um Sie zu verfolgen.",
+    "diyBox": "Sprache und Hell-/Dunkel-Thema",
+    "error": "Plattformfehler",
+    "followSystem": "Synchronisierungssystemdesign",
+    "form": {
+      "footerInfoPlaceholder": "Plattform-Fußzeilen-Copyright-Information",
+      "footerInfoTitle": "Plattform-Fußzeile Copyright-Informationen",
+      "footerUrlPlaceholder": "Urheberrecht-Informationen-Link",
+      "footerUrlTitle": "版权信息链接",
+      "hideMaker": "Entwicklerinformationen ausblenden",
+      "hideMakerDisabled": "Deine Lizenz erlaubt nicht, die Entwicklerinformationen zu verbergen.",
+      "nameTitle": "Plattformname",
+      "recordPlaceholder": "Chinesische MIIT-Registrierungsnummer (Nicht für den Service in der VR China erforderlich)",
+      "recordTitle": "中国工信部备案号",
+      "subjectInfoTitle": "Startseite Untertitel",
+      "subjectUrlTitle": "Untertitel-Link"
+    },
+    "hello": "Hallo",
+    "name": "Rückkehr zum Terminal",
+    "noNotifications": "Keine ungelesenen Nachrichten",
+    "notImplemented": "Nicht geschrieben, keine Eile",
+    "notImplementedTips": "Einen zufälligen RX geopfert, die Produktivität steigt!",
+    "notImplementedTips1": "Nicht als Kumpel, selbst der Esel im Produktionsteam wagt nicht so viel zu ruhen.",
+    "notImplementedTips2": "Hier ist dieser Herr RX, ein wahrer Genie im Aufbau von Dungberg-Code.",
+    "notImplementedTips3": "Du hast recht, aber RX ist ein ein ein ein...",
+    "notificationBox": "Hinweis",
+    "offline": "Der Backend-Server scheint offline zu sein. Bitte aktualisieren Sie die Seite. Wenn dieser Fehler wiederholt auftritt, wenden Sie sich bitte an den Support.",
+    "ok": "translate from zh-cn to de-de:\n\n好的",
+    "reject": "Nicht geht.",
+    "return": "Rückkehr",
+    "subject": "Für alle Schönheiten der Welt kämpfen",
+    "systemTheme": "Systemthema",
+    "unavailable": "System offline",
+    "underMaintenance": "Wartung...",
+    "versionMismatch": "Dienstversionen stimmen nicht überein ({{frontend}} != {{backend}}), der Server funktioniert möglicherweise nicht ordnungsgemäß, bitte wenden Sie sich an die Betriebsabteilung zur Untersuchung.",
+    "yes": "Bestätigen"
+  },
+  "shell": {
+    "canNotSwitchDir": "Die Remote-Host hat die Verzeichnisschnittüberquerung abgelehnt.",
+    "cat": {
+      "error": "Fehler beim Lesen der Datei.",
+      "fileNotFound": "Die Datei existiert nicht.",
+      "man": "Dateiinhalt anzeigen.",
+      "noFileSpecified": "Keine angegebene Datei.",
+      "permissionDenied": "Berechtigung unzureichend, Zugriff verweigert.",
+      "tooManyFiles": "Zu viele Parameter."
+    },
+    "clear": {
+      "man": "Leeren Sie den Ausgabeinhalt des Terminals und beginnen Sie neu."
+    },
+    "commandInvalid": "Befehl enthält Syntaxfehler",
+    "commandNotFound": "Unbekannter Befehl: {{command}}",
+    "echo": {
+      "man": "原始输出你的任何输入。"
+    },
+    "help": {
+      "man": "Hilfeinformationen ausgeben."
+    },
+    "helpCommands": "Du hast folgende Befehle zur Verfügung:",
+    "helpTips": "Geben Sie in diesem Terminal direkt das formatkonforme {{flag}} ein, um es zu übermitteln. Sie können {{help}} eingeben, um weitere Hilfe zur Verwendung zu erhalten.",
+    "ls": {
+      "error": "Die Dateiliste kann nicht abgerufen werden.",
+      "invalidOption": "Unbekannte Option: `{{option}}`; Bitte beachten Sie, dass der ls-Befehl ein Alias für /bin/ls -l ist und keine anderen Parameteroptionen akzeptiert.",
+      "invalidPath": "Die Remote-Host hat den Verzeichnisdurchlauf abgelehnt.",
+      "man": "Liste der aktuellen Aufgabendateien.",
+      "noSuchFileOrDirectory": "Die Datei existiert nicht.",
+      "permissionDenied": "Berechtigung unzureichend, Zugriff verweigert.",
+      "tooManyArgs": "Zu viele Parameter."
+    },
+    "noChallengeSpecified": "Nicht im Titel.",
+    "noChallengeSpecifiedTips": "Nur im Themenumfeld können Anhänge heruntergeladen werden.",
+    "noGameSpecified": "Nicht in irgendeinem Wettbewerb.",
+    "noGameSpecifiedTips": "Shell kann nur im Themenumfeld verwendet werden.",
+    "service": {
+      "delayTips": "Verlängern Sie die Umgebungsdauer des Themas. Nach dem Start der Themenumgebung beträgt die Standarddienstzeit eine Stunde. Wenn Sie der Meinung sind, dass diese Zeit nicht ausreicht, können Sie diesen Befehl verwenden, um sie zu verlängern.",
+      "error": "Fehler beim Abrufen der Umgebungskonfiguration für die Aufgabe",
+      "man": "Verwaltung von Umweltdienstleistungen.",
+      "needAction": "Eine bestimmte Aktion muss angegeben werden.",
+      "noActionPerformed": "Es wird keine Aktion ausgeführt.",
+      "noEnv": "Dieses Problem bietet keine Online-Umgebung.",
+      "onlyOneInstancePersist": "Zur gleichen Zeit kann nur ein Aufgabendienst gestartet werden.",
+      "onlyOneInstancePersistChoice": "Sollen andere Aufgabendienste gestoppt und der aktuelle Aufgabendienst gestartet werden?",
+      "onlyOneInstancePersistTips": "Derzeit ausgeführte Dienste",
+      "restartTips": "Starten Sie den Aufgabenumgebungsdienst neu, wenn Sie die Aufgabenumgebung versehentlich beschädigt haben.",
+      "startTips": "Starten Sie den Themenumgebungsdienst.",
+      "statusTips": "Anzeige des Umgebungsdienststatus für Aufgaben.",
+      "stopTips": "Stoppen Sie den Umgebungsdienst für die Aufgabe. Dieser Befehl kann hier den Umgebungsdienst für andere Aufgaben stoppen.",
+      "usage": "Verwendungsweise:"
+    },
+    "welcome": "Willkommen bei {{shell}}!",
+    "wget": {
+      "downloading": "Download-Fortschritt",
+      "failed": "Dateidownload fehlgeschlagen",
+      "fileNotFound": "Die Datei existiert nicht.",
+      "man": "Laden Sie die angegebene Datei herunter.",
+      "success": "Download erfolgreich, bitte speichern Sie die Datei in dem im Browser geöffneten Fenster.",
+      "usage": "Verwendung: wget \"<Dateiname>\""
+    },
+    "whoami": {
+      "man": "Zeigt den Benutzernamen an, der mit der aktuellen effektiven User-ID verknüpft ist."
+    }
+  },
+  "theme": {
+    "colorScheme": "Hell-Dunkel-Thema",
+    "language": "语言 / Sprache"
+  },
+  "training": {
+    "briefPlaceholder": "Übungsplatz-Einführung",
+    "briefRequired": "Bitte füllen Sie die Beschreibung des Übungsplatzes aus.",
+    "challenge": {
+      "welcome": "Übungsplatz-Einführung"
+    },
+    "create": "Neu",
+    "createSuccess": "Übungsplatz {{name}} erfolgreich erstellt",
+    "failedToFetchGames": "Fehler beim Abrufen der Wettbewerbsliste",
+    "failedToFetchPlaygrounds": "Das Abrufen der Übungsplatzliste ist fehlgeschlagen",
+    "gameNotArchived": "Wettkampf noch nicht archiviert",
+    "list": "Übungsplatzliste",
+    "namePlaceholder": "Übungsplatzname",
+    "nameRequired": "Bitte geben Sie den Namen des Übungsplatzes ein.",
+    "noArchivedGames": "Nicht archivierte vergangene Wettbewerbe",
+    "noPlaygrounds": "kein Übungsgelände",
+    "openForever": "Dauerhaft geöffnet",
+    "selectPlayground": "Beginne mit dem heutigen Training!",
+    "title": "Übung"
+  },
+  "user": {
+    "fetchTeamsFailed": "Fehlgeschlagener Versuch, Teilnahmeerfahrung zu erhalten",
+    "gameJournal": "Als Mitglied des {{team}} habe ich an {{game}} teilgenommen.",
+    "introductionTitle": "Persönliche Vorstellung",
+    "joinedGamesTitle": "Wettkampferfahrung",
+    "moreJournal": "Leben ist, forschen nie aufzuhören...",
+    "noDescription": "Dieser große Hacker hat nichts hinterlassen...",
+    "noInstitute": "Keiner Organisation beigetreten",
+    "registeredAt": "Beitreten um {{time}}"
+  },
+  "wiki": {
+    "contentPlaceholder": "Artikelinhalt",
+    "contentRequired": "Bitte füllen Sie den Artikelinhalt aus.",
+    "deleteSuccess": "Löschung erfolgreich",
+    "draft": "Entwurf",
+    "enableComment": "Kommentarbereich öffnen",
+    "fetchTocFailed": "Fehler beim Abrufen des Inhaltsverzeichnisses des Artikels",
+    "pathPlaceholder": "Artikelpfad",
+    "pathRequired": "Bitte füllen Sie den Artikelpfad aus.",
+    "published": "Veröffentlichung",
+    "selectWikiToRead": "Was möchtest du heute lernen?",
+    "title": "Wissen",
+    "titlePlaceholder": "Artikelüberschrift",
+    "titleRequired": "Bitte füllen Sie den Artikeltitel aus"
+  }
+}

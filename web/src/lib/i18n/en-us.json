@@ -655,7 +655,9 @@
     "retryLinkWsrx": "Attempt to Connect",
     "stop": "Termination Environment",
     "wsrxDisconnected": "WSRX client is offline.",
-    "wsrxSettings": "Modify WSRX Connection Settings"
+    "wsrxSettings": "Modify WSRX Connection Settings",
+    "jumpToChallenge": "Go to the corresponding question",
+    "notInThisGame": "This is not the competition question, click to stop."
   },
   "loading": {
     "0": "Fixing bit flips caused by cosmic rays...",

@@ -1,8 +1,7 @@
 import { api_root } from "@api";
-import { getChallengeAttachments, getChallengeEnv } from "@api/game";
+import { type ChallengeEnv, getChallengeAttachments, getChallengeEnv } from "@api/game";
 import { wsrx } from "@lib/wsrx";
 import type { Challenge } from "@models/challenge";
-import type { EnvConfig } from "@models/instance";
 import { accountStore } from "@storage/account";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -29,7 +28,7 @@ passiveSupport({
 
 export default function (props: { challenge?: Challenge; solved?: boolean; solves?: number; inGame?: boolean }) {
   const [files, setFiles] = createSignal([] as { folder: "mapped" | "static"; file: string }[]);
-  const [env, setEnv] = createSignal(null as EnvConfig | null);
+  const [env, setEnv] = createSignal(null as ChallengeEnv | null);
   let cachedChallengeId = 0;
   createEffect(() => {
     if (props.challenge && props.challenge.id !== cachedChallengeId) {
@@ -72,7 +71,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
   });
   const localAddr = createMemo(() => {
     if (instance()) {
-      return wsrx.traffic().find((t) => t.instance_id === instance()!.id)?.local_addr ?? null;
+      return wsrx.traffic().find((t) => t.wsrx === instance()!.wsrx)?.local_addr ?? null;
     }
     return null;
   });
@@ -157,7 +156,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                   <Switch fallback={<span class="opacity-80 flex-1 truncate">{t("game.challenge.envNotStart")}</span>}>
                     <Match when={instance()}>
                       <span class="flex-1 truncate">
-                        {t("game.challenge.envIsRunning")}: {localAddr() ?? instance()?.proxy_addr}
+                        {t("game.challenge.envIsRunning")}: {localAddr() ?? instance()?.wsrx}
                       </span>
                     </Match>
                     <Match when={userExplicitInstance()}>
@@ -180,12 +179,23 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                     }
                   >
                     <Match when={instance()}>
-                      <Button ghost size="sm" square>
-                        <span class="icon-[fluent--copy-20-regular] w-5 h-5 text-success" />
-                      </Button>
-                      <Button ghost size="sm" square>
-                        <span class="icon-[fluent--open-20-regular] w-5 h-5 text-success" />
-                      </Button>
+                      <For each={env()?.images}>
+                        {(image) => (
+                          <Show when={image.port}>
+                            <Button ghost size="sm" title={image.description}>
+                              <Switch>
+                                <Match when={image.service_type === "http"}>
+                                  <span class="text-info">HTTP</span>
+                                </Match>
+                                <Match when={image.service_type === "tcp"}>
+                                  <span class="text-warning">TCP</span>
+                                </Match>
+                              </Switch>
+                              <span>{image.port}</span>
+                            </Button>
+                          </Show>
+                        )}
+                      </For>
                       <Divider class="h-8" direction="horizontal" />
                       <Button ghost size="sm" square>
                         <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />

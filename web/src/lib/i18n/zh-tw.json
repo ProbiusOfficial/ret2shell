@@ -655,7 +655,9 @@
     "retryLinkWsrx": "嘗試連接",
     "stop": "終止環境",
     "wsrxDisconnected": "WSRX 用戶端離線了。",
-    "wsrxSettings": "修改 WSRX 連接設定"
+    "wsrxSettings": "修改 WSRX 連接設定",
+    "jumpToChallenge": "跳轉到對應的題目",
+    "notInThisGame": "非本比賽題目，點擊停止"
   },
   "loading": {
     "0": "正在修復宇宙射線引發的比特翻轉...",

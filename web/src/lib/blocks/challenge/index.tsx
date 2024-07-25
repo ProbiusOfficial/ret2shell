@@ -115,19 +115,21 @@ function BottomPanel(props: {
                 </Show>
               }
             >
-              <Card contentClass="p-2 flex flex-row space-x-2 items-center">
-                <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary" />
-                <Show
-                  when={props.challenge?.hidden}
-                  fallback={
-                    <>
-                      <span>{t("game.challenge.withdrawTips")}</span>
-                    </>
-                  }
-                >
-                  <span>{t("game.challenge.publishTips")}</span>
-                </Show>
-                <Button level="primary" size="sm">
+              <Card contentClass="p-2 flex flex-col space-x-2 max-w-96">
+                <span class="inline-block space-x-2">
+                  <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary align-middle" />
+                  <Show
+                    when={props.challenge?.hidden}
+                    fallback={
+                      <>
+                        <span>{t("game.challenge.withdrawTips")}</span>
+                      </>
+                    }
+                  >
+                    <span>{t("game.challenge.publishTips")}</span>
+                  </Show>
+                </span>
+                <Button level="primary" size="sm" class="self-end">
                   {t("platform.accept")}
                 </Button>
               </Card>

@@ -56,6 +56,10 @@ export class Service implements Command {
   }
 
   async start(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
+    if (!env) {
+      io.error(t("shell.service.noEnv")!);
+      return 1;
+    }
     const inst = wsrx.instances().find((instance) => instance.user_id === accountStore.id);
     if (inst) {
       if (inst.challenge_id === challenge.id) {
@@ -82,10 +86,18 @@ export class Service implements Command {
   }
 
   async stop(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
+    if (!env) {
+      io.error(t("shell.service.noEnv")!);
+      return 1;
+    }
     return 0;
   }
 
   async restart(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
+    if (!env) {
+      io.error(t("shell.service.noEnv")!);
+      return 1;
+    }
     return 0;
   }
 
@@ -101,12 +113,12 @@ export class Service implements Command {
       `     Loaded: loaded (~/${challenge.name}/checkers/${d_service_name}.service; ${ansiColors.yellow("disabled")}; preset: ${ansiColors.green("enabled")})`
     );
     io.println(
-      `     Active: ${inst ? `${ansiColors.greenBright("active (running)")} since ${inst.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}` : ansiColors.red("inactive (dead)")}`
+      `     Active: ${inst ? `${ansiColors.greenBright.bold("active (running)")} since ${inst.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}` : ansiColors.red.bold("inactive (dead)")}`
     );
     if (inst) {
       for (const image of env.images) {
         io.println(
-          `       ${ansiColors.greenBright("└─")} ${image.name}.service: ${ansiColors.greenBright("active (running)")} - ${image.description}`
+          `       ${ansiColors.dim("└─")} ${image.name}.service: ${ansiColors.greenBright.bold("active (running)")} - ${image.description}`
         );
         io.println(
           `          Connection: ${ansiColors.blue(link(`wsrx://open?url=${inst.wsrx}&port=${image.port}`, `wsrx://open?url=${inst.wsrx}&port=${image.port}`))}`
@@ -118,6 +130,10 @@ export class Service implements Command {
   }
 
   async delay(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
+    if (!env) {
+      io.error(t("shell.service.noEnv")!);
+      return 1;
+    }
     return 0;
   }
 }

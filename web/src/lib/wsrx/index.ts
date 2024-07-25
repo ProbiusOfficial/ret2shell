@@ -46,3 +46,9 @@ export class Wsrx {
 }
 
 export const wsrx = new Wsrx();
+
+export function getWsrxLink(wsrx: string, port: number) {
+  const prefix = location.protocol === "https:" ? "wss" : "ws";
+  const host = location.host;
+  return `${prefix}://${host}/api/traffic/${wsrx}?port=${port}`;
+}

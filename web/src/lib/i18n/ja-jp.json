@@ -590,7 +590,9 @@
     "retryLinkWsrx": "接続を試みる",
     "stop": "環境の終了",
     "wsrxDisconnected": "WSRX クライアントがオフラインになりました。",
-    "wsrxSettings": "WSRX 接続設定の変更"
+    "wsrxSettings": "WSRX 接続設定の変更",
+    "jumpToChallenge": "対応する問題にジャンプ",
+    "notInThisGame": "このコンテストの問題ではありません。クリックして停止します。"
   },
   "loading": {
     "0": "宇宙線によるビットフリップの修復中...",

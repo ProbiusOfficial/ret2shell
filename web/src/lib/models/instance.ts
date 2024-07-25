@@ -1,10 +1,5 @@
 import type { DateTime } from "luxon";
 
-export type EnvConfig = {
-  port: number;
-  images: { tag: string; cpu: number; mem: string }[];
-};
-
 export enum InstanceState {
   Pending = 0,
   Running = 1,

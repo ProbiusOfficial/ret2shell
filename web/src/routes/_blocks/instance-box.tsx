@@ -1,5 +1,7 @@
 import { WsrxState, wsrx } from "@lib/wsrx";
+import { useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
+import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
@@ -14,6 +16,7 @@ import { For, Show, createEffect, createSignal, onCleanup, untrack } from "solid
 export function InstanceBoxContent() {
   const [connecting, setConnecting] = createSignal(false);
   const [showSettings, setShowSettings] = createSignal(false);
+  const [_, setSearchParams] = useSearchParams();
 
   function retryConnect() {
     wsrx.tryConnect().catch(() => {});
@@ -151,48 +154,47 @@ export function InstanceBoxContent() {
               <span class="flex-1" />
               <Timer
                 class="opacity-60"
-                end={instance.started_at.plus({
+                end={instance.created_at.plus({
                   hours: instance.renew_count + 1,
                 })}
               />
             </Button>
             <TimeProgress
               class="px-2"
-              startAt={instance.started_at}
-              endAt={instance.started_at.plus({
+              startAt={instance.created_at}
+              endAt={instance.created_at.plus({
                 hours: instance.renew_count + 1,
               })}
             />
             <div class="flex flex-row space-x-2">
-              <Button ghost size="sm" title={t("instance.copyWsrxAddr")}>
-                <span class="icon-[fluent--copy-20-regular] w-5 h-5 text-success" />
-                <span class="truncate text-nowrap opacity-60">WSRX</span>
-              </Button>
-              <Button
-                ghost
-                size="sm"
-                title={wsrx.connected() ? t("instance.copyLocalAddr") : t("instance.needLocalDaemon")}
-                disabled={wsrx.connected() === null}
+              <Show
+                when={instance.game_id === gameStore.current?.id}
+                fallback={
+                  <Button size="sm" square ghost title={t("instance.notInThisGame")}>
+                    <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-warning" />
+                    <span class="flex-1 truncate">{instance.challenge_name}</span>
+                  </Button>
+                }
               >
-                <span class="icon-[fluent--copy-20-regular] w-5 h-5 text-info" />
-                <span class="truncate text-nowrap opacity-60">LOCAL</span>
-              </Button>
-              <Button
-                size="sm"
-                square
-                ghost
-                title={wsrx.connected() ? t("instance.openLocalAddr") : t("instance.needLocalDaemon")}
-                disabled={wsrx.connected() === null}
-              >
-                <span class="icon-[fluent--open-20-regular] w-5 h-5 text-info" />
-              </Button>
-              <div class="flex-1" />
-              <Button size="sm" square ghost title={t("instance.renew")}>
-                <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-info" />
-              </Button>
-              <Button size="sm" square ghost title={t("instance.stop")}>
-                <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
-              </Button>
+                <Button
+                  ghost
+                  class="flex-1 overflow-hidden"
+                  size="sm"
+                  title={t("instance.jumpToChallenge")}
+                  onClick={() => {
+                    setSearchParams({ challenge: instance.challenge_id });
+                  }}
+                >
+                  <span class="icon-[fluent--open-20-regular] w-5 h-5 text-success" />
+                  <span class="flex-1 truncate">{instance.challenge_name}</span>
+                </Button>
+                <Button size="sm" square ghost title={t("instance.renew")}>
+                  <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-info" />
+                </Button>
+                <Button size="sm" square ghost title={t("instance.stop")}>
+                  <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
+                </Button>
+              </Show>
             </div>
           </Card>
         )}

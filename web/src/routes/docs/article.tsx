@@ -9,10 +9,7 @@ import tocJson from "./contents/toc.json";
 
 type DocNode = {
   title: {
-    en_us: string;
-    zh_cn: string;
-    zh_tw: string;
-    ja_jp: string;
+    [key: string]: string;
   };
   children?: { [key: string]: DocNode };
 };
@@ -41,10 +38,14 @@ export default function () {
     setTitle(node.title[themeStore.locale]);
     try {
       // console.log(comps);
-      const match = comps[`./contents/${path}/index.${themeStore.locale}.md`];
+      let locale = themeStore.locale;
+      if (comps[`./contents/${path}/index.${locale}.md`] === undefined) {
+        locale = "zh_cn";
+      }
+      const match = comps[`./contents/${path}/index.${locale}.md`];
       const content = (await match()) as { default: string };
       setContent(content.default);
-    } catch (_se) {
+    } catch (_e) {
       // console.error(e);
       setNotFound(true);
     }
