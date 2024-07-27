@@ -3,6 +3,7 @@ import type { Challenge } from "@models/challenge";
 import type { Game, HostType } from "@models/game";
 import { type Team, TeamState } from "@models/team";
 import type { SearchParamsOption } from "ky";
+import type { DateTime } from "luxon";
 import api, { api_root } from ".";
 import type { Extra } from "../models/extra";
 import type { Hint } from "../models/hint";
@@ -204,4 +205,14 @@ export async function createTeam(
   }
 ) {
   return await api.post(`${api_root}/game/${game_id}/team`, { json: team }).json<Team>();
+}
+
+export type EventDeviceInfo = {
+  client: string;
+  address: string;
+  connected_at: DateTime;
+};
+
+export async function getGameDevices(game_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/device`).json<EventDeviceInfo[]>();
 }

@@ -373,7 +373,8 @@
         "noDevicesLinked": "No hay dispositivos conectados",
         "tips1": "Conecta a la siguiente dirección WebSocket para suscribirte a la API de eventos de la plataforma. Puedes encontrar aquí el método de integración con la API de eventos:",
         "tips2": "Tenga en cuenta que la API de eventos solo se autoriza mediante Token, tenga cuidado de no divulgar este enlace.",
-        "title": "Notificación de eventos"
+        "title": "Notificación de eventos",
+        "fetchDevicesFailed": ""
       },
       "awardRate": "Proporción de puntos de recompensa por la primera sangre",
       "briefPlaceholder": "Introducción del concurso",

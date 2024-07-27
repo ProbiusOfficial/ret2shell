@@ -373,7 +373,8 @@
         "noDevicesLinked": "Aucun appareil connecté",
         "tips1": "Connectez-vous à l'adresse WebSocket suivante pour accéder à l'API d'abonnement aux événements de la plateforme. Vous pouvez trouver ici la méthode de connexion à l'API des événements :",
         "tips2": "Attention, l'API des événements n'est authentifiée que par Token, soyez vigilant à ne pas divulguer ce lien.",
-        "title": "Push d'événements"
+        "title": "Push d'événements",
+        "fetchDevicesFailed": ""
       },
       "awardRate": "Ratio de points de récompense pour la première élimination",
       "briefPlaceholder": "Présentation de la compétition",

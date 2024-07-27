@@ -435,7 +435,8 @@
         "noDevicesLinked": "沒有已連接的設備",
         "tips1": "連接下述 WebSocket 地址即可接入平台事件 API 訂閱。你可以在這裡找到事件 API 的對接方法：",
         "tips2": "請注意，事件 API 只透過 Token 進行鑑權，謹防此連結洩漏。",
-        "title": "事件推送"
+        "title": "事件推送",
+        "fetchDevicesFailed": ""
       },
       "awardRate": "一血獎勵分數比例",
       "briefPlaceholder": "比賽簡介",

@@ -22,7 +22,7 @@ export default function SideBar() {
           activeMatch="exact"
           class="w-full"
           ghost
-          href={`/games/${gameStore.current?.id}/admin/events`}
+          href={`/games/${gameStore.current?.id}/admin/monitor`}
           justify="start"
         >
           <span class="icon-[fluent--flash-flow-20-regular] w-5 h-5" />
@@ -70,7 +70,7 @@ export default function SideBar() {
           activeMatch="exact"
           class="w-full"
           ghost
-          href={`/games/${gameStore.current?.id}/admin/automate`}
+          href={`/games/${gameStore.current?.id}/admin/events`}
           justify="start"
         >
           <span class="icon-[fluent--cloud-flow-20-regular] w-5 h-5" />

@@ -12,6 +12,9 @@ resolver = "2"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
+async-trait = "0.1"
+
+r2s-config = { version = "3", path = "../config" }
 
 [lib]
 path = "src/lib.rs"

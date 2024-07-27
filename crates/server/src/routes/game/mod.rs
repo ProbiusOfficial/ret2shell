@@ -439,6 +439,7 @@ async fn stop_self_env(
 struct ConnectedDevice {
   client: String,
   address: String,
+  #[serde(with = "ts_seconds")]
   connected_at: DateTime<Utc>,
 }
 

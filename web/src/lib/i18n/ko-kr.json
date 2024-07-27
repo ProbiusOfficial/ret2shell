@@ -373,7 +373,8 @@
         "noDevicesLinked": "연결된 장치가 없습니다",
         "tips1": "WebSocket 주소에 연결하면 플랫폼 이벤트 API 구독에 접속할 수 있습니다. 이벤트 API의 연동 방법은 여기서 찾을",
         "tips2": "주의하세요, 이벤트 API는 Token을 통해서만 인증되므로, 이 링크가 유출되지 않도록 조심하세요.",
-        "title": "이벤트 푸시"
+        "title": "이벤트 푸시",
+        "fetchDevicesFailed": ""
       },
       "awardRate": "첫 킬 보너스 점수 비율",
       "briefPlaceholder": "대회 소개",

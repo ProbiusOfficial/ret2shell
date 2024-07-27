@@ -373,7 +373,8 @@
         "noDevicesLinked": "Kein verbundenes Gerät",
         "tips1": "Verbinden Sie sich mit der folgenden WebSocket-Adresse, um das Plattformereignis-API-Abonnement aufzunehmen. Hier finden Sie die Anleitung zur Integration der Ereignis-API:",
         "tips2": "Bitte beachten Sie, dass die Event-API nur über Token authentifiziert wird. Gehen Sie sorgfältig vor, um das Leaken dieses Links zu verhindern.",
-        "title": "Ereignis-Push"
+        "title": "Ereignis-Push",
+        "fetchDevicesFailed": ""
       },
       "awardRate": "Erstblut-Bonuspunkte-Verhältnis",
       "briefPlaceholder": "Wettkampfübersicht",

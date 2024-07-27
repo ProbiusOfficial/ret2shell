@@ -32,7 +32,6 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 pub mod auditor;
 pub mod auth;
-pub mod automate;
 pub mod bucket;
 pub mod cache;
 pub mod captcha;
@@ -60,7 +59,6 @@ pub enum ConfigError {
 pub struct GlobalConfig {
   pub auditor: Option<auditor::Config>,
   pub auth: Option<auth::Config>,
-  pub automate: Option<automate::Config>,
   pub bucket: Option<bucket::Config>,
   pub cache: Option<cache::Config>,
   pub captcha: Option<captcha::Config>,

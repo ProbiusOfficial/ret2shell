@@ -3,11 +3,25 @@ use serde::{Deserialize, Serialize};
 
 use crate::traits::Merge;
 
-#[derive(Serialize, Deserialize, Clone, Debug, FromJsonQueryResult, PartialEq, Eq)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub struct OAuthKey {
-  pub service: String,
-  pub client_key: Option<String>,
-  pub secret: Option<String>,
+  pub id: String,
+  pub key: String,
+}
+
+impl OAuthKey {
+  pub fn desensitize(self) -> Self {
+    OAuthKey {
+      key: "".to_owned(),
+      ..self
+    }
+  }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+pub struct OAuthKeys {
+  pub xdu: Option<OAuthKey>,
+  pub xmu: Option<OAuthKey>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, FromJsonQueryResult, PartialEq, Eq)]
@@ -15,21 +29,16 @@ pub struct Config {
   pub signing_key: String,
   pub buffer_time: i64,
   pub expires_time: i64,
-  pub oauth_keys: Option<Vec<OAuthKey>>,
+  pub oauth_keys: Option<OAuthKeys>,
 }
 
 impl Config {
   pub fn desensitize(self) -> Self {
     Config {
       signing_key: "".to_owned(),
-      oauth_keys: self.oauth_keys.map(|keys| {
-        keys
-          .into_iter()
-          .map(|key| OAuthKey {
-            secret: None,
-            ..key
-          })
-          .collect()
+      oauth_keys: self.oauth_keys.map(|keys| OAuthKeys {
+        xdu: keys.xdu.map(|key| key.desensitize()),
+        xmu: keys.xmu.map(|key| key.desensitize()),
       }),
       ..self
     }

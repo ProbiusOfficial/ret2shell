@@ -435,7 +435,8 @@
         "noDevicesLinked": "No connected devices",
         "tips1": "Connect to the following WebSocket address to subscribe to the platform event API. You can find the method for integrating with the event API here:",
         "tips2": "Please note that the Event API is authorized only through Token, so be cautious to prevent this link from being leaked.",
-        "title": "Event Push"
+        "title": "Event Push",
+        "fetchDevicesFailed": ""
       },
       "awardRate": "First Blood Reward Score Ratio",
       "briefPlaceholder": "Competition Overview",
