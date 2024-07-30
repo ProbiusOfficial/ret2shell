@@ -54,12 +54,7 @@ impl MigrationTrait for Migration {
               .on_delete(ForeignKeyAction::SetNull),
           )
           .col(ColumnDef::new(Oauth::Provider).string_len(63).not_null())
-          .col(
-            ColumnDef::new(Oauth::AuthKey)
-              .string_len(127)
-              .not_null()
-              .unique_key(),
-          )
+          .col(ColumnDef::new(Oauth::AuthKey).string_len(127).not_null())
           .col(ColumnDef::new(Oauth::Data).json_binary())
           .col(
             ColumnDef::new(Oauth::CreatedAt)
