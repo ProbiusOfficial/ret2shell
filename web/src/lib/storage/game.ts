@@ -22,7 +22,7 @@ export const [gameStore, setGameStore] = createStore({
 export type GameStoreType = typeof gameStore;
 
 export function appendGames(games: Game[]) {
-  const ids = new Set(gameStore.games.map((g) => g.id));
+  const ids = new Set(games.map((g) => g.id));
   setGameStore({
     games: [...gameStore.games.filter((g) => !ids.has(g.id)), ...games],
   });

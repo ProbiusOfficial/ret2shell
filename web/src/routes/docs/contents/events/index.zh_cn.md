@@ -4,14 +4,14 @@
 
 ## 快速开始
 
-我们提供了一个与 [NoneBot 2](https://nonebot.dev/) 集成的插件，如果你不想看下面的实现细节，你可以直接部署 [这个](https://github.com/ret2shell/ret2nonebot)。
+~~我们提供了一个与 [NoneBot 2](https://nonebot.dev/) 集成的插件，如果你不想看下面的实现细节，你可以直接部署 [这个](https://github.com/ret2shell/ret2nonebot)。~~ 先咕咕咕了。
 
 ## 连接
 
 事件 API 的连接地址可以在比赛的管理页面复制，大概长这个样子：
 
 ```
-wss://<domain.ret.sh.cn>/api/event/connect?game_id=<subscribed game>&token=<access token>
+wss://<domain.ret.sh.cn>/api/event/connect?game_id=<subscribed game>&token=<access token>&client=<client name>
 ```
 
 事件 API 是按照比赛区分的，一个订阅链接只会订阅一场比赛的相关事件。平台最多可以承接 128 个事件订阅连接，这个连接数被所有比赛共享，如果你同时举办 128 场比赛，并且每场比赛都接入事件服务，才会超出限额，因此在正常情况下是一定够用的，不需要关注这个限额。
