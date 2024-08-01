@@ -40,14 +40,17 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()
     .route("/code", get(get_account_code).post(generate_account_code))
     .route(
-      "/profile",
-      get(get_profile).patch(change_profile).delete(delete_self),
-    )
-    .route(
       "/bind",
       get(get_oauth_status)
         .post(bind_oauth_account)
         .delete(unbind_oauth_account),
+    )
+    .route_layer(middleware::from_fn(permission_required_all!(
+      Permission::Verified
+    )))
+    .route(
+      "/profile",
+      get(get_profile).patch(change_profile).delete(delete_self),
     )
     .route("/verify", post(verify_email).patch(resend_verify_email))
     .route_layer(middleware::from_fn_with_state(
