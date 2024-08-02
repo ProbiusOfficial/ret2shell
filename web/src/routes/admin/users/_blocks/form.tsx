@@ -6,6 +6,7 @@ import type { Ip } from "@models/ip";
 import { Permission, type User, permissionToString } from "@models/user";
 import { createForm, email, required, setValue, setValues } from "@modular-forms/solid";
 import { A } from "@solidjs/router";
+import { accountStore, refreshInstitutes } from "@storage/account";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
@@ -16,9 +17,10 @@ import Editor from "@widgets/editor";
 import Input from "@widgets/input";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
+import Select from "@widgets/select";
 import Tag from "@widgets/tag";
 import type { HTTPError } from "ky";
-import { For, Show, createEffect, createSignal, untrack } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
 
 export type UserForm = {
   account: string;
@@ -26,6 +28,7 @@ export type UserForm = {
   email: string;
   avatar: string;
   description: string;
+  institute_id?: number;
   hidden: boolean;
   banned: boolean;
   permBasic: boolean;
@@ -55,6 +58,7 @@ export default function (compProps: {
           email: compProps.editSource?.email || "",
           avatar: compProps.editSource?.avatar || "",
           description: compProps.editSource?.description || "",
+          institute_id: compProps.editSource?.institute_id || undefined,
           hidden: compProps.editSource?.hidden || false,
           banned: compProps.editSource?.banned || false,
           permBasic: compProps.editSource?.permissions.includes(Permission.Basic) || false,
@@ -126,6 +130,15 @@ export default function (compProps: {
     }
   }
 
+  const institutesSelect = createMemo(() => {
+    return accountStore.institutes.map((i) => ({
+      value: i.id.toString(),
+      label: i.name,
+      icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
+    }));
+  });
+  refreshInstitutes();
+
   function onSubmit(result: UserForm) {
     const permissions: Permission[] = [];
     if (result.permBasic) permissions.push(Permission.Basic);
@@ -146,6 +159,7 @@ export default function (compProps: {
       email: result.email,
       avatar: result.avatar,
       description: result.description,
+      institute_id: result.institute_id || null,
       hidden: result.hidden,
       banned: result.banned,
       permissions,
@@ -205,25 +219,42 @@ export default function (compProps: {
                 )}
               </Field>
             </div>
-            <Field
-              name="email"
-              validate={[
-                required(t("account.settings.info.emailRequired")!),
-                email(t("account.settings.info.emailInvalid")!),
-              ]}
-            >
-              {(field, props) => (
-                <Input
-                  icon={<span class="icon-[fluent--mail-20-regular] w-5 h-5" />}
-                  title={t("account.settings.info.email")}
-                  placeholder={t("account.settings.info.email")}
-                  {...props}
-                  value={field.value}
-                  error={field.error}
-                  required
-                />
-              )}
-            </Field>
+            <div class="flex flex-row space-x-2">
+              <Field
+                name="email"
+                validate={[
+                  required(t("account.settings.info.emailRequired")!),
+                  email(t("account.settings.info.emailInvalid")!),
+                ]}
+              >
+                {(field, props) => (
+                  <Input
+                    class="flex-1 min-w-0"
+                    icon={<span class="icon-[fluent--mail-20-regular] w-5 h-5" />}
+                    title={t("account.settings.info.email")}
+                    placeholder={t("account.settings.info.email")}
+                    {...props}
+                    value={field.value}
+                    error={field.error}
+                    required
+                  />
+                )}
+              </Field>
+              <Field name="institute_id" type="number">
+                {(field) => (
+                  <Select
+                    class="flex-1 min-w-0"
+                    label={t("admin.users.institute")}
+                    placeholder={t("admin.users.selectInstitute")}
+                    items={institutesSelect()}
+                    onValueChange={(v) => {
+                      setValue(form, "institute_id", (v.value.at(0) && Number.parseInt(v.value.at(0)!)) || undefined);
+                    }}
+                    value={field.value ? [field.value.toString()] : undefined}
+                  />
+                )}
+              </Field>
+            </div>
           </div>
           <Field name="avatar">
             {(field, props) => (

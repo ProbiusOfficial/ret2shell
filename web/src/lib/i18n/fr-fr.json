@@ -291,7 +291,7 @@
       "sortBy": "Tri...",
       "id": "ID",
       "account": "Nom d'utilisateur",
-      "institute": "boîte aux lettres",
+      "institute": "organisation",
       "registeredAt": "Date d'inscription",
       "fetchUserFailed": "Échec de la récupération des détails de l'utilisateur",
       "warningDelete": "Voulez-vous vraiment supprimer cet utilisateur ? C'est une suppression définitive !",

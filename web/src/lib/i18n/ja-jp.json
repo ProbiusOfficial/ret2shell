@@ -291,7 +291,7 @@
       "sortBy": "ソート中...",
       "id": "IDを日本語に翻訳する:\n\nID",
       "account": "ユーザー名",
-      "institute": "メールボックス",
+      "institute": "組織",
       "registeredAt": "登録時間",
       "fetchUserFailed": "ユーザー詳細情報の取得に失敗しました",
       "warningDelete": "本当にこのユーザーを削除しますか？これは本当の削除です！",

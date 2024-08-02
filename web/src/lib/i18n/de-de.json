@@ -291,7 +291,7 @@
       "sortBy": "Sortieren...",
       "id": "ID",
       "account": "Benutzername",
-      "institute": "E-Mail",
+      "institute": "Organisation",
       "registeredAt": "Registrierungszeit",
       "fetchUserFailed": "Fehler beim Abrufen der Benutzerdetails",
       "warningDelete": "Möchten Sie diesen Benutzer wirklich löschen? Das ist eine echte Löschung!",

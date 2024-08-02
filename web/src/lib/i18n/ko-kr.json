@@ -291,7 +291,7 @@
       "sortBy": "정렬 중...",
       "id": "ID",
       "account": "사용자 이름",
-      "institute": "이메일",
+      "institute": "조직",
       "registeredAt": "가입 시간",
       "fetchUserFailed": "사용자 상세 정보 가져오기 실패",
       "warningDelete": "정말로 이 사용자를 삭제하시겠습니까? 이것은 진짜 삭제입니다!",

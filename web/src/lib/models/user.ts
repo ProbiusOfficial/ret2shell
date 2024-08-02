@@ -22,7 +22,7 @@ export type User = {
   email: string | null;
   description: string | null;
   avatar: string | null;
-  institute_id: number;
+  institute_id: number | null;
   institute_name?: string;
   permissions: Permission[];
   hidden: boolean;

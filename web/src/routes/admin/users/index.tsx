@@ -94,7 +94,7 @@ function UserList() {
           ]}
           onValueChange={(v) => {
             setSearchParams({ order: (v.value.at(0) || "id") as OrderType });
-            refreshUsers();
+            setTimeout(refreshUsers, 100);
           }}
           value={order() ? [order()!] : undefined}
         />
@@ -105,7 +105,7 @@ function UserList() {
           items={institutesSelect()}
           onValueChange={(v) => {
             setSearchParams({ institute: (v.value.at(0) && Number.parseInt(v.value.at(0)!)) || null });
-            refreshUsers();
+            setTimeout(refreshUsers, 100);
           }}
           value={instituteId() ? [instituteId()!.toString()] : undefined}
         />
@@ -117,7 +117,7 @@ function UserList() {
           placeholder={t("admin.users.filterPlaceholder")}
           onChange={(e) => {
             setSearchParams({ filter: e.target.value });
-            refreshUsers();
+            setTimeout(refreshUsers, 100);
           }}
         />
       </h3>

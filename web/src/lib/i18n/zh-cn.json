@@ -427,7 +427,7 @@
       "sortBy": "排序...",
       "id": "ID",
       "account": "用户名",
-      "institute": "邮箱",
+      "institute": "组织",
       "registeredAt": "注册时间",
       "fetchUserFailed": "获取用户详细信息失败",
       "warningDelete": "真的要删除此用户吗？这是真正的删除！",

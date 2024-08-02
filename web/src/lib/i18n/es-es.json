@@ -291,7 +291,7 @@
       "sortBy": "Ordenar...",
       "id": "Traducir del chino (simplificado) al español:\n\nID",
       "account": "Nombre de usuario",
-      "institute": "correo electrónico",
+      "institute": "organización",
       "registeredAt": "Fecha de registro",
       "fetchUserFailed": "Error al obtener los detalles del usuario",
       "warningDelete": "¿Realmente deseas eliminar a este usuario? ¡Esta es una eliminación real!",

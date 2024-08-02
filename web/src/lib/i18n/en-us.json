@@ -356,7 +356,7 @@
       "sortBy": "Sorting...",
       "id": "translate from zh-cn to en-us:\n\nID",
       "account": "Username",
-      "institute": "Email",
+      "institute": "Organization",
       "registeredAt": "Registration Time",
       "fetchUserFailed": "Failed to retrieve user details",
       "warningDelete": "Are you sure you want to delete this user? This is a real deletion!",
