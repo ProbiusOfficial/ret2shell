@@ -55,11 +55,7 @@ macro_rules! check_enabled {
 
 impl Cluster {
   pub fn new(client: Option<Client>, config: &Config) -> Self {
-    let registry = if let Some(registry) = &config.registry {
-      Some(Registry::new(registry.clone()))
-    } else {
-      None
-    };
+    let registry = config.registry.as_ref().map(|registry| Registry::new(registry.clone()));
     Self {
       client,
       registry,
@@ -423,7 +419,7 @@ impl Cluster {
       .ok_or(ClusterError::PodNotFound(token.to_owned()))?;
     let client = check_enabled!(self.client)?;
     let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "wsrx link")?);
-    let mut pf = api.portforward(&pod.name().unwrap(), &vec![port]).await?;
+    let mut pf = api.portforward(&pod.name().unwrap(), &[port]).await?;
     let pfw = pf.take_stream(port);
     if let Some(pfw) = pfw {
       let stream = Framed::new(pfw, wsrx::proxy::MessageCodec::new());

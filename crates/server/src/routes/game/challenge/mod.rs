@@ -851,6 +851,7 @@ async fn get_challenge_env(
   }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn start_challenge_env(
   State(config): State<GlobalConfig>, State(ref bucket): State<Bucket>,
   State(cluster): State<Cluster>, State(ref cache): State<Cache>,

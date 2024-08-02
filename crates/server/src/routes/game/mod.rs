@@ -454,7 +454,7 @@ async fn get_connected_devices(
     .map(|(_, c, a, d)| ConnectedDevice {
       client: c.clone(),
       address: a.to_string(),
-      connected_at: d.clone(),
+      connected_at: *d,
     })
     .collect::<Vec<_>>();
   Ok(Json(clients))

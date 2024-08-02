@@ -164,7 +164,7 @@ impl GameBucket {
       return Err(BucketError::NeedLocking);
     }
     let challenge_config: challenge::ChallengeConfig = serde_json::from_value(challenge)?;
-    let challenge_name = deunicode_with_tofu(&challenge_config.name.as_ref(), "_")
+    let challenge_name = deunicode_with_tofu(challenge_config.name.as_ref(), "_")
       .trim()
       .to_owned()
       .to_snake_case();

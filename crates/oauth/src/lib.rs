@@ -16,61 +16,36 @@ pub struct OAuth {
 impl OAuth {
   pub fn from_config(config: &Config) -> Self {
     OAuth {
-      xdu: if let Some(key) = &config
+      xdu: config
         .oauth_keys
         .as_ref()
-        .and_then(|keys| keys.xdu.as_ref())
-      {
-        Some(adapters::xdu::OAuthProvider {
+        .and_then(|keys| keys.xdu.as_ref()).as_ref().map(|key| adapters::xdu::OAuthProvider {
           key: key.to_owned().clone(),
-        })
-      } else {
-        None
-      },
-      xmu: if let Some(key) = &config
+        }),
+      xmu: config
         .oauth_keys
         .as_ref()
-        .and_then(|keys| keys.xmu.as_ref())
-      {
-        Some(adapters::xmu::OAuthProvider {
+        .and_then(|keys| keys.xmu.as_ref()).as_ref().map(|key| adapters::xmu::OAuthProvider {
           key: key.to_owned().clone(),
-        })
-      } else {
-        None
-      },
-      jiangnan: if let Some(key) = &config
+        }),
+      jiangnan: config
         .oauth_keys
         .as_ref()
-        .and_then(|keys| keys.jiangnan.as_ref())
-      {
-        Some(adapters::jiangnan::OAuthProvider {
+        .and_then(|keys| keys.jiangnan.as_ref()).as_ref().map(|key| adapters::jiangnan::OAuthProvider {
           key: key.to_owned().clone(),
-        })
-      } else {
-        None
-      },
-      nwnu: if let Some(key) = &config
+        }),
+      nwnu: config
         .oauth_keys
         .as_ref()
-        .and_then(|keys| keys.nwnu.as_ref())
-      {
-        Some(adapters::nwnu::OAuthProvider {
+        .and_then(|keys| keys.nwnu.as_ref()).as_ref().map(|key| adapters::nwnu::OAuthProvider {
           key: key.to_owned().clone(),
-        })
-      } else {
-        None
-      },
-      taru: if let Some(key) = &config
+        }),
+      taru: config
         .oauth_keys
         .as_ref()
-        .and_then(|keys| keys.taru.as_ref())
-      {
-        Some(adapters::taru::OAuthProvider {
+        .and_then(|keys| keys.taru.as_ref()).as_ref().map(|key| adapters::taru::OAuthProvider {
           key: key.to_owned().clone(),
-        })
-      } else {
-        None
-      },
+        }),
     }
   }
 

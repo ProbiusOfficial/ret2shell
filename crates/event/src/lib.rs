@@ -12,10 +12,12 @@ pub use events::Event;
 pub mod traits;
 pub use traits::EventError;
 
+type EventClient = (i64, String, IpAddr, DateTime<Utc>);
+
 #[derive(Clone, Debug)]
 pub struct EventManager {
   tx: broadcast::Sender<EventContainer>,
-  pub clients: Arc<RwLock<Vec<(i64, String, IpAddr, DateTime<Utc>)>>>,
+  pub clients: Arc<RwLock<Vec<EventClient>>>,
 }
 
 impl Default for EventManager {
@@ -38,7 +40,7 @@ impl EventManager {
     let subscribed_time = Utc::now();
     {
       let mut clients = self.clients.write().await;
-      clients.push((id, client.clone(), ip_addr.clone(), subscribed_time.clone()));
+      clients.push((id, client.clone(), ip_addr, subscribed_time));
     }
 
     while let Ok(event) = rx.recv().await {

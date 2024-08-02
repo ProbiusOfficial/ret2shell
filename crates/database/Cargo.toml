@@ -11,12 +11,12 @@ keywords = ["ctf", "challenge", "platform", "security", "education"]
 resolver = "2"
 
 [dependencies]
-sea-orm = { version = "0.12", features = [
+sea-orm = { version = "1.0", features = [
   "sqlx-postgres",
   "runtime-tokio-rustls",
 ] }
-sea-orm-migration = "0.12"
-sea-query = "0.30"
+sea-orm-migration = "1.0"
+sea-query = "0.31"
 serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"
 serde_json = "1.0"

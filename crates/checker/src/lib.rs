@@ -106,7 +106,7 @@ impl Checker {
       return Ok(());
     }
     let context = Self::context().await?;
-    let mut sources = Self::sources(&bucket).await?;
+    let mut sources = Self::sources(bucket).await?;
 
     let unit = rune::prepare(&mut sources).with_context(&context).build()?;
     let runtime = context.runtime()?;

@@ -27,7 +27,7 @@ impl Bucket {
 
   pub async fn create(&self, game: Value) -> Result<game::GameBucket, BucketError> {
     let game_config: GameConfig = serde_json::from_value(game)?;
-    let game_name = deunicode_with_tofu(&game_config.name.as_ref(), "_")
+    let game_name = deunicode_with_tofu(game_config.name.as_ref(), "_")
       .trim()
       .to_owned()
       .to_snake_case();

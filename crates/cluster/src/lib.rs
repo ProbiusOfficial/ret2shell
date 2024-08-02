@@ -91,7 +91,6 @@ async fn check_network_policy(client: &Cluster) -> Result<(), ClusterError> {
           policy_types: Some(vec!["Egress".to_owned()]),
           ..Default::default()
         }),
-        ..Default::default()
       };
       api.create_network_policy(policy).await?;
     }
