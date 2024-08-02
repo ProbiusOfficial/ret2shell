@@ -117,7 +117,7 @@
         "nickname": "Surnom",
         "nicknameRequired": "Veuillez remplir le pseudonyme",
         "title": "Informations de l'utilisateur",
-        "accountRequired": ""
+        "accountRequired": "Veuillez saisir votre nom d'utilisateur"
       },
       "institute": {
         "title": "organisation"
@@ -293,14 +293,14 @@
       "account": "Nom d'utilisateur",
       "institute": "boîte aux lettres",
       "registeredAt": "Date d'inscription",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "Échec de la récupération des détails de l'utilisateur",
+      "warningDelete": "Voulez-vous vraiment supprimer cet utilisateur ? C'est une suppression définitive !",
+      "hidden": "Cacher",
+      "banned": "Blocage",
+      "permBasic": "Autorisations de base",
+      "permVerified": "Vérifié",
+      "ipAddresses": "Adresse IP",
+      "fetchIpAddressesFailed": "Échec de l'obtention de l'adresse IP"
     },
     "institute": {
       "title": "école/organisation",
@@ -439,7 +439,7 @@
     "confirm": "Confirmation",
     "deleteSuccess": "Suppression réussie",
     "goto": "Aller",
-    "backToList": ""
+    "backToList": "retourner à la liste"
   },
   "game": {
     "accessPolicy": {

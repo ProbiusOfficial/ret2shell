@@ -117,7 +117,7 @@
         "nickname": "ニックネーム",
         "nicknameRequired": "ニックネームを入力してください",
         "title": "ユーザー情報",
-        "accountRequired": ""
+        "accountRequired": "ユーザー名を入力してください"
       },
       "institute": {
         "title": "組織機構"
@@ -293,14 +293,14 @@
       "account": "ユーザー名",
       "institute": "メールボックス",
       "registeredAt": "登録時間",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "ユーザー詳細情報の取得に失敗しました",
+      "warningDelete": "本当にこのユーザーを削除しますか？これは本当の削除です！",
+      "hidden": "隠す",
+      "banned": "禁止",
+      "permBasic": "基本権限",
+      "permVerified": "検証済み",
+      "ipAddresses": "IPアドレス",
+      "fetchIpAddressesFailed": "IP アドレスの取得に失敗しました"
     },
     "institute": {
       "title": "学校/組織",
@@ -439,7 +439,7 @@
     "confirm": "確認",
     "deleteSuccess": "削除成功",
     "goto": "行く",
-    "backToList": ""
+    "backToList": "リストに戻る"
   },
   "game": {
     "accessPolicy": {

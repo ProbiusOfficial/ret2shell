@@ -117,7 +117,7 @@
         "nickname": "Apodo",
         "nicknameRequired": "Por favor, ingrese el apodo",
         "title": "Información del usuario",
-        "accountRequired": ""
+        "accountRequired": "Por favor, ingrese el nombre de usuario"
       },
       "institute": {
         "title": "organización"
@@ -293,14 +293,14 @@
       "account": "Nombre de usuario",
       "institute": "correo electrónico",
       "registeredAt": "Fecha de registro",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "Error al obtener los detalles del usuario",
+      "warningDelete": "¿Realmente deseas eliminar a este usuario? ¡Esta es una eliminación real!",
+      "hidden": "ocultar",
+      "banned": "Bloqueo",
+      "permBasic": "Permisos básicos",
+      "permVerified": "Verificado",
+      "ipAddresses": "Dirección IP",
+      "fetchIpAddressesFailed": "Error al obtener la dirección IP"
     },
     "institute": {
       "title": "escuela/organización",
@@ -439,7 +439,7 @@
     "confirm": "Confirmar",
     "deleteSuccess": "Eliminación exitosa",
     "goto": "前往",
-    "backToList": ""
+    "backToList": "volver a la lista"
   },
   "game": {
     "accessPolicy": {

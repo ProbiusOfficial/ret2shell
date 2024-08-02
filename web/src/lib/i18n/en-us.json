@@ -182,7 +182,7 @@
         "nickname": "Nickname",
         "nicknameRequired": "Enter Nickname",
         "title": "User Information",
-        "accountRequired": ""
+        "accountRequired": "Please enter your username"
       },
       "institute": {
         "title": "Organization"
@@ -358,14 +358,14 @@
       "account": "Username",
       "institute": "Email",
       "registeredAt": "Registration Time",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "Failed to retrieve user details",
+      "warningDelete": "Are you sure you want to delete this user? This is a real deletion!",
+      "hidden": "Hide",
+      "banned": "Banned",
+      "permBasic": "Basic Permissions",
+      "permVerified": "Verified",
+      "ipAddresses": "IP Address",
+      "fetchIpAddressesFailed": "Failed to obtain IP address"
     },
     "institute": {
       "title": "School/Organization",
@@ -504,7 +504,7 @@
     "confirm": "Confirm",
     "deleteSuccess": "Deletion successful",
     "goto": "Go",
-    "backToList": ""
+    "backToList": "return list"
   },
   "game": {
     "accessPolicy": {

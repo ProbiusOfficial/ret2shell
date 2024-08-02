@@ -182,7 +182,7 @@
         "nickname": "暱稱",
         "nicknameRequired": "請填寫暱稱",
         "title": "使用者資訊",
-        "accountRequired": ""
+        "accountRequired": "請填寫用戶名"
       },
       "institute": {
         "title": "組織機構"
@@ -358,14 +358,14 @@
       "account": "使用者名稱",
       "institute": "郵箱",
       "registeredAt": "註冊時間",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "獲取用戶詳細資訊失敗",
+      "warningDelete": "真的要刪除此用戶嗎？這是真正的刪除！",
+      "hidden": "隱藏",
+      "banned": "封鎖",
+      "permBasic": "基礎權限",
+      "permVerified": "已驗證",
+      "ipAddresses": "IP 位址",
+      "fetchIpAddressesFailed": "取得 IP 位址失敗"
     },
     "institute": {
       "title": "學校/組織",
@@ -504,7 +504,7 @@
     "confirm": "確認",
     "deleteSuccess": "刪除成功",
     "goto": "前往",
-    "backToList": ""
+    "backToList": "返回清單"
   },
   "game": {
     "accessPolicy": {

@@ -117,7 +117,7 @@
         "nickname": "닉네임",
         "nicknameRequired": "닉네임을 입력하세요.",
         "title": "사용자 정보",
-        "accountRequired": ""
+        "accountRequired": "사용자 이름을 입력하세요."
       },
       "institute": {
         "title": "조직 기관"
@@ -293,14 +293,14 @@
       "account": "사용자 이름",
       "institute": "이메일",
       "registeredAt": "가입 시간",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "사용자 상세 정보 가져오기 실패",
+      "warningDelete": "정말로 이 사용자를 삭제하시겠습니까? 이것은 진짜 삭제입니다!",
+      "hidden": "숨기기",
+      "banned": "차단",
+      "permBasic": "기본 권한",
+      "permVerified": "검증됨",
+      "ipAddresses": "IP 주소",
+      "fetchIpAddressesFailed": "IP 주소 가져오기 실패"
     },
     "institute": {
       "title": "학교/조직",
@@ -439,7 +439,7 @@
     "confirm": "확인",
     "deleteSuccess": "삭제 성공",
     "goto": "가기",
-    "backToList": ""
+    "backToList": "반환 목록"
   },
   "game": {
     "accessPolicy": {

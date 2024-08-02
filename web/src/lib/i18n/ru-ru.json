@@ -117,7 +117,7 @@
         "nickname": "никнейм",
         "nicknameRequired": "Пожалуйста, заполните никнейм",
         "title": "пользовательская информация",
-        "accountRequired": ""
+        "accountRequired": "Введите имя пользователя"
       },
       "institute": {
         "title": "организации"
@@ -293,14 +293,14 @@
       "account": "Имя пользователя",
       "institute": "почтовый ящик",
       "registeredAt": "Дата регистрации",
-      "fetchUserFailed": "",
-      "warningDelete": "",
-      "hidden": "",
-      "banned": "",
-      "permBasic": "",
-      "permVerified": "",
-      "ipAddresses": "",
-      "fetchIpAddressesFailed": ""
+      "fetchUserFailed": "Ошибка при получении подробной информации о пользователе",
+      "warningDelete": "Вы действительно хотите удалить этого пользователя? Это настоящее удаление!",
+      "hidden": "скрыть",
+      "banned": "Запрет",
+      "permBasic": "Базовые права",
+      "permVerified": "Проверено",
+      "ipAddresses": "IP-адрес",
+      "fetchIpAddressesFailed": "Ошибка получения IP-адреса"
     },
     "institute": {
       "title": "школа/организация",
@@ -439,7 +439,7 @@
     "confirm": "Подтвердить",
     "deleteSuccess": "Удаление прошло успешно",
     "goto": "前往",
-    "backToList": ""
+    "backToList": "вернуться к списку"
   },
   "game": {
     "accessPolicy": {
