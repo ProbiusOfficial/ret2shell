@@ -36,7 +36,6 @@ async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(),
   let smtp_credentials = Credentials::new(config.username.clone(), config.password.clone());
   debug!("smtp_credentials: {} {}", config.username, config.password);
   debug!("smtp host: {} {}:{}", config.tls, config.host, config.port);
-  debug!("email: {:?}", email);
   let mailer: AsyncSmtpTransport<Tokio1Executor> = match config.tls.as_str() {
     "starttls" => AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&config.host),
     "tls" => Ok(
@@ -52,8 +51,11 @@ async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(),
   .port(config.port)
   .credentials(smtp_credentials)
   .build();
+  debug!("mailer: {:?}", mailer);
   let email = construct_email(email, &config.sender, &config.username);
+  debug!("email: {:?}", email);
   mailer.send(email).await?;
+  debug!("email sent");
   Ok(())
 }
 
@@ -73,7 +75,11 @@ async fn process_message(message: jetstream::Message) -> Result<(), EmailError> 
         "Successfully sent email: '{}' to <{}>",
         req.email.subject, req.email.email
       );
-      message.ack_with(AckKind::Ack).await.ok();
+      message
+        .ack_with(AckKind::Ack)
+        .await
+        .inspect_err(|e| error!("Failed to ack message: {:?}", e))
+        .ok();
       return Ok(());
     }
   }
@@ -90,7 +96,7 @@ pub async fn email_worker(mut messages: Stream) {
     if let Ok(message) = message {
       process_message(message)
         .await
-        .map_err(|e| error!("Failed to process message: {:?}", e))
+        .inspect_err(|e| error!("Failed to process message: {:?}", e))
         .ok();
     } else {
       error!("Failed to receive message from nats: {:?}", message);
