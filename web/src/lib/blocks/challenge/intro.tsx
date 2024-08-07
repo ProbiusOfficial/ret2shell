@@ -45,6 +45,7 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
   createEffect(() => {
     if (challengeStore.current && challengeStore.env) {
       refreshCalmdown();
+      wsrx.refreshInstances();
     }
   });
   const userExplicitInstance = createMemo(() => {
@@ -80,46 +81,55 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
   const [delaying, setDelaying] = createSignal(false);
   function handleDelaySelfEnv() {
     setDelaying(true);
-    delayGameSelfEnv(challengeStore.current!.game_id)
-      .then(() => {
-        setTimeout(() => {
-          wsrx.refreshInstances();
-        }, 500);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.delayEnvFailed")}: ${text}`,
-            duration: 5000,
+    setTimeout(() => {
+      delayGameSelfEnv(challengeStore.current!.game_id)
+        .then(() => {
+          setTimeout(() => {
+            wsrx.refreshInstances();
+          }, 500);
+        })
+        .catch((err: HTTPError) => {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.challenge.delayEnvFailed")}: ${text}`,
+              duration: 5000,
+            });
           });
+        })
+        .finally(() => {
+          setDelaying(false);
         });
-      })
-      .finally(() => {
-        setDelaying(false);
-      });
+    }, 500);
   }
   const [stopping, setStopping] = createSignal(false);
   function handleStopSelfEnv() {
     setStopping(true);
-    stopGameSelfEnv(challengeStore.current!.game_id)
-      .then(() => {
-        setTimeout(() => {
-          wsrx.refreshInstances();
-        }, 500);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
+    setTimeout(() => {
+      stopGameSelfEnv(challengeStore.current!.game_id)
+        .then(() => {
           addToast({
             level: "error",
-            description: `${t("game.challenge.stopEnvFailed")}: ${text}`,
+            description: t("game.challenge.stopEnvSuccess")!,
             duration: 5000,
           });
+          setTimeout(() => {
+            wsrx.refreshInstances();
+          }, 500);
+        })
+        .catch((err: HTTPError) => {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.challenge.stopEnvFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        })
+        .finally(() => {
+          setStopping(false);
         });
-      })
-      .finally(() => {
-        setStopping(false);
-      });
+    }, 500);
   }
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
@@ -184,7 +194,7 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
               </section>
             </Show>
             <Show when={challengeStore.env}>
-              <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6 relative">
+              <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center relative">
                 <Show when={instance()}>
                   <TimeProgress
                     class="absolute bottom-0 left-0 right-0"
@@ -207,7 +217,7 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                     </Match>
                   </Switch>
                 </h3>
-                <div class="flex flex-row space-x-2">
+                <div class="flex flex-row space-x-2 items-center">
                   <Switch
                     fallback={
                       <Button
@@ -229,7 +239,7 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                           <span class="icon-[fluent--history-20-regular] w-5 h-5" />
                           <span class="opacity-60">{t("game.challenge.calmDownBeforeStartEnv")}</span>
                           <Timer
-                            end={calmdownStart()!.plus({ minutes: 1 })}
+                            end={calmdownStart()!.plus({ minutes: 5 })}
                             onTimeout={() => {
                               refreshCalmdown();
                             }}
@@ -260,6 +270,15 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                           </Show>
                         )}
                       </For> */}
+                      <Timer
+                        end={instance()!.created_at.plus({ hours: instance()!.renew_count + 1 })}
+                        onTimeout={() => {
+                          setTimeout(() => {
+                            wsrx.refreshInstances();
+                          }, 500);
+                        }}
+                        hasHours
+                      />
                       <Divider class="h-8" direction="horizontal" />
                       <Button
                         ghost

@@ -28,4 +28,6 @@ pub enum ClusterError {
   IoError(#[from] std::io::Error),
   #[error("upload failed: {0}")]
   UploadFailed(String),
+  #[error("renew exceed limit: {0}")]
+  PodRenewExceedLimit(String),
 }

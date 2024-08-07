@@ -30,6 +30,7 @@ export type CaptchaConfig = {
 };
 
 export type RegistryConfig = {
+  external: string;
   username: string;
   password: string;
   server: string;

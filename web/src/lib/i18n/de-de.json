@@ -631,7 +631,8 @@
       "deleteTips": "Möchten Sie diese Frage wirklich löschen? Alle damit verbundenen Einsendungen und Punkte werden ebenfalls gelöscht.",
       "delayEnvFailed": "Umgebungsverzögerung fehlgeschlagen",
       "stopEnvFailed": "Umgebungstopp fehlgeschlagen",
-      "startEnvFailed": "Umgebung konnte nicht gestartet werden"
+      "startEnvFailed": "Umgebung konnte nicht gestartet werden",
+      "stopEnvSuccess": "Stopp-Befehl wurde gesendet"
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

@@ -342,10 +342,16 @@ macro_rules! get_pod_field {
       .metadata
       .$domain
       .clone()
-      .ok_or(ResponseError::Gone("pod field not found".to_owned()))?
+      .ok_or(ResponseError::Gone(format!(
+        "pod field not found: {}",
+        $field
+      )))?
       .get($field)
       .map(|s| s.clone())
-      .ok_or(ResponseError::Gone("pod field not found".to_owned()))?
+      .ok_or(ResponseError::Gone(format!(
+        "pod field not found: {}",
+        $field
+      )))?
   }};
 }
 
@@ -381,7 +387,7 @@ impl TryFrom<Pod> for Instance {
       user_name: get_pod_field!(value, annotations, "ret.sh.cn/user").clone(),
       team_id: get_pod_field!(value, labels, "ret.sh.cn/team")
         .parse()
-        .map_err(|_| ResponseError::Gone("team id not found".to_owned()))?,
+        .unwrap_or(0),
       team_name: get_pod_field!(value, annotations, "ret.sh.cn/team").clone(),
       challenge_id: get_pod_field!(value, labels, "ret.sh.cn/challenge")
         .parse()

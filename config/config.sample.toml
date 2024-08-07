@@ -39,6 +39,7 @@ capture_directory = "./data/captures"
 cleanup_interval = 3600                        # in seconds
 
 [cluster.registry]
+external = "ctf.xidian.edu.cn"
 server = "ctf.xidian.edu.cn"
 insecure = false
 #username =

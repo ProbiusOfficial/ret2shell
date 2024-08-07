@@ -249,6 +249,13 @@ impl IntoResponse for ResponseError {
             "please setup cluster first and enable it in the config file"
           )
         }
+        r2s_cluster::ClusterError::PodRenewExceedLimit(s) => {
+          log_with_resp!(
+            StatusCode::TOO_MANY_REQUESTS,
+            "pod renew exceed limit".to_owned(),
+            s
+          )
+        }
         _ => log_with_resp!(
           StatusCode::INTERNAL_SERVER_ERROR,
           "cluster internal error".to_owned(),

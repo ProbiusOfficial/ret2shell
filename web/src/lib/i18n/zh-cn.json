@@ -227,7 +227,8 @@
       "deleteTips": "是否确认删除此题目？相关提交记录与分数将一并删除。",
       "delayEnvFailed": "环境延时失败",
       "stopEnvFailed": "停止环境失败",
-      "startEnvFailed": "启动环境失败"
+      "startEnvFailed": "启动环境失败",
+      "stopEnvSuccess": "已发送停止指令"
     },
     "scoreboard": {
       "title": "积分板",

@@ -10,7 +10,10 @@ use axum::{
 use chrono::Utc;
 use futures::TryStreamExt;
 use nanoid::nanoid;
-use r2s_bucket::{challenge::ChallengeBucket, Bucket};
+use r2s_bucket::{
+  challenge::{ChallengeBucket, Hints},
+  Bucket,
+};
 use r2s_cache::Cache;
 use r2s_checker::{traits::CheckerError, Checker};
 use r2s_cluster::{Cluster, CHALLENGE_NS};
@@ -848,15 +851,15 @@ async fn sync_challenge_hint_with_bucket(
 ) -> Result<(), ResponseError> {
   let hints = hint::get_list(db, challenge.id).await?;
   bucket
-    .set_hints(
-      hints
+    .set_hints(Hints {
+      hints: hints
         .into_iter()
         .map(|m| r2s_bucket::Hint {
           content: m.content,
           cost: m.cost,
         })
         .collect(),
-    )
+    })
     .await?;
   Ok(())
 }
@@ -947,12 +950,14 @@ async fn start_challenge_env(
           ("ret.sh.cn/challenge", challenge.id.to_string()),
           (
             "ret.sh.cn/team",
-            team.clone().map(|t| t.id.to_string()).unwrap_or_default(),
+            team
+              .clone()
+              .map(|t| t.id.to_string())
+              .unwrap_or("0".to_owned()),
           ),
           ("ret.sh.cn/game", game.id.to_string()),
           ("ret.sh.cn/user", token.id.to_string()),
           ("ret.sh.cn/wsrx", nanoid!()),
-          ("ret.sh.cn/renew", 0.to_string()),
           ("ret.sh.cn/internet", env_config.internet.to_string()),
         ]
         .iter()
@@ -969,6 +974,7 @@ async fn start_challenge_env(
           ),
           ("ret.sh.cn/game", game.name.to_string()),
           ("ret.sh.cn/user", token.account.to_string()),
+          ("ret.sh.cn/renew", 0.to_string()),
           ("ret.sh.cn/ports", ports),
         ]
         .iter()

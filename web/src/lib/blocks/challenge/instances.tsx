@@ -188,7 +188,7 @@ function CreateForm(fnProps: {
                 }
                 inputProps={props}
                 onValueChange={(e) => {
-                  setValue(form, "tag", `${registryConfig()?.server}/${searchedRepo()}:${e.value.at(0)}`);
+                  setValue(form, "tag", `${registryConfig()?.external}/${searchedRepo()}:${e.value.at(0)}`);
                 }}
               />
             </>

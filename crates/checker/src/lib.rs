@@ -108,7 +108,7 @@ impl Checker {
   pub async fn preload(
     &mut self, challenge: &challenge::Model, bucket: &ChallengeBucket,
   ) -> Result<(), CheckerError> {
-    let contexts = self.contexts.write().await;
+    let mut contexts = self.contexts.write().await;
     if contexts.contains_key(&bucket.hash()) && challenge.updated_at < contexts[&bucket.hash()].2 {
       return Ok(());
     }
@@ -118,7 +118,7 @@ impl Checker {
     let unit = rune::prepare(&mut sources).with_context(&context).build()?;
     let runtime = context.runtime()?;
 
-    self.contexts.write().await.insert(
+    contexts.insert(
       bucket.hash(),
       (Arc::new(unit), Arc::new(runtime), Utc::now()),
     );

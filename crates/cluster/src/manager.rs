@@ -14,14 +14,14 @@ use k8s_openapi::{
   apimachinery::pkg::{api::resource::Quantity, version::Info},
 };
 use kube::{
-  api::{ListParams, LogParams, ObjectList, ObjectMeta, PartialObjectMetaExt, Patch},
+  api::{DeleteParams, ListParams, LogParams, ObjectList, ObjectMeta, PartialObjectMetaExt, Patch},
   runtime::reflector::Lookup,
   Api, Client,
 };
 use tokio_util::codec::Framed;
 
 use r2s_config::cluster::{ChallengeEnv, Config};
-use tracing::{debug, error};
+use tracing::{debug, error, warn};
 
 use crate::registry::Registry;
 
@@ -201,21 +201,25 @@ impl Cluster {
     let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "renew pod")?);
     let prev_renew = pod
       .metadata
-      .labels
+      .annotations
       .clone()
       .unwrap_or_default()
       .get("ret.sh.cn/renew")
       .map(|v| v.parse::<i32>().unwrap_or(0))
       .unwrap_or(0);
-    let mut labels = pod.metadata.labels.clone().unwrap_or_default();
-    labels.insert("ret.sh.cn/renew".to_owned(), (prev_renew + 1).to_string());
+    if prev_renew > 3 {
+      warn!("Pod renew exceed limit: {}", name);
+      return Err(ClusterError::PodRenewExceedLimit(name.to_owned()));
+    }
+    let mut annotations = pod.metadata.annotations.clone().unwrap_or_default();
+    annotations.insert("ret.sh.cn/renew".to_owned(), (prev_renew + 1).to_string());
     let metadata = ObjectMeta {
-      labels: Some(labels),
+      annotations: Some(annotations),
       ..Default::default()
     }
     .into_request_partial::<Pod>();
     api
-      .patch_metadata(name, &Default::default(), &Patch::Apply(metadata))
+      .patch_metadata(name, &Default::default(), &Patch::Merge(metadata))
       .await?;
     Ok(())
   }
@@ -223,7 +227,15 @@ impl Cluster {
   pub async fn delete_pod(&self, name: &str) -> Result<(), ClusterError> {
     let client = check_enabled!(self.client)?;
     let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "delete pod")?);
-    api.delete(name, &Default::default()).await?;
+    api
+      .delete(
+        name,
+        &DeleteParams {
+          grace_period_seconds: Some(0),
+          ..Default::default()
+        },
+      )
+      .await?;
     Ok(())
   }
 
@@ -292,7 +304,9 @@ impl Cluster {
     let pod = api
       .list(&ListParams {
         label_selector: Some(label.to_owned()),
-        field_selector: Some("status.phase!=Succeeded,status.phase!=Failed".to_owned()),
+        field_selector: Some(
+          "status.phase!=Succeeded,status.phase!=Failed,status.phase!=Unknown".to_owned(),
+        ),
         ..Default::default()
       })
       .await?;
@@ -311,10 +325,10 @@ impl Cluster {
     envs: HashMap<String, String>, env_config: ChallengeEnv, node_selector: Option<String>,
   ) -> Result<(), ClusterError> {
     let challenge_id = labels
-      .get("challenge")
+      .get("ret.sh.cn/challenge")
       .ok_or(ClusterError::MissingField("challenge".to_string()))?;
     let user_id = labels
-      .get("user")
+      .get("ret.sh.cn/user")
       .ok_or(ClusterError::MissingField("user".to_string()))?;
     let pod_name = format!("ret2shell-{challenge_id}-{user_id}");
     let node_selector = if let Some(node_selector) = node_selector {

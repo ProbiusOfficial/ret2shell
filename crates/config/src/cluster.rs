@@ -10,6 +10,7 @@ pub struct RegistryConfig {
   pub password: Option<String>,
   pub server: String,
   pub insecure: bool,
+  pub external: String,
 }
 
 /// `ClusterConfig` is a configuration struct for managing service settings.

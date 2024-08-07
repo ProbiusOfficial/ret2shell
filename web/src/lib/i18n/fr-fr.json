@@ -631,7 +631,8 @@
       "deleteTips": "Êtes-vous sûr de vouloir supprimer cette question ? Toutes les soumissions et les scores associés seront également supprimés.",
       "delayEnvFailed": "Échec du délai d'attente de l'environnement",
       "stopEnvFailed": "Échec de l'arrêt de l'environnement",
-      "startEnvFailed": "Échec du démarrage de l'environnement"
+      "startEnvFailed": "Échec du démarrage de l'environnement",
+      "stopEnvSuccess": ""
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

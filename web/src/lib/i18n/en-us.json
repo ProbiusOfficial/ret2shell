@@ -696,7 +696,8 @@
       "deleteTips": "Are you sure you want to delete this question? All related submission records and scores will be deleted as well.",
       "delayEnvFailed": "Environmental delay failure",
       "stopEnvFailed": "Environment stop failure",
-      "startEnvFailed": "Failed to start the environment"
+      "startEnvFailed": "Failed to start the environment",
+      "stopEnvSuccess": "Stop command has been sent"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

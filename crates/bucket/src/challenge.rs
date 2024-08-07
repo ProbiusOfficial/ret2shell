@@ -49,6 +49,11 @@ pub struct Hint {
   pub cost: i32,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Hints {
+  pub hints: Vec<Hint>,
+}
+
 impl ChallengeBucket {
   pub async fn open(
     root_path: impl AsRef<Path>, name: impl AsRef<str>, locked: bool,
@@ -146,7 +151,7 @@ impl ChallengeBucket {
     Ok(())
   }
 
-  pub async fn set_hints(&self, hints: Vec<Hint>) -> Result<(), BucketError> {
+  pub async fn set_hints(&self, hints: Hints) -> Result<(), BucketError> {
     if !self.locked {
       return Err(BucketError::NeedLocking);
     }
@@ -158,10 +163,10 @@ impl ChallengeBucket {
     Ok(())
   }
 
-  pub async fn hints(&self) -> Result<Vec<Hint>, BucketError> {
+  pub async fn hints(&self) -> Result<Hints, BucketError> {
     let path = self.path.join("hints.toml");
     if !path.exists() {
-      return Ok(vec![]);
+      return Ok(Hints { hints: vec![] });
     }
     let config = toml::from_str(&read_to_string(&path).await?)?;
     Ok(config)
