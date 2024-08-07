@@ -712,7 +712,11 @@
         "title": "Crear equipo"
       },
       "join": {
-        "title": "Unirse al equipo"
+        "title": "Unirse al equipo",
+        "failed": "Fallo al unirse a la tripulación",
+        "token": "Equipo Token",
+        "tokenPlaceholder": "ingresar token del equipo",
+        "tokenRequired": "Por favor, ingrese el token del equipo"
       },
       "joinFirst": "Por favor, participa primero en la competición.",
       "joinGame": "Inscribirse para participar",
@@ -726,7 +730,22 @@
       "sizeMinExceeded": "El equipo debe tener al menos un miembro.",
       "sizeRequired": "Por favor, complete el límite de número de personas en el equipo.",
       "solo": "Individual competencia",
-      "title": "Detalles del equipo"
+      "title": "Detalles del equipo",
+      "noInstitute": "sin organización",
+      "members": "miembros del equipo",
+      "fetchMembersFailed": "Error al obtener la lista de miembros del equipo",
+      "fetchTeamFailed": "Error al obtener información del equipo",
+      "scoreChart": "Curva de fracaso",
+      "solves": "Situación de resolución de problemas",
+      "fetchTeamExtrasFailed": "Fallo al obtener la puntuación adicional del equipo",
+      "fetchTeamSubmissionsFailed": "Fallo al obtener el estado de resolución del equipo",
+      "solvesJournal": "Miembro {{user}} resolvió el desafío {{challenge}}.",
+      "noSolves": "Aún no ha resuelto ningún problema.",
+      "extras": "Cambio adicional en la puntuación",
+      "noExtras": "Aquí no hay nada...",
+      "selfManagement": "Gestión de equipos",
+      "token": "Equipo Token",
+      "name": "Nombre del equipo"
     },
     "teamSizePlaceholder": "Límite de número de miembros en el equipo",
     "timerTips": "falta {{ period }}",
@@ -757,7 +776,8 @@
     "retryLinkWsrx": "intentar conectar",
     "stop": "terminar el medio ambiente",
     "wsrxDisconnected": "El cliente de WSRX está desconectado.",
-    "wsrxSettings": "Modificar la configuración de conexión de WSRX"
+    "wsrxSettings": "Modificar la configuración de conexión de WSRX",
+    "fetchFailed": "Fallo al obtener el entorno del problema"
   },
   "loading": {
     "0": "Reparando el bit flip causado por los rayos cósmicos...",
@@ -930,7 +950,8 @@
     "moreJournal": "La vida no se detiene, la exploración no cesa...",
     "noDescription": "Este gran hacker no dejó nada...",
     "noInstitute": "No se ha unido a ninguna organización.",
-    "registeredAt": "unirse en {{time}}"
+    "registeredAt": "unirse en {{time}}",
+    "gotoAdminPanel": "Ir al panel de administración"
   },
   "wiki": {
     "contentPlaceholder": "artículo",
@@ -946,5 +967,10 @@
     "title": "conocimiento",
     "titlePlaceholder": "Título del artículo",
     "titleRequired": "Por favor, complete el título del artículo"
+  },
+  "traffic": {
+    "fetchFailed": "Fallo en la comunicación con el WSRX local",
+    "deleteFailed": "Fallo al eliminar la asignación local de WSRX",
+    "openFailed": "Fallo al agregar la asignación local de WSRX"
   }
 }

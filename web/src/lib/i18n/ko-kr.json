@@ -712,7 +712,11 @@
         "title": "팀 생성"
       },
       "join": {
-        "title": "팀에 합류"
+        "title": "팀에 합류",
+        "failed": "팀에 참여하지 못했습니다.",
+        "token": "팀 토큰",
+        "tokenPlaceholder": "팀 토큰 입력",
+        "tokenRequired": "팀 Token을 입력하세요."
       },
       "joinFirst": "먼저 참가하세요.",
       "joinGame": "참가 신청",
@@ -726,7 +730,22 @@
       "sizeMinExceeded": "팀 멤버는 최소한 한 명",
       "sizeRequired": "팀 인원 제한을 입력하세요.",
       "solo": "개인전",
-      "title": "팀 상세 정보"
+      "title": "팀 상세 정보",
+      "noInstitute": "소속 없음",
+      "members": "팀원",
+      "fetchMembersFailed": "팀 멤버 목록을 가져오지 못했습니다.",
+      "fetchTeamFailed": "팀 정보 가져오기 실패",
+      "scoreChart": "분수 곡선",
+      "solves": "문제 해결 상황",
+      "fetchTeamExtrasFailed": "팀 추가 점수 획득 실패",
+      "fetchTeamSubmissionsFailed": "팀 문제 해결 상황 가져오기 실패",
+      "solvesJournal": "멤버 {{user}} 가 문제 {{challenge}} 를 해결했습니다.",
+      "noSolves": "아직 어떤 문제도 풀지 못했습니다.",
+      "extras": "추가 점수 변동",
+      "noExtras": "여기 아무것도 없어요...",
+      "selfManagement": "팀 관리",
+      "token": "팀 토큰",
+      "name": "팀 이름"
     },
     "teamSizePlaceholder": "팀 인원 제한",
     "timerTips": "{{ period }}까지 남은 시간",
@@ -757,7 +776,8 @@
     "retryLinkWsrx": "연결 시도",
     "stop": "환경 종료",
     "wsrxDisconnected": "WSRX 클라이언트가 오프라인 상태입니다.",
-    "wsrxSettings": "WSRX 연결 설정 수정"
+    "wsrxSettings": "WSRX 연결 설정 수정",
+    "fetchFailed": "문제 환경 가져오기 실패"
   },
   "loading": {
     "0": "우주 방사선으로 인한 비트 플립을 복구하는 중...",
@@ -930,7 +950,8 @@
     "moreJournal": "삶은 계속되고, 탐구는 멈추지 않습니다...",
     "noDescription": "이 위대한 해커는 아무것도 남기지 않았다...",
     "noInstitute": "조직에 가입하지 않음",
-    "registeredAt": "{{time}}에 참여하세요"
+    "registeredAt": "{{time}}에 참여하세요",
+    "gotoAdminPanel": "관리 패널로 이동"
   },
   "wiki": {
     "contentPlaceholder": "기사 내용",
@@ -946,5 +967,10 @@
     "title": "지식",
     "titlePlaceholder": "글 제목",
     "titleRequired": "기사 제목을 입력하세요"
+  },
+  "traffic": {
+    "fetchFailed": "로컬 WSRX와의 통신 실패",
+    "deleteFailed": "로컬 WSRX 매핑 삭제 실패",
+    "openFailed": "로컬 WSRX 매핑 추가 실패"
   }
 }

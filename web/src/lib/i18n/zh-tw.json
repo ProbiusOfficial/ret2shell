@@ -777,7 +777,11 @@
         "title": "創建隊伍"
       },
       "join": {
-        "title": "加入隊伍"
+        "title": "加入隊伍",
+        "failed": "加入隊伍失敗",
+        "token": "隊伍 Token",
+        "tokenPlaceholder": "輸入隊伍 Token",
+        "tokenRequired": "請輸入隊伍 Token"
       },
       "joinFirst": "請先參賽",
       "joinGame": "報名參賽",
@@ -791,7 +795,22 @@
       "sizeMinExceeded": "隊伍成員最少一人",
       "sizeRequired": "請填寫隊伍人數限制",
       "solo": "單人賽",
-      "title": "隊伍詳情"
+      "title": "隊伍詳情",
+      "noInstitute": "無所屬組織",
+      "members": "隊伍成員",
+      "fetchMembersFailed": "獲取團隊成員列表失敗",
+      "fetchTeamFailed": "獲取隊伍資訊失敗",
+      "scoreChart": "分數曲線",
+      "solves": "解題情況",
+      "fetchTeamExtrasFailed": "獲取隊伍額外得分情況失敗",
+      "fetchTeamSubmissionsFailed": "獲取隊伍解題情況失敗",
+      "solvesJournal": "成員 {{user}} 解出了題目 {{challenge}}。",
+      "noSolves": "還沒有解出任何題目。",
+      "extras": "額外分數變動",
+      "noExtras": "這裡什麼也沒有...",
+      "selfManagement": "隊伍管理",
+      "token": "隊伍 Token",
+      "name": "隊伍名稱"
     },
     "teamSizePlaceholder": "隊伍人數限制",
     "timerTips": "距離 {{ period }} 還有",
@@ -822,7 +841,8 @@
     "wsrxDisconnected": "WSRX 用戶端離線了。",
     "wsrxSettings": "修改 WSRX 連接設定",
     "jumpToChallenge": "跳轉到對應的題目",
-    "notInThisGame": "非本比賽題目，點擊停止"
+    "notInThisGame": "非本比賽題目，點擊停止",
+    "fetchFailed": "獲取題目環境失敗"
   },
   "loading": {
     "0": "正在修復宇宙射線引發的比特翻轉...",
@@ -930,7 +950,8 @@
     "moreJournal": "生命不息，探索不止……",
     "noDescription": "這位大黑客什麼也沒有留下...",
     "noInstitute": "沒有加入任何組織",
-    "registeredAt": "在 {{time}} 加入"
+    "registeredAt": "在 {{time}} 加入",
+    "gotoAdminPanel": "前往管理面板"
   },
   "wiki": {
     "contentPlaceholder": "文章內容",
@@ -946,5 +967,10 @@
     "title": "知識",
     "titlePlaceholder": "文章標題",
     "titleRequired": "請填寫文章標題"
+  },
+  "traffic": {
+    "fetchFailed": "與本地 WSRX 通信失敗",
+    "deleteFailed": "刪除本地 WSRX 映射失敗",
+    "openFailed": "新增本地 WSRX 映射失敗"
   }
 }

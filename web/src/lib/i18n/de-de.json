@@ -712,7 +712,11 @@
         "title": "Mannschaft erstellen"
       },
       "join": {
-        "title": "Beitreten zur Mannschaft"
+        "title": "Beitreten zur Mannschaft",
+        "failed": "Beitritt zur Gruppe fehlgeschlagen",
+        "token": "Team Token",
+        "tokenPlaceholder": "Eingabe-Team-Token",
+        "tokenRequired": "Bitte geben Sie das Team-Token ein."
       },
       "joinFirst": "Bitte zuerst teilnehmen.",
       "joinGame": "Anmeldung für den Wettbewerb",
@@ -726,7 +730,22 @@
       "sizeMinExceeded": "Teammitglieder mindestens ein",
       "sizeRequired": "Bitte geben Sie die Teamgrößenbeschränkung ein.",
       "solo": "Einzelturnier",
-      "title": "Team-Details"
+      "title": "Team-Details",
+      "noInstitute": "Keiner Organisation zugehörig",
+      "members": "Teammitglieder",
+      "fetchMembersFailed": "Fehler beim Abrufen der Teammitgliederliste",
+      "fetchTeamFailed": "Fehler beim Abrufen der Teaminformationen",
+      "scoreChart": "Bruchkurve",
+      "solves": "Lösungsstatus",
+      "fetchTeamExtrasFailed": "Fehler beim Abrufen der zusätzlichen Punkte für das Team",
+      "fetchTeamSubmissionsFailed": "Fehler beim Abrufen der Team-Lösungsstatus",
+      "solvesJournal": "Mitglied {{user}} hat die Aufgabe {{challenge}} gelöst.",
+      "noSolves": "Noch keine Aufgaben gelöst.",
+      "extras": "Zusätzliche Punkteänderung",
+      "noExtras": "Hier ist nichts...",
+      "selfManagement": "Teammanagement",
+      "token": "Team Token",
+      "name": "Teamname"
     },
     "teamSizePlaceholder": "Teamgrößenbeschränkung",
     "timerTips": "Es sind noch {{ period }}",
@@ -757,7 +776,8 @@
     "retryLinkWsrx": "Versuch, Verbindung herzustellen",
     "stop": "Umweltbeendigung",
     "wsrxDisconnected": "WSRX-Client ist offline.",
-    "wsrxSettings": "Änderung der WSRX-Verbindungseinstellungen"
+    "wsrxSettings": "Änderung der WSRX-Verbindungseinstellungen",
+    "fetchFailed": "Abrufen der Aufgabenumgebung fehlgeschlagen"
   },
   "loading": {
     "0": "Wird repariert, um Bit-Flips zu beheben, die durch kosmischen Strahlung verursacht wurden...",
@@ -930,7 +950,8 @@
     "moreJournal": "Leben ist, forschen nie aufzuhören...",
     "noDescription": "Dieser große Hacker hat nichts hinterlassen...",
     "noInstitute": "Keiner Organisation beigetreten",
-    "registeredAt": "Beitreten um {{time}}"
+    "registeredAt": "Beitreten um {{time}}",
+    "gotoAdminPanel": "Zur Verwaltungskonsole"
   },
   "wiki": {
     "contentPlaceholder": "Artikelinhalt",
@@ -946,5 +967,10 @@
     "title": "Wissen",
     "titlePlaceholder": "Artikelüberschrift",
     "titleRequired": "Bitte füllen Sie den Artikeltitel aus"
+  },
+  "traffic": {
+    "fetchFailed": "Die Kommunikation mit dem lokalen WSRX ist fehlgeschlagen.",
+    "deleteFailed": "Lokale WSRX-Zuordnung konnte nicht gelöscht werden",
+    "openFailed": "Fehler beim Hinzufügen der lokalen WSRX-Zuordnung"
   }
 }

@@ -894,9 +894,31 @@ async fn start_challenge_env(
       "please wait for rebuilding cargo crates".to_owned(),
     ));
   }
+  if cluster
+    .at("ret2shell-challenge")
+    .get_challenge_env_by_user(token.id)
+    .await?
+    .is_some_and(|v| {
+      v.status
+        .is_some_and(|s| s.phase.is_some_and(|p| p == "Pending" || p == "Running"))
+    })
+  {
+    return Err(ResponseError::PreconditionFailed(
+      "you can only start one environment at the same time".to_owned(),
+    ));
+  }
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge.clone());
   let team = extract_team!(game, team_ext, token);
   if let Some(env_config) = challenge_bucket.env().await? {
+    let ports = env_config
+      .clone()
+      .images
+      .into_iter()
+      .map(|s| s.port)
+      .filter(|p| p.is_some())
+      .map(|p| p.unwrap().to_string())
+      .collect::<Vec<_>>()
+      .join(",");
     checker.preload(&challenge, &challenge_bucket).await?;
     let env_map = checker
       .environ(
@@ -933,10 +955,13 @@ async fn start_challenge_env(
           ("ret.sh.cn/challenge", challenge.name.to_string()),
           (
             "ret.sh.cn/team",
-            team.map(|t| t.name.to_string()).unwrap_or_default(),
+            team
+              .map(|t| t.name.to_string())
+              .unwrap_or("wheel".to_owned()),
           ),
           ("ret.sh.cn/game", game.name.to_string()),
           ("ret.sh.cn/user", token.account.to_string()),
+          ("ret.sh.cn/ports", ports),
         ]
         .iter()
         .cloned()
@@ -949,7 +974,7 @@ async fn start_challenge_env(
       .await?;
     cache
       .at("cluster")
-      .set_ex(token.id.to_string(), 1, 60)
+      .set_ex(token.id.to_string(), Utc::now().timestamp(), 5 * 60)
       .await?;
     Ok(())
   } else {

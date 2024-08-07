@@ -1,4 +1,5 @@
 import { api_root } from "@api";
+import { getCalmdownStatus } from "@api/cluster";
 import { wsrx } from "@lib/wsrx";
 import { accountStore } from "@storage/account";
 import { challengeStore } from "@storage/challenge";
@@ -8,9 +9,11 @@ import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Tag from "@widgets/tag";
 import TimeProgress from "@widgets/time-progress";
+import Timer from "@widgets/timer";
+import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
-import { For, Match, Show, Switch, createMemo } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createMemo, createSignal } from "solid-js";
 import DownloadButton from "../download-button";
 
 passiveSupport({
@@ -30,11 +33,16 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
     }
     return null;
   });
-  const localAddr = createMemo(() => {
-    if (instance()) {
-      return wsrx.traffic().find((t) => t.wsrx === instance()!.wsrx)?.local_addr ?? null;
+  const [calmdownStart, setCalmdownStart] = createSignal<DateTime | null>(null);
+  function refreshCalmdown() {
+    getCalmdownStatus()
+      .then(setCalmdownStart)
+      .catch(() => setCalmdownStart(null));
+  }
+  createEffect(() => {
+    if (challengeStore.current && challengeStore.env) {
+      refreshCalmdown();
     }
-    return null;
   });
   const userExplicitInstance = createMemo(() => {
     if (challengeStore.current && challengeStore.env) {
@@ -118,7 +126,7 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                   <Switch fallback={<span class="opacity-80 flex-1 truncate">{t("game.challenge.envNotStart")}</span>}>
                     <Match when={instance()}>
                       <span class="flex-1 truncate">
-                        {t("game.challenge.envIsRunning")}: {localAddr() ?? instance()?.wsrx}
+                        {t("game.challenge.envIsRunning")}: {instance()?.wsrx}
                       </span>
                     </Match>
                     <Match when={userExplicitInstance()}>
@@ -132,11 +140,24 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                   <Switch
                     fallback={
                       <Button ghost size="sm">
-                        <span class="icon-[fluent--play-20-regular] w-5 h-5 text-success" />
-                        <span>{t("game.challenge.startEnv")}</span>
-                        {/* <span class="icon-[fluent--history-20-regular] w-5 h-5" />
-                        <span class="opacity-60">{t("game.challenge.calmDownBeforeStartEnv")}</span>
-                        <span>00:48</span> */}
+                        <Show
+                          when={calmdownStart()}
+                          fallback={
+                            <>
+                              <span class="icon-[fluent--play-20-regular] w-5 h-5 text-success" />
+                              <span>{t("game.challenge.startEnv")}</span>
+                            </>
+                          }
+                        >
+                          <span class="icon-[fluent--history-20-regular] w-5 h-5" />
+                          <span class="opacity-60">{t("game.challenge.calmDownBeforeStartEnv")}</span>
+                          <Timer
+                            end={calmdownStart()!.plus({ minutes: 1 })}
+                            onTimeout={() => {
+                              refreshCalmdown();
+                            }}
+                          />
+                        </Show>
                       </Button>
                     }
                   >

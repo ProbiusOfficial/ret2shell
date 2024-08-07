@@ -216,7 +216,9 @@ where
   C: ConnectionTrait,
 {
   Entity::find_by_id(id)
-    .join(JoinType::InnerJoin, Relation::Institute.def())
+    .join(JoinType::LeftJoin, Relation::Institute.def())
+    .join(JoinType::InnerJoin, Relation::Game.def())
+    .column_as(game::Column::Name, "game_name")
     .column_as(institute::Column::Name, "institute_name")
     .into_model()
     .one(db)

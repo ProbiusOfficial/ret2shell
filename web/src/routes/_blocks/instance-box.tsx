@@ -1,5 +1,6 @@
 import { WsrxState, wsrx } from "@lib/wsrx";
-import { useSearchParams } from "@solidjs/router";
+import type { Instance } from "@models/instance";
+import { useLocation } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
@@ -16,7 +17,16 @@ import { For, Show, createEffect, createSignal, onCleanup, untrack } from "solid
 export function InstanceBoxContent() {
   const [connecting, setConnecting] = createSignal(false);
   const [showSettings, setShowSettings] = createSignal(false);
-  const [_, setSearchParams] = useSearchParams();
+  const location = useLocation();
+  function challengeLink(i: Instance) {
+    if (i.game_id !== gameStore.current?.id) {
+      return "#";
+    }
+    if (location.pathname.startsWith("/training")) {
+      return `/training/${i.game_id}?challenge=${i.challenge_id}`;
+    }
+    return `/games/${i.game_id}/challenges?challenge=${i.challenge_id}`;
+  }
 
   function retryConnect() {
     wsrx.tryConnect().catch(() => {});
@@ -147,55 +157,26 @@ export function InstanceBoxContent() {
       </Show>
       <For each={wsrx.instances()}>
         {(instance) => (
-          <Card contentClass="p-2 flex flex-col space-y-2">
-            <Button size="sm" ghost>
+          <Card contentClass="p-2">
+            <Link size="sm" ghost class="relative" href={challengeLink(instance)}>
               <span class="icon-[fluent--play-circle-hint-20-regular] w-5 h-5 text-success" />
               <span>{instance.challenge_name}</span>
               <span class="flex-1" />
               <Timer
                 class="opacity-60"
+                hasHours
                 end={instance.created_at.plus({
                   hours: instance.renew_count + 1,
                 })}
               />
-            </Button>
-            <TimeProgress
-              class="px-2"
-              startAt={instance.created_at}
-              endAt={instance.created_at.plus({
-                hours: instance.renew_count + 1,
-              })}
-            />
-            <div class="flex flex-row space-x-2">
-              <Show
-                when={instance.game_id === gameStore.current?.id}
-                fallback={
-                  <Button size="sm" square ghost title={t("instance.notInThisGame")}>
-                    <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-warning" />
-                    <span class="flex-1 truncate">{instance.challenge_name}</span>
-                  </Button>
-                }
-              >
-                <Button
-                  ghost
-                  class="flex-1 overflow-hidden"
-                  size="sm"
-                  title={t("instance.jumpToChallenge")}
-                  onClick={() => {
-                    setSearchParams({ challenge: instance.challenge_id });
-                  }}
-                >
-                  <span class="icon-[fluent--open-20-regular] w-5 h-5 text-success" />
-                  <span class="flex-1 truncate">{instance.challenge_name}</span>
-                </Button>
-                <Button size="sm" square ghost title={t("instance.renew")}>
-                  <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-info" />
-                </Button>
-                <Button size="sm" square ghost title={t("instance.stop")}>
-                  <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
-                </Button>
-              </Show>
-            </div>
+              <TimeProgress
+                class="absolute bottom-0 left-2 right-2"
+                startAt={instance.created_at}
+                endAt={instance.created_at.plus({
+                  hours: instance.renew_count + 1,
+                })}
+              />
+            </Link>
           </Card>
         )}
       </For>

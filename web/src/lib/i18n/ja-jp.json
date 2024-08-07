@@ -712,7 +712,11 @@
         "title": "チームを作成"
       },
       "join": {
-        "title": "チームに参加"
+        "title": "チームに参加",
+        "failed": "チームに参加できませんでした",
+        "token": "チームトークン",
+        "tokenPlaceholder": "チームトークンを入力",
+        "tokenRequired": "チームトークンを入力してください"
       },
       "joinFirst": "まず参加してください",
       "joinGame": "参加申し込み",
@@ -726,7 +730,22 @@
       "sizeMinExceeded": "チームメンバーは最低一人",
       "sizeRequired": "チーム人数制限を入力してください",
       "solo": "個人戦",
-      "title": "チーム詳細"
+      "title": "チーム詳細",
+      "noInstitute": "無所属",
+      "members": "チームメンバー",
+      "fetchMembersFailed": "チームメンバーリストの取得に失敗しました",
+      "fetchTeamFailed": "チーム情報の取得に失敗しました",
+      "scoreChart": "分数曲線",
+      "solves": "解題状況",
+      "fetchTeamExtrasFailed": "チームの追加得点状況を取得できませんでした",
+      "fetchTeamSubmissionsFailed": "チームの解題状況の取得に失敗しました",
+      "solvesJournal": "メンバー {{user}} が問題 {{challenge}} を解きました。",
+      "noSolves": "まだどの問題も解けていません。",
+      "extras": "追加得点変動",
+      "noExtras": "ここには何もない...",
+      "selfManagement": "チーム管理",
+      "token": "チームトークン",
+      "name": "チーム名"
     },
     "teamSizePlaceholder": "チーム人数制限",
     "timerTips": "あと {{ period }}",
@@ -757,7 +776,8 @@
     "wsrxDisconnected": "WSRX クライアントがオフラインになりました。",
     "wsrxSettings": "WSRX 接続設定の変更",
     "jumpToChallenge": "対応する問題にジャンプ",
-    "notInThisGame": "このコンテストの問題ではありません。クリックして停止します。"
+    "notInThisGame": "このコンテストの問題ではありません。クリックして停止します。",
+    "fetchFailed": "問題環境の取得に失敗しました"
   },
   "loading": {
     "0": "宇宙線によるビットフリップの修復中...",
@@ -930,7 +950,8 @@
     "moreJournal": "命がある限り、探求は続く……",
     "noDescription": "この大きなハッカーは何も残していません...",
     "noInstitute": "組織に加入していない",
-    "registeredAt": "{{time}} に参加"
+    "registeredAt": "{{time}} に参加",
+    "gotoAdminPanel": "管理パネルに移動"
   },
   "wiki": {
     "contentPlaceholder": "記事内容",
@@ -946,5 +967,10 @@
     "title": "知識",
     "titlePlaceholder": "記事タイトル",
     "titleRequired": "記事タイトルを入力してください"
+  },
+  "traffic": {
+    "fetchFailed": "ローカル WSRX との通信に失敗しました",
+    "deleteFailed": "ローカル WSRX マッピングの削除に失敗しました",
+    "openFailed": "ローカル WSRX マッピングの追加に失敗しました"
   }
 }

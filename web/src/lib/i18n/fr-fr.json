@@ -712,7 +712,11 @@
         "title": "Créer une équipe"
       },
       "join": {
-        "title": "Rejoindre l'équipe"
+        "title": "Rejoindre l'équipe",
+        "failed": "Échec de l'ajout à l'équipe",
+        "token": "Équipe Token",
+        "tokenPlaceholder": "Entrez le jeton de l'équipe",
+        "tokenRequired": "Veuillez entrer le jeton de l'équipe"
       },
       "joinFirst": "Participer d'abord",
       "joinGame": "S'inscrire pour participer",
@@ -726,7 +730,22 @@
       "sizeMinExceeded": "L'équipe doit comporter au moins un membre.",
       "sizeRequired": "Veuillez remplir la limite du nombre de membres dans l'équipe",
       "solo": "Match en simple",
-      "title": "Détails de l'équipe"
+      "title": "Détails de l'équipe",
+      "noInstitute": "sans organisation",
+      "members": "membres de l'équipe",
+      "fetchMembersFailed": "Échec de la récupération de la liste des membres de l'équipe",
+      "fetchTeamFailed": "Échec de la récupération des informations de l'équipe",
+      "scoreChart": "Courbe de fraction",
+      "solves": "Situation de résolution de problèmes",
+      "fetchTeamExtrasFailed": "Échec de l'obtention des points supplémentaires de l'équipe",
+      "fetchTeamSubmissionsFailed": "Échec de la récupération des informations sur la résolution des problèmes de l'équipe",
+      "solvesJournal": "Membre {{user}} a résolu le défi {{challenge}}.",
+      "noSolves": "Je n'ai encore résolu aucun problème.",
+      "extras": "Variation des points supplémentaires",
+      "noExtras": "Il n'y a rien ici...",
+      "selfManagement": "Gestion d'équipe",
+      "token": "Équipe Token",
+      "name": "Nom de l'équipe"
     },
     "teamSizePlaceholder": "limite de nombre de membres dans l'équipe",
     "timerTips": "Il reste {{ period }}",
@@ -757,7 +776,8 @@
     "retryLinkWsrx": "Essayer de se connecter",
     "stop": "Arrêt de l'environnement",
     "wsrxDisconnected": "Le client WSRX est hors ligne.",
-    "wsrxSettings": "Modifier les paramètres de connexion WSRX"
+    "wsrxSettings": "Modifier les paramètres de connexion WSRX",
+    "fetchFailed": "Échec de l'obtention de l'environnement du sujet"
   },
   "loading": {
     "0": "Réparation des inversions de bits causées par les rayons cosmiques en cours...",
@@ -930,7 +950,8 @@
     "moreJournal": "La vie ne s'arrête pas, l'exploration ne cesse pas...",
     "noDescription": "Ce grand hacker n'a rien laissé...",
     "noInstitute": "n'a pas rejoint aucune organisation",
-    "registeredAt": "Rejoindre à {{time}}"
+    "registeredAt": "Rejoindre à {{time}}",
+    "gotoAdminPanel": "Aller au panneau de gestion"
   },
   "wiki": {
     "contentPlaceholder": "contenu de l'article",
@@ -946,5 +967,10 @@
     "title": "savoir",
     "titlePlaceholder": "Titre de l'article",
     "titleRequired": "Veuillez remplir le titre de l'article"
+  },
+  "traffic": {
+    "fetchFailed": "Échec de la communication avec le WSRX local",
+    "deleteFailed": "Échec de la suppression de la carte WSRX locale",
+    "openFailed": "Échec de l'ajout du mappage WSRX local"
   }
 }

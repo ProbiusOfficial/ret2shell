@@ -1,11 +1,13 @@
 import { mediaPath } from "@lib/utils/media";
-import { type User, permissionToString } from "@models/user";
+import { Permission, type User, permissionToString } from "@models/user";
+import { A } from "@solidjs/router";
+import { accountStore } from "@storage/account";
 import { fullTheme, t } from "@storage/theme";
 import Avatar from "@widgets/avatar";
 import Divider from "@widgets/divider";
 import Tag from "@widgets/tag";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { For } from "solid-js";
+import { For, Show } from "solid-js";
 
 export default function (props: { user: User | null; loading?: boolean }) {
   return (
@@ -63,6 +65,13 @@ export default function (props: { user: User | null; loading?: boolean }) {
             </For>
           </div>
           <div class="flex-1" />
+          <Show when={accountStore.permissions.includes(Permission.User)}>
+            <div class="h-12 flex items-center justify-center">
+              <A class="opacity-60 hover:underline" href={`/admin/users?user=${props.user?.id}`}>
+                {t("user.gotoAdminPanel")}
+              </A>
+            </div>
+          </Show>
           <div class="h-12 flex items-center justify-center">
             <span class="opacity-60">
               {t("user.registeredAt", { time: props.user?.registered_at.toFormat("yyyy-MM-dd") || "UNKNOWN" })}

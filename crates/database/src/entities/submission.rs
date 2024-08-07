@@ -48,6 +48,7 @@ pub struct ExModel {
   pub content: Option<String>,
   pub solved: bool,
   pub score: i32,
+  pub result: Option<String>,
 }
 
 impl ExModel {

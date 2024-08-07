@@ -1,22 +1,16 @@
 import type { DateTime } from "luxon";
 
-export enum InstanceState {
-  Pending = 0,
-  Running = 1,
-  Succeeded = 2,
-  Failed = 3,
-}
-
 export type Instance = {
-  state: InstanceState;
+  state: "Pending" | "Running" | "Succeeded" | "Failed" | "Unknown";
   name: string;
-  wsrx: string | null;
+  wsrx: string;
+  ports: number[];
   renew_count: number;
   created_at: DateTime;
   user_id: number;
   user_name?: string;
-  team_id: number | null;
-  team_name?: string | null;
+  team_id: number;
+  team_name?: string;
   challenge_id: number;
   challenge_name?: string;
   game_id: number;
@@ -24,7 +18,6 @@ export type Instance = {
 };
 
 export type Traffic = {
-  wsrx: string;
-  local_addr: string;
-  delay: number;
+  remote: string;
+  local: string;
 };

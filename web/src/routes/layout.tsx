@@ -341,7 +341,7 @@ function TitleBar() {
                   </Match>
                   <Match when={inProgress()}>
                     <div class="flex flex-col items-center justify-center px-4 relative">
-                      <Timer end={gameStore.current!.end_at} />
+                      <Timer end={gameStore.current!.end_at} hasHours />
                       <TimeProgress
                         class="w-full"
                         startAt={gameStore.current!.start_at}

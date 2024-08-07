@@ -777,7 +777,11 @@
         "title": "Create Team"
       },
       "join": {
-        "title": "Join the Team"
+        "title": "Join the Team",
+        "failed": "Failed to join the team",
+        "token": "Team Token",
+        "tokenPlaceholder": "Enter Team Token",
+        "tokenRequired": "Please enter the team Token"
       },
       "joinFirst": "Please participate first.",
       "joinGame": "Sign Up to Participate",
@@ -791,7 +795,22 @@
       "sizeMinExceeded": "Team members must be at least one person.",
       "sizeRequired": "Please fill in the team size limit",
       "solo": "Single Player Competition",
-      "title": "Team Details"
+      "title": "Team Details",
+      "noInstitute": "No affiliation",
+      "members": "team members",
+      "fetchMembersFailed": "Failed to retrieve the list of team members",
+      "fetchTeamFailed": "Failed to retrieve team information",
+      "scoreChart": "Fractional Curve",
+      "solves": "Problem-solving status",
+      "fetchTeamExtrasFailed": "Failed to retrieve additional team score information",
+      "fetchTeamSubmissionsFailed": "Failed to retrieve team problem-solving status",
+      "solvesJournal": "Member {{user}} solved the challenge {{challenge}}.",
+      "noSolves": "No problems have been solved yet.",
+      "extras": "Additional Score Adjustment",
+      "noExtras": "There's nothing here...",
+      "selfManagement": "Team Management",
+      "token": "Team Token",
+      "name": "Team Name"
     },
     "teamSizePlaceholder": "Team Size Limit",
     "timerTips": "There are {{ period }} left",
@@ -822,7 +841,8 @@
     "wsrxDisconnected": "WSRX client is offline.",
     "wsrxSettings": "Modify WSRX Connection Settings",
     "jumpToChallenge": "Go to the corresponding question",
-    "notInThisGame": "This is not the competition question, click to stop."
+    "notInThisGame": "This is not the competition question, click to stop.",
+    "fetchFailed": "Failed to obtain the problem environment"
   },
   "loading": {
     "0": "Fixing bit flips caused by cosmic rays...",
@@ -930,7 +950,8 @@
     "moreJournal": "Life goes on, exploration never stops...",
     "noDescription": "This big hacker left nothing behind...",
     "noInstitute": "Not affiliated with any organization.",
-    "registeredAt": "Join at {{time}}"
+    "registeredAt": "Join at {{time}}",
+    "gotoAdminPanel": "Go to the Admin Panel"
   },
   "wiki": {
     "contentPlaceholder": "Article Content",
@@ -946,5 +967,10 @@
     "title": "Knowledge",
     "titlePlaceholder": "Article Title",
     "titleRequired": "Fill in the Article Title"
+  },
+  "traffic": {
+    "fetchFailed": "Local WSRX communication failure",
+    "deleteFailed": "Failed to delete local WSRX mapping",
+    "openFailed": "Failed to add local WSRX mapping"
   }
 }

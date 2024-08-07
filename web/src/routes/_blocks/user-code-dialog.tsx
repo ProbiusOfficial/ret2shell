@@ -83,7 +83,7 @@ export default function UserCodeDialog() {
               <span class="font-extrabold text-5xl tracking-widest">
                 {code()?.code.toString(16).toUpperCase().padStart(6, "0")}
               </span>
-              <Timer class="opacity-80 font-bold" end={code()!.generate_at.plus({ seconds: 300 })} />
+              <Timer class="opacity-80 font-bold" end={code()!.generate_at.plus({ seconds: 300 })} hasHours />
             </Match>
             <Match when={true}>
               <span class="icon-[fluent--person-link-20-regular] w-10 h-10 opacity-60" />

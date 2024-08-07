@@ -358,14 +358,33 @@
       "solo": "单人赛",
       "noTeamParticipated": "还没有队伍参赛",
       "join": {
-        "title": "加入队伍"
+        "title": "加入队伍",
+        "failed": "加入队伍失败",
+        "token": "队伍 Token",
+        "tokenPlaceholder": "输入队伍 Token",
+        "tokenRequired": "请输入队伍 Token"
       },
       "joinFirst": "请先参赛",
       "title": "队伍详情",
       "canNotJoin": "不符合参赛条件",
       "joinGame": "报名参赛",
       "joinTips": "已有队伍？点击加入",
-      "coming": "登场！"
+      "coming": "登场！",
+      "noInstitute": "无所属组织",
+      "members": "队伍成员",
+      "fetchMembersFailed": "获取团队成员列表失败",
+      "fetchTeamFailed": "获取队伍信息失败",
+      "scoreChart": "分数曲线",
+      "solves": "解题情况",
+      "fetchTeamExtrasFailed": "获取队伍额外得分情况失败",
+      "fetchTeamSubmissionsFailed": "获取队伍解题情况失败",
+      "solvesJournal": "成员 {{user}} 解出了题目 {{challenge}}。",
+      "noSolves": "还没有解出任何题目。",
+      "extras": "额外分数变动",
+      "noExtras": "这里什么也没有...",
+      "selfManagement": "队伍管理",
+      "token": "队伍 Token",
+      "name": "队伍名称"
     },
     "archivedGotoTraining": "已归档，请前往练习场",
     "canNotParticipate": "不符合参与条件",
@@ -804,7 +823,8 @@
     "wsrxDisconnected": "WSRX 客户端离线了。",
     "instanceCount": "{{ count }} 个容器",
     "jumpToChallenge": "跳转到对应的题目",
-    "notInThisGame": "非本比赛题目，点击停止"
+    "notInThisGame": "非本比赛题目，点击停止",
+    "fetchFailed": "获取题目环境失败"
   },
   "magic": {
     "illustration": "插画",
@@ -868,7 +888,8 @@
     "fetchTeamsFailed": "获取参赛经历失败",
     "moreJournal": "生命不息，探索不止……",
     "noInstitute": "没有加入任何组织",
-    "registeredAt": "在 {{time}} 加入"
+    "registeredAt": "在 {{time}} 加入",
+    "gotoAdminPanel": "前往管理面板"
   },
   "shell": {
     "commandInvalid": "命令存在语法错误",
@@ -946,5 +967,10 @@
     "user": "用户管理",
     "statistics": "统计数据",
     "devOps": "运维"
+  },
+  "traffic": {
+    "fetchFailed": "与本地 WSRX 通信失败",
+    "deleteFailed": "删除本地 WSRX 映射失败",
+    "openFailed": "新增本地 WSRX 映射失败"
   }
 }

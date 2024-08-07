@@ -9,7 +9,7 @@ use chrono::Utc;
 use nanoid::nanoid;
 use r2s_auditor::Auditor;
 use r2s_database::{
-  extra, game, team,
+  extra, game, submission, team,
   user::{self, Permission},
   user2_team,
 };
@@ -26,7 +26,12 @@ use crate::{
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()
-    .route("/self", get(get_self_team))
+    .route(
+      "/self",
+      get(get_self_team)
+        .patch(update_self_team)
+        .delete(leave_self_team),
+    )
     .route_layer(middleware::from_fn_with_state(
       state.clone(),
       data::prepare_team_info,
@@ -40,6 +45,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       "/:team",
       Router::new()
         .route("/", get(get_team_info))
+        .route("/member", get(get_team_members))
+        .route("/solve", get(get_team_solves))
         .route("/extra", get(get_team_extra))
         .route_layer(middleware::from_fn_with_state(
           state.clone(),
@@ -55,6 +62,73 @@ async fn get_self_team(
 }
 
 #[derive(Deserialize)]
+struct UpdateTeamRequest {
+  pub name: String,
+  pub institute_id: Option<i64>,
+}
+
+async fn update_self_team(
+  State(ref db): State<Database>, State(ref auditor): State<Auditor>,
+  Extension(game): Extension<game::Model>, Extension(team): Extension<team::Model>,
+  Json(req): Json<UpdateTeamRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let mut team = team;
+  if game.team_size > 1 {
+    team.name = req.name;
+  }
+  if game.archived() {
+    return Err(ResponseError::PreconditionFailed(
+      "game is archived".to_owned(),
+    ));
+  }
+  if req.institute_id.is_some() && req.institute_id != team.institute_id {
+    let members = team::get_members(&db.conn, team.id).await?;
+    for member in members {
+      if member.institute_id != req.institute_id {
+        return Err(ResponseError::PreconditionFailed(
+          "institute not match".to_owned(),
+        ));
+      }
+    }
+    team.institute_id = req.institute_id;
+  } else if req.institute_id.is_none() {
+    team.institute_id = req.institute_id;
+  }
+  if game.enable_audit {
+    team.state = if auditor.audit_content(&team.name) {
+      team::State::Pending
+    } else {
+      team::State::Passed
+    };
+  }
+
+  let result = team::update(&db.conn, team).await?;
+  Ok(Json(result))
+}
+
+async fn leave_self_team(
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Extension(team): Extension<team::Model>, Extension(token): Extension<Token>,
+) -> Result<impl IntoResponse, ResponseError> {
+  if game.in_progress() {
+    return Err(ResponseError::PreconditionFailed(
+      "game is in progress, can not leave team".to_owned(),
+    ));
+  }
+  if game.archived() {
+    return Err(ResponseError::PreconditionFailed(
+      "game is archived".to_owned(),
+    ));
+  }
+  user2_team::user_leave_team(&db.conn, token.id, team.id).await?;
+  let members = team::get_members(&db.conn, team.id).await?;
+  if members.is_empty() {
+    team::delete(&db.conn, team.id).await?;
+  }
+  Ok(())
+}
+
+#[derive(Deserialize)]
 struct TeamInfoQuery {
   pub ex: Option<bool>,
 }
@@ -64,18 +138,35 @@ async fn get_team_info(
   Extension(team): Extension<team::Model>, Extension(token): Extension<Token>,
   Query(query): Query<TeamInfoQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if game.id != team.game_id {
+    return Err(ResponseError::NotFound("team not found".to_owned()));
+  }
   let result = if query.ex.unwrap_or(false) {
-    team.into()
-  } else {
     team::get_ex(&db.conn, team.id)
       .await?
-      .ok_or(ResponseError::NotFound("team".to_string()))?
+      .ok_or(ResponseError::NotFound("team not found".to_string()))?
+  } else {
+    team.into()
   };
   if is_game_admin!(token, game) {
     Ok(Json(result))
   } else {
     Ok(Json(result.desensitize()))
   }
+}
+
+async fn get_team_solves(
+  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  Ok(Json(
+    submission::get_list(&db.conn, true, false, None, Some(team.id), None).await?,
+  ))
+}
+
+async fn get_team_members(
+  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  Ok(Json(team::get_members(&db.conn, team.id).await?))
 }
 
 #[derive(Deserialize)]
@@ -187,6 +278,7 @@ async fn create_team(
       game_id: game.id,
       state,
       token: team_token,
+      institute_id: user.institute_id,
       ..Default::default()
     },
   )

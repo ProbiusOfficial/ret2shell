@@ -1,6 +1,8 @@
 import type { Article } from "@models/article";
 import type { Challenge, ChallengeEnv } from "@models/challenge";
 import type { Game, HostType } from "@models/game";
+import type { Instance } from "@models/instance";
+import type { Submission } from "@models/submission";
 import { type Team, TeamState } from "@models/team";
 import type { User } from "@models/user";
 import type { Pod } from "kubernetes-types/core/v1";
@@ -222,16 +224,42 @@ export async function updateChallengeCheckerScript(game_id: number, challenge_id
     .json<void>();
 }
 
-export async function getTeamInfo(game_id: number, team_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/team/${team_id}`).json<Team>();
+export async function getTeamInfo(game_id: number, team_id: number, ex?: boolean) {
+  return await api
+    .get(`${api_root}/game/${game_id}/team/${team_id}`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          ex,
+        })
+      ),
+    })
+    .json<Team>();
+}
+
+export async function getTeamMembers(game_id: number, team_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/team/${team_id}/member`).json<User[]>();
 }
 
 export async function getSelfTeam(game_id: number) {
   return await api.get(`${api_root}/game/${game_id}/team/self`).json<Team>();
 }
 
+export async function updateSelfteam(
+  game_id: number,
+  team: {
+    name: string;
+    institute_id: number | null;
+  }
+) {
+  return await api.patch(`${api_root}/game/${game_id}/team/self`, { json: team }).json<Team>();
+}
+
 export async function getTeamExtras(game_id: number, team_id: number) {
   return await api.get(`${api_root}/game/${game_id}/team/${team_id}/extra`).json<Extra[]>();
+}
+
+export async function getTeamSolves(game_id: number, team_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/team/${team_id}/solve`).json<Submission[]>();
 }
 
 export async function createTeam(
@@ -241,6 +269,16 @@ export async function createTeam(
   }
 ) {
   return await api.post(`${api_root}/game/${game_id}/team`, { json: team }).json<Team>();
+}
+
+export async function joinTeam(game_id: number, token: string) {
+  return await api
+    .patch(`${api_root}/game/${game_id}/team`, {
+      json: {
+        token,
+      },
+    })
+    .json<Team>();
 }
 
 export type EventDeviceInfo = {
@@ -259,4 +297,20 @@ export async function getGameAdmins(game_id: number) {
 
 export async function updateGameAdmins(game_id: number, admins: number[]) {
   return await api.patch(`${api_root}/game/${game_id}/administrator`, { json: admins }).json<Game>();
+}
+
+export async function getGameSelfEnvs(game_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/env`).json<Instance[]>();
+}
+
+export async function delayGameSelfEnv(game_id: number) {
+  return await api.patch(`${api_root}/game/${game_id}/env`).json<void>();
+}
+
+export async function stopGameSelfEnv(game_id: number) {
+  return await api.delete(`${api_root}/game/${game_id}/env`).json<void>();
+}
+
+export async function startChallengeEnv(game_id: number, challenge_id: number) {
+  return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`).json<void>();
 }

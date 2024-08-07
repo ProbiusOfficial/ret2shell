@@ -3,9 +3,10 @@ use axum::{
   middleware,
   response::IntoResponse,
   routing::get,
-  Json, Router,
+  Extension, Json, Router,
 };
 use futures::TryStreamExt;
+use r2s_cache::Cache;
 use r2s_cluster::Cluster;
 use r2s_config::GlobalConfig;
 use r2s_database::user::Permission;
@@ -13,7 +14,7 @@ use tokio_util::io::StreamReader;
 use tracing::{debug, error};
 
 use crate::{
-  middleware::auth,
+  middleware::auth::{self, Token},
   traits::{GlobalState, ResponseError},
 };
 
@@ -43,6 +44,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           Permission::Game
         ))),
     )
+    .route("/calmdown", get(get_calmdown_status))
     .route_layer(middleware::from_fn(auth::permission_required_all!(
       Permission::Basic,
       Permission::Verified
@@ -136,4 +138,11 @@ async fn get_cluster_registry_config(
   } else {
     Ok(Json(None))
   }
+}
+
+async fn get_calmdown_status(
+  State(cache): State<Cache>, Extension(token): Extension<Token>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let timestamp = cache.at("cluster").get::<i64>(token.id).await?;
+  Ok(Json(timestamp))
 }

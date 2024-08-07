@@ -324,7 +324,7 @@ export default function () {
             <Show when={showTimer()} fallback={<span class="text-3xl font-bold text-warning">{t("game.ended")}</span>}>
               <h3 class="text-xl font-bold opacity-60">{t("game.timerTips", { period: period() })}</h3>
               <p class="text-3xl font-bold">
-                <Timer end={timeEnd()} />
+                <Timer end={timeEnd()} hasHours />
               </p>
             </Show>
           </div>

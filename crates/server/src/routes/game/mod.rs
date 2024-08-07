@@ -318,10 +318,11 @@ async fn update_game_intro(
 }
 
 #[derive(Serialize, Clone, Deserialize)]
-struct ChallengeEnvInstance {
+struct Instance {
   pub state: String,
   pub name: String,
   pub wsrx: String,
+  pub ports: Vec<u16>,
   pub renew_count: i32,
   #[serde(with = "ts_seconds")]
   pub created_at: DateTime<Utc>,
@@ -348,10 +349,10 @@ macro_rules! get_pod_field {
   }};
 }
 
-impl TryFrom<Pod> for ChallengeEnvInstance {
+impl TryFrom<Pod> for Instance {
   type Error = ResponseError;
   fn try_from(value: Pod) -> Result<Self, Self::Error> {
-    Ok(ChallengeEnvInstance {
+    Ok(Instance {
       state: value
         .status
         .map(|s| s.phase.unwrap_or("Unknown".to_string()))
@@ -359,6 +360,10 @@ impl TryFrom<Pod> for ChallengeEnvInstance {
         .clone(),
       name: value.metadata.name.clone().unwrap_or_default(),
       wsrx: get_pod_field!(value, labels, "ret.sh.cn/wsrx"),
+      ports: get_pod_field!(value, annotations, "ret.sh.cn/ports")
+        .split(',')
+        .map(|p| p.parse().unwrap_or(0))
+        .collect(),
       renew_count: get_pod_field!(value, annotations, "ret.sh.cn/renew")
         .parse()
         .map_err(|_| ResponseError::Gone("renew count not found".to_owned()))?,
@@ -407,7 +412,7 @@ async fn get_self_envs(
   } else {
     vec![]
   };
-  let mut envs: Vec<ChallengeEnvInstance> = vec![];
+  let mut envs: Vec<Instance> = vec![];
   if let Some(self_env) = self_env {
     envs.push(self_env.try_into()?);
   }
