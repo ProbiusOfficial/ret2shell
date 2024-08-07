@@ -31,6 +31,7 @@ pub struct SubmissionEvent {
   pub blood_state: Option<u64>,
   pub operator: user::Model,
   pub team: team::Model,
+  pub challenge: challenge::Model,
   pub peer_team: Option<team::Model>,
   pub reason: Option<String>,
   pub event_type: SubmissionEventType,

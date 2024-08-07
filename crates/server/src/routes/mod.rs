@@ -36,7 +36,6 @@ mod rpc;
 mod traffic;
 mod user;
 mod wiki;
-mod worker;
 
 pub async fn initialize(
   config: Option<server::Config>, state: GlobalState,

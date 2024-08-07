@@ -214,6 +214,18 @@ where
   challenge.update(db).await
 }
 
+pub async fn update_score<C>(db: &C, challenge: Model) -> Result<Model, DbErr>
+where
+  C: ConnectionTrait,
+{
+  let challenge = ActiveModel {
+    id: ActiveValue::Unchanged(challenge.id),
+    score: ActiveValue::Set(challenge.score),
+    ..challenge.into_active_model()
+  };
+  challenge.update(db).await
+}
+
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
 where
   C: ConnectionTrait,

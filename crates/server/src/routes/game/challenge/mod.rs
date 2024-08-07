@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use axum::{
   body::Body,
-  extract::{DefaultBodyLimit, Multipart, Query, State},
+  extract::{DefaultBodyLimit, Multipart, Path, Query, State},
   http::{HeaderMap, StatusCode},
   middleware,
   response::{IntoResponse, Response},
@@ -463,6 +465,11 @@ async fn delete_challenge(
   Ok(())
 }
 
+#[derive(Deserialize)]
+struct SolvesStatusQuery {
+  pub id: Option<i64>,
+}
+
 #[derive(Serialize)]
 struct SolvesStatus {
   pub solved: bool,
@@ -473,21 +480,60 @@ struct SolvesStatus {
 async fn get_challenge_solves_status(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, team_ext: Option<Extension<team::Model>>,
-  Extension(challenge): Extension<challenge::Model>,
+  Extension(challenge): Extension<challenge::Model>, Query(query): Query<SolvesStatusQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if let Some(id) = query.id {
+    let submission = submission::get(&db.conn, id).await?;
+    if submission.clone().is_some_and(|s| s.user_id != token.id) || submission.is_none() {
+      return Err(ResponseError::NotFound("submission".to_string()));
+    } else {
+      return Ok(Json(submission.unwrap()).into_response());
+    }
+  }
   let team = extract_team!(game, team_ext, token);
-  let (top, solves) =
-    submission::get_page_ex(&db.conn, 1, 3, true, false, Some(challenge.id), None, None).await?;
+  let (top, solves) = submission::get_page_ex(
+    &db.conn,
+    1,
+    3,
+    true,
+    false,
+    Some(challenge.id),
+    None,
+    None,
+    team.is_some(),
+  )
+  .await?;
   let solved = if let Some(team) = team {
-    submission::count(&db.conn, true, Some(challenge.id), Some(team.id), None).await? > 0
+    submission::count(
+      &db.conn,
+      true,
+      Some(challenge.id),
+      Some(team.id),
+      None,
+      false,
+    )
+    .await?
+      > 0
   } else {
-    submission::count(&db.conn, true, Some(challenge.id), None, Some(token.id)).await? > 0
+    submission::count(
+      &db.conn,
+      true,
+      Some(challenge.id),
+      None,
+      Some(token.id),
+      false,
+    )
+    .await?
+      > 0
   };
-  Ok(Json(SolvesStatus {
-    solved,
-    solves,
-    top,
-  }))
+  Ok(
+    Json(SolvesStatus {
+      solved,
+      solves,
+      top,
+    })
+    .into_response(),
+  )
 }
 
 #[derive(Deserialize)]
@@ -497,7 +543,7 @@ struct SubmitRequest {
 
 #[allow(clippy::too_many_arguments)]
 async fn submit_flag(
-  State(ref db): State<Database>, State(_bucket): State<Bucket>, State(ref queue): State<Queue>,
+  State(ref db): State<Database>, State(ref queue): State<Queue>,
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
   team_ext: Option<Extension<team::Model>>, Extension(challenge): Extension<challenge::Model>,
   Json(req): Json<SubmitRequest>,
@@ -513,20 +559,20 @@ async fn submit_flag(
     solved: None,
     result: None,
     team_id: if let Some(team) = team {
-      Some(team.id)
+      if game.in_progress() {
+        Some(team.id)
+      } else {
+        None
+      }
     } else {
       None
     },
     user_id: token.id,
   };
   let submission = submission::create(&db.conn, submission).await?;
-  queue.publish("check", submission).await?;
-  Ok(())
+  queue.publish("check", submission.clone()).await?;
+  Ok(Json(submission))
 }
-
-// TODO: publish solved event
-// TODO: update scoreboard
-// TODO: check flag
 
 #[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug)]
 #[serde(rename_all = "snake_case")]

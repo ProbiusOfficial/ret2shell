@@ -909,7 +909,10 @@
       "startTips": "환경 서비스를 시작합니다.",
       "statusTips": "문제 환경 서비스 상태를 표시합니다.",
       "stopTips": "환경 서비스 중지, 이 명령어는 여기서 다른 문제의 환경 서비스를 중지할 수 있습니다.",
-      "usage": "사용 방법:"
+      "usage": "사용 방법:",
+      "stopEnvError": "환경 중지 실패",
+      "startEnvError": "환경 시작 실패",
+      "delayError": "서비스 기간 연장 실패"
     },
     "welcome": "{{shell}}을 사용해 주셔서 감사합니다!",
     "wget": {

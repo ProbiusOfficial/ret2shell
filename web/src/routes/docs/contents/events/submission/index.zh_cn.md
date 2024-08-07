@@ -25,6 +25,15 @@
       ... // 其他数据库字段，不保证完整，也不保证今后的版本不变更，即使存在也不要使用这些字段
     }, // Team | null，仅当 event_type 为 "cheated" 时不为空
     "blood_state": 1, // number | null, 表示抢血状态，三血以后或者event_type为"too_many_requests"时为null
+    "challenge": {
+      "id": 1,
+      "name": "题目标题",
+      "updated_at": 1718493963, // UNIX 时间戳
+      "hidden": false,
+      "score": 100,
+      "content": "题目内容",
+      ... // 其他数据库字段，不保证完整，也不保证今后的版本不变更，即使存在也不要使用这些字段
+    },
     "submission": {
       "id": 1,
       "created_at": 1718493963, // UNIX 时间戳

@@ -1,4 +1,4 @@
-import { getChallengeEnv } from "@api/game";
+import { delayGameSelfEnv, getChallengeEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
 import { deunicode } from "@api/rpc";
 import { wsrx } from "@lib/wsrx";
 import { accountStore } from "@storage/account";
@@ -62,25 +62,42 @@ export class Service implements Command {
     const inst = wsrx.instances().find((instance) => instance.user_id === accountStore.id);
     if (inst) {
       if (inst.challenge_id === challengeStore.current!.id) {
-        this.status(io);
-      } else {
-        io.warning(t("shell.service.onlyOneInstancePersist")!);
-        io.info(
-          `${t("shell.service.onlyOneInstancePersistTips")}: ${link(inst.challenge_name!, `rnix://challenge/${inst.challenge_id}`)}`
-        );
-        io.print(
-          `${t("shell.service.onlyOneInstancePersistChoice")!} [${ansiColors.green(link("yes", "rnix://command/yes"))}/${ansiColors.red(link("NO", "rnix://command/no"))}]: `
-        );
-        const choice = await io.input();
-        io.println("");
-        if (choice === "yes") {
-          // TODO: Implement this
-        } else {
-          io.warning(t("shell.service.noActionPerformed")!);
-          return 1;
+        await this.status(io);
+        return 0;
+      }
+      io.warning(t("shell.service.onlyOneInstancePersist")!);
+      io.info(
+        `${t("shell.service.onlyOneInstancePersistTips")}: ${link(inst.challenge_name!, `rnix://challenge/${inst.challenge_id}`)}`
+      );
+      io.print(
+        `${t("shell.service.onlyOneInstancePersistChoice")!} [${ansiColors.green(link("yes", "rnix://command/yes"))}/${ansiColors.red(link("NO", "rnix://command/no"))}]: `
+      );
+      const choice = await io.input();
+      io.println("");
+      if (choice === "yes") {
+        try {
+          await stopGameSelfEnv(challengeStore.current!.game_id);
+        } catch (e) {
+          if (e instanceof HTTPError) {
+            const text = await e.response.text();
+            io.error(`${t("shell.service.stopEnvError")!}: ${text}`);
+          }
         }
+      } else {
+        io.warning(t("shell.service.noActionPerformed")!);
+        return 1;
       }
     }
+    await new Promise((r) => setTimeout(r, 500));
+    try {
+      await startChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id);
+    } catch (e) {
+      if (e instanceof HTTPError) {
+        const text = await e.response.text();
+        io.error(`${t("shell.service.startEnvError")!}: ${text}`);
+      }
+    }
+    await this.status(io);
     return 0;
   }
 
@@ -89,6 +106,16 @@ export class Service implements Command {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
+    try {
+      await stopGameSelfEnv(challengeStore.current!.game_id);
+    } catch (e) {
+      if (e instanceof HTTPError) {
+        const text = await e.response.text();
+        io.error(`${t("shell.service.stopEnvError")!}: ${text}`);
+      }
+    }
+    await wsrx.refreshInstances();
+    await wsrx.deleteOutdatedTraffic();
     return 0;
   }
 
@@ -97,6 +124,9 @@ export class Service implements Command {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
+    await this.stop(io);
+    await new Promise((r) => setTimeout(r, 500));
+    await this.start(io);
     return 0;
   }
 
@@ -105,6 +135,7 @@ export class Service implements Command {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
+    await wsrx.refreshInstances();
     const inst = wsrx.instances().find((instance) => instance.challenge_id === challengeStore.current?.id);
     const d_service_name = await deunicode(challengeStore.current!.name);
     io.println(`${inst ? ansiColors.greenBright("●") : ansiColors.dim("○")} ${d_service_name}.service`);
@@ -115,13 +146,24 @@ export class Service implements Command {
       `     Active: ${inst ? `${ansiColors.greenBright.bold("active (running)")} since ${inst.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}` : ansiColors.red.bold("inactive (dead)")}`
     );
     if (inst) {
+      await wsrx.openAllTraffic();
+      await wsrx.refreshTraffic();
       for (const image of challengeStore.env.images) {
         io.println(
           `       ${ansiColors.dim("└─")} ${image.name}.service: ${ansiColors.greenBright.bold("active (running)")} - ${image.description}`
         );
-        io.println(
-          `          Connection: ${ansiColors.blue(link(`wsrx://open?url=${inst.wsrx}&port=${image.port}`, `wsrx://open?url=${inst.wsrx}&port=${image.port}`))}`
-        );
+        if (image.port) {
+          const local = wsrx.getTrafficLocal(inst, image.port!);
+          if (local) {
+            io.println(
+              `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(link(`${image.service_type}://${local.local}`, `${image.service_type}://${local.local}`))} proxing by WSRX`
+            );
+          } else {
+            io.println(
+              `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(link(`wsrx://open?url=${inst.wsrx}&port=${image.port}`, `wsrx://open?url=${inst.wsrx}&port=${image.port}`))}`
+            );
+          }
+        }
       }
     }
     io.println("");
@@ -133,6 +175,15 @@ export class Service implements Command {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
+    try {
+      await delayGameSelfEnv(challengeStore.current!.game_id);
+    } catch (e) {
+      if (e instanceof HTTPError) {
+        const text = await e.response.text();
+        io.error(`${t("shell.service.delayError")!}: ${text}`);
+      }
+    }
+    this.status(io);
     return 0;
   }
 }

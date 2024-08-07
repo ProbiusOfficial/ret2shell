@@ -909,7 +909,10 @@
       "startTips": "Iniciar el servicio de entorno del tema.",
       "statusTips": "Mostrar el estado del entorno de servicio del tema.",
       "stopTips": "Detener el servicio de entorno del problema, este comando puede detener los servicios de entorno de otros problemas aquí.",
-      "usage": "Modo de uso:"
+      "usage": "Modo de uso:",
+      "stopEnvError": "Detener el fracaso ambiental",
+      "startEnvError": "Fallo al iniciar el entorno",
+      "delayError": "Fallo al extender el plazo de servicio"
     },
     "welcome": "¡Bienvenido a usar {{shell}}!",
     "wget": {

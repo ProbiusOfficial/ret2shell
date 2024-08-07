@@ -55,7 +55,11 @@ async fn cluster_maintain_worker(cluster: Cluster) {
   loop {
     tokio::time::sleep(std::time::Duration::from_secs(60)).await;
     debug!("Checking outdated pods...");
-    if let Err(e) = cluster.delete_outdated_pods().await {
+    if let Err(e) = cluster
+      .at("ret2shell-challenge")
+      .delete_outdated_pods()
+      .await
+    {
       error!("Failed to delete outdated pods: {}", e);
     }
   }

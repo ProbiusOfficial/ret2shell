@@ -56,8 +56,9 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
 }
 
 async fn get_self_team(
-  Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team::get_ex(&db.conn, team.id).await?;
   Ok(Json(team))
 }
 
@@ -159,7 +160,7 @@ async fn get_team_solves(
   State(ref db): State<Database>, Extension(team): Extension<team::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   Ok(Json(
-    submission::get_list(&db.conn, true, false, None, Some(team.id), None).await?,
+    submission::get_list(&db.conn, true, false, None, Some(team.id), None, true).await?,
   ))
 }
 

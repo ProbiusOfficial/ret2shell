@@ -36,8 +36,10 @@ mod challenge;
 mod chat;
 mod notification;
 mod team;
+mod worker;
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
+  tokio::spawn(worker::spawn_game_workers(state.clone()));
   Router::new()
     .route("/", post(create_game))
     .route_layer(middleware::from_fn(auth::permission_required_all!(

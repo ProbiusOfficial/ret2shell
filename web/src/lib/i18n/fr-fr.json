@@ -909,7 +909,10 @@
       "startTips": "Démarrer le service d'environnement de sujet.",
       "statusTips": "Afficher l'état des services d'environnement de la question.",
       "stopTips": "Arrêter le service d'environnement des questions, cette commande peut arrêter les services d'environnement des autres questions ici.",
-      "usage": "Mode d'emploi :"
+      "usage": "Mode d'emploi :",
+      "stopEnvError": "Échec de l'arrêt de l'environnement",
+      "startEnvError": "Échec du démarrage de l'environnement",
+      "delayError": "Échec de l'extension de la durée du service"
     },
     "welcome": "Bienvenue sur {{shell}}!",
     "wget": {

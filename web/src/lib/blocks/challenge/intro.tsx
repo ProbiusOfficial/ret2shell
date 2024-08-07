@@ -47,7 +47,10 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
     if (challengeStore.current && challengeStore.env) {
       refreshCalmdown();
       wsrx.refreshInstances().then(() => {
-        wsrx.openAllTraffic();
+        wsrx.deleteOutdatedTraffic();
+        wsrx.openAllTraffic().then(() => {
+          wsrx.refreshTraffic();
+        });
       });
     }
   });
@@ -329,7 +332,9 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                         loading={stopping()}
                         disabled={stopping()}
                       >
-                        <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
+                        <Show when={!stopping()}>
+                          <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
+                        </Show>
                       </Button>
                     </Match>
                   </Switch>

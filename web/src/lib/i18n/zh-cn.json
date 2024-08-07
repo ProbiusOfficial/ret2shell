@@ -958,7 +958,10 @@
       "onlyOneInstancePersist": "同一时间只能启动一个题目服务。",
       "onlyOneInstancePersistChoice": "是否停止其他题目服务并启动当前题目？",
       "onlyOneInstancePersistTips": "当前正在运行的服务",
-      "noActionPerformed": "不会执行任何操作。"
+      "noActionPerformed": "不会执行任何操作。",
+      "stopEnvError": "停止环境失败",
+      "startEnvError": "启动环境失败",
+      "delayError": "延长服务时限失败"
     },
     "canNotSwitchDir": "远程主机拒绝了目录穿越。"
   },

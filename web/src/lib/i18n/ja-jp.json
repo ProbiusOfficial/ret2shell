@@ -920,7 +920,10 @@
       "onlyOneInstancePersist": "同時に一つの問題サービスしか起動できません。",
       "onlyOneInstancePersistChoice": "他の問題サービスを停止し、現在の問題を開始しますか？",
       "onlyOneInstancePersistTips": "現在稼働中のサービス",
-      "noActionPerformed": "何も実行しません。"
+      "noActionPerformed": "何も実行しません。",
+      "stopEnvError": "環境停止に失敗",
+      "startEnvError": "環境の起動に失敗しました",
+      "delayError": "サービス期間の延長に失敗しました"
     },
     "canNotSwitchDir": "リモートホストがディレクトリトラバーサルを拒否しました。"
   },

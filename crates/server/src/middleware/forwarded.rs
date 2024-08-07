@@ -331,8 +331,8 @@ pub async fn ip_record(
 }
 
 async fn ip_record_worker_exec(message: jetstream::Message, db: &Database) -> anyhow::Result<()> {
-  let email = String::from_utf8(message.message.payload.to_vec())?;
-  let req = serde_json::from_str::<IpRecord>(&email)?;
+  let req = String::from_utf8(message.message.payload.to_vec())?;
+  let req = serde_json::from_str::<IpRecord>(&req)?;
   let model = ip::get_or_create(&db.conn, &req.ip).await?;
   ip::link_user(&db.conn, req.user_id, model.id).await.ok();
   Ok(())

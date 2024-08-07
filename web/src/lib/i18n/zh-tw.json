@@ -60,7 +60,10 @@
       "onlyOneInstancePersist": "同一時間只能啟動一個題目服務。",
       "onlyOneInstancePersistChoice": "是否停止其他題目服務並啟動當前題目？",
       "onlyOneInstancePersistTips": "目前正在運行的服務",
-      "noActionPerformed": "不會執行任何操作。"
+      "noActionPerformed": "不會執行任何操作。",
+      "stopEnvError": "停止環境失敗",
+      "startEnvError": "啟動環境失敗",
+      "delayError": "延長服務時限失敗"
     },
     "canNotSwitchDir": "遠端主機拒絕了目錄穿越。"
   },

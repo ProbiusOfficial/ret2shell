@@ -909,7 +909,10 @@
       "startTips": "Starten Sie den Themenumgebungsdienst.",
       "statusTips": "Anzeige des Umgebungsdienststatus für Aufgaben.",
       "stopTips": "Stoppen Sie den Umgebungsdienst für die Aufgabe. Dieser Befehl kann hier den Umgebungsdienst für andere Aufgaben stoppen.",
-      "usage": "Verwendungsweise:"
+      "usage": "Verwendungsweise:",
+      "stopEnvError": "Umgebungstopp fehlgeschlagen",
+      "startEnvError": "Umgebung starten fehlgeschlagen",
+      "delayError": "Erweiterung der Servicefrist fehlgeschlagen"
     },
     "welcome": "Willkommen bei {{shell}}!",
     "wget": {

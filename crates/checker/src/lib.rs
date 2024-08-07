@@ -25,8 +25,8 @@ pub struct Checker {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AuditMessage {
-  peer_team: Option<i64>,
-  reason: String,
+  pub peer_team: Option<i64>,
+  pub reason: String,
 }
 
 macro_rules! to_rune_object {

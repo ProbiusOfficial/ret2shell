@@ -276,7 +276,13 @@ impl Cluster {
         Ok(true) => {
           debug!("Deleting outdated pod: {}", pod.name().unwrap());
           api
-            .delete(&pod.name().unwrap(), &Default::default())
+            .delete(
+              &pod.name().unwrap(),
+              &DeleteParams {
+                grace_period_seconds: Some(0),
+                ..Default::default()
+              },
+            )
             .await?;
         }
         Ok(false) => {

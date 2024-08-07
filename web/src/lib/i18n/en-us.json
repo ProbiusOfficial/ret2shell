@@ -14,7 +14,10 @@
       "onlyOneInstancePersist": "Only one topic service can be activated at the same time.",
       "onlyOneInstancePersistChoice": "Do you want to stop other topic services and start the current topic? ",
       "onlyOneInstancePersistTips": "Currently running services",
-      "noActionPerformed": "No action will be taken."
+      "noActionPerformed": "No action will be taken.",
+      "stopEnvError": "Environment stop failure",
+      "startEnvError": "Failed to start the environment",
+      "delayError": "Failed to extend service duration"
     },
     "cat": {
       "error": "Error reading file.",

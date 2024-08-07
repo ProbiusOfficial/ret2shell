@@ -81,6 +81,8 @@ pub enum ResponseError {
   OAuthError(#[from] r2s_oauth::OAuthError),
   #[error("Checker error: {0}")]
   CheckerError(#[from] r2s_checker::traits::CheckerError),
+  #[error("string decode error: {0}")]
+  StringDecodeError(#[from] std::string::FromUtf8Error),
 }
 
 macro_rules! log_with_resp {
@@ -306,6 +308,13 @@ impl IntoResponse for ResponseError {
           )
         }
       },
+      ResponseError::StringDecodeError(e) => {
+        log_with_resp!(
+          StatusCode::INTERNAL_SERVER_ERROR,
+          "failed to decode string".to_owned(),
+          e.to_string()
+        )
+      }
     };
     Response::builder()
       .status(status)

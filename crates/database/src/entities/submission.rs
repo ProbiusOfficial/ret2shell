@@ -108,10 +108,17 @@ impl Related<super::user::Entity> for Entity {
 
 impl ActiveModelBehavior for ActiveModel {}
 
+pub async fn get<C>(db: &C, id: i64) -> Result<Option<Model>, DbErr>
+where
+  C: ConnectionTrait,
+{
+  Entity::find_by_id(id).one(db).await
+}
+
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page<C>(
   db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool,
-  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
+  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
   C: ConnectionTrait,
@@ -126,8 +133,12 @@ where
   if let Some(user_id) = user_id {
     sql = sql.filter(Column::UserId.eq(user_id));
   }
-  if only_solved {
-    sql = sql.filter(Column::Solved.eq(true));
+  if in_game && only_solved {
+    sql = sql
+      .filter(Column::TeamId.is_not_null())
+      .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
+  } else if only_solved {
+    sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
   }
   if !with_content {
     sql = sql
@@ -142,7 +153,7 @@ where
 
 pub async fn get_list<C>(
   db: &C, only_solved: bool, with_content: bool, challenge_id: Option<i64>, team_id: Option<i64>,
-  user_id: Option<i64>,
+  user_id: Option<i64>, in_game: bool,
 ) -> Result<Vec<ExModel>, DbErr>
 where
   C: ConnectionTrait,
@@ -160,6 +171,13 @@ where
   if only_solved {
     sql = sql.filter(Column::Solved.eq(true));
   }
+  if in_game && only_solved {
+    sql = sql
+      .filter(Column::TeamId.is_not_null())
+      .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
+  } else if only_solved {
+    sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
+  }
   sql = sql
     .join(JoinType::InnerJoin, Relation::Challenge.def())
     .column_as(challenge::Column::Score, "score");
@@ -174,7 +192,7 @@ where
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page_ex<C>(
   db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool,
-  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
+  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
 ) -> Result<(Vec<ExModel>, u64), DbErr>
 where
   C: ConnectionTrait,
@@ -198,6 +216,13 @@ where
   if only_solved {
     sql = sql.filter(Column::Solved.eq(true));
   }
+  if in_game && only_solved {
+    sql = sql
+      .filter(Column::TeamId.is_not_null())
+      .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
+  } else if only_solved {
+    sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
+  }
   sql = sql
     .join(JoinType::InnerJoin, Relation::Challenge.def())
     .column_as(challenge::Column::Score, "score");
@@ -217,6 +242,7 @@ where
 
 pub async fn count<C>(
   db: &C, only_solved: bool, challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
+  in_game: bool,
 ) -> Result<u64, DbErr>
 where
   C: ConnectionTrait,
@@ -234,6 +260,13 @@ where
   if only_solved {
     sql = sql.filter(Column::Solved.eq(true));
   }
+  if in_game && only_solved {
+    sql = sql
+      .filter(Column::TeamId.is_not_null())
+      .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
+  } else if only_solved {
+    sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
+  }
   sql.count(db).await
 }
 
@@ -247,6 +280,17 @@ where
     ..submission.into_active_model().reset_all()
   };
   submission.insert(db).await
+}
+
+pub async fn update<C>(db: &C, submission: Model) -> Result<Model, DbErr>
+where
+  C: ConnectionTrait,
+{
+  let submission = ActiveModel {
+    id: ActiveValue::Unchanged(submission.id),
+    ..submission.into_active_model().reset_all()
+  };
+  submission.update(db).await
 }
 
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
