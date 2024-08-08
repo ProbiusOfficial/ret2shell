@@ -1,5 +1,5 @@
 import { checkSubmissionStatus, submitFlag } from "@api/game";
-import { challengeStore } from "@storage/challenge";
+import { challengeStore, refreshSolves, refreshStatus } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
@@ -25,6 +25,8 @@ export class Submit implements Command {
           io.println("");
           if (s.solved) {
             io.success(`${t("shell.submit.correct")}: ${s.result}`);
+            refreshStatus();
+            refreshSolves();
           } else {
             io.error(`${t("shell.submit.incorrect")}: ${s.result}`);
           }
