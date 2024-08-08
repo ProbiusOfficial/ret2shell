@@ -177,11 +177,6 @@ where
   sql = sql
     .join(JoinType::InnerJoin, Relation::Challenge.def())
     .column_as(challenge::Column::Score, "score");
-  if !with_content {
-    sql = sql
-      .select_only()
-      .columns(Column::iter().filter(|c| !matches!(c, Column::Content | Column::Result)));
-  }
 
   let result = sql.into_model().all(db).await?;
   if !with_content {
