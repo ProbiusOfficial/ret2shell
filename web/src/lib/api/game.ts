@@ -343,6 +343,5 @@ export async function getChallengeSolveStatus(game_id: number, challenge_id: num
   return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/submit`).json<{
     solved: boolean;
     solves: number;
-    top: Submission[];
   }>();
 }

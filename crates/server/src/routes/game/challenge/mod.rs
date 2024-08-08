@@ -487,7 +487,6 @@ struct SolvesStatusQuery {
 struct SolvesStatus {
   pub solved: bool,
   pub solves: u64,
-  pub top: Vec<submission::ExModel>,
 }
 
 async fn get_challenge_solves_status(
@@ -507,12 +506,9 @@ async fn get_challenge_solves_status(
     }
   }
   let team = extract_team!(game, team_ext, token);
-  let (top, solves) = submission::get_page_ex(
+  let solves = submission::count(
     &db.conn,
-    1,
-    3,
     true,
-    false,
     Some(challenge.id),
     None,
     None,
@@ -542,14 +538,7 @@ async fn get_challenge_solves_status(
     .await?
       > 0
   };
-  Ok(
-    Json(SolvesStatus {
-      solved,
-      solves,
-      top,
-    })
-    .into_response(),
-  )
+  Ok(Json(SolvesStatus { solved, solves }).into_response())
 }
 
 #[derive(Deserialize)]

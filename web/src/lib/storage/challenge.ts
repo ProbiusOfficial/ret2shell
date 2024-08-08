@@ -21,7 +21,6 @@ export const [challengeStore, setChallengeStore] = createStore({
   status: null as {
     solved: boolean;
     solves: number;
-    top: Submission[];
   } | null,
   challenges: [] as Challenge[],
   files: [] as Attachment[],

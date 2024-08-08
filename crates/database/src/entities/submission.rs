@@ -3,7 +3,7 @@
 use chrono::{serde::ts_seconds, DateTime, Utc};
 use sea_orm::{
   entity::prelude::*, ActiveValue, FromQueryResult, IntoActiveModel, Iterable, JoinType,
-  QueryOrder, QuerySelect,
+  QuerySelect,
 };
 use serde::{Deserialize, Serialize};
 
@@ -118,7 +118,7 @@ where
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page<C>(
   db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool,
-  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
+  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
   C: ConnectionTrait,
@@ -133,12 +133,8 @@ where
   if let Some(user_id) = user_id {
     sql = sql.filter(Column::UserId.eq(user_id));
   }
-  if in_game && only_solved {
-    sql = sql
-      .filter(Column::TeamId.is_not_null())
-      .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
-  } else if only_solved {
-    sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
+  if only_solved {
+    sql = sql.filter(Column::Solved.eq(true));
   }
   if !with_content {
     sql = sql
@@ -192,7 +188,7 @@ where
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page_ex<C>(
   db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool,
-  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
+  challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
 ) -> Result<(Vec<ExModel>, u64), DbErr>
 where
   C: ConnectionTrait,
@@ -216,23 +212,13 @@ where
   if only_solved {
     sql = sql.filter(Column::Solved.eq(true));
   }
-  if in_game && only_solved {
-    sql = sql
-      .filter(Column::TeamId.is_not_null())
-      .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
-  } else if only_solved {
-    sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
-  }
   sql = sql.column_as(challenge::Column::Score, "score");
   if !with_content {
     sql = sql
       .select_only()
       .columns(Column::iter().filter(|c| !matches!(c, Column::Content | Column::Result)));
   }
-  let paginator = sql
-    .order_by_asc(Column::CreatedAt)
-    .into_model()
-    .paginate(db, page_size);
+  let paginator = sql.into_model().paginate(db, page_size);
   let total = paginator.num_items().await?;
   let submissions = paginator.fetch_page(page - 1).await?;
   Ok((submissions, total))
