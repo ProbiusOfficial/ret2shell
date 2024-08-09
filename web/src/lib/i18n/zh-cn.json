@@ -243,7 +243,11 @@
       "hammerInputAlreadySend": "问题已经发送，请等待反馈...",
       "fetchChatSessionError": "获取反馈列表失败",
       "adminHammerTips": "这是选手反馈的题目和队伍信息：",
-      "envContainerNameFormat": "容器名称只能由小写字母与短横杠组成"
+      "envContainerNameFormat": "容器名称只能由小写字母与短横杠组成",
+      "commitHistoryTips": "谁动了我的题？",
+      "commitHistory": "操作历史",
+      "statisticsTips": "谁做了我的题？",
+      "fetchHistoryFailed": "获取题目历史更改失败"
     },
     "scoreboard": {
       "title": "积分板",

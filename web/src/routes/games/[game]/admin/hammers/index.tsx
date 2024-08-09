@@ -80,7 +80,10 @@ export default function () {
     if (gameStore.current && challengeId() && teamId()) {
       getGameAdminChatMessages(gameStore.current.id, challengeId()!, teamId()!)
         .then((result) => {
-          if (result.length > chats().length) {
+          if (
+            result.length > chats().length ||
+            chats().some((v, i) => v.challenge_id !== result[i].challenge_id || v.team_id !== result[i].team_id)
+          ) {
             setChats(result);
             setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 300);
           }
@@ -110,23 +113,16 @@ export default function () {
     <div class="flex-1 overflow-hidden flex flex-col">
       <div class="h-16 flex flex-row px-4 space-x-2 items-center backdrop-blur border-b border-b-layer-content/10">
         <span class="icon-[fluent--chat-20-regular] w-5 h-5" />
-        <span class="font-bold">{t("game.admin.chat.title")}</span>
+        <A class="font-bold" href={`/games/${gameStore.current?.id}/teams/${teamId()}`}>
+          {team() ? team()?.name : t("game.admin.chat.title")}
+        </A>
         <span class="flex-1" />
         <Show when={challenge()}>
           <A
             class="flex flex-row space-x-2 hover:underline items-center"
-            href={`/games/${gameStore.current?.id}/teams/${teamId()}`}
-          >
-            <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-            <span>{team()?.name}</span>
-          </A>
-        </Show>
-        <Show when={team()}>
-          <A
-            class="flex flex-row space-x-2 hover:underline items-center"
             href={`/games/${gameStore.current?.id}/challenges?challenge=${challengeId()}`}
           >
-            <span class="icon-[fluent--code-20-regular] w-5 h-5" />
+            <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
             <span>{challenge()?.name}</span>
           </A>
         </Show>

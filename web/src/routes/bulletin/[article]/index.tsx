@@ -139,7 +139,9 @@ export default function () {
         when={inEdit()}
         fallback={<Article class="self-center" content={article()?.content || ""} extra={true} headingAnchors={true} />}
       >
-        <EditForm editSource={article() || undefined} onDone={onDone} />
+        <div class="flex-1 flex flex-row justify-center px-3 lg:px-6 pb-3 lg:pb-6">
+          <EditForm editSource={article() || undefined} onDone={onDone} />
+        </div>
       </Show>
     </>
   );

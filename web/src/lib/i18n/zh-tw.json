@@ -764,7 +764,11 @@
       "hammerInputAlreadySend": "問題已經發送，請等待回饋...",
       "fetchChatSessionError": "獲取反饋列表失敗",
       "adminHammerTips": "這是選手回饋的題目和隊伍資訊：",
-      "envContainerNameFormat": "容器名稱只能由小寫字母與短橫槓組成"
+      "envContainerNameFormat": "容器名稱只能由小寫字母與短橫槓組成",
+      "commitHistoryTips": "誰動了我的題？",
+      "commitHistory": "操作紀錄",
+      "statisticsTips": "誰做了我的題？",
+      "fetchHistoryFailed": "獲取題目歷史更改失敗"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

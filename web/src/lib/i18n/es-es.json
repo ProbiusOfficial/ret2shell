@@ -685,7 +685,11 @@
       "hammerInputAlreadySend": "El problema ha sido enviado, por favor espere la respuesta...",
       "fetchChatSessionError": "Fallo al obtener la lista de comentarios",
       "adminHammerTips": "Este es el tema de retroalimentación del participante y la información del equipo:",
-      "envContainerNameFormat": "Los nombres de los contenedores solo pueden estar formados por letras minúsculas y guiones."
+      "envContainerNameFormat": "Los nombres de los contenedores solo pueden estar formados por letras minúsculas y guiones.",
+      "commitHistoryTips": "¿Quién tocó mi pregunta?",
+      "commitHistory": "Historial de operaciones",
+      "statisticsTips": "¿Quién hizo mis ejercicios?",
+      "fetchHistoryFailed": "Error al obtener el historial de cambios del tema"
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

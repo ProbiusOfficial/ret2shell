@@ -27,3 +27,14 @@ export type ChallengeEnv = {
   internet: boolean;
   images: ChallengeImage[];
 };
+
+export type CommitHistory = {
+  abbreviated_commit: string;
+  subject: string;
+  body: string;
+  author: {
+    name: string;
+    email: string;
+    date: number;
+  };
+};

@@ -72,6 +72,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             )
             .route_layer(DefaultBodyLimit::max(1024 * 1024 * 1024)),
         )
+        .route("/history", get(get_challenge_update_history))
         .route(
           "/env",
           patch(update_challenge_env).delete(delete_challenge_env),
@@ -1197,4 +1198,31 @@ async fn get_all_running_instances_for_challenge(
     .get_challenge_env(challenge.id)
     .await?;
   Ok(Json(instances))
+}
+
+async fn get_challenge_update_history(
+  State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+  Extension(challenge): Extension<challenge::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let game_bucket = bucket
+    .at(
+      game
+        .bucket
+        .as_ref()
+        .ok_or(ResponseError::PreconditionFailed(
+          "game does not have a valid bucket".to_owned(),
+        ))?,
+    )
+    .await?;
+  let history = game_bucket
+    .logs(
+      challenge
+        .bucket
+        .as_ref()
+        .ok_or(ResponseError::PreconditionFailed(
+          "challenge does not have a valid bucket".to_owned(),
+        ))?,
+    )
+    .await?;
+  Ok(Json(history))
 }

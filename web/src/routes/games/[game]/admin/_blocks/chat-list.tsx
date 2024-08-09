@@ -34,6 +34,14 @@ export default function ChatList() {
   });
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
+      <div class="h-16 flex flex-row px-4 space-x-2 items-center backdrop-blur border-b border-b-layer-content/10">
+        <span class="icon-[fluent--chat-20-regular] w-5 h-5" />
+        <span>
+          <span class="font-bold">Rx</span>
+          <span class="opacity-60">::</span>
+          <span>Messenger</span>
+        </span>
+      </div>
       <OverlayScrollbarsComponent
         class="w-full flex-1 relative"
         options={{
@@ -53,7 +61,7 @@ export default function ChatList() {
             </div>
           }
         >
-          <div class="w-full min-h-full overflow-hidden flex flex-col space-y-2 p-3 lg:p-6">
+          <div class="w-full min-h-full overflow-hidden flex flex-col space-y-2 p-2">
             <For each={sessions()}>
               {(session) => (
                 <>
@@ -72,9 +80,9 @@ export default function ChatList() {
                       <Divider />
                       <div class="flex flex-row space-x-2 items-center overflow-hidden">
                         <Show when={!session.checked && session.last_user_id !== accountStore.id}>
-                          <span class="icon-[fluent--alert-20-regular] w-5 h-5 text-error" />
+                          <span class="text-error">[{t("game.admin.chat.unread")}]</span>
                         </Show>
-                        <span class="text-info truncate flex-1 text-end">
+                        <span class="opacity-60 truncate flex-1 text-end">
                           {session.last_active_at.toFormat("MM-dd HH:mm")}
                         </span>
                       </div>

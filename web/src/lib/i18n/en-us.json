@@ -764,7 +764,11 @@
       "fetchChatSessionError": "Failed to retrieve feedback list",
       "hammerInputAlreadySend": "The issue has been sent, please wait for feedback...",
       "sendChatError": "Send failed",
-      "envContainerNameFormat": "Container names can only consist of lowercase letters and hyphens."
+      "envContainerNameFormat": "Container names can only consist of lowercase letters and hyphens.",
+      "commitHistoryTips": "Who touched my question?",
+      "commitHistory": "Operation History",
+      "statisticsTips": "Who did my problem?",
+      "fetchHistoryFailed": "Failed to retrieve historical changes of the question"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

@@ -685,7 +685,11 @@
       "hammerInputAlreadySend": "Le problème a été envoyé, veuillez attendre la réponse...",
       "fetchChatSessionError": "Échec de la récupération de la liste des commentaires",
       "adminHammerTips": "Voici les informations sur le sujet et l'équipe fournies par les participants :",
-      "envContainerNameFormat": "Le nom du conteneur ne peut être composé que de lettres minuscules et de traits d'union."
+      "envContainerNameFormat": "Le nom du conteneur ne peut être composé que de lettres minuscules et de traits d'union.",
+      "commitHistoryTips": "Qui a touché à mon exercice ?",
+      "commitHistory": "Historique des opérations",
+      "statisticsTips": "Qui a fait mon exercice ?",
+      "fetchHistoryFailed": "Échec de l'obtention de l'historique des modifications du sujet"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

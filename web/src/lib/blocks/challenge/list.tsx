@@ -31,7 +31,8 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
     const tags = new Set(
       challengeStore.challenges.flatMap((c) => c.tag.find((t) => t.primary)?.name ?? t("game.challenge.unknownTag")!)
     );
-    for (const tag of tags) {
+    const tagsArray = Array.from(tags).sort((a, b) => a.localeCompare(b));
+    for (const tag of tagsArray) {
       const taggedChallenges = result
         .filter((c) => c.challenge.tag.find((t) => t.primary)?.name === tag)
         .sort((a, b) => {

@@ -685,7 +685,11 @@
       "hammerInputAlreadySend": "問題は送信されました、フィードバックをお待ちください...",
       "fetchChatSessionError": "フィードバックリストの取得に失敗しました",
       "adminHammerTips": "これは選手からのフィードバックの課題とチーム情報です：",
-      "envContainerNameFormat": "コンテナ名は小文字とハイフンのみで構成される必要があります"
+      "envContainerNameFormat": "コンテナ名は小文字とハイフンのみで構成される必要があります",
+      "commitHistoryTips": "誰が私の問題を動かした？",
+      "commitHistory": "操作履歴",
+      "statisticsTips": "誰が私の問題を解決したの？",
+      "fetchHistoryFailed": "題目履歴変更の取得に失敗しました"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

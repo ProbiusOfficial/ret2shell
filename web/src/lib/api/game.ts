@@ -1,5 +1,5 @@
 import type { Article } from "@models/article";
-import type { Challenge, ChallengeEnv } from "@models/challenge";
+import type { Challenge, ChallengeEnv, CommitHistory } from "@models/challenge";
 import type { Chat, ChatSession } from "@models/chat";
 import type { Game, HostType } from "@models/game";
 import type { Instance } from "@models/instance";
@@ -330,6 +330,10 @@ export async function stopGameSelfEnv(game_id: number) {
 
 export async function startChallengeEnv(game_id: number, challenge_id: number) {
   return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`).json<void>();
+}
+
+export async function getChallengeCommitHistory(game_id: number, challenge_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/history`).json<CommitHistory[]>();
 }
 
 export async function submitFlag(game_id: number, challenge_id: number, flag: string) {

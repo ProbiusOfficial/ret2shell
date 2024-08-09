@@ -4,6 +4,7 @@ use std::{
   process::{Command as SyncCommand, Stdio},
 };
 
+use serde::{Deserialize, Serialize};
 use tokio::{fs::create_dir_all, io::AsyncRead, process::Command};
 use tracing::{debug, trace, warn};
 
@@ -12,6 +13,21 @@ use crate::BucketError;
 #[derive(Clone, Debug)]
 pub struct Git {
   path: PathBuf,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct CommitAuthor {
+  name: String,
+  email: String,
+  date: i64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct CommitLog {
+  abbreviated_commit: String,
+  subject: String,
+  body: String,
+  author: CommitAuthor,
 }
 
 impl Git {
@@ -260,20 +276,24 @@ impl Git {
     }
   }
 
-  pub async fn get_commits(&self) -> Result<Vec<String>, BucketError> {
+  pub async fn logs(&self, sub_path: impl AsRef<str>) -> Result<Vec<CommitLog>, BucketError> {
     let output = Command::new("git")
       .current_dir(&self.path)
       .arg("log")
-      .arg("--reflog")
-      .arg("--pretty='%H %at %s'")
+      .arg("--date=unix")
+      .arg("--pretty=format:{\"abbreviated_commit\":\"%h\",\"subject\":\"%s\",\"body\":\"%b\",\"author\":{\"name\":\"%aN\",\"email\":\"%aE\",\"date\":%at}}")
+      .arg(self.path.join(sub_path.as_ref()).canonicalize()?)
       .output()
       .await?;
     if output.status.success() {
       trace!("got commits from git repository: {:?}", output);
+      let output = String::from_utf8(output.stdout)?;
+      trace!("output: {:?}", output);
       Ok(
-        String::from_utf8(output.stdout)?
-          .split('\n')
-          .map(String::from)
+        output
+          .lines()
+          .map(serde_json::from_str)
+          .filter_map(Result::ok)
           .collect(),
       )
     } else {

@@ -11,7 +11,7 @@ use tracing::error;
 
 use crate::{
   challenge,
-  git::Git,
+  git::{CommitLog, Git},
   traits::{init_dir, BucketError},
 };
 
@@ -130,6 +130,22 @@ impl GameBucket {
     }
     self.git.cleanup().await?;
     Ok(())
+  }
+
+  pub async fn logs(&self, challenge: impl AsRef<str>) -> Result<Vec<CommitLog>, BucketError> {
+    let sub_path = "challenges".to_owned() + "/" + challenge.as_ref();
+    // check path traversal
+    let full_path = self.path.join(&sub_path);
+    if !full_path.exists() {
+      return Err(BucketError::PathDoesNotExist(sub_path));
+    }
+    if !full_path
+      .canonicalize()?
+      .starts_with(self.path.canonicalize()?)
+    {
+      return Err(BucketError::PathTraversal);
+    }
+    self.git.logs(sub_path).await
   }
 
   pub async fn set_config(&self, game: Value) -> Result<(), BucketError> {
