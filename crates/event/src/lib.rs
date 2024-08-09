@@ -4,6 +4,7 @@ use async_nats::jetstream::consumer::pull::Stream;
 use axum::extract::ws::{Message, WebSocket};
 use chrono::{DateTime, Utc};
 use events::{Broadcast, EventContainer};
+use futures::{SinkExt, StreamExt};
 use tokio::sync::{broadcast, RwLock};
 
 pub mod events;
@@ -36,13 +37,21 @@ impl EventManager {
     }
   }
 
-  pub async fn subscribe(&self, id: i64, ip_addr: IpAddr, client: String, mut ws: WebSocket) {
+  pub async fn subscribe(&self, id: i64, ip_addr: IpAddr, client: String, ws: WebSocket) {
     let mut rx = self.tx.subscribe();
     let subscribed_time = Utc::now();
     {
       let mut clients = self.clients.write().await;
       clients.push((id, client.clone(), ip_addr, subscribed_time));
     }
+
+    let (mut sink, mut stream) = ws.split();
+
+    tokio::spawn(async move {
+      while let Some(_) = stream.next().await {
+        continue;
+      }
+    });
 
     while let Ok(event) = rx.recv().await {
       match event {
@@ -54,7 +63,7 @@ impl EventManager {
             Some(message) => message,
             None => continue,
           };
-          match ws.send(Message::Text(message)).await {
+          match sink.send(Message::Text(message)).await {
             Ok(_) => {}
             Err(err) => {
               warn!("Failed to send message to client: {:?}", err);
@@ -62,7 +71,7 @@ impl EventManager {
             }
           }
         }
-        Broadcast::Heartbeat => match ws.send(Message::Ping(vec![])).await {
+        Broadcast::Heartbeat => match sink.send(Message::Ping(vec![])).await {
           Ok(_) => {}
           Err(err) => {
             warn!("Failed to send heartbeat to client: {:?}", err);
