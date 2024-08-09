@@ -6,7 +6,7 @@ use futures_io::AsyncBufRead;
 use k8s_openapi::{
   api::{
     core::v1::{
-      ConfigMap, Container, ContainerPort, EnvVar, Namespace, Node, Pod, PodSpec,
+      ConfigMap, Container, ContainerPort, EnvVar, Namespace, Node, Pod, PodSpec, PodStatus,
       ResourceRequirements,
     },
     networking::v1::NetworkPolicy,
@@ -259,7 +259,7 @@ impl Cluster {
     Ok(now - started_at > 3600 * (renew + 1) as i64)
   }
 
-  pub async fn delete_outdated_pods(&self) -> Result<(), ClusterError> {
+  pub async fn delete_outdated_pods(&self) -> Result<(bool, i32, i32), ClusterError> {
     let client = check_enabled!(self.client)?;
     let api: Api<Pod> = Api::namespaced(
       client,
@@ -271,7 +271,28 @@ impl Cluster {
         ..Default::default()
       })
       .await?;
+    let mut running = 0;
+    let mut pending = 0;
+    let default_status = PodStatus {
+      phase: Some("Unknown".to_owned()),
+      ..Default::default()
+    };
+    let default_phase = "Unknown".to_owned();
     for pod in pods.items {
+      let phase = pod
+        .status
+        .as_ref()
+        .unwrap_or(&default_status)
+        .phase
+        .as_ref()
+        .unwrap_or(&default_phase);
+      match phase.as_str() {
+        "Running" => running += 1,
+        "Pending" => pending += 1,
+        _ => {
+          warn!("Deleting unknown pod: {}", pod.name().unwrap());
+        }
+      };
       match self.check_outdated_pod(&pod).await {
         Ok(true) => {
           debug!("Deleting outdated pod: {}", pod.name().unwrap());
@@ -294,7 +315,9 @@ impl Cluster {
       }
     }
 
-    Ok(())
+    let overloaded = running + pending > 240;
+
+    Ok((overloaded, running, pending))
   }
 
   pub async fn get_pod(&self, name: &str) -> Result<Pod, ClusterError> {

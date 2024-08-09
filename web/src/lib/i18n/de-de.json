@@ -544,6 +544,15 @@
         "unread": "Ungelesen",
         "title": "Rückmeldung",
         "noSession": "Keine Mannschaft hat Feedback gesendet..."
+      },
+      "monitor": {
+        "fetchFailed": "Fehler beim Abrufen",
+        "pending": "Warteschlange",
+        "solved": "richtig",
+        "notSolved": "Fehler",
+        "needReview": "Warten auf Überprüfung",
+        "misjudged": "Fehlurteil",
+        "confirmed": "Wahr"
       }
     },
     "adminCanNotTakePartIn": "Administrator kann nicht teilnehmen.",
@@ -831,7 +840,13 @@
     "writeup": {
       "title": "Lösung"
     },
-    "writeupsOnlyOpenWhenArchived": "Die Lösungen werden erst nach der Archivierung des Wettbewerbs veröffentlicht!"
+    "writeupsOnlyOpenWhenArchived": "Die Lösungen werden erst nach der Archivierung des Wettbewerbs veröffentlicht!",
+    "monitor": {
+      "submissions": "Commit-Verlauf",
+      "audits": "Prüfungsereignis",
+      "autoRefreshEnabled": "Automatischer Aktualisierung aktiviert",
+      "submit": "eingereicht"
+    }
   },
   "instance": {
     "box": "Dynamische Umgebungsverbindung",

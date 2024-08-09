@@ -623,6 +623,15 @@
         "sendPlaceholder": "Send reply...",
         "title": "Feedback",
         "unread": "Unread"
+      },
+      "monitor": {
+        "fetchFailed": "Acquisition failed",
+        "pending": "In the queue",
+        "solved": "accurate",
+        "notSolved": "Error",
+        "needReview": "Awaiting review",
+        "misjudged": "Misjudgment",
+        "confirmed": "True"
       }
     },
     "adminCanNotTakePartIn": "Administrators are not allowed to participate.",
@@ -910,7 +919,13 @@
     "writeup": {
       "title": "Solution"
     },
-    "writeupsOnlyOpenWhenArchived": "The solution will only be released after the game is archived!"
+    "writeupsOnlyOpenWhenArchived": "The solution will only be released after the game is archived!",
+    "monitor": {
+      "submissions": "Submission Record",
+      "audits": "Audit Event",
+      "autoRefreshEnabled": "Auto-refresh has been enabled",
+      "submit": "Submitted"
+    }
   },
   "instance": {
     "box": "Dynamic Environment Connection",

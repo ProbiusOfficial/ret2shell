@@ -128,7 +128,6 @@ function AdminManagement(props: {
                   value={field.value}
                   error={field.error}
                   required
-                  disabled={gameStore.current?.team_size === 1}
                 />
               )}
             </Field>

@@ -544,6 +544,15 @@
         "unread": "No leído",
         "title": "Respuesta",
         "noSession": "No hay equipos que hayan enviado comentarios..."
+      },
+      "monitor": {
+        "fetchFailed": "Obtener fallido",
+        "pending": "en cola",
+        "solved": "correcto",
+        "notSolved": "error",
+        "needReview": "Esperar la revisión",
+        "misjudged": "Equivocación",
+        "confirmed": "Verdadero"
       }
     },
     "adminCanNotTakePartIn": "El administrador no puede participar en la competición.",
@@ -831,7 +840,13 @@
     "writeup": {
       "title": "Solución del problema"
     },
-    "writeupsOnlyOpenWhenArchived": "¡La solución solo se publica después de que el evento ha sido archivado!"
+    "writeupsOnlyOpenWhenArchived": "¡La solución solo se publica después de que el evento ha sido archivado!",
+    "monitor": {
+      "submissions": "Historial de envíos",
+      "audits": "Evento de auditoría",
+      "autoRefreshEnabled": "La actualización automática está activada",
+      "submit": "Presentado"
+    }
   },
   "instance": {
     "box": "Conexión de entorno dinámico",

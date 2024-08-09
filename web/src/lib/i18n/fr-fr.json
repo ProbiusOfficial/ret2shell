@@ -544,6 +544,15 @@
         "unread": "Non lu",
         "title": "Retour",
         "noSession": "Aucune équipe n'a envoyé de retour d'information..."
+      },
+      "monitor": {
+        "fetchFailed": "Échec de l'obtention",
+        "pending": "file d'attente",
+        "solved": "correct",
+        "notSolved": "Erreur",
+        "needReview": "En attente de révision",
+        "misjudged": "Erreur de jugement",
+        "confirmed": "vrai"
       }
     },
     "adminCanNotTakePartIn": "L'administrateur ne peut pas participer.",
@@ -831,7 +840,13 @@
     "writeup": {
       "title": "Solution"
     },
-    "writeupsOnlyOpenWhenArchived": "La solution ne sera publiée qu'après l'archivage de la compétition !"
+    "writeupsOnlyOpenWhenArchived": "La solution ne sera publiée qu'après l'archivage de la compétition !",
+    "monitor": {
+      "submissions": "Historique des soumissions",
+      "audits": "Événement d'audit",
+      "autoRefreshEnabled": "La mise à jour automatique est activée.",
+      "submit": "Soumis."
+    }
   },
   "instance": {
     "box": "Connexions environnementales dynamiques",

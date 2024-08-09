@@ -331,6 +331,15 @@
         "unread": "未读",
         "title": "反馈",
         "noSession": "没有队伍发送过反馈..."
+      },
+      "monitor": {
+        "fetchFailed": "获取失败",
+        "pending": "队列中",
+        "solved": "正确",
+        "notSolved": "错误",
+        "needReview": "等待复审",
+        "misjudged": "误判",
+        "confirmed": "属实"
       }
     },
     "exit": "退出",
@@ -476,7 +485,13 @@
     "registerAtRequired": "请选择注册时间",
     "archiveAtRequired": "请选择归档时间",
     "registerNotStarted": "未到注册时间",
-    "registerEnded": "太晚了，无法参与比赛"
+    "registerEnded": "太晚了，无法参与比赛",
+    "monitor": {
+      "submissions": "提交记录",
+      "audits": "审计事件",
+      "autoRefreshEnabled": "自动刷新已开启",
+      "submit": "提交了"
+    }
   },
   "bulletin": {
     "title": "公告",

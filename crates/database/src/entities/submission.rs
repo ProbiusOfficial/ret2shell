@@ -3,7 +3,7 @@
 use chrono::{serde::ts_seconds, DateTime, Utc};
 use sea_orm::{
   entity::prelude::*, ActiveValue, FromQueryResult, IntoActiveModel, Iterable, JoinType,
-  QuerySelect,
+  QueryOrder, QuerySelect,
 };
 use serde::{Deserialize, Serialize};
 
@@ -252,7 +252,7 @@ where
 
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page_ex<C>(
-  db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool,
+  db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool, game_id: Option<i64>,
   challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
 ) -> Result<(Vec<ExModel>, u64), DbErr>
 where
@@ -268,6 +268,9 @@ where
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }
+  if let Some(game_id) = game_id {
+    sql = sql.filter(challenge::Column::GameId.eq(game_id));
+  }
   if let Some(team_id) = team_id {
     sql = sql.filter(Column::TeamId.eq(team_id));
   }
@@ -278,6 +281,7 @@ where
     sql = sql.filter(Column::Solved.eq(true));
   }
   sql = sql.column_as(challenge::Column::Score, "score");
+  sql = sql.order_by_desc(Column::CreatedAt);
   let paginator = sql.into_model().paginate(db, page_size);
   let total = paginator.num_items().await?;
   let submissions = paginator.fetch_page(page - 1).await?;

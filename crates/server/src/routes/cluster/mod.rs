@@ -10,8 +10,13 @@ use r2s_cache::Cache;
 use r2s_cluster::Cluster;
 use r2s_config::GlobalConfig;
 use r2s_database::user::Permission;
+use r2s_event::{
+  events::{DevopsEvent, DevopsEventType, EventContainer},
+  Event,
+};
+use r2s_queue::Queue;
 use tokio_util::io::StreamReader;
-use tracing::{debug, error};
+use tracing::{debug, error, info, warn};
 
 use crate::{
   middleware::auth::{self, Token},
@@ -21,7 +26,8 @@ use crate::{
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   if state.config.cluster.as_ref().is_some_and(|c| c.enabled) {
     let cluster = state.cluster.clone();
-    tokio::spawn(cluster_maintain_worker(cluster));
+    let queue = state.queue.clone();
+    tokio::spawn(cluster_maintain_worker(cluster, queue));
   }
   Router::new()
     .nest(
@@ -51,16 +57,46 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     )))
 }
 
-async fn cluster_maintain_worker(cluster: Cluster) {
+async fn cluster_maintain_worker(cluster: Cluster, queue: Queue) {
+  let mut overloaded = false;
   loop {
     tokio::time::sleep(std::time::Duration::from_secs(60)).await;
     debug!("Checking outdated pods...");
-    if let Err(e) = cluster
+    match cluster
       .at("ret2shell-challenge")
       .delete_outdated_pods()
       .await
     {
-      error!("Failed to delete outdated pods: {}", e);
+      Ok((o, running, pending)) => {
+        if o {
+          warn!(
+            "Cluster is overloaded: running={}, pending={}",
+            running, pending
+          );
+          let event = EventContainer {
+            game_id: 0,
+            event: Event::Devops(DevopsEvent {
+              event_type: DevopsEventType::ClusterOverloaded,
+              running: running as i64,
+              pending: pending as i64,
+            }),
+          };
+          queue.publish("event", event).await.ok();
+        } else if o == false && overloaded != o {
+          info!("Cluster is recovered");
+          let event = EventContainer {
+            game_id: 0,
+            event: Event::Devops(DevopsEvent {
+              event_type: DevopsEventType::ClusterRecovered,
+              running: running as i64,
+              pending: pending as i64,
+            }),
+          };
+          queue.publish("event", event).await.ok();
+        }
+        overloaded = o;
+      }
+      Err(err) => error!("Failed to delete outdated pods: {:?}", err),
     }
   }
 }

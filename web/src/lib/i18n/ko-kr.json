@@ -544,6 +544,15 @@
         "unread": "읽지 않음",
         "title": "피드백",
         "noSession": "팀에서 피드백을 보낸 적이 없습니다..."
+      },
+      "monitor": {
+        "fetchFailed": "획득 실패",
+        "pending": "큐에서",
+        "solved": "정확",
+        "notSolved": "오류",
+        "needReview": "대기 중",
+        "misjudged": "오판",
+        "confirmed": "속시"
       }
     },
     "adminCanNotTakePartIn": "관리자는 참가할 수 없습니다.",
@@ -831,7 +840,13 @@
     "writeup": {
       "title": "문제 해결"
     },
-    "writeupsOnlyOpenWhenArchived": "문제 해결 방법은 대회가 종료된 후에만 공개됩니다!"
+    "writeupsOnlyOpenWhenArchived": "문제 해결 방법은 대회가 종료된 후에만 공개됩니다!",
+    "monitor": {
+      "submissions": "제출 기록",
+      "audits": "감사 이벤트",
+      "autoRefreshEnabled": "자동 새로고침이 활성화되었습니다.",
+      "submit": "제출되었습니다."
+    }
   },
   "instance": {
     "box": "동적 환경 연결",

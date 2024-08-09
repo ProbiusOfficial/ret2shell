@@ -11,7 +11,7 @@ use r2s_bucket::Bucket;
 use r2s_cache::Cache;
 use r2s_cluster::{Cluster, Pod, CHALLENGE_NS};
 use r2s_database::{
-  article, game, submission, team as team_db,
+  article, audit, game, submission, team as team_db,
   user::{self, Permission},
 };
 use r2s_event::{
@@ -54,6 +54,17 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         )
         .route("/device", get(get_connected_devices))
         .route("/introduction", patch(update_game_intro))
+        .route("/submission", get(get_submissions))
+        .nest(
+          "/audit",
+          Router::new()
+            .route("/:audit", patch(update_audit))
+            .route_layer(middleware::from_fn_with_state(
+              state.clone(),
+              data::prepare_data!(audit, false),
+            ))
+            .route("/", get(get_audit_messages)),
+        )
         .route("/", patch(update_game).delete(delete_game))
         .route_layer(middleware::from_fn(auth::game_admin_required))
         .route("/solve", get(get_self_solves))
@@ -532,5 +543,68 @@ async fn update_game_administrator(
   )
   .await?;
   cache.at("game").del(game.id).await?;
+  Ok(Json(model))
+}
+
+#[derive(Deserialize)]
+struct PaginateQuery {
+  page: Option<u64>,
+  page_size: Option<u64>,
+}
+
+async fn get_submissions(
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Query(query): Query<PaginateQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let submissions = submission::get_page_ex(
+    &db.conn,
+    query.page.unwrap_or(1),
+    query.page_size.unwrap_or(15),
+    false,
+    true,
+    Some(game.id),
+    None,
+    None,
+    None,
+  )
+  .await?;
+  Ok(Json(submissions))
+}
+
+async fn get_audit_messages(
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Query(query): Query<PaginateQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let submissions = audit::get_page_ex(
+    &db.conn,
+    query.page.unwrap_or(1),
+    query.page_size.unwrap_or(15),
+    Some(game.id),
+    None,
+    None,
+    None,
+    None,
+  )
+  .await?;
+  Ok(Json(submissions))
+}
+
+async fn update_audit(
+  State(ref db): State<Database>, Extension(prev_model): Extension<audit::Model>,
+  Json(model): Json<audit::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let model = audit::update(
+    &db.conn,
+    prev_model.id,
+    audit::Model {
+      id: prev_model.id,
+      challenge_id: prev_model.challenge_id,
+      team_id: prev_model.team_id,
+      user_id: prev_model.user_id,
+      game_id: prev_model.game_id,
+      ..model
+    },
+  )
+  .await?;
   Ok(Json(model))
 }

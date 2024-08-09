@@ -82,9 +82,10 @@ export default function ChatList() {
                         <Show when={!session.checked && session.last_user_id !== accountStore.id}>
                           <span class="text-error">[{t("game.admin.chat.unread")}]</span>
                         </Show>
-                        <span class="opacity-60 truncate flex-1 text-end">
-                          {session.last_active_at.toFormat("MM-dd HH:mm")}
+                        <span class="flex-1 w-0 truncate opacity-60 text-start font-normal">
+                          {session.last_message}
                         </span>
+                        <span class="opacity-60">{session.last_active_at.toFormat("MM-dd HH:mm")}</span>
                       </div>
                     </div>
                   </Link>

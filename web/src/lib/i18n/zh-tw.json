@@ -623,6 +623,15 @@
         "unread": "未讀",
         "title": "回饋",
         "noSession": "沒有隊伍發送過回饋..."
+      },
+      "monitor": {
+        "fetchFailed": "獲取失敗",
+        "pending": "排隊中",
+        "solved": "正確",
+        "notSolved": "錯誤",
+        "needReview": "等待複審",
+        "misjudged": "誤判",
+        "confirmed": "屬實"
       }
     },
     "adminCanNotTakePartIn": "管理員不能參賽",
@@ -910,7 +919,13 @@
     "writeup": {
       "title": "題解"
     },
-    "writeupsOnlyOpenWhenArchived": "題解僅在賽事歸檔之後才公開！"
+    "writeupsOnlyOpenWhenArchived": "題解僅在賽事歸檔之後才公開！",
+    "monitor": {
+      "submissions": "提交紀錄",
+      "audits": "審計事件",
+      "autoRefreshEnabled": "自動重新整理已開啟",
+      "submit": "提交了"
+    }
   },
   "instance": {
     "box": "動態環境連接",

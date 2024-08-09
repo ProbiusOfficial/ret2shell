@@ -1,4 +1,5 @@
 import type { Article } from "@models/article";
+import type { Audit } from "@models/audit";
 import type { Challenge, ChallengeEnv, CommitHistory } from "@models/challenge";
 import type { Chat, ChatSession } from "@models/chat";
 import type { Game, HostType } from "@models/game";
@@ -442,4 +443,38 @@ export async function getTeamList(
       ) as SearchParamsOption,
     })
     .json<[Team[], number]>();
+}
+
+export async function getGameSubmissions(game_id: number, page?: number, page_size?: number) {
+  return (
+    await api.get(`${api_root}/game/${game_id}/submission`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          page,
+          page_size,
+        })
+      ) as SearchParamsOption,
+    })
+  ).json<[Submission[], number]>();
+}
+
+export async function getGameAuditLogs(game_id: number, page?: number, page_size?: number) {
+  return (
+    await api.get(`${api_root}/game/${game_id}/audit`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          page,
+          page_size,
+        })
+      ) as SearchParamsOption,
+    })
+  ).json<[Audit[], number]>();
+}
+
+export async function updateGameAuditLog(game_id: number, audit_id: number, audit: Audit) {
+  return await api
+    .patch(`${api_root}/game/${game_id}/audit/${audit_id}`, {
+      json: audit,
+    })
+    .json<Audit>();
 }

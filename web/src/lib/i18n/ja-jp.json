@@ -544,6 +544,15 @@
         "unread": "未読",
         "title": "フィードバック",
         "noSession": "フィードバックが送信されていません..."
+      },
+      "monitor": {
+        "fetchFailed": "取得失敗",
+        "pending": "キュー内",
+        "solved": "正しい",
+        "notSolved": "エラー",
+        "needReview": "再審査待ち",
+        "misjudged": "誤判定",
+        "confirmed": "実在する"
       }
     },
     "adminCanNotTakePartIn": "管理者は参加できません。",
@@ -831,7 +840,13 @@
     "writeup": {
       "title": "題解"
     },
-    "writeupsOnlyOpenWhenArchived": "題解は大会のアーカイブ後にのみ公開されます！"
+    "writeupsOnlyOpenWhenArchived": "題解は大会のアーカイブ後にのみ公開されます！",
+    "monitor": {
+      "submissions": "提出記録",
+      "audits": "監査イベント",
+      "autoRefreshEnabled": "自動更新が有効になっています",
+      "submit": "提出しました"
+    }
   },
   "instance": {
     "box": "動的環境接続",

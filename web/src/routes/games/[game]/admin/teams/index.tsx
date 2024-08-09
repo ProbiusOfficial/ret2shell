@@ -130,7 +130,15 @@ export default function () {
         </div>
       </Show>
       <div class="flex-1 flex flex-col">
-        <For each={teams()}>
+        <For
+          each={teams()}
+          fallback={
+            <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
+              <span class="icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
+              <span>{t("game.team.noExtras")}</span>
+            </div>
+          }
+        >
           {(team) => (
             <A
               class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-4 px-2 hover:bg-layer-content/5 cursor-pointer"

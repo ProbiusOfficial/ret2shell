@@ -110,7 +110,7 @@ export default function () {
   const interval = setInterval(refreshChats(), 5000);
   onCleanup(() => clearInterval(interval));
   return (
-    <div class="flex-1 overflow-hidden flex flex-col">
+    <div class="flex-1 h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
       <div class="h-16 flex flex-row px-4 space-x-2 items-center backdrop-blur border-b border-b-layer-content/10">
         <span class="icon-[fluent--chat-20-regular] w-5 h-5" />
         <A class="font-bold" href={`/games/${gameStore.current?.id}/teams/${teamId()}`}>
@@ -147,12 +147,12 @@ export default function () {
           }
         >
           <div class="flex flex-col min-h-full relative">
-            <div class="flex flex-col flex-1 p-3 lg:p-6 space-y-4">
+            <div class="flex flex-col flex-1 p-3 lg:p-6 space-y-1">
               <div class="self-start flex-row max-w-[calc(100%-4rem)] flex items-center">
                 <img src={xdsecMascotNormal} width={40} height={40} alt="ΦωΦ" class="flex-shrink-0 self-start mt-2" />
                 <div class="w-4 flex-shrink-0" />
                 <div class="flex flex-col space-y-1">
-                  <label class="label">Ciallo～(∠・ω&lt; )</label>
+                  <label class="label">Ciallo～(∠・ω&lt; )⌒☆</label>
                   <Card contentClass="flex flex-col space-y-2 p-2">
                     <span>{t("game.challenge.adminHammerTips")}</span>
                     <div class="flex flex-row space-x-2">
@@ -179,34 +179,49 @@ export default function () {
                       </Link>
                     </div>
                   </Card>
+                  <div class="h-3" />
                 </div>
               </div>
               <For each={chats()}>
-                {(chat) => (
+                {(chat, index) => (
                   <div
                     class={`${chat.user_id !== accountStore.id ? "self-start flex-row" : "self-end flex-row-reverse"} max-w-[calc(100%-4rem)] flex items-center`}
                   >
-                    <Avatar
-                      class="w-10 h-10 flex-shrink-0 self-start mt-2"
-                      src={chat.avatar ? mediaPath(chat.avatar) : undefined}
-                      fallback={chat.user_name}
-                    />
+                    <Show
+                      when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}
+                      fallback={<div class="w-10 h-10 flex-shrink-0 self-start" />}
+                    >
+                      <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href={`/users/${chat.user_id}`}>
+                        <Avatar
+                          class="w-full h-full"
+                          src={chat.avatar ? mediaPath(chat.avatar) : undefined}
+                          fallback={chat.user_name}
+                        />
+                      </A>
+                    </Show>
                     <div class="w-4 flex-shrink-0" />
                     <div
                       class={`flex flex-col space-y-1 ${chat.user_id !== accountStore.id ? "items-start" : "items-end"}`}
                     >
-                      <label class="label space-x-2">
-                        <Show
-                          when={chat.is_admin}
-                          fallback={<span class="text-info">[{t("game.challenge.chatPlayerRole")}]</span>}
-                        >
-                          <span class="text-error">[{t("game.challenge.chatAdminRole")}]</span>
-                        </Show>
-                        <span>{chat.user_name}</span>
-                      </label>
-                      <Card contentClass="p-2">
+                      <Show when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}>
+                        <label class="label space-x-2">
+                          <Show
+                            when={chat.is_admin}
+                            fallback={<span class="text-info">[{t("game.challenge.chatPlayerRole")}]</span>}
+                          >
+                            <span class="text-error">[{t("game.challenge.chatAdminRole")}]</span>
+                          </Show>
+                          <A href={`/users/${chat.user_id}`}>{chat.user_name}</A>
+                        </label>
+                      </Show>
+                      <Card class="peer" contentClass="p-2">
                         <p class="text-wrap">{chat.content}</p>
                       </Card>
+                      <Show when={index() === chats().length - 1 || chats().at(index() + 1)?.user_id !== chat.user_id}>
+                        <label class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
+                          {chat.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
+                        </label>
+                      </Show>
                     </div>
                   </div>
                 )}
@@ -214,12 +229,18 @@ export default function () {
             </div>
             <div class="sticky bottom-0 p-3 lg:p-6">
               <Input
+                value={chat()}
                 placeholder={t("game.admin.chat.sendPlaceholder")}
                 extraBtn={
                   <Button class="!rounded-l-none" onClick={handleSendChat} disabled={sending() || chat() === ""}>
                     <span class="icon-[fluent--send-20-regular] w-5 h-5" />
                   </Button>
                 }
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleSendChat();
+                  }
+                }}
                 onInput={(e) => setChat(e.currentTarget.value)}
               />
             </div>
