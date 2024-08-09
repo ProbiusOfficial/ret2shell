@@ -814,6 +814,27 @@
       },
       "jiangnan": {
         "title": "江南大学邮件身份认证"
+      },
+      "hduEmail": {
+        "title": "杭州电子科技大学邮件身份验证"
+      },
+      "xduCas": {
+        "title": "西安电子科技大学统一身份认证"
+      },
+      "xmuCas": {
+        "title": "厦门大学统一身份认证"
+      },
+      "jiangnan_email": {
+        "title": "江南大学邮件身份认证"
+      },
+      "hdu_email": {
+        "title": "杭州电子科技大学邮件身份认证"
+      },
+      "xmu_cas": {
+        "title": "厦门大学统一身份认证"
+      },
+      "xdu_cas": {
+        "title": "西安电子科技大学统一身份认证"
       }
     },
     "institute": {

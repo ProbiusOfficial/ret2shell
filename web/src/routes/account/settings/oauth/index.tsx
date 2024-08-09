@@ -1,8 +1,5 @@
 import { getInstitutes, getOAuthStatus, unbindWithOAuth } from "@api/account";
 import { getAuthConfig } from "@api/platform";
-import jiangnan from "@assets/brands/jiangnan.svg";
-import xdu from "@assets/brands/xdu.svg";
-import xmu from "@assets/brands/xmu.svg";
 import type { AuthConfig } from "@models/config";
 import type { Institute } from "@models/institute";
 import type { OAuth } from "@models/oauth";
@@ -13,7 +10,31 @@ import Button from "@widgets/button";
 import Link from "@widgets/link";
 import Tag from "@widgets/tag";
 import type { HTTPError } from "ky";
-import { Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+
+import hdu from "@assets/brands/hdu.svg";
+import jiangnan from "@assets/brands/jiangnan.svg";
+import xdu from "@assets/brands/xdu.svg";
+import xmu from "@assets/brands/xmu.svg";
+import logo from "@assets/logo-gray.svg";
+const logos = {
+  xdu: xdu,
+  xmu: xmu,
+  jiangnan: jiangnan,
+  hdu: hdu,
+};
+
+function getOAuthLink(service: string) {
+  if (service.endsWith("_email")) {
+    return `${window.location.origin}/account/bind?service=${service}`;
+  }
+  if (service.endsWith("_cas")) {
+    if (service.startsWith("xdu"))
+      return `https://ids.xidian.edu.cn/authserver/login?service=${window.location.origin}/account/bind?service=${service}`;
+    if (service.startsWith("xmu"))
+      return `https://ids.xmu.edu.cn/authserver/login?service=${window.location.origin}/account/bind?service=${service}`;
+  }
+}
 
 export default function () {
   const [authConfig, setAuthConfig] = createSignal({
@@ -43,6 +64,13 @@ export default function () {
           });
         });
       });
+  }
+  function getLogo(provider: string) {
+    const logoKeys = Object.keys(logos);
+    for (const key of logoKeys) {
+      if (provider.startsWith(key)) return logos[key as keyof typeof logos];
+    }
+    return logo;
   }
   createEffect(() => {
     if (accountStore.token) {
@@ -83,111 +111,45 @@ export default function () {
           <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
           <span>{t("account.settings.oauth.title")}</span>
         </h3>
-        <Show when={oauthServices().find((service) => service === "xdu")}>
-          <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-            <img src={xdu} alt="XDU" class="w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.xdu.title")}</span>
-            </h4>
-            <Show when={institutes().find((v) => v.provider === "xdu")}>
-              <Tag level="info">
-                <span>{institutes().find((v) => v.provider === "xdu")?.name}</span>
-              </Tag>
-            </Show>
-            <Show
-              when={selfOAuthItems().find((v) => v.provider === "xdu")}
-              fallback={
-                <>
-                  <span class="opacity-60">{t("account.oauth.notBind")}</span>
-                  <Link
-                    size="sm"
-                    href={`https://ids.xidian.edu.cn/authserver/login?service=${window.location.origin}/account/bind?service=xdu`}
-                  >
-                    {t("account.oauth.bind")}
-                  </Link>
-                </>
-              }
-            >
-              <span class="opacity-60">
-                <span>{selfOAuthItems().find((v) => v.provider === "xdu")?.data.name ?? "UNKNOWN"}</span>
-                &nbsp;
-                <span>({selfOAuthItems().find((v) => v.provider === "xdu")?.data.id ?? "UNKNOWN"})</span>
-              </span>
-              <Button size="sm" onClick={() => handleUnbind(selfOAuthItems().find((v) => v.provider === "xdu")!.id)}>
-                {t("account.oauth.unbind")}
-              </Button>
-            </Show>
-          </div>
-        </Show>
-        <Show when={oauthServices().find((service) => service === "xmu")}>
-          <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-            <img src={xmu} alt="XMU" class="w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.xmu.title")}</span>
-            </h4>
-            <Show when={institutes().find((v) => v.provider === "xmu")}>
-              <Tag level="info">
-                <span>{institutes().find((v) => v.provider === "xmu")?.name}</span>
-              </Tag>
-            </Show>
-            <Show
-              when={selfOAuthItems().find((v) => v.provider === "xmu")}
-              fallback={
-                <>
-                  <span class="opacity-60">{t("account.oauth.notBind")}</span>
-                  <Link
-                    size="sm"
-                    href={`https://ids.xmu.edu.cn/authserver/login?service=${window.location.origin}/account/bind?service=xmu`}
-                  >
-                    {t("account.oauth.bind")}
-                  </Link>
-                </>
-              }
-            >
-              <span class="opacity-60">
-                {selfOAuthItems().find((v) => v.provider === "xmu")?.data.name ?? "UNKNOWN"} (
-                {selfOAuthItems().find((v) => v.provider === "xmu")?.data.id ?? "UNKNOWN"})
-              </span>
-              <Button size="sm" onClick={() => handleUnbind(selfOAuthItems().find((v) => v.provider === "xmu")!.id)}>
-                {t("account.oauth.unbind")}
-              </Button>
-            </Show>
-          </div>
-        </Show>
-        <Show when={oauthServices().find((service) => service === "jiangnan")}>
-          <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-            <img src={jiangnan} alt="Jiangnan" class="w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.jiangnan.title")}</span>
-            </h4>
-            <Show when={institutes().find((v) => v.provider === "jiangnan")}>
-              <Tag level="info">
-                <span>{institutes().find((v) => v.provider === "jiangnan")?.name}</span>
-              </Tag>
-            </Show>
-            <Show
-              when={selfOAuthItems().find((v) => v.provider === "jiangnan")}
-              fallback={
-                <>
-                  <span class="opacity-60">{t("account.oauth.notBind")}</span>
-                  <Link size="sm" href={`${window.location.origin}/account/bind?service=jiangnan`}>
-                    {t("account.oauth.bind")}
-                  </Link>
-                </>
-              }
-            >
-              <span class="opacity-60">
-                {selfOAuthItems().find((v) => v.provider === "jiangnan")?.data.email ?? "UNKNOWN"}
-              </span>
-              <Button
-                size="sm"
-                onClick={() => handleUnbind(selfOAuthItems().find((v) => v.provider === "jiangnan")!.id)}
+        <For each={oauthServices()}>
+          {(service) => (
+            <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
+              <img src={getLogo(service)} alt={service.toUpperCase()} class="w-5 h-5" />
+              <h4 class="font-bold text-start flex-1">
+                {/* @ts-expect-error key is dynamic */}
+                <span>{t(`account.oauth.${service}.title`) as string}</span>
+              </h4>
+              <Show when={institutes().find((v) => v.provider === service)}>
+                <Tag level="info">
+                  <span>{institutes().find((v) => v.provider === service)?.name}</span>
+                </Tag>
+              </Show>
+              <Show
+                when={selfOAuthItems().find((v) => v.provider === service)}
+                fallback={
+                  <>
+                    <span class="opacity-60">{t("account.oauth.notBind")}</span>
+                    <Link size="sm" href={getOAuthLink(service)}>
+                      {t("account.oauth.bind")}
+                    </Link>
+                  </>
+                }
               >
-                {t("account.oauth.unbind")}
-              </Button>
-            </Show>
-          </div>
-        </Show>
+                <span class="opacity-60">
+                  <span>{selfOAuthItems().find((v) => v.provider === service)?.data.name ?? "UNKNOWN"}</span>
+                  &nbsp;
+                  <span>({selfOAuthItems().find((v) => v.provider === service)?.data.id ?? "UNKNOWN"})</span>
+                </span>
+                <Button
+                  size="sm"
+                  onClick={() => handleUnbind(selfOAuthItems().find((v) => v.provider === service)!.id)}
+                >
+                  {t("account.oauth.unbind")}
+                </Button>
+              </Show>
+            </div>
+          )}
+        </For>
       </div>
     </div>
   );

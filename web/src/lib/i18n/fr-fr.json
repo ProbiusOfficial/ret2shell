@@ -78,6 +78,27 @@
       },
       "jiangnan": {
         "title": "Authentification d'identité par e-mail de l'Université du Sud du Yangtze"
+      },
+      "hduEmail": {
+        "title": "vérification d'identité des e-mails de l'Université des Technologies électroniques de Hangzhou"
+      },
+      "xduCas": {
+        "title": "Authentification unique de l'Université des Technologies électroniques de Xi'an"
+      },
+      "xmuCas": {
+        "title": "Authentification unique de l'Université de Xiamen"
+      },
+      "jiangnan_email": {
+        "title": "Authentification d'identité par e-mail de l'Université du Sud du Yangtze"
+      },
+      "hdu_email": {
+        "title": "Authentification d'identité par e-mail de l'Université des sciences et technologies du Zhejiang"
+      },
+      "xmu_cas": {
+        "title": "Authentification unique de l'Université de Xiamen"
+      },
+      "xdu_cas": {
+        "title": "Authentification unique de l'Université des Technologies électroniques de Xi'an"
       }
     },
     "register": {

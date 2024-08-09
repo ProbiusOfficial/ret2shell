@@ -157,6 +157,27 @@
       },
       "jiangnan": {
         "title": "Jiangnan University Email Identity Verification"
+      },
+      "hduEmail": {
+        "title": "Hangzhou Dianzi University Email Identity Verification"
+      },
+      "xduCas": {
+        "title": "Xi'an University of Electronic Science and Technology Unified Identity Authentication"
+      },
+      "xmuCas": {
+        "title": "Xiamen University Unified Identity Authentication"
+      },
+      "jiangnan_email": {
+        "title": "Jiangnan University Email Identity Verification"
+      },
+      "hdu_email": {
+        "title": "Hangzhou Dianzi University Email Identity Verification"
+      },
+      "xmu_cas": {
+        "title": "Xiamen University Unified Identity Authentication"
+      },
+      "xdu_cas": {
+        "title": "Xi'an University of Electronic Science and Technology Unified Identity Authentication"
       }
     },
     "register": {

@@ -1,8 +1,5 @@
 import { createInstitute, deleteInstitute, updateInstitute } from "@api/account";
 import { getAuthConfig } from "@api/platform";
-import jiangnan from "@assets/brands/jiangnan.svg";
-import xdu from "@assets/brands/xdu.svg";
-import xmu from "@assets/brands/xmu.svg";
 import type { AuthConfig } from "@models/config";
 import type { Institute } from "@models/institute";
 import { accountStore, refreshInstitutes } from "@storage/account";
@@ -18,6 +15,17 @@ import type { HTTPError } from "ky";
 import { For, Show, createMemo, createSignal } from "solid-js";
 import InstituteForm from "./_blocks/form";
 
+import hdu from "@assets/brands/hdu.svg";
+import jiangnan from "@assets/brands/jiangnan.svg";
+import xdu from "@assets/brands/xdu.svg";
+import xmu from "@assets/brands/xmu.svg";
+import logo from "@assets/logo-gray.svg";
+const logos = {
+  xdu: xdu,
+  xmu: xmu,
+  jiangnan: jiangnan,
+  hdu: hdu,
+};
 export default function () {
   const [authConfig, setAuthConfig] = createSignal({
     signing_key: "",
@@ -28,6 +36,13 @@ export default function () {
   getAuthConfig()
     .then((config) => setAuthConfig(config))
     .catch(() => {});
+  function getLogo(provider: string) {
+    const logoKeys = Object.keys(logos);
+    for (const key of logoKeys) {
+      if (provider.startsWith(key)) return logos[key as keyof typeof logos];
+    }
+    return logo;
+  }
   const oauthServices = createMemo(() => Object.keys(authConfig().oauth_keys || {}));
   const [loading, setLoading] = createSignal(true);
   refreshInstitutes().then(() => setLoading(false));
@@ -112,56 +127,18 @@ export default function () {
               <span>{t("admin.oauth.warningChangeInConfig")}</span>
             </Card>
           </div>
-          <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2">
-            <img src={xdu} alt="XDU" class="w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.xdu.title")}</span>
-            </h4>
-            <Show
-              when={oauthServices().includes("xdu")}
-              fallback={<span class="opacity-80">{t("admin.oauth.notConfigured")}</span>}
-            >
-              <span class="text-success">{t("admin.oauth.configured")}</span>
-            </Show>
-          </div>
-          <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2">
-            <span class="text-info icon-[fluent--hat-graduation-20-regular] w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.nwnu.title")}</span>
-            </h4>
-            <span class="text-warning">{t("admin.oauth.notSupport")}</span>
-          </div>
-          <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2">
-            <span class="text-info icon-[fluent--hat-graduation-20-regular] w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.taru.title")}</span>
-            </h4>
-            <span class="text-warning">{t("admin.oauth.notSupport")}</span>
-          </div>
-          <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2">
-            <img src={xmu} alt="XMU" class="w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.xmu.title")}</span>
-            </h4>
-            <Show
-              when={oauthServices().includes("xmu")}
-              fallback={<span class="opacity-80">{t("admin.oauth.notConfigured")}</span>}
-            >
-              <span class="text-success">{t("admin.oauth.configured")}</span>
-            </Show>
-          </div>
-          <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2">
-            <img src={jiangnan} alt="Jiangnan" class="w-5 h-5" />
-            <h4 class="font-bold text-start flex-1">
-              <span>{t("account.oauth.jiangnan.title")}</span>
-            </h4>
-            <Show
-              when={oauthServices().includes("jiangnan")}
-              fallback={<span class="opacity-80">{t("admin.oauth.notConfigured")}</span>}
-            >
-              <span class="text-success">{t("admin.oauth.configuredEmail")}</span>
-            </Show>
-          </div>
+          <For each={oauthServices()}>
+            {(service) => (
+              <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2">
+                <img src={getLogo(service)} alt={service.toUpperCase()} class="w-5 h-5" />
+                <h4 class="font-bold text-start flex-1">
+                  {/* @ts-expect-error key is dynamic */}
+                  <span>{t(`account.oauth.${service}.title`) as string}</span>
+                </h4>
+                <span class="text-success">{t("admin.oauth.configured")}</span>
+              </div>
+            )}
+          </For>
           <div class="h-36" />
           <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
             <span class="icon-[fluent--hat-graduation-20-regular] w-5 h-5" />
@@ -177,7 +154,7 @@ export default function () {
                 </>
               }
             >
-              <InstituteForm onDone={handleCreateInstitute} loading={loading()} />
+              <InstituteForm onDone={handleCreateInstitute} loading={loading()} oauthServices={oauthServices()} />
             </Dialog>
           </h3>
           <For each={accountStore.institutes}>
@@ -200,7 +177,12 @@ export default function () {
                   title={t("form.edit")}
                   btnContent={<span class="icon-[fluent--edit-20-regular] w-5 h-5" />}
                 >
-                  <InstituteForm editSource={institute} onDone={handleUpdateInstitute} loading={loading()} />
+                  <InstituteForm
+                    editSource={institute}
+                    onDone={handleUpdateInstitute}
+                    loading={loading()}
+                    oauthServices={oauthServices()}
+                  />
                 </Dialog>
                 <Popover
                   size="sm"

@@ -6,6 +6,12 @@ signing_key = '857f1cda-01f7-473c-b957-6d4744230a47'
 buffer_time = 21600
 expires_time = 86400
 
+[auth.oauth_keys]
+xdu_cas = { id = "https://ctf.xidian.edu.cn/account/oauth", key = "NOTNEEDED" }
+xmu_cas = { id = "https://ctf.xmu.edu.cn/account/oauth", key = "NOTNEEDED" }
+jiangnan_email = { id = "jiangnan.edu.cn", key = "NOTNEEDED" }
+hdu_email = { id = "hdu.edu.cn", key = "NOTNEEDED" }
+
 [automate]
 enabled = false
 token = 'T0k3nInD3v3l0pm3nt'

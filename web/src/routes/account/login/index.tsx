@@ -231,20 +231,20 @@ export default function () {
             </Link>
             <Show when={authConfig().oauth_keys !== null && (oauthServices().length || 0) > 0}>
               <div class="flex flex-row flex-wrap space-x-2 items-start w-full">
-                <Show when={oauthServices().find((s) => s === "xdu")}>
+                <Show when={oauthServices().find((s) => s === "xdu_cas")}>
                   <Link
                     class="flex-1"
-                    href={`https://ids.xidian.edu.cn/authserver/login?service=${window.location.origin}/account/oauth?service=xdu`}
+                    href={`https://ids.xidian.edu.cn/authserver/login?service=${window.location.origin}/account/oauth?service=xdu_cas`}
                     title={t("account.oauth.xdu.title")}
                   >
                     <img src={xdu} alt="XDU" width={24} height={24} />
                     <span>XDU</span>
                   </Link>
                 </Show>
-                <Show when={oauthServices().find((s) => s === "xmu")}>
+                <Show when={oauthServices().find((s) => s === "xmu_cas")}>
                   <Link
                     class="flex-1"
-                    href={`https://ids.xmu.edu.cn/authserver/login?service=${window.location.origin}/account/oauth?service=xmu`}
+                    href={`https://ids.xmu.edu.cn/authserver/login?service=${window.location.origin}/account/oauth?service=xmu_cas`}
                     title={t("account.oauth.xmu.title")}
                   >
                     <img src={xmu} alt="XMU" width={24} height={24} />

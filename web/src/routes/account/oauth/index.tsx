@@ -1,15 +1,32 @@
 import { loginWithOAuth } from "@api/account";
 import LogoAnimate from "@assets/animates/logo-animate";
-import xdu from "@assets/brands/xdu.svg";
-import xmu from "@assets/brands/xmu.svg";
 import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
 import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import LoadingTips from "@widgets/loading-tips";
 import type { HTTPError } from "ky";
-import { createMemo, createSignal, onMount } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 
+import hdu from "@assets/brands/hdu.svg";
+import jiangnan from "@assets/brands/jiangnan.svg";
+import xdu from "@assets/brands/xdu.svg";
+import xmu from "@assets/brands/xmu.svg";
+import logo from "@assets/logo-gray.svg";
+const logos = {
+  xdu: xdu,
+  xmu: xmu,
+  jiangnan: jiangnan,
+  hdu: hdu,
+};
+
+function getLogo(provider: string) {
+  const logoKeys = Object.keys(logos);
+  for (const key of logoKeys) {
+    if (provider.startsWith(key)) return logos[key as keyof typeof logos];
+  }
+  return logo;
+}
 export default function () {
   const [animate, setAnimate] = createSignal(false);
   const location = useLocation();
@@ -23,17 +40,11 @@ export default function () {
       handleLoginWithOAuth();
     }, 2000);
   });
-  const brand = createMemo(() => {
+  const brand = () => {
     const service = searchParams.service;
-    switch (service) {
-      case "xdu":
-        return xdu;
-      case "xmu":
-        return xmu;
-      default:
-        return xdu;
-    }
-  });
+    if (service) return getLogo(service);
+    return logo;
+  };
 
   function handleLoginWithOAuth() {
     loginWithOAuth(location.search)

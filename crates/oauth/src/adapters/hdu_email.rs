@@ -13,8 +13,12 @@ pub struct OAuthProvider {
 #[async_trait::async_trait]
 impl OAuthProviderTrait for OAuthProvider {
   async fn login(
-    &self, _account: &str, _email: &str, _query: HashMap<String, String>,
+    &self, _account: &str, email: &str, _query: HashMap<String, String>,
   ) -> Result<(String, Value), OAuthError> {
-    Err(OAuthError::AdapterUnavailable("taru".to_string()))
+    if email.ends_with("hdu.edu.cn") {
+      Ok((email.to_string(), serde_json::json!({ "email": email })))
+    } else {
+      Err(OAuthError::InvalidEmail(email.to_string()))
+    }
   }
 }

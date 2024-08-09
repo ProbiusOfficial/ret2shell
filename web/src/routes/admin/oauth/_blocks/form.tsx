@@ -14,6 +14,7 @@ type FormType = {
 };
 
 export default function InstituteForm(props: {
+  oauthServices: string[];
   onDone?: (result: Institute) => void;
   editSource?: Institute;
   loading?: boolean;
@@ -54,42 +55,23 @@ export default function InstituteForm(props: {
         )}
       </Field>
       <Field name="provider">
-        {(field, props) => (
+        {(field, fieldProps) => (
           <Select
             name={field.name}
             label={t("admin.institute.provider")!}
             class="flex-1"
             error={field.error}
             placeholder={t("admin.institute.providerNeeded")}
-            items={[
-              {
-                value: "xdu",
-                label: t("account.oauth.xdu.title")!,
+            items={props.oauthServices.map((service) => {
+              return {
+                value: service,
+                /* @ts-expect-error key is dynamic */
+                label: t(`account.oauth.${service}.title`) as string,
                 icon: "icon-[fluent--hat-graduation-20-regular]",
-              },
-              {
-                value: "xmu",
-                label: t("account.oauth.xmu.title")!,
-                icon: "icon-[fluent--hat-graduation-20-regular]",
-              },
-              {
-                value: "jiangnan",
-                label: t("account.oauth.jiangnan.title")!,
-                icon: "icon-[fluent--hat-graduation-20-regular]",
-              },
-              {
-                value: "nwnu",
-                label: t("account.oauth.nwnu.title")!,
-                icon: "icon-[fluent--hat-graduation-20-regular]",
-              },
-              {
-                value: "taru",
-                label: t("account.oauth.taru.title")!,
-                icon: "icon-[fluent--hat-graduation-20-regular]",
-              },
-            ]}
+              };
+            })}
             value={field.value ? [field.value as string] : undefined}
-            inputProps={props}
+            inputProps={fieldProps}
             onValueChange={(e) => {
               setValue(form, "provider", e.value.at(0) as Providers);
             }}

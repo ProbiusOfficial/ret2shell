@@ -78,6 +78,27 @@
       },
       "jiangnan": {
         "title": "강남대학교 이메일 신원 인증"
+      },
+      "hduEmail": {
+        "title": "항저우 전자공업 대학교 이메일 신원 확인"
+      },
+      "xduCas": {
+        "title": "서안전자과학대학교 통합신분인증"
+      },
+      "xmuCas": {
+        "title": "샤먼 대학교 통합 신분 인증"
+      },
+      "jiangnan_email": {
+        "title": "강남대학교 이메일 신원 인증"
+      },
+      "hdu_email": {
+        "title": "항저우 전자공업 대학교 이메일 신원 인증"
+      },
+      "xmu_cas": {
+        "title": "샤먼 대학교 통합 신분 인증"
+      },
+      "xdu_cas": {
+        "title": "서안전자과학대학교 통합신분인증"
       }
     },
     "register": {

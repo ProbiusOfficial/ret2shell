@@ -1,5 +1,4 @@
-pub mod jiangnan;
-pub mod nwnu;
-pub mod taru;
-pub mod xdu;
-pub mod xmu;
+pub mod hdu_email;
+pub mod jiangnan_email;
+pub mod xdu_cas;
+pub mod xmu_cas;
