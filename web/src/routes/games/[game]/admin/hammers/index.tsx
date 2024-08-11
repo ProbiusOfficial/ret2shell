@@ -1,5 +1,12 @@
-import { getChallenge, getGameAdminChatMessages, getTeamInfo, sendGameAdminChatMessage } from "@api/game";
+import {
+  getChallenge,
+  getGameAdminChatMessages,
+  getTeamInfo,
+  getTeamSolves,
+  sendGameAdminChatMessage,
+} from "@api/game";
 import Spin from "@assets/animates/spin";
+import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
 import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
 import { mediaPath } from "@lib/utils/media";
 import type { Challenge } from "@models/challenge";
@@ -16,6 +23,7 @@ import Card from "@widgets/card";
 import Editor from "@widgets/editor";
 import Link from "@widgets/link";
 import type { HTTPError } from "ky";
+import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 
@@ -56,8 +64,9 @@ export default function () {
   const [chats, setChats] = createSignal([] as Chat[]);
   const [chat, setChat] = createSignal("");
   const [sending, setSending] = createSignal(false);
+  const [solvedAt, setSolvedAt] = createSignal(null as DateTime | null);
   function handleSendChat() {
-    if (chat() === "") return;
+    if (chat().trim() === "") return;
     setSending(true);
     sendGameAdminChatMessage(gameStore.current!.id, challengeId()!, teamId()!, chat())
       .then(() => {
@@ -98,6 +107,7 @@ export default function () {
             });
           });
         });
+      getSolveStatus();
     }
     return refreshChats;
   }
@@ -107,6 +117,47 @@ export default function () {
       untrack(refreshChats);
     }
   });
+  const mixedChats = createMemo(() => {
+    const c = chats();
+    if (solvedAt()) {
+      c.push({
+        id: 0,
+        user_id: 0,
+        user_name: "Ciallo～(∠・ω< )⌒☆",
+        avatar: undefined,
+        content: t("game.challenge.chatSolvedMessage")!,
+        created_at: solvedAt()!,
+        is_admin: true,
+        challenge_id: challengeId()!,
+        team_id: teamId()!,
+        checked: true,
+        game_id: gameStore.current!.id,
+      });
+    }
+    c.sort((a, b) => a.created_at.toMillis() - b.created_at.toMillis());
+    return c;
+  });
+
+  function getSolveStatus() {
+    if (gameStore.current?.id && teamId()) {
+      getTeamSolves(gameStore.current.id, teamId()!)
+        .then((resp) => {
+          const s = resp.find((x) => x.challenge_id === challengeId());
+          if (s) {
+            setSolvedAt(s.created_at);
+          }
+        })
+        .catch((err: HTTPError) => {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.challenge.fetchSolveError")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        });
+    }
+  }
 
   const interval = setInterval(refreshChats(), 5000);
   onCleanup(() => clearInterval(interval));
@@ -183,34 +234,49 @@ export default function () {
                   <div class="h-3" />
                 </div>
               </div>
-              <For each={chats()}>
+              <For each={mixedChats()}>
                 {(chat, index) => (
                   <div
                     class={`${chat.user_id !== accountStore.id ? "self-start flex-row" : "self-end flex-row-reverse"} max-w-[calc(100%-4rem)] flex items-center`}
                   >
                     <Show
-                      when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}
-                      fallback={<div class="w-10 h-10 flex-shrink-0 self-start" />}
-                    >
-                      <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href={`/users/${chat.user_id}`}>
-                        <Avatar
-                          class="w-full h-full"
-                          src={chat.avatar ? mediaPath(chat.avatar) : undefined}
-                          fallback={chat.user_name}
+                      when={chat.id !== 0}
+                      fallback={
+                        <img
+                          src={xdsecMascotHappy}
+                          width={40}
+                          height={40}
+                          alt="ΦωΦ"
+                          class="flex-shrink-0 self-start mt-2"
                         />
-                      </A>
+                      }
+                    >
+                      <Show
+                        when={index() === 0 || mixedChats().at(index() - 1)?.user_id !== chat.user_id}
+                        fallback={<div class="w-10 h-10 flex-shrink-0 self-start" />}
+                      >
+                        <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href={`/users/${chat.user_id}`}>
+                          <Avatar
+                            class="w-full h-full"
+                            src={chat.avatar ? mediaPath(chat.avatar) : undefined}
+                            fallback={chat.user_name}
+                          />
+                        </A>
+                      </Show>
                     </Show>
                     <div class="w-4 flex-shrink-0" />
                     <div
                       class={`flex flex-col space-y-1 ${chat.user_id !== accountStore.id ? "items-start" : "items-end"}`}
                     >
-                      <Show when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}>
+                      <Show when={index() === 0 || mixedChats().at(index() - 1)?.user_id !== chat.user_id}>
                         <label class="label space-x-2">
-                          <Show
-                            when={chat.is_admin}
-                            fallback={<span class="text-info">[{t("game.challenge.chatPlayerRole")}]</span>}
-                          >
-                            <span class="text-error">[{t("game.challenge.chatAdminRole")}]</span>
+                          <Show when={chat.user_id !== 0}>
+                            <Show
+                              when={chat.is_admin}
+                              fallback={<span class="text-info">[{t("game.challenge.chatPlayerRole")}]</span>}
+                            >
+                              <span class="text-error">[{t("game.challenge.chatAdminRole")}]</span>
+                            </Show>
                           </Show>
                           <A href={`/users/${chat.user_id}`}>{chat.user_name}</A>
                         </label>
@@ -218,7 +284,11 @@ export default function () {
                       <Card class="peer" contentClass="p-2">
                         <Article content={chat.content} noExtraPaddings compact extra />
                       </Card>
-                      <Show when={index() === chats().length - 1 || chats().at(index() + 1)?.user_id !== chat.user_id}>
+                      <Show
+                        when={
+                          index() === mixedChats().length - 1 || mixedChats().at(index() + 1)?.user_id !== chat.user_id
+                        }
+                      >
                         <label class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
                           {chat.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
                         </label>

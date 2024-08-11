@@ -247,7 +247,9 @@
       "commitHistoryTips": "谁动了我的题？",
       "commitHistory": "操作历史",
       "statisticsTips": "谁做了我的题？",
-      "fetchHistoryFailed": "获取题目历史更改失败"
+      "fetchHistoryFailed": "获取题目历史更改失败",
+      "fetchSolveError": "获取解题情况失败",
+      "chatSolvedMessage": "恭喜选手解出了此题！"
     },
     "scoreboard": {
       "title": "积分板",
@@ -331,7 +333,8 @@
         "unread": "未读",
         "title": "反馈",
         "noSession": "没有队伍发送过反馈...",
-        "playerUnread": "选手未读"
+        "playerUnread": "选手未读",
+        "notReply": "已读不回"
       },
       "monitor": {
         "fetchFailed": "获取失败",

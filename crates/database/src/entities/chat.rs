@@ -145,7 +145,11 @@ where
     .column_as(Column::UserId, "last_user_id")
     .column_as(Column::Content, "last_message")
     .column_as(Column::CreatedAt, "last_active_at");
-  sql = sql.distinct_on([(Entity, Column::TeamId), (Entity, Column::ChallengeId)]);
+  sql = sql
+    .distinct_on([(Entity, Column::TeamId), (Entity, Column::ChallengeId)])
+    .order_by_desc(Column::TeamId)
+    .order_by_desc(Column::ChallengeId)
+    .order_by_desc(Column::CreatedAt);
 
   let result = sql.into_model().all(conn).await?;
   Ok(result)

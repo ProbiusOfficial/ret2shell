@@ -56,7 +56,7 @@ export default function (_props: {
 }) {
   const [tab, setTab] = createSignal("statistics" as "statistics" | "history");
   return (
-    <div class="flex flex-row min-h-full overflow-hidden">
+    <div class="flex flex-row min-h-full">
       <ul class="w-1/5 min-w-48 flex flex-col space-y-2 p-3 lg:p-6 sticky top-0 self-start">
         <li class="w-full">
           <Button ghost={tab() !== "statistics"} class="h-auto w-full" onClick={() => setTab("statistics")}>
@@ -76,7 +76,7 @@ export default function (_props: {
         </li>
       </ul>
       <Divider direction="vertical" />
-      <div class="flex-1 flex flex-col space-y-2 p-3 lg:p-6 overflow-hidden">
+      <div class="flex-1 w-0 flex flex-col space-y-2 p-3 lg:p-6">
         <Switch>
           <Match when={tab() === "statistics"}>
             <StatisticsPanel />

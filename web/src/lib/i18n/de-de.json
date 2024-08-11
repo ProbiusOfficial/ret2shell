@@ -545,7 +545,8 @@
         "unread": "Ungelesen",
         "title": "Rückmeldung",
         "noSession": "Keine Mannschaft hat Feedback gesendet...",
-        "playerUnread": "Spieler hat nicht gelesen"
+        "playerUnread": "Spieler hat nicht gelesen",
+        "notReply": "Gelesen und kann nicht antworten"
       },
       "monitor": {
         "fetchFailed": "Fehler beim Abrufen",
@@ -700,7 +701,9 @@
       "commitHistoryTips": "Wer hat meine Aufgabe verändert?",
       "commitHistory": "Vorgangsgeschichte",
       "statisticsTips": "Wer hat meine Aufgabe gemacht?",
-      "fetchHistoryFailed": "Die Abfrage des Verlaufs der Aufgabenänderungen ist fehlgeschlagen."
+      "fetchHistoryFailed": "Die Abfrage des Verlaufs der Aufgabenänderungen ist fehlgeschlagen.",
+      "fetchSolveError": "Lösungsstatus konnte nicht abgerufen werden",
+      "chatSolvedMessage": "Herzlichen Glückwunsch an den Teilnehmer zur Lösung dieses Problems!"
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

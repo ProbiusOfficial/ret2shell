@@ -624,7 +624,8 @@
         "unread": "未讀",
         "title": "回饋",
         "noSession": "沒有隊伍發送過回饋...",
-        "playerUnread": "選手未讀"
+        "playerUnread": "選手未讀",
+        "notReply": "已讀不回"
       },
       "monitor": {
         "fetchFailed": "獲取失敗",
@@ -779,7 +780,9 @@
       "commitHistoryTips": "誰動了我的題？",
       "commitHistory": "操作紀錄",
       "statisticsTips": "誰做了我的題？",
-      "fetchHistoryFailed": "獲取題目歷史更改失敗"
+      "fetchHistoryFailed": "獲取題目歷史更改失敗",
+      "fetchSolveError": "取得解題情況失敗",
+      "chatSolvedMessage": "恭喜選手解出了此題！"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

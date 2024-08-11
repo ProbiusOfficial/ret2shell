@@ -545,7 +545,8 @@
         "unread": "Non lu",
         "title": "Retour",
         "noSession": "Aucune équipe n'a envoyé de retour d'information...",
-        "playerUnread": "Joueur non lu"
+        "playerUnread": "Joueur non lu",
+        "notReply": "J'ai lu et je ne peux pas répondre"
       },
       "monitor": {
         "fetchFailed": "Échec de l'obtention",
@@ -700,7 +701,9 @@
       "commitHistoryTips": "Qui a touché à mon exercice ?",
       "commitHistory": "Historique des opérations",
       "statisticsTips": "Qui a fait mon exercice ?",
-      "fetchHistoryFailed": "Échec de l'obtention de l'historique des modifications du sujet"
+      "fetchHistoryFailed": "Échec de l'obtention de l'historique des modifications du sujet",
+      "fetchSolveError": "Échec de l'obtention de l'état de la solution",
+      "chatSolvedMessage": "Félicitations au candidat pour avoir résolu ce problème !"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

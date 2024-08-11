@@ -545,7 +545,8 @@
         "unread": "No leído",
         "title": "Respuesta",
         "noSession": "No hay equipos que hayan enviado comentarios...",
-        "playerUnread": "Jugador no leído"
+        "playerUnread": "Jugador no leído",
+        "notReply": "Leí y no puedo responder."
       },
       "monitor": {
         "fetchFailed": "Obtener fallido",
@@ -700,7 +701,9 @@
       "commitHistoryTips": "¿Quién tocó mi pregunta?",
       "commitHistory": "Historial de operaciones",
       "statisticsTips": "¿Quién hizo mis ejercicios?",
-      "fetchHistoryFailed": "Error al obtener el historial de cambios del tema"
+      "fetchHistoryFailed": "Error al obtener el historial de cambios del tema",
+      "fetchSolveError": "No se pudo obtener el estado de la solución",
+      "chatSolvedMessage": "¡Felicitaciones al concursante por resolver este problema!"
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

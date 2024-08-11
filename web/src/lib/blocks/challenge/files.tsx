@@ -75,7 +75,7 @@ export default function (_props: {
   }
   return (
     <div class="flex flex-row min-h-full">
-      <ul class="w-1/5 min-w-48 flex flex-col space-y-2 p-3 lg:p-6 sticky top-0 self-start">
+      <ul class="w-1/5 min-w-48 flex flex-col flex-shrink-0 space-y-2 p-3 lg:p-6 sticky top-0 self-start">
         <li class="w-full">
           <Button ghost={folder() !== "static"} class="h-auto w-full" onClick={() => setFolder("static")}>
             <div class="flex flex-col py-2 items-start w-full">
@@ -102,7 +102,7 @@ export default function (_props: {
         </li>
       </ul>
       <Divider direction="vertical" />
-      <div class="flex-1 flex flex-col space-y-2 p-3 lg:p-6">
+      <div class="flex-1 flex flex-col w-0 space-y-2 p-3 lg:p-6">
         <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
           <span class="icon-[fluent--folder-zip-20-regular] w-5 h-5 flex-shrink-0" />
           <span class="flex-1 text-start">{t("game.challenge.uploadFiles")}</span>

@@ -624,7 +624,8 @@
         "sendPlaceholder": "Enter to send, Shift Enter to wrap, supports Markdown syntax",
         "title": "Feedback",
         "unread": "Unread",
-        "playerUnread": "Player has not read"
+        "playerUnread": "Player has not read",
+        "notReply": "Read and cannot reply"
       },
       "monitor": {
         "fetchFailed": "Fetch failed",
@@ -779,7 +780,9 @@
       "commitHistoryTips": "Who touched my question?",
       "commitHistory": "Operation History",
       "statisticsTips": "Who did my problem?",
-      "fetchHistoryFailed": "Failed to retrieve historical changes of the question"
+      "fetchHistoryFailed": "Failed to retrieve historical changes of the question",
+      "fetchSolveError": "Failed to obtain solution status",
+      "chatSolvedMessage": "Congratulations to the contestant for solving this problem!"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

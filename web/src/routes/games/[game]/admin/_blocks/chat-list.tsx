@@ -101,6 +101,9 @@ export default function ChatList() {
                         <Show when={!session.checked && session.is_admin}>
                           <span class="text-info">[{t("game.admin.chat.playerUnread")}]</span>
                         </Show>
+                        <Show when={session.checked && !session.is_admin}>
+                          <span class="text-warning">[{t("game.admin.chat.notReply")}]</span>
+                        </Show>
                         <span class="flex-1 w-0 truncate opacity-60 text-start font-normal">
                           {session.last_message}
                         </span>

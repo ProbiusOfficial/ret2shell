@@ -545,7 +545,8 @@
         "unread": "未読",
         "title": "フィードバック",
         "noSession": "フィードバックが送信されていません...",
-        "playerUnread": "選手未読"
+        "playerUnread": "選手未読",
+        "notReply": "読んでも返信できない"
       },
       "monitor": {
         "fetchFailed": "取得失敗",
@@ -700,7 +701,9 @@
       "commitHistoryTips": "誰が私の問題を動かした？",
       "commitHistory": "操作履歴",
       "statisticsTips": "誰が私の問題を解決したの？",
-      "fetchHistoryFailed": "題目履歴変更の取得に失敗しました"
+      "fetchHistoryFailed": "題目履歴変更の取得に失敗しました",
+      "fetchSolveError": "ソリューションステータスの取得に失敗しました",
+      "chatSolvedMessage": "この問題を解決した出場者におめでとうございます!"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",
