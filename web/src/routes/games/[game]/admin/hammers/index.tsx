@@ -6,8 +6,7 @@ import {
   sendGameAdminChatMessage,
 } from "@api/game";
 import Spin from "@assets/animates/spin";
-import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
-import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
+import xdsecMascotCiallo from "@assets/imgs/xdsec-mascot-ciallo.webp";
 import { mediaPath } from "@lib/utils/media";
 import type { Challenge } from "@models/challenge";
 import type { Chat } from "@models/chat";
@@ -209,7 +208,9 @@ export default function () {
           <div class="flex flex-col min-h-full relative">
             <div class="flex flex-col flex-1 p-3 lg:p-6 space-y-1">
               <div class="self-start flex-row max-w-[calc(100%-4rem)] flex items-center">
-                <img src={xdsecMascotNormal} width={40} height={40} alt="ΦωΦ" class="flex-shrink-0 self-start mt-2" />
+                <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href="/magic/sakana">
+                  <Avatar class="w-full h-full" src={xdsecMascotCiallo} fallback="Ciallo" />
+                </A>
                 <div class="w-4 flex-shrink-0" />
                 <div class="flex flex-col space-y-1">
                   <label class="label">Ciallo～(∠・ω&lt; )⌒☆</label>
@@ -250,13 +251,9 @@ export default function () {
                     <Show
                       when={chat.id !== 0}
                       fallback={
-                        <img
-                          src={xdsecMascotHappy}
-                          width={40}
-                          height={40}
-                          alt="ΦωΦ"
-                          class="flex-shrink-0 self-start mt-2"
-                        />
+                        <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href="/magic/sakana">
+                          <Avatar class="w-full h-full" src={xdsecMascotCiallo} fallback="Ciallo" />
+                        </A>
                       }
                     >
                       <Show

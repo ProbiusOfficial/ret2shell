@@ -1,6 +1,6 @@
 article.prose,
 article.prose * {
-  @apply scroll-m-20 indent-[2em];
+  @apply scroll-m-20 indent-[2em] break-words;
 }
 
 .article-compact.prose * {

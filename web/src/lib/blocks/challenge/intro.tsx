@@ -374,7 +374,14 @@ export default function (props: { inGame?: boolean }) {
                     <Show when={image.port}>
                       <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 relative">
                         <span class="icon-[fluent--cube-20-regular] w-5 h-5 text-info" />
-                        <span class="flex-1 text-start">{image.name}.service</span>
+                        <span class="flex-1 text-start space-x-2">
+                          <span>{image.name}.service</span>
+                          <span>-</span>
+                          <span>{image.description}</span>
+                        </span>
+                        <Tag level="info">
+                          <span>{image.service_type}</span>
+                        </Tag>
                         <ClipboardBtn
                           size="sm"
                           title={image.description!}
