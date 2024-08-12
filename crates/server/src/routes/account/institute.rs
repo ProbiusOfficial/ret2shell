@@ -33,10 +33,19 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
 }
 
 async fn get_institute_list(
-  State(ref db): State<Database>,
+  State(ref db): State<Database>, Extension(token): Extension<auth::Token>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let institutes = institute::get_list(&db.conn).await?;
-  Ok(Json(institutes))
+  if token.permissions.0.contains(&Permission::User) {
+    Ok(Json(institutes))
+  } else {
+    Ok(Json(
+      institutes
+        .into_iter()
+        .map(|institute| institute.desensitize())
+        .collect(),
+    ))
+  }
 }
 
 async fn create_institute(

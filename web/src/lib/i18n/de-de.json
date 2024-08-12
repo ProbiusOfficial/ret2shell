@@ -338,7 +338,8 @@
       "name": "Organisationsname",
       "nameRequired": "Bitte geben Sie den Namen der Organisation ein",
       "provider": "Drittanbieter-Authentifizierung",
-      "providerNeeded": "Bitte wählen Sie einen Drittanbieter-Validator, leer lassen für manuell..."
+      "providerNeeded": "Bitte wählen Sie einen Drittanbieter-Validator, leer lassen für manuell...",
+      "token": "Schlüssel verwalten"
     }
   },
   "article": {

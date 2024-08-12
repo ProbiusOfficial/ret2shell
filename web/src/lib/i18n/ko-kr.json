@@ -338,7 +338,8 @@
       "name": "조직 이름",
       "nameRequired": "조직 이름을 입력하세요",
       "provider": "제3자 인증기",
-      "providerNeeded": "서드 파티 검증기를 선택하세요. 빈칸으로 두면 수동으로..."
+      "providerNeeded": "서드 파티 검증기를 선택하세요. 빈칸으로 두면 수동으로...",
+      "token": "키 관리"
     }
   },
   "article": {

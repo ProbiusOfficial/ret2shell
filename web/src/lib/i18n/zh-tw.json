@@ -417,7 +417,8 @@
       "name": "組織名稱",
       "nameRequired": "請輸入組織名稱",
       "provider": "第三方身分驗證器",
-      "providerNeeded": "請選擇第三方驗證器，留空為手動..."
+      "providerNeeded": "請選擇第三方驗證器，留空為手動...",
+      "token": "管理密鑰"
     }
   },
   "article": {

@@ -97,6 +97,45 @@ impl ExModel {
   }
 }
 
+impl From<Model> for ExModel {
+  fn from(model: Model) -> Self {
+    ExModel {
+      id: model.id,
+      registered_at: model.registered_at,
+      account: model.account,
+      nickname: model.nickname,
+      password: model.password,
+      email: model.email,
+      description: model.description,
+      avatar: model.avatar,
+      institute_id: model.institute_id,
+      permissions: model.permissions,
+      hidden: model.hidden,
+      banned: model.banned,
+      institute_name: None,
+    }
+  }
+}
+
+impl From<ExModel> for Model {
+  fn from(model: ExModel) -> Self {
+    Model {
+      id: model.id,
+      registered_at: model.registered_at,
+      account: model.account,
+      nickname: model.nickname,
+      password: model.password,
+      email: model.email,
+      description: model.description,
+      avatar: model.avatar,
+      institute_id: model.institute_id,
+      permissions: model.permissions,
+      hidden: model.hidden,
+      banned: model.banned,
+    }
+  }
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
   #[sea_orm(has_many = "super::article::Entity")]

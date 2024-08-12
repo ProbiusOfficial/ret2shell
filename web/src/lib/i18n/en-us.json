@@ -417,7 +417,8 @@
       "name": "Organization Name",
       "nameRequired": "Please enter the organization name",
       "provider": "Third-party authenticator",
-      "providerNeeded": "Please select a third-party validator, leaving it blank for manual..."
+      "providerNeeded": "Please select a third-party validator, leaving it blank for manual...",
+      "token": "Manage keys"
     }
   },
   "article": {

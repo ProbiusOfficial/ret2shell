@@ -338,7 +338,8 @@
       "name": "Nombre de la organización",
       "nameRequired": "Por favor, ingrese el nombre de la organización",
       "provider": "autenticador de terceros",
-      "providerNeeded": "Seleccione un validador de terceros, dejar en blanco para manual..."
+      "providerNeeded": "Seleccione un validador de terceros, dejar en blanco para manual...",
+      "token": "Administrar claves"
     }
   },
   "article": {

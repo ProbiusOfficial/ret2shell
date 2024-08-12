@@ -4,4 +4,5 @@ export type Institute = {
   description: string | null;
   logo: string | null;
   provider: string | null;
+  token: string | null;
 };

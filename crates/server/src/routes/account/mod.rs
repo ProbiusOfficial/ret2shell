@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, net::IpAddr};
 
 use axum::{
   extract::{Query, State},
@@ -13,7 +13,7 @@ use nanoid::{alphabet, nanoid};
 use r2s_cache::Cache;
 use r2s_config::{captcha::ValidatorType, email};
 use r2s_database::{
-  config, game, team,
+  config, game, institute as institute_db, team,
   user::{self, Permission, Permissions},
 };
 use r2s_email::{EmailCtx, EmailRequest};
@@ -68,7 +68,12 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     .route("/forgot", post(forgot_password))
     .route("/login", post(login))
     .route("/register", post(register))
-    .route("/query", get(query_code_for_account))
+    .route(
+      "/query",
+      get(query_code_for_account)
+        .post(bind_account_by_code)
+        .delete(unbind_account_by_code),
+    )
     .nest("/captcha", captcha::router(state))
     .nest("/institute", institute::router(state))
 }
@@ -197,6 +202,107 @@ async fn query_code_for_account(
   if let Some(user_id) = user_id {
     cache.at("account-code").del(user_id).await.ok();
     if let Some(user) = user::get_ex(&db.conn, user_id).await? {
+      Ok(Json(user))
+    } else {
+      Err(ResponseError::NotFound("user not found".to_owned()))
+    }
+  } else {
+    Err(ResponseError::NotFound("user not found".to_owned()))
+  }
+}
+
+async fn bind_account_by_code(
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(token_tracker): Extension<TokenTracker>, Extension(ip): Extension<IpAddr>,
+  Query(CodeQuery { code }): Query<CodeQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let original = match token_tracker.original.clone() {
+    Some(token) => token,
+    None => {
+      return Err(ResponseError::Forbidden(
+        "permission denied".to_owned(),
+        format!(
+          "client {} has no permission to bind account",
+          ip.to_string()
+        ),
+      ));
+    }
+  };
+  let institute = match institute_db::get_by_token(&db.conn, &original).await? {
+    Some(institute) => institute,
+    None => {
+      return Err(ResponseError::Forbidden(
+        "permission denied".to_owned(),
+        format!(
+          "client {} has no permission to bind account",
+          ip.to_string()
+        ),
+      ));
+    }
+  };
+  let user_id: Option<i64> = cache.at("account-code-rev").getdel(code).await?;
+  if let Some(user_id) = user_id {
+    cache.at("account-code").del(user_id).await.ok();
+    if let Some(user) = user::get_ex(&db.conn, user_id).await? {
+      let user = user::Model {
+        institute_id: Some(institute.id),
+        ..user.into()
+      };
+      let mut user: user::ExModel = user::update(&db.conn, user).await?.into();
+      user.institute_name = Some(institute.name);
+      Ok(Json(user))
+    } else {
+      Err(ResponseError::NotFound("user not found".to_owned()))
+    }
+  } else {
+    Err(ResponseError::NotFound("user not found".to_owned()))
+  }
+}
+
+async fn unbind_account_by_code(
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(token_tracker): Extension<TokenTracker>, Extension(ip): Extension<IpAddr>,
+  Query(CodeQuery { code }): Query<CodeQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let original = match token_tracker.original.clone() {
+    Some(token) => token,
+    None => {
+      return Err(ResponseError::Forbidden(
+        "permission denied".to_owned(),
+        format!(
+          "client {} has no permission to bind account",
+          ip.to_string()
+        ),
+      ));
+    }
+  };
+  let institute = match institute_db::get_by_token(&db.conn, &original).await? {
+    Some(institute) => institute,
+    None => {
+      return Err(ResponseError::Forbidden(
+        "permission denied".to_owned(),
+        format!(
+          "client {} has no permission to bind account",
+          ip.to_string()
+        ),
+      ));
+    }
+  };
+  let user_id: Option<i64> = cache.at("account-code-rev").getdel(code).await?;
+  if let Some(user_id) = user_id {
+    cache.at("account-code").del(user_id).await.ok();
+    if let Some(mut user) = user::get_ex(&db.conn, user_id).await? {
+      if user.institute_id.is_some_and(|v| v != institute.id) {
+        return Err(ResponseError::Forbidden(
+          "permission denied".to_owned(),
+          format!(
+            "client {} has no permission to unbind account",
+            ip.to_string()
+          ),
+        ));
+      }
+      user.institute_id = None;
+      let user: user::ExModel = user::update(&db.conn, user.into()).await?.into();
       Ok(Json(user))
     } else {
       Err(ResponseError::NotFound("user not found".to_owned()))

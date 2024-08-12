@@ -667,7 +667,8 @@
       "name": "组织名称",
       "nameRequired": "请输入组织名称",
       "provider": "第三方身份验证器",
-      "providerNeeded": "请选择第三方验证器，留空为手动..."
+      "providerNeeded": "请选择第三方验证器，留空为手动...",
+      "token": "管理密钥"
     }
   },
   "theme": {

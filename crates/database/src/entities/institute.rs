@@ -13,6 +13,16 @@ pub struct Model {
   pub description: Option<String>,
   pub logo: Option<String>,
   pub provider: Option<String>,
+  pub token: Option<String>,
+}
+
+impl Model {
+  pub fn desensitize(self) -> Self {
+    Self {
+      token: None,
+      ..self
+    }
+  }
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -67,6 +77,13 @@ where
     .filter(Column::Provider.eq(provider))
     .one(db)
     .await
+}
+
+pub async fn get_by_token<C>(db: &C, token: &str) -> Result<Option<Model>, DbErr>
+where
+  C: ConnectionTrait,
+{
+  Entity::find().filter(Column::Token.eq(token)).one(db).await
 }
 
 pub async fn create<C>(db: &C, institute: Model) -> Result<Model, DbErr>

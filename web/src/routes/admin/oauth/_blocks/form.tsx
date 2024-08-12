@@ -9,6 +9,7 @@ import { createEffect, untrack } from "solid-js";
 type FormType = {
   name: string;
   provider?: string;
+  token?: string;
 };
 
 export default function InstituteForm(props: {
@@ -24,6 +25,7 @@ export default function InstituteForm(props: {
         setValues(form, {
           name: props.editSource!.name,
           provider: props.editSource?.provider || undefined,
+          token: props.editSource?.token || undefined,
         });
       });
     }
@@ -35,6 +37,7 @@ export default function InstituteForm(props: {
       description: null,
       logo: null,
       provider: result.provider || null,
+      token: result.token || null,
     });
   }
   return (
@@ -76,6 +79,18 @@ export default function InstituteForm(props: {
           >
             {/* TODO: integrate with modular-forms */}
           </Select>
+        )}
+      </Field>
+      <Field name="token">
+        {(field, props) => (
+          <Input
+            icon={<span class="icon-[fluent--key-20-regular] w-5 h-5" />}
+            title={t("admin.institute.token")}
+            placeholder={t("admin.institute.token")}
+            {...props}
+            value={field.value}
+            error={field.error}
+          />
         )}
       </Field>
       <Button type="submit" level="primary" class="!mt-4" loading={props.loading} disabled={props.loading}>

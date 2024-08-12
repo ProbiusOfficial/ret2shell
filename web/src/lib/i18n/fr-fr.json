@@ -338,7 +338,8 @@
       "name": "Nom de l'organisation",
       "nameRequired": "Veuillez entrer le nom de l'organisation",
       "provider": "Authentificateur tiers",
-      "providerNeeded": "Sélectionnez un validateur tiers, laisser vide pour une vérification manuelle..."
+      "providerNeeded": "Sélectionnez un validateur tiers, laisser vide pour une vérification manuelle...",
+      "token": "Gérer les clés"
     }
   },
   "article": {
