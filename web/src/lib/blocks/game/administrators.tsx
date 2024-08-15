@@ -1,24 +1,25 @@
 import { getGameAdmins, updateGameAdmins } from "@api/game";
 import { getUserList } from "@api/user";
+import { Popover as ArkPopover } from "@ark-ui/solid";
+import { mediaPath } from "@lib/utils/media";
+import { Permission, type User, permissionToIcon } from "@models/user";
+import { A } from "@solidjs/router";
+import { accountStore } from "@storage/account";
 import { gameStore, setGameStore } from "@storage/game";
-import { t } from "@storage/theme";
+import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
-import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
-import { createEffect, createSignal, For, Show, untrack } from "solid-js";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Dialog from "@widgets/dialog";
 import Divider from "@widgets/divider";
 import Input from "@widgets/input";
+import LoadingTips from "@widgets/loading-tips";
 import Popover from "@widgets/popover";
 import Tag from "@widgets/tag";
-import { Popover as ArkPopover } from "@ark-ui/solid";
-import { mediaPath } from "@lib/utils/media";
-import { Permission, type User, permissionToIcon } from "@models/user";
-import { A } from "@solidjs/router";
-import { accountStore } from "@storage/account";
+import type { HTTPError } from "ky";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
+import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 export default function AdministratorsManagement() {
   const [loading, setLoading] = createSignal(false);
@@ -55,7 +56,7 @@ export default function AdministratorsManagement() {
       untrack(() => {
         setSearching(true);
         setSearchedUsers([]);
-        getUserList(1, 10, "id", adminSearch())
+        getUserList(1, 30, "id", adminSearch())
           .then((resp) => {
             setSearchedUsers(resp[0]);
           })
@@ -141,83 +142,94 @@ export default function AdministratorsManagement() {
         </ArkPopover.Anchor>
         <ArkPopover.Positioner class="w-full">
           <ArkPopover.Content class="popover card w-full z-50">
-            <div class="card-content p-2 flex flex-col space-y-2">
-              <Show when={searching()}>
-                <LoadingTips />
-              </Show>
-              <For
-                each={searchedUsers()}
-                fallback={
-                  <Show when={!searching() && adminSearch()}>
-                    <div class="h-12 flex items-center font-bold space-x-4 px-2">
-                      <span class="icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
-                      <span class="font-bold opacity-60">{t("game.admin.administrators.noAdmins")}</span>
-                    </div>
-                  </Show>
-                }
-              >
-                {(user) => (
-                  <Dialog
-                    disabled={
-                      !user.permissions.includes(Permission.Game) || gameStore.current?.admins.includes(user.id)
-                    }
-                    ghost
-                    btnContent={
-                      <>
-                        <Avatar
-                          class="w-6 h-6"
-                          src={(user.avatar && mediaPath(user.avatar)) || undefined}
-                          fallback={user.account || undefined}
-                        />
-                        <span class="flex-1 truncate text-start">
-                          <span>{user.nickname}</span>
-                          <span class="font-normal px-2 opacity-60">
-                            {user.account}#{user.id.toString(16).padStart(6, "0")}
-                          </span>
-                        </span>
-                        <Show when={!user.permissions.includes(Permission.Game)}>
-                          <Tag level="error">
-                            <span>{t("game.admin.administrators.noPermission")}</span>
-                          </Tag>
-                        </Show>
-                        <Show when={gameStore.current?.admins.includes(user.id)}>
-                          <Tag level="success">
-                            <span>{t("game.admin.administrators.alreadyAdded")}</span>
-                          </Tag>
-                        </Show>
-                      </>
-                    }
-                  >
-                    <div class="flex flex-col w-64 space-y-2 items-center">
-                      <div class="flex flex-row space-x-4 justify-start items-center w-full">
-                        <Avatar
-                          class="w-12 h-12"
-                          src={(user.avatar && mediaPath(user.avatar)) || undefined}
-                          fallback={user.account || undefined}
-                        />
-                        <div class="flex flex-col space-x-0 items-start justify-center">
-                          <h2 class="font-bold text-lg">{user.nickname}</h2>
-                          <p class="font-normal opacity-60">
-                            {user.account}#{user.id.toString(16).padStart(6, "0")}
-                          </p>
-                        </div>
+            <OverlayScrollbarsComponent
+              options={{
+                scrollbars: {
+                  theme: `os-theme-${fullTheme()}`,
+                  autoHide: "scroll",
+                },
+              }}
+              class="relative w-full print:h-auto print:overflow-auto max-h-96"
+              defer
+            >
+              <div class="card-content p-2 flex flex-col space-y-2">
+                <Show when={searching()}>
+                  <LoadingTips />
+                </Show>
+                <For
+                  each={searchedUsers()}
+                  fallback={
+                    <Show when={!searching() && adminSearch()}>
+                      <div class="h-12 flex items-center font-bold space-x-4 px-2">
+                        <span class="icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
+                        <span class="font-bold opacity-60">{t("game.admin.administrators.noAdmins")}</span>
                       </div>
-                      <Divider class="w-full" />
-                      <p>{t("game.admin.administrators.confirm")}</p>
-                      <Button
-                        level="info"
-                        class="w-full"
-                        onClick={() => handleAddAdmin(user)}
-                        loading={adding()}
-                        disabled={adding()}
-                      >
-                        {t("form.confirm")}
-                      </Button>
-                    </div>
-                  </Dialog>
-                )}
-              </For>
-            </div>
+                    </Show>
+                  }
+                >
+                  {(user) => (
+                    <Dialog
+                      disabled={
+                        !user.permissions.includes(Permission.Game) || gameStore.current?.admins.includes(user.id)
+                      }
+                      ghost
+                      btnContent={
+                        <>
+                          <Avatar
+                            class="w-6 h-6"
+                            src={(user.avatar && mediaPath(user.avatar)) || undefined}
+                            fallback={user.account || undefined}
+                          />
+                          <span class="flex-1 truncate text-start">
+                            <span>{user.nickname}</span>
+                            <span class="font-normal px-2 opacity-60">
+                              {user.account}#{user.id.toString(16).padStart(6, "0")}
+                            </span>
+                          </span>
+                          <Show when={!user.permissions.includes(Permission.Game)}>
+                            <Tag level="error">
+                              <span>{t("game.admin.administrators.noPermission")}</span>
+                            </Tag>
+                          </Show>
+                          <Show when={gameStore.current?.admins.includes(user.id)}>
+                            <Tag level="success">
+                              <span>{t("game.admin.administrators.alreadyAdded")}</span>
+                            </Tag>
+                          </Show>
+                        </>
+                      }
+                    >
+                      <div class="flex flex-col w-64 space-y-2 items-center">
+                        <div class="flex flex-row space-x-4 justify-start items-center w-full">
+                          <Avatar
+                            class="w-12 h-12"
+                            src={(user.avatar && mediaPath(user.avatar)) || undefined}
+                            fallback={user.account || undefined}
+                          />
+                          <div class="flex flex-col space-x-0 items-start justify-center">
+                            <h2 class="font-bold text-lg">{user.nickname}</h2>
+                            <p class="font-normal opacity-60">
+                              {user.account}#{user.id.toString(16).padStart(6, "0")}
+                            </p>
+                          </div>
+                        </div>
+                        <Divider class="w-full" />
+                        <p>{t("game.admin.administrators.confirm")}</p>
+                        <Button
+                          level="info"
+                          class="w-full"
+                          onClick={() => handleAddAdmin(user)}
+                          loading={adding()}
+                          disabled={adding()}
+                        >
+                          {t("form.confirm")}
+                        </Button>
+                      </div>
+                    </Dialog>
+                  )}
+                </For>
+              </div>
+            </OverlayScrollbarsComponent>
           </ArkPopover.Content>
         </ArkPopover.Positioner>
       </ArkPopover.Root>
