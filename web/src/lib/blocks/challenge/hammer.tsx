@@ -41,7 +41,6 @@ function mergeChats(challengeId: number, teamId: number, a: Chat[], b: Chat[], s
   }
   const bb = b.sort((x, y) => x.id - y.id);
   const aa = a.sort((x, y) => x.id - y.id);
-  if (aa.length === 0) return bb;
 
   let i = 0;
   const iLen = aa.length;
