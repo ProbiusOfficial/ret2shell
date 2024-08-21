@@ -150,6 +150,7 @@ where
   Ok((submissions, total))
 }
 
+#[allow(clippy::too_many_arguments)]
 pub async fn get_list<C>(
   db: &C, only_solved: bool, with_content: bool, game_id: Option<i64>, challenge_id: Option<i64>,
   team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
@@ -203,6 +204,7 @@ where
   }
 }
 
+#[allow(clippy::too_many_arguments)]
 pub async fn get_list_ex<C>(
   db: &C, only_solved: bool, with_content: bool, game_id: Option<i64>, challenge_id: Option<i64>,
   team_id: Option<i64>, user_id: Option<i64>, in_game: bool,

@@ -223,7 +223,7 @@ async fn bind_account_by_code(
         "permission denied".to_owned(),
         format!(
           "client {} has no permission to bind account",
-          ip.to_string()
+          ip
         ),
       ));
     }
@@ -235,7 +235,7 @@ async fn bind_account_by_code(
         "permission denied".to_owned(),
         format!(
           "client {} has no permission to bind account",
-          ip.to_string()
+          ip
         ),
       ));
     }
@@ -276,7 +276,7 @@ async fn unbind_account_by_code(
         "permission denied".to_owned(),
         format!(
           "client {} has no permission to bind account",
-          ip.to_string()
+          ip
         ),
       ));
     }
@@ -288,7 +288,7 @@ async fn unbind_account_by_code(
         "permission denied".to_owned(),
         format!(
           "client {} has no permission to bind account",
-          ip.to_string()
+          ip
         ),
       ));
     }
@@ -302,7 +302,7 @@ async fn unbind_account_by_code(
           "permission denied".to_owned(),
           format!(
             "client {} has no permission to unbind account",
-            ip.to_string()
+            ip
           ),
         ));
       }

@@ -394,7 +394,7 @@ impl Cluster {
         security_context: env_config
           .restricted
           .is_some_and(|r| r)
-          .then(|| pod_security_context),
+          .then_some(pod_security_context),
         containers: env_config
           .images
           .iter()
