@@ -1,5 +1,5 @@
 import DarkmodeButton from "@blocks/darkmode-button";
-import { setLocale, setThemeStore, t, themeStore } from "@storage/theme";
+import { setLocale, setThemeStore, t, themeStore, toggleBackgroundImg } from "@storage/theme";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Popover from "@widgets/popover";
@@ -57,10 +57,10 @@ export function DiyBoxContent() {
               square
               justify="center"
               onClick={() => {
-                location.reload();
+                toggleBackgroundImg();
               }}
             >
-              <span class="icon-[fluent--arrow-sync-20-regular] w-5 h-5" />
+              <span class="icon-[fluent--image-border-20-regular] w-5 h-5" />
             </Button>
           </li>
         </ul>

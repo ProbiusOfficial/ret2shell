@@ -21,6 +21,7 @@ export const [themeStore, setThemeStore] = makePersisted(
     locale: systemPrefersLocale,
     colorScheme: "dark",
     colorSchemeFollowsSystem: true,
+    showBackgroundImg: true,
   }),
   { name: "theme" }
 );
@@ -36,6 +37,10 @@ export function setColorScheme(colorScheme: "dark" | "light") {
 export function setLocale(locale: Locale) {
   setThemeStore({ locale });
   setTimeout(() => location.reload());
+}
+
+export function toggleBackgroundImg() {
+  setThemeStore("showBackgroundImg", !themeStore.showBackgroundImg);
 }
 
 export function fullTheme() {

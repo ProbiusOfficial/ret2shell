@@ -36,6 +36,7 @@ function checkEdition() {
         break;
     }
     localStorage.clear();
+    localStorage.removeItem("theme");
     localStorage.setItem("edition", compact_edition);
     location.reload();
   } else if (compact_edition) {
