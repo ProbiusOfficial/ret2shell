@@ -164,34 +164,20 @@ export default function GameStatistics(props: {
               team.name,
               accountStore.institutes.find((i) => i.id === team.institute_id)?.name,
               ...members.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
-              ...challenges().map((c) => team.history.find((h) => h.challenge_id === c.id) ? "*" : ""),
+              ...challenges().map((c) => (team.history.find((h) => h.challenge_id === c.id) ? "*" : "")),
             ];
             XLSX.utils.sheet_add_aoa(scoreboardSheet, [row], {
-              origin: "A" + (scoreboardSheet["!ref"]?.split(
-                ":"
-              )[1].split("$")[1] ?? "1")
+              origin: `A${scoreboardSheet["!ref"]?.split(":")[1].split("$")[1] ?? "1"}`,
             });
           }
           XLSX.utils.book_append_sheet(workbook, scoreboardSheet, "Scoreboard");
 
-          const auditHeader = [
-            "Created At",
-            "User",
-            "Team",
-            "Reason",
-          ]
+          const auditHeader = ["Created At", "User", "Team", "Reason"];
           const auditSheet = XLSX.utils.aoa_to_sheet([auditHeader]);
           for (const audit of data.audits) {
-            const row = [
-              audit.created_at,
-              audit.user_name,
-              audit.team_name,
-              audit.reason,
-            ];
+            const row = [audit.created_at, audit.user_name, audit.team_name, audit.reason];
             XLSX.utils.sheet_add_aoa(auditSheet, [row], {
-              origin: "A" + (auditSheet["!ref"]?.split(
-                ":"
-              )[1].split("$")[1] ?? "1")
+              origin: `A${auditSheet["!ref"]?.split(":")[1].split("$")[1] ?? "1"}`,
             });
           }
 
@@ -510,7 +496,7 @@ export default function GameStatistics(props: {
                           .map(([_, v]) => v)
                           .concat(
                             stats()!.total_players -
-                            Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
+                              Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
                           ),
                         barMaxWidth: 64,
                       },
