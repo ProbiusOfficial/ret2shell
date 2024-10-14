@@ -109,7 +109,6 @@ export default function GameStatistics(props: {
           link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.json`;
           link.click();
           URL.revokeObjectURL(url);
-          document.body.removeChild(link);
         })
         .catch((err: HTTPError) => {
           err.response.text().then((text) => {
@@ -157,30 +156,29 @@ export default function GameStatistics(props: {
             ...Array.from({ length: challenges().length }, (_, i) => challenges()[i].name),
           ];
           const scoreboardSheet = XLSX.utils.aoa_to_sheet([scoreboardHeader]);
+          const scoreboardArr = [];
           for (const [index, [team, members]] of data.scoreboard.entries()) {
             const row = [
               index + 1,
               team.id,
               team.name,
-              accountStore.institutes.find((i) => i.id === team.institute_id)?.name,
+              accountStore.institutes.find((i) => i.id === team.institute_id)?.name ?? "",
               ...members.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
               ...challenges().map((c) => (team.history.find((h) => h.challenge_id === c.id) ? "*" : "")),
             ];
-            XLSX.utils.sheet_add_aoa(scoreboardSheet, [row], {
-              origin: `A${scoreboardSheet["!ref"]?.split(":")[1].split("$")[1] ?? "1"}`,
-            });
+            scoreboardArr.push(row);
           }
+          XLSX.utils.sheet_add_aoa(scoreboardSheet, scoreboardArr, { origin: "A2" });
           XLSX.utils.book_append_sheet(workbook, scoreboardSheet, "Scoreboard");
 
           const auditHeader = ["Created At", "User", "Team", "Reason"];
           const auditSheet = XLSX.utils.aoa_to_sheet([auditHeader]);
+          const auditArr = [];
           for (const audit of data.audits) {
-            const row = [audit.created_at, audit.user_name, audit.team_name, audit.reason];
-            XLSX.utils.sheet_add_aoa(auditSheet, [row], {
-              origin: `A${auditSheet["!ref"]?.split(":")[1].split("$")[1] ?? "1"}`,
-            });
+            const row = [audit.created_at.toISO(), audit.user_name, audit.team_name, audit.reason];
+            auditArr.push(row);
           }
-
+          XLSX.utils.sheet_add_aoa(auditSheet, auditArr, { origin: "A2" });
           XLSX.utils.book_append_sheet(workbook, auditSheet, "Audits");
 
           const blob = new Blob([XLSX.write(workbook, { bookType: "xlsx", type: "array" })], {
@@ -192,7 +190,6 @@ export default function GameStatistics(props: {
           link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.xlsx`;
           link.click();
           URL.revokeObjectURL(url);
-          document.body.removeChild(link);
         })
         .catch((err: HTTPError) => {
           err.response.text().then((text) => {
@@ -496,7 +493,7 @@ export default function GameStatistics(props: {
                           .map(([_, v]) => v)
                           .concat(
                             stats()!.total_players -
-                              Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
+                            Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
                           ),
                         barMaxWidth: 64,
                       },
