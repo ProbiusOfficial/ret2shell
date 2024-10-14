@@ -95,30 +95,33 @@ export default function GameStatistics(props: {
 
   const [exporting, setExporting] = createSignal(false);
 
-  function exportStatistics() {
+  function exportStatisticsJson() {
     if (gameStore.current) {
       setExporting(true);
-      getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined).then((data) => {
-        // save as json
-        const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `statistics.${gameInstitutes().find((i => i.id === selectedInstituteId()))?.name ?? 'general'}.json`
-        link.click();
-        URL.revokeObjectURL(url);
-        document.body.removeChild(link);
-      }).catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.fetchFailed")}: ${text}`,
-            duration: 5000,
+      getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined)
+        .then((data) => {
+          // save as json
+          const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.json`;
+          link.click();
+          URL.revokeObjectURL(url);
+          document.body.removeChild(link);
+        })
+        .catch((err: HTTPError) => {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.fetchFailed")}: ${text}`,
+              duration: 5000,
+            });
           });
+        })
+        .finally(() => {
+          setExporting(false);
         });
-      }).finally(() => {
-        setExporting(false);
-      });
     }
   }
 
@@ -144,9 +147,10 @@ export default function GameStatistics(props: {
             />
           </Show>
           <div class="flex-1" />
-          <Button size="sm" square onClick={exportStatistics} loading={exporting()} disabled={exporting()}>
+          <Button size="sm" square onClick={exportStatisticsJson} loading={exporting()} disabled={exporting()}>
             <Show when={!exporting()}>
               <span class="icon-[fluent--open-20-regular] w-5 h-5" />
+              <span>JSON</span>
             </Show>
           </Button>
         </div>
@@ -301,102 +305,106 @@ export default function GameStatistics(props: {
             </Show>
           </div>
         </div>
-        <Show when={props.inGame} fallback={
-          <div class="flex flex-col space-y-4">
-            <div class="flex flex-row items-center">
-              <h2 class="font-bold flex-1 truncate">{t("game.statistics.players")}</h2>
-            </div>
-            <div class="h-64 flex flex-row lg:space-x-4">
-              <div class="h-full aspect-square flex items-center justify-center">
+        <Show
+          when={props.inGame}
+          fallback={
+            <div class="flex flex-col space-y-4">
+              <div class="flex flex-row items-center">
+                <h2 class="font-bold flex-1 truncate">{t("game.statistics.players")}</h2>
+              </div>
+              <div class="h-64 flex flex-row lg:space-x-4">
+                <div class="h-full aspect-square flex items-center justify-center">
+                  <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                    <Chart
+                      class="hidden lg:block"
+                      option={{
+                        grid: {
+                          left: "16px",
+                          right: "16px",
+                          bottom: "16px",
+                          top: "16px",
+                        },
+                        toolbox: {},
+                        tooltip: {
+                          show: true,
+                        },
+                        series: {
+                          type: "sunburst",
+                          emphasis: {
+                            focus: "ancestor",
+                          },
+                          data: Object.entries(stats()!.institute_players).map(([key, value]) => ({
+                            name: accountStore.institutes.find((v) => v.id === Number.parseInt(key))?.name || key,
+                            value,
+                          })),
+                          label: {
+                            show: false,
+                          },
+                          levels: [
+                            {},
+                            {
+                              r0: "40%",
+                              r: "80%",
+                            },
+                          ],
+                        },
+                      }}
+                    />
+                  </Show>
+                </div>
                 <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
                   <Chart
-                    class="hidden lg:block"
+                    class="flex-1"
                     option={{
                       grid: {
-                        left: "16px",
-                        right: "16px",
-                        bottom: "16px",
-                        top: "16px",
+                        left: "64px",
+                        right: "32px",
+                        bottom: "32px",
+                        top: "48px",
+                      },
+                      title: {
+                        text: t("game.statistics.institutePlayers"),
+                        right: "center",
+                      },
+                      tooltip: {
+                        trigger: "axis",
+                        axisPointer: {
+                          type: "line",
+                          label: {
+                            precision: 0,
+                          },
+                          snap: true,
+                        },
+                        borderColor: "transparent",
                       },
                       toolbox: {},
-                      tooltip: {
-                        show: true,
+                      xAxis: {
+                        type: "category",
+                        data: Object.entries(stats()!.institute_players)
+                          .map(([i, _]) => accountStore.institutes.find((v) => v.id === Number.parseInt(i))?.name)
+                          .concat(t("game.statistics.others")!),
+                      },
+                      yAxis: {
+                        type: "value",
+                        min: 0,
                       },
                       series: {
-                        type: "sunburst",
-                        emphasis: {
-                          focus: "ancestor",
-                        },
-                        data: Object.entries(stats()!.institute_players).map(([key, value]) => ({
-                          name: accountStore.institutes.find((v) => v.id === Number.parseInt(key))?.name || key,
-                          value,
-                        })),
-                        label: {
-                          show: false,
-                        },
-                        levels: [
-                          {},
-                          {
-                            r0: "40%",
-                            r: "80%",
-                          },
-                        ],
+                        type: "bar",
+                        data: Object.entries(stats()!.institute_players)
+                          .map(([_, v]) => v)
+                          .concat(
+                            stats()!.total_players -
+                              Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
+                          ),
+                        barMaxWidth: 64,
                       },
                     }}
                   />
                 </Show>
               </div>
-              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
-                <Chart
-                  class="flex-1"
-                  option={{
-                    grid: {
-                      left: "64px",
-                      right: "32px",
-                      bottom: "32px",
-                      top: "48px",
-                    },
-                    title: {
-                      text: t("game.statistics.institutePlayers"),
-                      right: "center",
-                    },
-                    tooltip: {
-                      trigger: "axis",
-                      axisPointer: {
-                        type: "line",
-                        label: {
-                          precision: 0,
-                        },
-                        snap: true,
-                      },
-                      borderColor: "transparent",
-                    },
-                    toolbox: {},
-                    xAxis: {
-                      type: "category",
-                      data: Object.entries(stats()!.institute_players)
-                        .map(([i, _]) => accountStore.institutes.find((v) => v.id === Number.parseInt(i))?.name)
-                        .concat(t("game.statistics.others")!),
-                    },
-                    yAxis: {
-                      type: "value",
-                      min: 0,
-                    },
-                    series: {
-                      type: "bar",
-                      data: Object.entries(stats()!.institute_players)
-                        .map(([_, v]) => v)
-                        .concat(
-                          stats()!.total_players - Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
-                        ),
-                      barMaxWidth: 64,
-                    },
-                  }}
-                />
-              </Show>
             </div>
-          </div>
-        }>
+          }
+        >
           <div class="flex flex-col space-y-4">
             <div class="flex flex-row items-center">
               <h2 class="font-bold flex-1 truncate">{t("game.statistics.teams")}</h2>

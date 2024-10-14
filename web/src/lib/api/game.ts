@@ -516,7 +516,7 @@ export type GameStatistics = {
   total_solves: number;
   challenge_submissions: { [key: number]: number };
   challenge_solves: { [key: number]: number };
-}
+};
 
 export async function getGameStatistics(game_id: number, in_game?: boolean, institute?: number) {
   return await api
@@ -549,4 +549,3 @@ export async function getGameStatisticsExport(game_id: number, in_game?: boolean
     })
     .json<GameStatisticsExport>();
 }
-
