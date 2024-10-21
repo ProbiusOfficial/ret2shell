@@ -1,38 +1,38 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
+@use 'tailwindcss/base';
+@use 'tailwindcss/components';
 
-@import './article.scss';
-@import './avatar.scss';
-@import './button.scss';
-@import './card.scss';
-@import './checkbox.scss';
-@import './dialog.scss';
-@import './divider.scss';
-@import './editor.scss';
-@import './icon-checkbox.scss';
-@import './input.scss';
-@import './label.scss';
-@import './popover.scss';
-@import './progress.scss';
-@import './select.scss';
-@import './skeleton.scss';
-@import './slider.scss';
-@import './splitter.scss';
-@import './tag.scss';
+@use 'article.scss';
+@use 'avatar.scss';
+@use 'button.scss';
+@use 'card.scss';
+@use 'checkbox.scss';
+@use 'dialog.scss';
+@use 'divider.scss';
+@use 'editor.scss';
+@use 'icon-checkbox.scss';
+@use 'input.scss';
+@use 'label.scss';
+@use 'popover.scss';
+@use 'progress.scss';
+@use 'select.scss';
+@use 'skeleton.scss';
+@use 'slider.scss';
+@use 'splitter.scss';
+@use 'tag.scss';
 
-@import './scrollbar.scss';
-@import './effect.scss';
-@import './ansi-color.scss';
+@use 'scrollbar.scss';
+@use 'effect.scss';
+@use 'ansi-color.scss';
 
-@import './logo-animate.scss';
-@import './too-narrow.scss';
-@import './reverier.scss';
-@import './background.scss';
-@import './darkmode-button.scss';
-@import './sidebar-layout.scss';
+@use 'logo-animate.scss';
+@use 'too-narrow.scss';
+@use 'reverier.scss';
+@use 'background.scss';
+@use 'darkmode-button.scss';
+@use 'sidebar-layout.scss';
 
-@import 'tailwindcss/utilities';
-@import 'tailwindcss/variants';
+@use 'tailwindcss/utilities';
+@use 'tailwindcss/variants';
 
 /* Disable scrollbar */
 * {
