@@ -18,7 +18,7 @@ import simpleChecker from "./scripts/simple.rx";
 
 type PresetChecker = "simple" | "mapped" | "dynamic-leet" | "dynamic-uuid";
 
-export default function(_props: {
+export default function (_props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
@@ -96,7 +96,7 @@ export default function(_props: {
         <span class="opacity-60">checker/main.rx</span>
         <div class="flex-1" />
         <Select
-          class="w-48 hidden lg:flex"
+          class="w-60 hidden lg:flex"
           placeholder={t("game.challenge.selectPresetScripts")}
           size="sm"
           items={[
