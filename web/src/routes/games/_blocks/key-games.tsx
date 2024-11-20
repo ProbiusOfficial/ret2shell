@@ -33,18 +33,19 @@ export default function () {
   const totalPages = createMemo(() => Math.ceil(total() / pageSize));
   const [loading, setLoading] = createSignal(true);
   const showCreate = () => searchParams.create === "true";
-  const selectedGameId = createMemo(() => {
-    const result = searchParams.selected ? Number.parseInt(searchParams.selected as string) : Number.NaN;
-    if (Number.isNaN(result)) {
-      return gameStore.games.at(0)?.id || null;
-    }
-    return result;
-  });
   const keyGames = createMemo(() => {
     return gameStore.games
       .filter((game) => game.weight >= 3 && game.host_type === HostType.CTFGame)
       .sort((a, b) => b.start_at.toSeconds() - a.start_at.toSeconds())
       .slice((page() - 1) * pageSize, page() * pageSize);
+  });
+
+  const selectedGameId = createMemo(() => {
+    const result = searchParams.selected ? Number.parseInt(searchParams.selected as string) : Number.NaN;
+    if (Number.isNaN(result)) {
+      return keyGames().at(0)?.id || null;
+    }
+    return result;
   });
 
   const selectedGame = createMemo(() => {
