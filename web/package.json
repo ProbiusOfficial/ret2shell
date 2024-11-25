@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@iconify-json/fluent": "^1.2.7",
+    "@iconify-json/fluent": "^1.2.8",
     "@iconify-json/fluent-emoji-flat": "^1.2.1",
     "@iconify-json/meteocons": "^1.2.1",
     "@iconify/tailwind": "^1.1.3",
