@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { getChallengeAnswer, updateChallengeAnswer } from "@api/game";
 import type { Challenge } from "@models/challenge";
 import { challengeStore } from "@storage/challenge";
@@ -8,10 +9,9 @@ import Article from "@widgets/article";
 import Button from "@widgets/button";
 import { EditorBare } from "@widgets/editor";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { createEffect, createSignal, Show, untrack } from "solid-js";
 
-export default function (_props: {
+export default function (props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
@@ -22,50 +22,33 @@ export default function (_props: {
 
   createEffect(() => {
     if (challengeStore.current) {
-      untrack(() => {
+      untrack(async () => {
         setLoading(true);
-        getChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id)
-          .then((data) => {
-            setAnswer(data);
-          })
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        try {
+          const data = await getChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id);
+          setAnswer(data);
+        } catch (err) {
+          handleHttpError(err as Error, t("game.challenge.fetchFailed")!);
+        }
+        setLoading(false);
       });
     }
   });
-
-  function handleUpdateAnswer() {
+  async function handleUpdateAnswer() {
     setSubmitting(true);
-    updateChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id, answer())
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-        setSubmitting(false);
-        setInEdit(false);
-        if (_props.onStateChange) _props.onStateChange();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+    try {
+      await updateChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id, answer());
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
       });
+      setInEdit(false);
+      if (props.onStateChange) props.onStateChange();
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setSubmitting(false);
   }
 
   return (

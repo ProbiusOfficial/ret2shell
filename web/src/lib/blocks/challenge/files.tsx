@@ -1,4 +1,4 @@
-import { api_root } from "@api";
+import { api_root, handleHttpError } from "@api";
 import { deleteChallengeAttachment, getChallengeAttachments } from "@api/game";
 import DownloadButton from "@blocks/download-button";
 import UploadButton from "@blocks/upload-button";
@@ -6,12 +6,10 @@ import type { Challenge } from "@models/challenge";
 import { challengeStore, refreshChallengeAssets, setChallengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 type FileType = "static" | "mapped" | "checker";
@@ -22,25 +20,21 @@ export default function (_props: {
 }) {
   const [folder, setFolder] = createSignal<FileType>("static");
   const [loading, setLoading] = createSignal(false);
-  function fetchAttachments() {
+  async function fetchAttachments() {
     setLoading(true);
-    getChallengeAttachments(challengeStore.current!.game_id, challengeStore.current!.id, true, folder())
-      .then((attachments) => {
-        setChallengeStore({ adminFiles: attachments });
-        refreshChallengeAssets();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.fetchFilesFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const attachments = await getChallengeAttachments(
+        challengeStore.current!.game_id,
+        challengeStore.current!.id,
+        true,
+        folder()
+      );
+      setChallengeStore({ adminFiles: attachments });
+      refreshChallengeAssets();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.fetchFilesFailed")!);
+    }
+    setLoading(false);
   }
   createEffect(() => {
     if (challengeStore.current && folder()) {
@@ -48,20 +42,13 @@ export default function (_props: {
     }
   });
 
-  function handleDelete(file: string, folder: FileType) {
-    deleteChallengeAttachment(challengeStore.current!.game_id, challengeStore.current!.id, folder, file)
-      .then(() => {
-        fetchAttachments();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.deleteFileFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      });
+  async function handleDelete(file: string, folder: FileType) {
+    try {
+      await deleteChallengeAttachment(challengeStore.current!.game_id, challengeStore.current!.id, folder, file);
+      await fetchAttachments();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.deleteFileFailed")!);
+    }
   }
   function folderTips() {
     switch (folder()) {

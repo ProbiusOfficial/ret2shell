@@ -8,15 +8,22 @@ import { EditorBare } from "@widgets/editor";
 import Select from "@widgets/select";
 import Splitter from "@widgets/splitter";
 import { AnsiUp } from "ansi_up";
-import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import dynamicLeetChecker from "./scripts/dynamic-leet.rx";
 import dynamicUuidChecker from "./scripts/dynamic-uuid.rx";
 import mappedChecker from "./scripts/mapped.rx";
 import simpleChecker from "./scripts/simple.rx";
+import { handleHttpError } from "@api";
 
 type PresetChecker = "simple" | "mapped" | "dynamic-leet" | "dynamic-uuid";
+
+const checkerMap = {
+  simple: simpleChecker,
+  mapped: mappedChecker,
+  "dynamic-leet": dynamicLeetChecker,
+  "dynamic-uuid": dynamicUuidChecker,
+};
 
 export default function (_props: {
   onStateChange?: (challenge?: Challenge) => void;
@@ -24,32 +31,21 @@ export default function (_props: {
 }) {
   const [preset, setPreset] = createSignal(null as PresetChecker | null);
   const presetChecker = createMemo(() => {
-    switch (preset()) {
-      case "simple":
-        return simpleChecker;
-      case "mapped":
-        return mappedChecker;
-      case "dynamic-leet":
-        return dynamicLeetChecker;
-      case "dynamic-uuid":
-        return dynamicUuidChecker;
-      default:
-        return null;
-    }
+    if (!preset()) return null;
+    return checkerMap[preset()!];
   });
   const [script, setScript] = createSignal("");
   const [lint, setLint] = createSignal(null as string | null);
   const [renderedLint, setRenderedLint] = createSignal(null as string | null);
   const ansi_up = new AnsiUp();
   ansi_up.use_classes = true;
-  function refreshScript() {
-    getChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, true).then((resp) => {
-      setScript(resp.script);
-      setLint(resp.lint ?? null);
-      if (resp.lint) {
-        setRenderedLint(ansi_up.ansi_to_html(resp.lint));
-      }
-    });
+  async function refreshScript() {
+    const resp = await getChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, true);
+    setScript(resp.script);
+    setLint(resp.lint ?? null);
+    if (resp.lint) {
+      setRenderedLint(ansi_up.ansi_to_html(resp.lint));
+    }
   }
   createEffect(() => {
     if (challengeStore.current) {
@@ -65,27 +61,18 @@ export default function (_props: {
     }
   });
 
-  function handleUpdateScript() {
-    updateChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, script())
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        refreshScript();
+  async function handleUpdateScript() {
+    try {
+      await updateChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, script());
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
       });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    refreshScript();
   }
 
   return (

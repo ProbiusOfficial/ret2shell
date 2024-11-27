@@ -4,6 +4,8 @@ import { accountStore, resetUser, storeToken } from "@storage/account";
 import { platformStore } from "@storage/platform";
 import ky from "ky";
 
+export { handleHttpError } from "./utils";
+
 export const api_root = (import.meta.env.VITE_API_ROOT as string) || "/api";
 
 const Ret2StreamTable = "SUCaeck4xrsbgtPwnGY56qpm9vWDIZAKVjlf.HFd,E17Tz0iNQ2yJMLh8OoRuX3B";
