@@ -7,6 +7,7 @@ import Button from "@widgets/button";
 import Input, { type TextInputProps } from "@widgets/input";
 import { base64 } from "@scure/base";
 import { type ComponentProps, createEffect, createSignal, splitProps, untrack } from "solid-js";
+import { handleHttpError } from "@api";
 
 export default function (
   props: TextInputProps &
@@ -26,26 +27,23 @@ export default function (
   const [calculating, setCalculating] = createSignal(false);
   const [manuallyFill, setManuallyFill] = createSignal(true);
 
-  function reload() {
+  async function reload() {
     setLoading(true);
-    getCaptcha()
-      .then((resp) => {
-        setCaptcha(resp);
-        if (resp.validator === "pow") startPow();
-        else if (resp.validator === "none") {
-          setValue(props.captchaForm, "captcha_answer", "0xDEADBEEF");
-          setValue(props.captchaForm, "captcha_id", "0xCAFEBABE");
-        }
-        setValue(props.captchaForm, "captcha_id", resp.id);
-      })
-      .catch(() => {
-        setCaptcha(null);
-        setValue(props.captchaForm, "captcha_id", "");
-      })
-      .finally(() => {
-        setLoading(false);
-        if (captcha()?.validator !== "none") setValue(props.captchaForm, "captcha_answer", "");
-      });
+    try {
+      const resp = await getCaptcha();
+      setCaptcha(resp);
+      if (resp.validator === "pow") startPow();
+      else if (resp.validator === "none") {
+        setValue(props.captchaForm, "captcha_answer", "0xDEADBEEF");
+        setValue(props.captchaForm, "captcha_id", "0xCAFEBABE");
+      }
+      setValue(props.captchaForm, "captcha_id", resp.id);
+    } catch (err) {
+      setCaptcha(null);
+      setValue(props.captchaForm, "captcha_id", "");
+      handleHttpError(err as Error, t("captcha.loadFailed")!);
+    }
+    setLoading(false);
   }
 
   createEffect(() => {

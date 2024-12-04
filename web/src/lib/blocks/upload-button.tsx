@@ -1,8 +1,8 @@
+import { handleHttpError } from "@api";
 import { uploadFile } from "@api/file";
 import Spin from "@assets/animates/spin";
 import { humanFileSize } from "@lib/utils/size";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button, { type ButtonProps } from "@widgets/button";
 import Progress from "@widgets/progress";
 import type { DownloadProgress } from "ky";
@@ -33,29 +33,22 @@ export default function UploadButton(
     }
   }
 
-  function handleUploadFile() {
+  async function handleUploadFile() {
     if (!selectedFile()) {
       return;
     }
     setUploading(true);
-    uploadFile(uploadProps.url, selectedFile()!, (progress) => {
-      setProgress(progress);
-    })
-      .then(() => {
-        setSelectedFile([]);
-        setUploadComplete(true);
-        uploadProps.onDone?.();
-      })
-      .catch((err: string) => {
-        addToast({
-          level: "error",
-          description: `${t("form.uploadFailed")}: ${err}`,
-          duration: 5000,
-        });
-      })
-      .finally(() => {
-        setUploading(false);
+    try {
+      await uploadFile(uploadProps.url, selectedFile()!, (progress) => {
+        setProgress(progress);
       });
+      setSelectedFile([]);
+      setUploadComplete(true);
+      uploadProps.onDone?.();
+    } catch (err) {
+      handleHttpError(err as Error, t("form.uploadFailed")!);
+    }
+    setUploading(false);
   }
   createEffect(() => {
     if (uploadComplete()) {

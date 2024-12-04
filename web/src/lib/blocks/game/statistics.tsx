@@ -1,8 +1,6 @@
-import { getGameStatistics, getGameStatisticsExport } from "@api/game";
+import { type GameStatisticsExport, getGameStatistics, getGameStatisticsExport } from "@api/game";
 import { gameStore } from "@storage/game";
-import { addToast } from "@storage/toast";
 import { t } from "@storage/theme";
-import type { HTTPError } from "ky";
 import { createEffect, createMemo, createSignal, Show, untrack } from "solid-js";
 import { platformStore } from "@storage/platform";
 import { Title } from "@storage/header";
@@ -16,6 +14,7 @@ import { challengeStore, refreshChallenges } from "@storage/challenge";
 import Button from "@widgets/button";
 import Select from "@widgets/select";
 import XLSX from "@e965/xlsx";
+import { handleHttpError } from "@api";
 
 export default function GameStatistics(props: {
   inGame?: boolean;
@@ -39,26 +38,16 @@ export default function GameStatistics(props: {
   createEffect(() => {
     if (gameStore.current) {
       void selectedInstituteId();
-      untrack(() => {
+      untrack(async () => {
         setLoading(true);
         refreshChallenges();
         refreshInstitutes();
-        getGameStatistics(gameStore.current!.id, props.inGame, selectedInstituteId() ?? undefined)
-          .then((data) => {
-            setStats(data);
-          })
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.fetchFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        try {
+          setStats(await getGameStatistics(gameStore.current!.id, props.inGame, selectedInstituteId() ?? undefined));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.fetchFailed")!);
+        }
+        setLoading(false);
       });
     }
   });
@@ -96,133 +85,124 @@ export default function GameStatistics(props: {
 
   const [exporting, setExporting] = createSignal(false);
 
-  function exportStatisticsJson() {
+  async function exportStatisticsJson() {
     if (gameStore.current) {
       setExporting(true);
-      getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined)
-        .then((data) => {
-          // save as json
-          const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.json`;
-          link.click();
-          URL.revokeObjectURL(url);
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.fetchFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setExporting(false);
-        });
+      try {
+        const data = await getGameStatisticsExport(
+          gameStore.current.id,
+          props.inGame,
+          selectedInstituteId() ?? undefined
+        );
+        // save as json
+        const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        handleHttpError(err as Error, t("game.fetchFailed")!);
+      }
+      setExporting(false);
     }
   }
 
-  function exportStatisticsXlsx() {
+  function _exportStatisticsXlsx(data: GameStatisticsExport) {
+    const workbook = XLSX.utils.book_new();
+    const statisticsSheet = XLSX.utils.sheet_new();
+    const statisticsArr = [];
+    for (const [key, value] of Object.entries(data.statistics)) {
+      statisticsArr.push([key, value]);
+    }
+    // add header
+    XLSX.utils.sheet_add_aoa(
+      statisticsSheet,
+      [[gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"]],
+      { origin: "A1" }
+    );
+    const max_width = statisticsArr.reduce((max, row) => Math.max(max, (row[0] as string).length), 0);
+    statisticsSheet["!cols"] = [{ wch: max_width }];
+    XLSX.utils.sheet_add_aoa(statisticsSheet, statisticsArr, { origin: "A2" });
+    XLSX.utils.book_append_sheet(workbook, statisticsSheet, "Statistics");
+
+    const challengeStatsHeader = ["Challenge", "Submissions", "Solves"];
+    const challengeStatsSheet = XLSX.utils.aoa_to_sheet([challengeStatsHeader]);
+    const challengeStatsArr = challengeStats().map((v) => [v.name, v.submissions, v.solves]);
+    XLSX.utils.sheet_add_aoa(challengeStatsSheet, challengeStatsArr, { origin: "A2" });
+    XLSX.utils.book_append_sheet(workbook, challengeStatsSheet, "Challenge Stats");
+
+    const scoreboardHeader = [
+      "Rank",
+      "ID",
+      "Team",
+      "Institute",
+      "State",
+      ...Array.from({ length: gameStore.current?.team_size ?? 0 }, (_, i) => `PLAYER ${i}`),
+      ...Array.from({ length: challenges().length }, (_, i) => challenges()[i].name),
+    ];
+    const scoreboardSheet = XLSX.utils.aoa_to_sheet([scoreboardHeader]);
+    const scoreboardArr = [];
+    function convertTeamState(state: number) {
+      switch (state) {
+        case 0:
+          return "Banned";
+        case 1:
+          return "Pending";
+        case 2:
+          return "Hidden";
+        case 3:
+          return "OK";
+      }
+    }
+    for (const [index, [team, members]] of data.scoreboard.entries()) {
+      const row = [
+        index + 1,
+        team.id,
+        team.name,
+        accountStore.institutes.find((i) => i.id === team.institute_id)?.name ?? "",
+        convertTeamState(team.state),
+        ...members.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
+        ...challenges().map((c) => (team.history.find((h) => h.challenge_id === c.id) ? "*" : "")),
+      ];
+      scoreboardArr.push(row);
+    }
+    XLSX.utils.sheet_add_aoa(scoreboardSheet, scoreboardArr, { origin: "A2" });
+    XLSX.utils.book_append_sheet(workbook, scoreboardSheet, "Scoreboard");
+
+    const auditHeader = ["Created At", "User", "Team", "Reason"];
+    const auditSheet = XLSX.utils.aoa_to_sheet([auditHeader]);
+    const auditArr = [];
+    for (const audit of data.audits) {
+      const row = [audit.created_at.toISO(), audit.user_name, audit.team_name, audit.reason];
+      auditArr.push(row);
+    }
+    XLSX.utils.sheet_add_aoa(auditSheet, auditArr, { origin: "A2" });
+    XLSX.utils.book_append_sheet(workbook, auditSheet, "Audits");
+
+    const blob = new Blob([XLSX.write(workbook, { bookType: "xlsx", type: "array" })], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.xlsx`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function exportStatisticsXlsx() {
     if (gameStore.current) {
       setExporting(true);
-      getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined)
-        .then((data) => {
-          const workbook = XLSX.utils.book_new();
-          const statisticsSheet = XLSX.utils.sheet_new();
-          const statisticsArr = [];
-          for (const [key, value] of Object.entries(data.statistics)) {
-            statisticsArr.push([key, value]);
-          }
-          // add header
-          XLSX.utils.sheet_add_aoa(
-            statisticsSheet,
-            [[gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"]],
-            { origin: "A1" }
-          );
-          const max_width = statisticsArr.reduce((max, row) => Math.max(max, (row[0] as string).length), 0);
-          statisticsSheet["!cols"] = [{ wch: max_width }];
-          XLSX.utils.sheet_add_aoa(statisticsSheet, statisticsArr, { origin: "A2" });
-          XLSX.utils.book_append_sheet(workbook, statisticsSheet, "Statistics");
-
-          const challengeStatsHeader = ["Challenge", "Submissions", "Solves"];
-          const challengeStatsSheet = XLSX.utils.aoa_to_sheet([challengeStatsHeader]);
-          const challengeStatsArr = challengeStats().map((v) => [v.name, v.submissions, v.solves]);
-          XLSX.utils.sheet_add_aoa(challengeStatsSheet, challengeStatsArr, { origin: "A2" });
-          XLSX.utils.book_append_sheet(workbook, challengeStatsSheet, "Challenge Stats");
-
-          const scoreboardHeader = [
-            "Rank",
-            "ID",
-            "Team",
-            "Institute",
-            "State",
-            ...Array.from({ length: gameStore.current?.team_size ?? 0 }, (_, i) => `PLAYER ${i}`),
-            ...Array.from({ length: challenges().length }, (_, i) => challenges()[i].name),
-          ];
-          const scoreboardSheet = XLSX.utils.aoa_to_sheet([scoreboardHeader]);
-          const scoreboardArr = [];
-          function convertTeamState(state: number) {
-            switch (state) {
-              case 0:
-                return "Banned";
-              case 1:
-                return "Pending";
-              case 2:
-                return "Hidden";
-              case 3:
-                return "OK";
-            }
-          }
-          for (const [index, [team, members]] of data.scoreboard.entries()) {
-            const row = [
-              index + 1,
-              team.id,
-              team.name,
-              accountStore.institutes.find((i) => i.id === team.institute_id)?.name ?? "",
-              convertTeamState(team.state),
-              ...members.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
-              ...challenges().map((c) => (team.history.find((h) => h.challenge_id === c.id) ? "*" : "")),
-            ];
-            scoreboardArr.push(row);
-          }
-          XLSX.utils.sheet_add_aoa(scoreboardSheet, scoreboardArr, { origin: "A2" });
-          XLSX.utils.book_append_sheet(workbook, scoreboardSheet, "Scoreboard");
-
-          const auditHeader = ["Created At", "User", "Team", "Reason"];
-          const auditSheet = XLSX.utils.aoa_to_sheet([auditHeader]);
-          const auditArr = [];
-          for (const audit of data.audits) {
-            const row = [audit.created_at.toISO(), audit.user_name, audit.team_name, audit.reason];
-            auditArr.push(row);
-          }
-          XLSX.utils.sheet_add_aoa(auditSheet, auditArr, { origin: "A2" });
-          XLSX.utils.book_append_sheet(workbook, auditSheet, "Audits");
-
-          const blob = new Blob([XLSX.write(workbook, { bookType: "xlsx", type: "array" })], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.xlsx`;
-          link.click();
-          URL.revokeObjectURL(url);
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.fetchFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setExporting(false);
-        });
+      try {
+        _exportStatisticsXlsx(
+          await getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined)
+        );
+      } catch (err) {
+        handleHttpError(err as Error, t("game.fetchFailed")!);
+      }
+      setExporting(false);
     }
   }
 

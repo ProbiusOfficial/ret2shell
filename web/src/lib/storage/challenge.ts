@@ -8,11 +8,10 @@ import {
 } from "@api/game";
 import type { Challenge, ChallengeEnv } from "@models/challenge";
 import type { Submission } from "@models/submission";
-import { HTTPError } from "ky";
 import { createStore } from "solid-js/store";
 import { gameStore } from "./game";
 import { t } from "./theme";
-import { addToast } from "./toast";
+import { handleHttpError } from "@api";
 
 type FileType = "static" | "mapped" | "checker";
 type Attachment = { file: string; folder: FileType };
@@ -36,14 +35,8 @@ export async function refreshChallenges() {
   try {
     const result = await getChallengeList(gameStore.current!.id);
     setChallengeStore({ challenges: result[0] });
-  } catch (e) {
-    const err = e as HTTPError;
-    const text = await err.response.text();
-    addToast({
-      level: "error",
-      description: `${t("game.challenge.fetchFailed")}: ${text}`,
-      duration: 5000,
-    });
+  } catch (err) {
+    handleHttpError(err as Error, t("game.challenge.fetchFailed")!);
   }
 }
 
@@ -55,66 +48,36 @@ export async function refreshChallengeAssets() {
       const env = await getChallengeEnv(challengeStore.current.game_id, challengeStore.current.id);
       setChallengeStore({ env });
     }
-  } catch (e: unknown) {
-    if (e instanceof HTTPError) {
-      const text = await e.response.text();
-      addToast({
-        level: "error",
-        description: `${t("game.challenge.fetchAssetsFailed")}: ${text}`,
-        duration: 5000,
-      });
-    } else {
-      throw e;
-    }
+  } catch (err) {
+    handleHttpError(err as Error, t("game.challenge.fetchAssetsFailed")!);
   }
 }
 
-export function refreshSolves() {
-  getSelfSolves(gameStore.current!.id)
-    .then((result) => {
-      setChallengeStore({ solves: result });
-    })
-    .catch((e: HTTPError) => {
-      addToast({
-        level: "error",
-        description: `${t("game.challenge.fetchSolvesFailed")}: ${e.response.statusText}`,
-        duration: 5000,
-      });
-    });
+export async function refreshSolves() {
+  try {
+    setChallengeStore({ solves: await getSelfSolves(gameStore.current!.id) });
+  } catch (err) {
+    handleHttpError(err as Error, t("game.challenge.fetchSolvesFailed")!);
+  }
 }
 
-export function refreshStatus() {
-  getChallengeSolveStatus(challengeStore.current!.game_id, challengeStore.current!.id)
-    .then((result) => {
-      setChallengeStore({ status: result });
-    })
-    .catch((e: HTTPError) => {
-      setChallengeStore({ status: null });
-      e.response.text().then((text) => {
-        addToast({
-          level: "error",
-          description: `${t("game.challenge.fetchSolveStatusFailed")}: ${text}`,
-          duration: 5000,
-        });
-      });
+export async function refreshStatus() {
+  try {
+    setChallengeStore({
+      status: await getChallengeSolveStatus(challengeStore.current!.game_id, challengeStore.current!.id),
     });
+  } catch (err) {
+    setChallengeStore({ status: null });
+    handleHttpError(err as Error, t("game.challenge.fetchSolveStatusFailed")!);
+  }
 }
 
-export function refreshCurrentChallenge() {
-  if (challengeStore.current) {
-    getChallenge(gameStore.current!.id, challengeStore.current.id)
-      .then((resp) => {
-        setChallengeStore({ current: resp });
-        refreshChallengeAssets();
-      })
-      .catch((e: HTTPError) => {
-        e.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.fetchChallengeFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      });
+export async function refreshCurrentChallenge() {
+  try {
+    const resp = await getChallenge(gameStore.current!.id, challengeStore.current!.id);
+    setChallengeStore({ current: resp });
+    refreshChallengeAssets();
+  } catch (err) {
+    handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
   }
 }

@@ -47,18 +47,11 @@ export function Title(props: { title: string }) {
   const path = useLocation().pathname;
   const pathArr = path.split("/");
   const [, exactRoute] = headerStore.findRoute(pathArr);
-  createEffect(() => {
-    if (props.title) {
-      untrack(() => {
-        if (exactRoute) {
-          exactRoute.title = props.title;
-        } else {
-          headerStore.insertRoute(pathArr, props.title);
-        }
-        document.title = props.title;
-      });
-    }
-  });
+  if (exactRoute) {
+    exactRoute.title = props.title;
+  } else {
+    headerStore.insertRoute(pathArr, props.title);
+  }
   return null;
 }
 

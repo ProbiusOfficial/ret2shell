@@ -5,6 +5,8 @@ import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
 import { downloadFile } from "../api/file";
 import { humanFileSize } from "../utils/size";
 import Progress from "../widgets/progress";
+import { handleHttpError } from "@api";
+import { t } from "@storage/theme";
 
 export default function DownloadButton(
   props: ButtonProps & {
@@ -20,27 +22,27 @@ export default function DownloadButton(
   const [downloadComplete, setDownloadComplete] = createSignal(false);
   const [progress, setProgress] = createSignal(null as DownloadProgress | null);
 
-  function handleDownload() {
+  async function handleDownload() {
     setDownloading(true);
-    void downloadFile(downloadProps.url, downloadProps.searchParams, (progress) => {
-      setProgress(progress);
-    })
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob as Blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = downloadProps.file;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      })
-      .finally(() => {
-        setDownloading(false);
-        setDownloadComplete(true);
-        setTimeout(() => {
-          setDownloadComplete(false);
-          setProgress(null);
-        }, 2000);
+    try {
+      const blob = await downloadFile(downloadProps.url, downloadProps.searchParams, (progress) => {
+        setProgress(progress);
       });
+      const url = window.URL.createObjectURL(blob as Blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = downloadProps.file;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setDownloading(false);
+    setDownloadComplete(true);
+    setTimeout(() => {
+      setDownloadComplete(false);
+      setProgress(null);
+    }, 2000);
   }
 
   return (

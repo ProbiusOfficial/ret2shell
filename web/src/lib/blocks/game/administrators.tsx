@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { getGameAdmins, updateGameAdmins } from "@api/game";
 import { getUserList } from "@api/user";
 import { Popover as ArkPopover } from "@ark-ui/solid";
@@ -7,7 +8,6 @@ import { A } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { gameStore, setGameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
@@ -17,7 +17,6 @@ import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
 import Popover from "@widgets/popover";
 import Tag from "@widgets/tag";
-import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
@@ -26,24 +25,14 @@ export default function AdministratorsManagement() {
   const [admins, setAdmins] = createSignal([] as User[]);
   createEffect(() => {
     if (gameStore.current?.admins) {
-      untrack(() => {
+      untrack(async () => {
         setLoading(true);
-        getGameAdmins(gameStore.current!.id)
-          .then((resp) => {
-            setAdmins(resp);
-          })
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.admin.administrators.fetchFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        try {
+          setAdmins(await getGameAdmins(gameStore.current!.id));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.admin.administrators.fetchFailed")!);
+        }
+        setLoading(false);
       });
     }
   });
@@ -53,72 +42,44 @@ export default function AdministratorsManagement() {
   const [searchedUsers, setSearchedUsers] = createSignal([] as User[]);
   createEffect(() => {
     if (adminSearch()) {
-      untrack(() => {
+      untrack(async () => {
         setSearching(true);
         setSearchedUsers([]);
-        getUserList(1, 30, "id", adminSearch())
-          .then((resp) => {
-            setSearchedUsers(resp[0]);
-          })
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("admin.users.fetchFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => {
-            setSearching(false);
-          });
+        try {
+          setSearchedUsers((await getUserList(1, 30, "id", adminSearch()))[0]);
+        } catch (err) {
+          handleHttpError(err as Error, t("admin.users.fetchFailed")!);
+        }
+        setSearching(false);
       });
     }
   });
   const [adding, setAdding] = createSignal(false);
-  function handleAddAdmin(user: User) {
+  async function handleAddAdmin(user: User) {
     setAdding(true);
-    updateGameAdmins(gameStore.current!.id, [...gameStore.current!.admins, user.id])
-      .then((resp) => {
-        setGameStore({ current: resp });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.admin.administrators.addFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setAdding(false);
-        setSearching(false);
-        setAdminSearch("");
-        setSearchedUsers([]);
-      });
+    try {
+      const resp = await updateGameAdmins(gameStore.current!.id, [...gameStore.current!.admins, user.id]);
+      setGameStore({ current: resp });
+    } catch (err) {
+      handleHttpError(err as Error, t("game.admin.administrators.addFailed")!);
+    }
+    setAdding(false);
+    setSearching(false);
+    setAdminSearch("");
+    setSearchedUsers([]);
   }
-  function handleDeleteAdmin(user: User) {
+  async function handleDeleteAdmin(user: User) {
     setLoading(true);
-    updateGameAdmins(
-      gameStore.current!.id,
-      gameStore.current!.admins.filter((v) => v !== user.id)
-    )
-      .then((resp) => {
-        setGameStore({ current: resp });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.admin.administrators.deleteFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const resp = await updateGameAdmins(
+        gameStore.current!.id,
+        gameStore.current!.admins.filter((v) => v !== user.id)
+      );
+      setGameStore({ current: resp });
+    } catch (err) {
+      handleHttpError(err as Error, t("game.admin.administrators.deleteFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <>

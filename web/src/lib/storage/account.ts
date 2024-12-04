@@ -19,7 +19,7 @@ export const [accountStore, setAccountStore] = makePersisted(
   { name: "account" }
 );
 
-export const storeToken = (token: string) => {
+export function storeToken(token: string) {
   setAccountStore({ token });
   const tokenRaw = new TextDecoder().decode(base64urlnopad.decode(token.split(".")[1]));
   const tokenJson = JSON.parse(tokenRaw) as Token;
@@ -29,9 +29,9 @@ export const storeToken = (token: string) => {
     nickname: tokenJson.nickname,
     permissions: tokenJson.permissions,
   });
-};
+}
 
-export const resetUser = () => {
+export function resetUser() {
   setAccountStore({
     id: null,
     account: null,
@@ -41,18 +41,16 @@ export const resetUser = () => {
     permissions: [],
     warnedCodeGeneration: false,
   });
-};
+}
 
-export const refreshUser = () => {
+export async function refreshUser() {
   if (!accountStore.token) return;
-  getProfile()
-    .then((info) => {
-      setAccountStore({ info });
-    })
-    .catch(() => {
-      resetUser();
-    });
-};
+  try {
+    setAccountStore({ info: await getProfile() });
+  } catch {
+    resetUser();
+  }
+}
 
 export const refreshInstitutes = async () => {
   try {
