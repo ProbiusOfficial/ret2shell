@@ -25,6 +25,11 @@ export default function (props: AvatarProps) {
         alt={root.alt}
         class="avatar-img"
         onLoad={() => {
+          // console.log("loaded");
+          setImageLoading(false);
+        }}
+        onError={() => {
+          // console.log("error");
           setImageLoading(false);
         }}
       />
