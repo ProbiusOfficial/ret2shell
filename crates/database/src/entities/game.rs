@@ -97,7 +97,9 @@ pub struct Model {
   pub token: Option<String>,
   #[sea_orm(column_type = "JsonBinary")]
   pub timeline_presets: Option<Vec<TimelinePreset>>,
+  #[serde(default = "Option::default")]
   pub node_selector: Option<String>,
+  #[serde(default = "Option::default")]
   pub traffic: Option<String>,
 }
 

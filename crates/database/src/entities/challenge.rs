@@ -48,9 +48,9 @@ pub struct Model {
   pub score: i32,
   pub bucket: Option<String>,
   pub ref_id: Option<i64>,
-  #[serde(with = "ts_seconds_option")]
+  #[serde(with = "ts_seconds_option", default = "Option::default")]
   pub release_at: Option<DateTime<Utc>>,
-  #[serde(with = "ts_seconds_option")]
+  #[serde(with = "ts_seconds_option", default = "Option::default")]
   pub archive_at: Option<DateTime<Utc>>,
 }
 

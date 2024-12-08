@@ -1,12 +1,14 @@
 FROM rust:1-alpine as builder
 
+# hadolint ignore=DL3018
+RUN apk add --update --no-cache musl-dev
+
 COPY ./config /app/config
-COPY ./crates /app/crates
 COPY ./Cargo.toml /app/Cargo.toml
+COPY ./crates /app/crates
 WORKDIR /app
 
-# hadolint ignore=DL3018
-RUN apk add --update --no-cache musl-dev && cargo build --release --target x86_64-unknown-linux-musl
+RUN cargo build --release --target x86_64-unknown-linux-musl
 
 FROM alpine:3
 
