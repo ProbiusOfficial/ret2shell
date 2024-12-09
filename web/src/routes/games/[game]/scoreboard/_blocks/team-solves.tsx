@@ -98,7 +98,7 @@ export default function TeamSolves(props: {
                           <span class="icon-[fluent--hexagon-20-filled] w-5 h-5 text-gray-500 -z-10" />
                         </Match>
                         <Match when={team.history.find((h) => h.challenge_id === challenge.id)?.blood_state === 3}>
-                          <span class="icon-[fluent--hexagon-20-filled] w-5 h-5 text-info -z-10" />
+                          <span class="icon-[fluent--hexagon-20-filled] w-5 h-5 text-orange-500 -z-10" />
                         </Match>
                         <Match when={team.history.find((h) => h.challenge_id === challenge.id)}>
                           <span class="icon-[fluent--flag-20-filled] w-5 h-5 text-success -z-10" />

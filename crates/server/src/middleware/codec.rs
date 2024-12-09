@@ -71,7 +71,7 @@ pub async fn encrypt_stream_codec(
     let config = GeneralPurposeConfig::new()
       .with_decode_allow_trailing_bits(true)
       .with_encode_padding(true)
-      .with_decode_padding_mode(engine::DecodePaddingMode::RequireCanonical);
+      .with_decode_padding_mode(engine::DecodePaddingMode::Indifferent);
     let engine = GeneralPurpose::new(&alphabet, config);
     let (parts, body) = req.into_parts();
     let body_stream = body
