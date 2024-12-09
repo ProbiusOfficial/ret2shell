@@ -30,28 +30,6 @@ export function appendGames(games: Game[]) {
 
 export async function refreshSelfTeam() {
   if (gameStore.current && !isGameAdmin() && accountStore.permissions.includes(Permission.Verified)) {
-    // getSelfTeam(gameStore.current?.id)
-    //   .then((team) => {
-    //     setGameStore({ team });
-    //     if (!team) return;
-    //     getTeamRank(gameStore.current!.id, team.id)
-    //       .then((rank) => {
-    //         setGameStore({ rank });
-    //       })
-    //       .catch(() => {
-    //         setGameStore({ rank: null });
-    //       });
-    //     if (team.state === TeamState.Pending) {
-    //       addToast({
-    //         level: "warning",
-    //         description: t("game.team.pendingTips")!,
-    //         duration: 5000,
-    //       });
-    //     }
-    //   })
-    //   .catch(() => {
-    //     setGameStore({ team: null });
-    //   });
     try {
       const team = await getSelfTeam(gameStore.current?.id);
       setGameStore({ team });

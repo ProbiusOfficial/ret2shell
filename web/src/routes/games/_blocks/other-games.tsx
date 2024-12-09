@@ -30,20 +30,6 @@ export default function() {
   async function fetchGames() {
     /// fetch games from server
     setLoading(true);
-    // getGames(page(), pageSize, HostType.CTFGame, 1)
-    //   .then(([games, total]) => {
-    //     appendGames(games);
-    //     setTotal(total);
-    //   })
-    //   .catch((err: HTTPError) => {
-    //     void err.response.text().then((resp) => {
-    //       addToast({
-    //         level: "error",
-    //         description: `${t("game.fetchFailed")}: ${resp}`,
-    //         duration: 5000,
-    //       });
-    //     });
-    //   })
     try {
       const [games, total] = await getGames(page(), pageSize, HostType.CTFGame, 1);
       appendGames(games);

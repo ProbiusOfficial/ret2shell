@@ -24,21 +24,23 @@ function getOAuthLink(service: string) {
   }
 }
 
-export default function () {
+export default function() {
   const [authConfig, setAuthConfig] = createSignal({
     signing_key: "",
     buffer_time: 0,
     expires_time: 0,
     oauth_keys: {},
   } as AuthConfig);
-  getAuthConfig()
-    .then((config) => setAuthConfig(config))
-    .catch(() => {});
   const [institutes, setInstitutes] = createSignal([] as Institute[]);
   const [selfOAuthItems, setSelfOAuthItems] = createSignal([] as OAuth[]);
   onMount(async () => {
     try {
       setInstitutes(await getInstitutes());
+    } catch (err) {
+      handleHttpError(err as Error, t("errors.unknown")!);
+    }
+    try {
+      setAuthConfig(await getAuthConfig());
     } catch (err) {
       handleHttpError(err as Error, t("errors.unknown")!);
     }

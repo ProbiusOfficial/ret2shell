@@ -3,7 +3,7 @@ import type { Article } from "@models/article";
 import type { HTTPError } from "ky";
 import { createStore } from "solid-js/store";
 import { t } from "./theme";
-import { addToast } from "./toast";
+import { handleHttpError } from "@api";
 
 export const [wikiStore, setWikiStore] = createStore({
   toc: [] as Article[],
@@ -16,12 +16,6 @@ export async function refreshWikiToc() {
     resp = resp.sort((a, b) => (a.created_at < b.created_at ? -1 : 1));
     setWikiStore({ toc: resp });
   } catch (err) {
-    void (err as HTTPError).response.text().then((reason) => {
-      addToast({
-        level: "error",
-        description: `${t("wiki.fetchTocFailed")}: ${reason}`,
-        duration: 5000,
-      });
-    });
+    handleHttpError(err as HTTPError, t("wiki.fetchTocFailed")!);
   }
 }

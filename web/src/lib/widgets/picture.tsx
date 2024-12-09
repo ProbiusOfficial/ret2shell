@@ -10,7 +10,7 @@ export type ImageProps = {
   height?: number;
 };
 
-export default function (props: ImageProps & ComponentProps<"div">) {
+export default function(props: ImageProps & ComponentProps<"div">) {
   const [imageProps, rest] = splitProps(props, ["src", "alt", "fallback", "width", "height"]);
   const [loading, setLoading] = createSignal(true);
   let cachedSrc = "" as string | undefined;
@@ -38,17 +38,19 @@ export default function (props: ImageProps & ComponentProps<"div">) {
         onLoadStart={() => setLoading(true)}
       />
       <Transition
-        onEnter={(el, done) => {
+        onEnter={async (el, done) => {
           const a = el.animate([{ opacity: 0 }, { opacity: 1 }], {
             duration: 300,
           });
-          void a.finished.then(done);
+          await a.finished;
+          done();
         }}
-        onExit={(el, done) => {
+        onExit={async (el, done) => {
           const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
             duration: 300,
           });
-          void a.finished.then(done);
+          await a.finished;
+          done();
         }}
       >
         <Show when={loading()}>

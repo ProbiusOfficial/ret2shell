@@ -20,19 +20,20 @@ import LoadingTips from "@widgets/loading-tips";
 import Popover from "@widgets/popover";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
-import type { HTTPError } from "ky";
+import { HTTPError } from "ky";
 import { DateTime } from "luxon";
-import { type JSX, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
+import { type JSX, Match, Show, Switch, createEffect, createMemo, createSignal, onMount, untrack } from "solid-js";
 import { Transition } from "solid-transition-group";
 import DiyBox, { DiyBoxContent } from "./_blocks/diy-box";
 import InstanceBox, { InstanceBoxContent } from "./_blocks/instance-box";
 import NotificationBox, { NotificationBoxContent } from "./_blocks/notification-box";
 import Toasts from "./_blocks/toasts";
 import UserBox from "./_blocks/user-box";
+import { handleHttpError } from "@api";
 
 function GlobalTitleLink() {
   const location = useLocation();
-  const inDocs = () => location.pathname.startsWith("/docs");
+  const inDocs = createMemo(() => location.pathname.startsWith("/docs"));
   return (
     <Link ghost href={inDocs() ? "/docs" : "/"}>
       <LogoAnimate class="hidden xl:inline-block" width={24} height={24} />
@@ -215,13 +216,11 @@ function TitleBar() {
                         onClick={() => setAdditionalMobileBox("wsrx")}
                       >
                         <span
-                          class={`${
-                            wsrx.instances().length > 0
+                          class={`${wsrx.instances().length > 0
                               ? "icon-[fluent--fluid-20-filled]"
                               : "icon-[fluent--fluid-20-regular]"
-                          } w-5 h-5 ${
-                            wsrx.instances().length > 0 ? (wsrx.connected() ? "text-success" : "text-warning") : ""
-                          }`.trim()}
+                            } w-5 h-5 ${wsrx.instances().length > 0 ? (wsrx.connected() ? "text-success" : "text-warning") : ""
+                            }`.trim()}
                         />
                         <span>{t("instance.box")}</span>
                       </Button>
@@ -235,11 +234,10 @@ function TitleBar() {
                         onClick={() => setAdditionalMobileBox("notification")}
                       >
                         <span
-                          class={`${
-                            toastStore.toasts.length > 0
+                          class={`${toastStore.toasts.length > 0
                               ? "icon-[fluent--alert-badge-20-filled] text-primary"
                               : "icon-[fluent--alert-20-regular]"
-                          } w-5 h-5`}
+                            } w-5 h-5`}
                         />
                         <span>{t("platform.notificationBox")}</span>
                       </Button>
@@ -392,7 +390,7 @@ function checkCookiePolicy() {
   }
 }
 
-export default function (props: { children?: JSX.Element }) {
+export default function(props: { children?: JSX.Element }) {
   let platformName = `\xa0\xa0[\xa0${platformStore.config.name || t("platform.name")}\xa0]\xa0`;
   const [platformTyped, setPlatformTyped] = createSignal("");
   const [hideAnimation, setHideAnimation] = createSignal(false);
@@ -413,109 +411,100 @@ export default function (props: { children?: JSX.Element }) {
       });
     }
   }
-  getPlatformInfo()
-    .then((res) => {
+
+  onMount(async () => {
+    try {
+      const res = await getPlatformInfo();
       setPlatformStore({
         config: res,
         backend_online: true,
       });
       loadVersion();
-    })
-    .catch((err: HTTPError) => {
-      if (err.response?.status === 503) {
+    } catch (err) {
+      if (err instanceof HTTPError && err.response?.status === 503) {
         setPlatformStore({ under_maintenance: true });
         if (!inDocs()) navigate("/");
-      } else if (err.response?.status === 502 && !inDocs()) {
+      } else if (err instanceof HTTPError && err.response?.status === 502 && !inDocs()) {
         addToast({
           level: "error",
           description: `${t("platform.offline")}`,
         });
         navigate(`/sigtrap/${err.response?.status || 502}`);
-      } else if (!inDocs()) {
+      } else if (err instanceof HTTPError && !inDocs()) {
         addToast({
           level: "error",
           description: `${t("platform.error")}: ${err.response?.statusText || err.message}`,
         });
         navigate(`/sigtrap/${err.response?.status || 500}`);
+      } else {
+        handleHttpError(err as Error, t("platform.error")!);
+        navigate("/sigtrap/unknown");
       }
       setPlatformStore({ backend_online: false });
-    })
-    .finally(() => {
-      platformName = `\xa0\xa0[\xa0${platformStore.config.name || t("platform.name")}\xa0]\xa0`;
+    }
+    platformName = `\xa0\xa0[\xa0${platformStore.config.name || t("platform.name")}\xa0]\xa0`;
 
-      checkCookiePolicy();
-      if (showAnimation) {
-        setTimeout(() => {
-          const typeTimer = setInterval(() => {
-            if (platformTyped().length < platformName.length) {
-              setPlatformTyped(platformName.slice(0, platformTyped().length + 1));
-            } else {
-              clearInterval(typeTimer);
-              setTimeout(() => {
-                setHideAnimation(true);
-              }, 500);
-            }
-          }, 100);
-        }, 1000);
+    checkCookiePolicy();
+    if (showAnimation) {
+      setTimeout(() => {
+        const typeTimer = setInterval(() => {
+          if (platformTyped().length < platformName.length) {
+            setPlatformTyped(platformName.slice(0, platformTyped().length + 1));
+          } else {
+            clearInterval(typeTimer);
+            setTimeout(() => {
+              setHideAnimation(true);
+            }, 500);
+          }
+        }, 100);
+      }, 1000);
+    }
+  });
+
+  async function loadVersion() {
+    try {
+      const version = await getVersion();
+      setPlatformStore({ version, under_maintenance: false, backend_online: true });
+      if (!version.startsWith(frontendCompatVersion)) {
+        addToast({
+          level: "warning",
+          description: t("platform.versionMismatch", {
+            frontend: frontendCompatVersion,
+            backend: version,
+          })!,
+        });
       }
-    });
+      console.log(
+        `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - 2024 %cRet 2 Shell%c, All rights reserved.\n`,
+        "color: #0078D6; font-weight: bold; font-size: 1.5rem;",
+        "color: currentColor; font-weight: bold; font-size: 1.5rem;",
+        "color: #808080; font-weight: bold; font-size: 1.5rem;",
+        "color: #f83030; font-weight: bold; font-size: 1.5rem;",
+        "color: currentColor; font-weight: bold; font-size: 1.5rem;",
+        "color: #0078D6",
+        "color: #808080",
+        "color: #808080",
+        "color: #808080;text-decoration: underline;",
+        "color: #808080;"
+      );
+      console.log(
+        "\n%cHaving issue? You can open a ticket on https://github.com/ret2shell, any bug reports or feature requests are welcome.\n",
+        "color: currentColor;"
+      );
+      console.log(
+        "\n%cIf you want to self-host CTF platforms or look for further cooperating, please contact <support@ret.sh.cn>.\n",
+        "color: currentColor;"
+      );
 
-  function loadVersion() {
-    getVersion()
-      .then((version) => {
-        setPlatformStore({ version, under_maintenance: false, backend_online: true });
-        if (!version.startsWith(import.meta.env.VITE_COMPAT_VERSION)) {
-          addToast({
-            level: "warning",
-            description: t("platform.versionMismatch", {
-              frontend: import.meta.env.VITE_COMPAT_VERSION,
-              backend: version,
-            })!,
-          });
-        }
-        console.log(
-          `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - 2024 %cRet 2 Shell%c, All rights reserved.\n`,
-          "color: #0078D6; font-weight: bold; font-size: 1.5rem;",
-          "color: currentColor; font-weight: bold; font-size: 1.5rem;",
-          "color: #808080; font-weight: bold; font-size: 1.5rem;",
-          "color: #f83030; font-weight: bold; font-size: 1.5rem;",
-          "color: currentColor; font-weight: bold; font-size: 1.5rem;",
-          "color: #0078D6",
-          "color: #808080",
-          "color: #808080",
-          "color: #808080;text-decoration: underline;",
-          "color: #808080;"
-        );
-        console.log(
-          "\n%cHaving issue? You can open a ticket on https://github.com/ret2shell, any bug reports or feature requests are welcome.\n",
-          "color: currentColor;"
-        );
-        console.log(
-          "\n%cIf you want to self-host CTF platforms or look for further cooperating, please contact <support@ret.sh.cn>.\n",
-          "color: currentColor;"
-        );
-
-        getPlatformLicense()
-          .then((resp) => {
-            setPlatformStore({ license: resp });
-          })
-          .catch((err: HTTPError) => {
-            void err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("admin.about.failedToFetchLicense")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          });
-      })
-      .catch((err: HTTPError) => {
-        setPlatformStore({ version: `${frontendCompatVersion}-UNKNOWN-0.0.0` });
-        if (err.response?.status === 503) {
-          setPlatformStore({ under_maintenance: true, backend_online: false });
-          if (!inDocs()) navigate("/");
-        }
-      });
+      const resp = await getPlatformLicense();
+      setPlatformStore({ license: resp });
+    } catch (err) {
+      setPlatformStore({ version: `${frontendCompatVersion}-UNKNOWN-0.0.0` });
+      if (err instanceof HTTPError && err.response?.status === 503) {
+        setPlatformStore({ under_maintenance: true, backend_online: false });
+        if (!inDocs()) navigate("/");
+      }
+    }
   }
 
   createEffect(() => {
@@ -535,11 +524,12 @@ export default function (props: { children?: JSX.Element }) {
       {props.children}
       <Toasts />
       <Transition
-        onExit={(el, done) => {
+        onExit={async (el, done) => {
           const a = el.animate([{ opacity: 1 }, { opacity: 0 }], {
             duration: 300,
           });
-          void a.finished.then(done);
+          await a.finished;
+          done();
         }}
       >
         <Show when={showAnimation && !hideAnimation()}>

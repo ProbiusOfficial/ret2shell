@@ -25,7 +25,7 @@ type RegisterForm = {
   captcha_answer: string;
 };
 
-export default function () {
+export default function() {
   const navigate = useNavigate();
   if (accountStore.token) {
     navigate("/", { replace: true });
@@ -86,13 +86,12 @@ export default function () {
                     error={field.error}
                     class="flex-1"
                     required
-                    onBlur={(e) => {
-                      if (e.target.value)
-                        deunicode(e.target.value)
-                          .then((result) => {
-                            setValue(form, "account", result);
-                          })
-                          .catch(() => {});
+                    onBlur={async (e) => {
+                      if (e.target.value) {
+                        try {
+                          setValue(form, "account", await deunicode(e.target.value));
+                        } catch { }
+                      }
                     }}
                   />
                 )}
@@ -123,13 +122,12 @@ export default function () {
                       <Button
                         class="!rounded-l-none"
                         type="button"
-                        onClick={() => {
-                          if (accountInputRef?.value)
-                            leet(accountInputRef!.value)
-                              .then((result) => {
-                                setValue(form, "account", result);
-                              })
-                              .catch(() => {});
+                        onClick={async () => {
+                          if (accountInputRef?.value) {
+                            try {
+                              setValue(form, "account", await leet(accountInputRef!.value));
+                            } catch { }
+                          }
                         }}
                       >
                         <span class="icon-[fluent--diversity-20-regular] w-5 h-5" />

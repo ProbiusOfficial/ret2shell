@@ -29,12 +29,11 @@ export function InstanceBoxContent() {
   }
 
   function retryConnect() {
-    wsrx.tryConnect().catch(() => {});
+    wsrx.tryConnect().catch(() => { });
     setConnecting(true);
-    setTimeout(() => {
-      void wsrx.checkConnection().then(() => {
-        setConnecting(false);
-      });
+    setTimeout(async () => {
+      await wsrx.checkConnection();
+      setConnecting(false);
     }, 1000);
   }
 
@@ -55,14 +54,13 @@ export function InstanceBoxContent() {
     cachedState = wsrx.connected();
   });
 
-  const heartbeatTimer = setInterval(() => {
+  const heartbeatTimer = setInterval(async () => {
     // Pending or Connected
     if (wsrx.connected()) {
-      void wsrx.checkConnection().then((state) => {
-        if (state === WsrxState.Connected) {
-          wsrx.refreshTraffic();
-        }
-      });
+      const state = await wsrx.checkConnection();
+      if (state === WsrxState.Connected) {
+        wsrx.refreshTraffic();
+      }
     }
   }, 5 * 1000);
   onCleanup(() => {
@@ -83,9 +81,8 @@ export function InstanceBoxContent() {
         >
           <Show when={!connecting() && wsrx.connected() !== WsrxState.Pending}>
             <span
-              class={`icon-[fluent--fluid-20-regular] w-5 h-5 ${
-                wsrx.connected() === WsrxState.Connected ? "text-success" : "text-warning"
-              }`}
+              class={`icon-[fluent--fluid-20-regular] w-5 h-5 ${wsrx.connected() === WsrxState.Connected ? "text-success" : "text-warning"
+                }`}
             />
           </Show>
           <span
@@ -115,9 +112,8 @@ export function InstanceBoxContent() {
         >
           {/* icon-[fluent--settings-20-regular] icon-[fluent--settings-20-filled] */}
           <span
-            class={`icon-[fluent--settings-20-${showSettings() ? "filled" : "regular"}] w-5 h-5 ${
-              showSettings() ? "text-primary" : ""
-            }`.trim()}
+            class={`icon-[fluent--settings-20-${showSettings() ? "filled" : "regular"}] w-5 h-5 ${showSettings() ? "text-primary" : ""
+              }`.trim()}
           />
         </Button>
         <Link

@@ -30,7 +30,7 @@ passiveSupport({
   ],
 });
 
-export default function (props: { inGame?: boolean }) {
+export default function(props: { inGame?: boolean }) {
   const instance = createMemo(() => {
     if (challengeStore.current && challengeStore.env) {
       return wsrx.instances().find((s) => s.challenge_id === challengeStore.current!.id) ?? null;
@@ -58,13 +58,11 @@ export default function (props: { inGame?: boolean }) {
     }
   });
   let instanceStateIter = 0;
-  function maintainInstances() {
-    wsrx.refreshInstances().then(() => {
-      wsrx.deleteOutdatedTraffic();
-      wsrx.openAllTraffic().then(() => {
-        wsrx.refreshTraffic();
-      });
-    });
+  async function maintainInstances() {
+    await wsrx.refreshInstances();
+    await wsrx.deleteOutdatedTraffic();
+    await wsrx.openAllTraffic();
+    await wsrx.refreshTraffic();
   }
   function maintainInstancesWorker() {
     if (instance()?.state === "Pending" || instanceStateIter === 0) {

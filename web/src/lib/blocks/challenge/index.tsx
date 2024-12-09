@@ -24,6 +24,7 @@ import Intro from "./intro";
 import Settings from "./settings";
 import Statistics from "./statistics";
 import Terminal from "./terminal";
+import { handleHttpError } from "@api";
 
 function BottomPanel(props: {
   onStateChange?: (challenge?: Challenge) => void;
@@ -35,72 +36,45 @@ function BottomPanel(props: {
   const [page, setPage] = createSignal(0);
   const pages = [Terminal, Hints, Files, Hammer, Answer, Statistics, Instances, Checker, Settings];
   const [deleting, setDeleting] = createSignal(false);
-  function handleDeleteChallenge() {
+  async function handleDeleteChallenge() {
     if (challengeStore.current) {
       setDeleting(true);
-      deleteChallenge(challengeStore.current.game_id, challengeStore.current.id)
-        .then(() => {
-          setSearchParams({ challenge: null });
-          addToast({
-            level: "success",
-            description: t("form.deleteSuccess")!,
-            duration: 5000,
-          });
-          props.onStateChange?.();
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("form.deleteFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => setDeleting(false));
+      try {
+        await deleteChallenge(challengeStore.current.game_id, challengeStore.current.id);
+        setSearchParams({ challenge: null });
+        addToast({
+          level: "success",
+          description: t("form.deleteSuccess")!,
+          duration: 5000,
+        });
+        props.onStateChange?.();
+      } catch (err) {
+        handleHttpError(err as HTTPError, t("form.deleteFailed")!);
+      }
+      setDeleting(false);
     }
   }
   const [publishing, setPublishing] = createSignal(false);
 
-  function handlePublishChallenge() {
+  async function handlePublishChallenge() {
     setPublishing(true);
-    if (challengeStore.current?.hidden) {
-      publishChallenge(challengeStore.current.game_id, challengeStore.current.id)
-        .then((resp) => {
-          props.onStateChange?.(resp);
-          setChallengeStore({ current: resp });
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.publishChallengeFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setPublishing(false);
-        });
-    } else {
-      withdrawChallenge(challengeStore.current!.game_id, challengeStore.current!.id)
-        .then((resp) => {
-          props.onStateChange?.(resp);
-          setChallengeStore({ current: resp });
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.withdrawChallengeFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setPublishing(false);
-        });
+    try {
+      const resp = await (challengeStore.current?.hidden ? publishChallenge : withdrawChallenge)(
+        challengeStore.current!.game_id,
+        challengeStore.current!.id
+      );
+      props.onStateChange?.(resp);
+      setChallengeStore({ current: resp });
+    } catch (err) {
+      handleHttpError(
+        err as HTTPError,
+        challengeStore.current?.hidden
+          ? t("game.challenge.publishChallengeFailed")!
+          : t("game.challenge.withdrawChallengeFailed")!
+      );
     }
+
+    setPublishing(false);
   }
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
@@ -235,7 +209,7 @@ function BottomPanel(props: {
   );
 }
 
-export default function (props: {
+export default function(props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {

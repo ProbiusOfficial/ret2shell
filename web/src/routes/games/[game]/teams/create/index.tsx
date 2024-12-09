@@ -104,10 +104,9 @@ export default function() {
                         square
                         type="button"
                         disabled={customDisabled()}
-                        onClick={() => {
-                          generateRandomName(generator()).then((name: string) => {
-                            setValue(form, "name", name);
-                          });
+                        onClick={async () => {
+                          const name = await generateRandomName(generator());
+                          setValue(form, "name", name);
                         }}
                       >
                         <span class="icon-[fluent--diversity-20-regular] w-5 h-5" />

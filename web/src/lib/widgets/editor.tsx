@@ -5,10 +5,9 @@ import "ace-builds/esm-resolver";
 import { type FormStore, setValue } from "@modular-forms/solid";
 import { t, themeStore } from "@storage/theme";
 import { uploadMedia } from "@api/media";
-import type { HTTPError } from "ky";
-import { addToast } from "@storage/toast";
 import { mediaPath } from "@lib/utils/media";
 import Spin from "@assets/animates/spin";
+import { handleHttpError } from "@api";
 
 export type EditorProps = {
   value?: string;
@@ -44,25 +43,16 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
   const [imageFile, setImageFile] = createSignal<File | null>(null);
   const [uploading, setUploading] = createSignal(false);
   const [draging, setDraging] = createSignal(false);
-  function handleUploadImage() {
+  async function handleUploadImage() {
     if (imageFile()) {
       setUploading(true);
-      uploadMedia(imageFile()!, false)
-        .then((resp) => {
-          editor?.insert(`![${imageFile()!.name}](${mediaPath(resp.hash)})`);
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((resp) => {
-            addToast({
-              level: "error",
-              description: `${t("form.uploadFailed")}: ${resp}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setUploading(false);
-        });
+      try {
+        const resp = await uploadMedia(imageFile()!, false);
+        editor?.insert(`![${imageFile()!.name}](${mediaPath(resp.hash)})`);
+      } catch (err) {
+        handleHttpError(err as Error, t("form.uploadFailed")!);
+      }
+      setUploading(false);
     }
   }
   let editorElement: HTMLPreElement;
