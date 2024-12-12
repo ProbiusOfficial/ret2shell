@@ -196,9 +196,10 @@ function TitleBar() {
                     <Switch>
                       <Match
                         when={
-                          platformStore.isOnline &&
                           gameStore.current &&
-                          gameStore.current.host_type === HostType.CTFGame
+                          gameStore.current.host_type === HostType.CTFGame &&
+                          params.game &&
+                          location.pathname.startsWith(`/games/${params.game}`)
                         }
                       >
                         <GameNav size="sm" />
