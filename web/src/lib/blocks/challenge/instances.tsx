@@ -478,7 +478,7 @@ export default function (_props: {
         <span class="font-bold">{t("game.challenge.uploadImageToRegistry")}:</span>
         <UploadButton
           size="sm"
-          url={`${api_root}/cluster/repo`}
+          url={`${api_root}/game/${gameStore.current!.id}/registry`}
           onDone={() => {
             addToast({
               level: "success",
