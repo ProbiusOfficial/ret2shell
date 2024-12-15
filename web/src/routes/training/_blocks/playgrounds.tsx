@@ -117,9 +117,10 @@ export default function Playgrounds() {
                 href={accountStore.token ? `/training/${item.id}` : `/account/login?redirect=/training/${item.id}`}
                 activeMatch="partial"
                 justify="start"
+                title={item.name}
               >
                 <span class="icon-[fluent--dumbbell-20-regular] w-5 h-5" />
-                <span class="flex-1 text-start">{item.name}</span>
+                <span class="flex-1 text-start truncate">{item.name}</span>
                 <Show when={item.hidden}>
                   <span class="icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning mx-2" />
                 </Show>
@@ -166,10 +167,10 @@ export default function Playgrounds() {
                 activeMatch="partial"
                 justify="start"
                 disabled={item.archive_at > DateTime.now()}
-                title={item.archive_at > DateTime.now() ? t("training.gameNotArchived") : undefined}
+                title={item.archive_at > DateTime.now() ? t("training.gameNotArchived") : item.name}
               >
                 <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-                <span class="flex-1 text-start">{item.name}</span>
+                <span class="flex-1 text-start truncate">{item.name}</span>
                 <Show when={item.hidden}>
                   <span class="icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning mx-2" />
                 </Show>
