@@ -19,6 +19,10 @@ declare module "*.jpeg" {
   const src: string;
   export default src;
 }
+declare module "*.gif" {
+  const src: string;
+  export default src;
+}
 declare module "*.md";
 declare module "*.rx";
 declare module "*.module.css" {

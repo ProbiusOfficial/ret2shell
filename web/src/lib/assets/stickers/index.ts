@@ -6,8 +6,12 @@ import xdsecMascot05 from "./xdsec-mascot-04-4.webp";
 import xdsecMascotCrying from "./xdsec-mascot-crying.webp";
 import xdsecMascotHappy from "./xdsec-mascot-happy.webp";
 import xdsecMascotNormal from "./xdsec-mascot-normal.webp";
-import xdsecMascotConfused from "./xdsec-mascot-question.webp";
 import xdsecMascotUnsee from "./xdsec-mascot-unsee.webp";
+import xdsecMascotEat from "./xdsec-mascot-eat.gif";
+import xdsecMascotDead from "./xdsec-mascot-dead.gif";
+import xdsecMascotLoading from "./xdsec-mascot-loading.gif";
+import xdsecMascotSparkle from "./xdsec-mascot-sparkle.gif";
+import xdsecMascotSpining from "./xdsec-mascot-spining.gif";
 
 export type Sticker = {
   src: string;
@@ -24,5 +28,9 @@ export const stickerSet: Sticker[] = [
   { src: xdsecMascotHappy, alt: "Happy" },
   { src: xdsecMascotNormal, alt: "Stare" },
   { src: xdsecMascotUnsee, alt: "Wink" },
-  { src: xdsecMascotConfused, alt: "Confused" },
+  { src: xdsecMascotEat, alt: "Eat" },
+  { src: xdsecMascotDead, alt: "Dead" },
+  { src: xdsecMascotLoading, alt: "Loading" },
+  { src: xdsecMascotSparkle, alt: "Sparkle" },
+  { src: xdsecMascotSpining, alt: "Spining" },
 ];
