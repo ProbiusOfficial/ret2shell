@@ -197,6 +197,18 @@ async fn submission_worker(
   }
 }
 
+fn get_award_rate(game: &game::Model, blood_state: i32) -> i32 {
+  if let Some(award_rates) = game.award_rates.clone() {
+    if blood_state < award_rates.len() as i32 {
+      return award_rates[blood_state as usize];
+    }
+    return 0;
+  } else if blood_state <= 3 && game.award_rate > 0 {
+    return game.award_rate * (4 - blood_state) / 3;
+  }
+  0
+}
+
 async fn submission_worker_exec(
   queue: Queue, db: Database, cache: Cache, mut checker: Checker, bucket: Bucket, cluster: Cluster,
   submission: submission::Model,
@@ -303,7 +315,7 @@ async fn submission_worker_exec(
     let changed_at = submission.created_at;
     let mut team = team.clone();
     if let Some(blood_state) = blood_state {
-      let score = challenge.score_rule.initial * game.award_rate / 100;
+      let score = challenge.score_rule.initial * get_award_rate(&game, blood_state) / 100;
       if score > 0 {
         extra::create(
           &db.conn,
