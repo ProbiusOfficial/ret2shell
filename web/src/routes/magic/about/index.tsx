@@ -92,17 +92,12 @@ export default function () {
                 <div class="flex flex-row flex-wrap justify-center">
                   <Tag level="info" class="m-1">
                     <a href="https://github.com/hypnoticss" target="_blank" rel="noreferrer">
-                      Hypnotics
+                      hypnotics
                     </a>
                   </Tag>
                   <Tag level="info" class="m-1">
                     <a href="https://twitter.com/LAttic1ng" target="_blank" rel="noreferrer">
                       Ac4ae0
-                    </a>
-                  </Tag>
-                  <Tag level="info" class="m-1">
-                    <a href="https://github.com/arttnba3" target="_blank" rel="noreferrer">
-                      Arttnba3
                     </a>
                   </Tag>
                   <Tag level="info" class="m-1">
@@ -116,6 +111,10 @@ export default function () {
                     </a>
                   </Tag>
                 </div>
+                <p>
+                  <span>Prototype of 墨雨鸢 created by</span>
+                  <a href="https://github.com/arttnba3">arttnba3 (SumiKiriko)</a>
+                </p>
                 <h3 class="font-bold">Opensource projects & 3rd libraries</h3>
                 <div class="flex flex-row flex-wrap justify-center">
                   <Tag level="warning" class="m-1">
