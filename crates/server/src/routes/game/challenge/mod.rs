@@ -77,7 +77,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           patch(update_challenge_env).delete(delete_challenge_env),
         )
         .route("/instance", get(get_all_running_instances_for_challenge))
-        .route("/solve", get(get_challenge_solves))
+        .route("/submission", get(get_challenge_submissions))
         .route(
           "/checker",
           get(get_checker_script).patch(update_checker_script),
@@ -1247,15 +1247,16 @@ async fn get_challenge_update_history(
 }
 
 #[derive(Deserialize)]
-struct ChallengeSolvesQuery {
+struct ChallengeSubmissionsQuery {
   pub page: Option<u64>,
   pub page_size: Option<u64>,
   pub only_solved: Option<bool>,
 }
 
-async fn get_challenge_solves(
+async fn get_challenge_submissions(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(challenge): Extension<challenge::Model>, Query(query): Query<ChallengeSolvesQuery>,
+  Extension(challenge): Extension<challenge::Model>,
+  Query(query): Query<ChallengeSubmissionsQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let solves = submission::get_page_ex(
     &db.conn,
