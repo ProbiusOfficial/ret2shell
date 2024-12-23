@@ -21,7 +21,7 @@ import Article from "@widgets/article";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
-import Editor from "@widgets/editor";
+import { EditorBare } from "@widgets/editor";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import type { DateTime } from "luxon";
@@ -297,10 +297,10 @@ export default function () {
                       </Show>
                       <div class="w-4 flex-shrink-0" />
                       <div
-                        class={`flex-1 w-0 flex flex-col space-y-1 ${chat.user_id !== accountStore.id ? "items-start" : "items-end"}`}
+                        class={`flex-1 w-0 flex flex-col ${chat.user_id !== accountStore.id ? "items-start" : "items-end"}`}
                       >
                         <Show when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}>
-                          <header class="label space-x-2">
+                          <header class="label space-x-2 py-1">
                             <Show when={chat.user_id !== 0}>
                               <Show
                                 when={chat.is_admin}
@@ -318,23 +318,19 @@ export default function () {
                           <Card contentClass="p-2">
                             <Article content={chat.content} noExtraPaddings compact extra />
                           </Card>
-                          <div class="px-2 self-end flex items-end">
+                          <div class="self-end flex items-end">
                             <span
                               class={
                                 chat.checked
-                                  ? "icon-[fluent--checkmark-circle-20-filled] w-5 h-5 text-success"
-                                  : "icon-[fluent--circle-20-regular] w-5 h-5 opacity-40"
+                                  ? "icon-[fluent--circle-20-filled] w-2 h-2 text-success"
+                                  : "icon-[fluent--circle-20-regular] w-2 h-2 opacity-40"
                               }
                             />
                           </div>
                         </div>
-                        <Show
-                          when={index() === chats().length - 1 || chats().at(index() + 1)?.user_id !== chat.user_id}
-                        >
-                          <header class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
-                            {chat.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
-                          </header>
-                        </Show>
+                        <header class="opacity-0 h-0 peer-hover:h-4 peer-hover:opacity-60 text-sm transition-all duration-300">
+                          {chat.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
+                        </header>
                       </div>
                     </div>
                   )}
@@ -343,44 +339,6 @@ export default function () {
             </div>
             <div class="sticky bottom-0 flex flex-col space-y-2 p-3 border-t border-t-layer-content/5 bg-layer">
               <div class="flex flex-row items-center h-8 space-x-2">
-                {/* <Popover size="sm" square ghost btnContent={<span class="icon-[fluent--emoji-20-regular] w-5 h-5" />}> */}
-                {/*   <Card contentClass="p-2 aspect-square"> */}
-                {/*     <OverlayScrollbarsComponent */}
-                {/*       options={{ */}
-                {/*         scrollbars: { */}
-                {/*           theme: `os-theme-${fullTheme()}`, */}
-                {/*           autoHide: "scroll", */}
-                {/*         }, */}
-                {/*       }} */}
-                {/*       class="relative w-full h-full print:h-auto print:overflow-auto" */}
-                {/*       defer */}
-                {/*     > */}
-                {/*       <div class="grid grid-cols-4 gap-2"> */}
-                {/*         <For each={stickerSet}> */}
-                {/*           {(sticker) => ( */}
-                {/*             <Button */}
-                {/*               ghost */}
-                {/*               class="p-0 aspect-square overflow-hidden" */}
-                {/*               onClick={() => { */}
-                {/*                 setChat(`![${sticker.alt}](${sticker.src})`); */}
-                {/*                 setTimeout(() => { */}
-                {/*                   handleSendChat(); */}
-                {/*                 }); */}
-                {/*               }} */}
-                {/*             > */}
-                {/*               <img */}
-                {/*                 class="w-16 h-16 transition-transform duration-300 hover:scale-[1.1]" */}
-                {/*                 src={sticker.src} */}
-                {/*                 alt={sticker.alt} */}
-                {/*                 title={sticker.alt} */}
-                {/*               /> */}
-                {/*             </Button> */}
-                {/*           )} */}
-                {/*         </For> */}
-                {/*       </div> */}
-                {/*     </OverlayScrollbarsComponent> */}
-                {/*   </Card> */}
-                {/* </Popover> */}
                 <Popover size="sm" square ghost btnContent={<span class="icon-[fluent--flash-20-regular] w-5 h-5" />}>
                   <Card contentClass="p-2">
                     <OverlayScrollbarsComponent
@@ -418,7 +376,7 @@ export default function () {
                 </Popover>
                 <div class="flex-1" />
                 <Link
-                  href="https://101.lug.ustc.edu.cn/Appendix/markdown/"
+                  href="https://docs.github.com/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"
                   ghost
                   size="sm"
                   class="opacity-60"
@@ -453,8 +411,8 @@ export default function () {
                   <span>{t("game.challenge.hammerSend")}</span>
                 </Button>
               </div>
-              <Editor
-                class={`bg-layer rounded-lg ${editorExpanded() ? "h-64" : "min-h-16 max-h-64"}`}
+              <EditorBare
+                class={`bg-layer rounded-lg ${editorExpanded() ? "h-64" : "h-16"}`}
                 value={chat()}
                 placeholder="MARKDOWN"
                 lang="markdown"
