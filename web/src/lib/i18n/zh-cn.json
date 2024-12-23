@@ -580,6 +580,9 @@
       "challenges": "题目状态",
       "submissions": "选手提交"
     },
+    "traffic": {
+      "title": "环境路由"
+    },
     "edit": {
       "title": "编辑平台设置"
     },
