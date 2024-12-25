@@ -1047,6 +1047,7 @@ async fn start_challenge_env(
       )
       .await?;
     debug!("env_map: {:?}", env_map);
+    debug!("game: {:?}", game);
     let node_selector = if game.archive_at > Utc::now() {
       game.node_selector.clone()
     } else {
@@ -1057,6 +1058,8 @@ async fn start_challenge_env(
     } else {
       config.traffic.is_some()
     };
+    debug!("node_selector: {:?}", node_selector);
+    debug!("need_expose: {:?}", need_expose);
     cluster
       .at(CHALLENGE_NS)
       .create_challenge_env(

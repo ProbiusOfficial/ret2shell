@@ -1000,7 +1000,7 @@ struct GameTrafficResponse {
 }
 
 async fn update_game_traffic(
-  State(cluster): State<Cluster>, State(ref db): State<Database>,
+  State(cluster): State<Cluster>, State(ref db): State<Database>, State(cache): State<Cache>,
   Extension(game): Extension<game::Model>, Json(req): Json<GameTraffic>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let traffic_mapper = cluster
@@ -1038,20 +1038,13 @@ async fn update_game_traffic(
         ))?,
     )
     .await;
-  traffic_mapper
-    .preload(
-      &game.bucket.ok_or(ResponseError::PreconditionFailed(
-        "game bucket does not exist".to_owned(),
-      ))?,
-      &req.traffic,
-    )
-    .await?;
+  cache.at("game").del(game.id).await?;
 
   Ok(Json(GameTrafficResponse { lint }))
 }
 
 async fn delete_game_traffic(
-  State(cluster): State<Cluster>, State(ref db): State<Database>,
+  State(cluster): State<Cluster>, State(ref db): State<Database>, State(cache): State<Cache>,
   Extension(game): Extension<game::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let traffic_mapper = cluster
@@ -1072,6 +1065,7 @@ async fn delete_game_traffic(
       "game bucket not exist".to_owned(),
     ))?)
     .await;
+  cache.at("game").del(game.id).await?;
   Ok(())
 }
 
@@ -1081,8 +1075,8 @@ struct GameNodeSelector {
 }
 
 async fn update_game_node_selector(
-  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Json(req): Json<GameNodeSelector>,
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(game): Extension<game::Model>, Json(req): Json<GameNodeSelector>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let node_selector = req.node_selector.clone();
   game::update(
@@ -1094,11 +1088,13 @@ async fn update_game_node_selector(
     },
   )
   .await?;
+  cache.at("game").del(game.id).await?;
   Ok(Json(node_selector))
 }
 
 async fn delete_game_node_selector(
-  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(game): Extension<game::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   game::update(
     &db.conn,
@@ -1109,5 +1105,6 @@ async fn delete_game_node_selector(
     },
   )
   .await?;
+  cache.at("game").del(game.id).await?;
   Ok(())
 }

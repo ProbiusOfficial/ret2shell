@@ -137,7 +137,8 @@ struct NodeSelector {
 }
 
 async fn update_default_node_selector(
-  State(ref db): State<Database>, Extension(config): Extension<config::Model>,
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(config): Extension<config::Model>,
   Json(NodeSelector { node_selector }): Json<NodeSelector>,
 ) -> Result<impl IntoResponse, ResponseError> {
   config::update(
@@ -151,11 +152,14 @@ async fn update_default_node_selector(
     },
   )
   .await?;
+  cache.at("platform").del("config").await?;
+
   Ok(())
 }
 
 async fn delete_default_node_selector(
-  State(ref db): State<Database>, Extension(config): Extension<config::Model>,
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(config): Extension<config::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   config::update(
     &db.conn,
@@ -168,6 +172,7 @@ async fn delete_default_node_selector(
     },
   )
   .await?;
+  cache.at("platform").del("config").await?;
   Ok(())
 }
 
@@ -182,7 +187,7 @@ struct TrafficScriptResponse {
 }
 
 async fn update_traffic_script(
-  State(ref cluster): State<Cluster>, State(ref db): State<Database>,
+  State(ref cluster): State<Cluster>, State(cache): State<Cache>, State(ref db): State<Database>,
   Extension(config): Extension<config::Model>, Json(req): Json<TrafficScriptRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let traffic_mapper = cluster
@@ -213,12 +218,12 @@ async fn update_traffic_script(
   )
   .await?;
   traffic_mapper.expire("default").await;
-  traffic_mapper.preload("default", &req.traffic).await?;
+  cache.at("platform").del("config").await?;
   Ok(Json(TrafficScriptResponse { lint }))
 }
 
 async fn delete_traffic_script(
-  State(ref cluster): State<Cluster>, State(ref db): State<Database>,
+  State(ref cluster): State<Cluster>, State(cache): State<Cache>, State(ref db): State<Database>,
   Extension(config): Extension<config::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let traffic_mapper = cluster
@@ -237,5 +242,6 @@ async fn delete_traffic_script(
   )
   .await?;
   traffic_mapper.expire("default").await;
+  cache.at("platform").del("config").await?;
   Ok(())
 }
