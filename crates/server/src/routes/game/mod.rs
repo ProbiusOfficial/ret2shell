@@ -562,7 +562,7 @@ async fn get_self_envs(
       Err(e) => return Err(e),
     };
 
-    if traffic_script.is_none() {
+    if traffic_script.is_none() || traffic_script.clone().unwrap().is_empty() {
       result.push(i);
       continue;
     }
