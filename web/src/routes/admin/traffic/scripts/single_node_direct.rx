@@ -1,3 +1,5 @@
+const PUBLIC_ENTRY = "www.example.com";
+
 // Traffic exposing API
 //
 // Args:
@@ -29,7 +31,7 @@
 pub async fn expose(node, service) {
     let result = #{};
     for port in service.ports {
-        result[port.name] = `ctf.xidian.edu.cn:${port.node_port}`;
+        result[port.name] = `${PUBLIC_ENTRY}:${port.node_port}`;
     }
     Ok(result)
 }

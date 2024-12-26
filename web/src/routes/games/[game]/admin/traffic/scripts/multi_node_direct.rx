@@ -1,4 +1,4 @@
-const NODE_MAP = #{
+const PUBLIC_ENTRIES = #{
     node1: "10.0.0.1",
     node2: "10.0.0.2",
 };
@@ -33,7 +33,7 @@ const NODE_MAP = #{
 // `lifetime` to calculate and manage the traffic in your external controller.
 pub async fn expose(node, service) {
     let result = #{};
-    let ip = NODE_MAP.get(node)?;
+    let ip = PUBLIC_ENTRIES.get(node)?;
     for port in service.ports {
         result[port.name] = `${ip}:${port.node_port}`;
     }
