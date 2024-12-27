@@ -1,17 +1,18 @@
 FROM rust:1-alpine as builder
 
 # hadolint ignore=DL3018
-RUN apk add --update --no-cache musl-dev
+RUN apk add --update --no-cache musl-dev clang lld
 
 ARG R2S_GIT_VERSION=DEADBEEF
 ENV R2S_GIT_VERSION=${R2S_GIT_VERSION}
 
+COPY ./.cargo /var/lib/ret2shell/.cargo
 COPY ./config /var/lib/ret2shell/config
 COPY ./Cargo.toml /var/lib/ret2shell/Cargo.toml
 COPY ./crates /var/lib/ret2shell/crates
 WORKDIR /var/lib/ret2shell
 
-RUN --mount=type=cache,target=/var/lib/ret2shell/target cargo build --release --target x86_64-unknown-linux-musl && \
+RUN --mount=type=cache,target=/var/lib/ret2shell/target cargo build --release --bin r2s-server --target x86_64-unknown-linux-musl && \
     cp /var/lib/ret2shell/target/x86_64-unknown-linux-musl/release/r2s-server /usr/local/bin/r2s-server
 
 # --------------------------------------------------------------------------------------------------------
