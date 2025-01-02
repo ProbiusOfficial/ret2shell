@@ -420,7 +420,7 @@ function InstanceList() {
   );
 }
 
-export default function(_props: {
+export default function (_props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
