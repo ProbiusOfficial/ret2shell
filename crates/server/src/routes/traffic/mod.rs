@@ -13,7 +13,9 @@ use crate::traits::{GlobalState, ResponseError};
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
   Router::new().route(
     "/{token}",
-    get(link_challenge_env).options(ping_challenge_env),
+    get(link_challenge_env)
+      .connect(link_challenge_env)
+      .options(ping_challenge_env),
   )
 }
 
