@@ -18,8 +18,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
   let frontend_config = state.config.server.clone().unwrap_or_default().frontend;
   if let Some(frontend_config) = frontend_config {
     match frontend_config.serve_type {
-      FrontendServeType::Static => Router::new().nest_service(
-        "/",
+      FrontendServeType::Static => Router::new().fallback_service(
         ServeDir::new(&frontend_config.path)
           .precompressed_gzip()
           .not_found_service(ServeFile::new(format!(
