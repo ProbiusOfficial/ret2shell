@@ -92,7 +92,7 @@ export default function () {
   const [total, setTotal] = createSignal(0);
   const [topTeams, setTopTeams] = createSignal<Team[]>([]);
   const [page, setPage] = createSignal(1);
-  const [pageSize, setPageSize] = createSignal(10);
+  const [pageSize, setPageSize] = createSignal(null as number | null);
   const showHiddenTeams = createMemo(() => searchParams.hidden === "true");
   const selectedInstituteId = createMemo(() => Number.parseInt((searchParams.institute as string) || "NaN") || null);
   const [loading, setLoading] = createSignal(false);
@@ -127,13 +127,14 @@ export default function () {
   }
 
   async function getTeams() {
+    if (!page() || !pageSize() || !gameStore.current?.id) return;
     setLoading(true);
     setTeams([]);
     try {
       const data = await getGameScoreboard(
         gameStore.current?.id || 0,
         page(),
-        pageSize(),
+        pageSize()!,
         showHiddenTeams(),
         selectedInstituteId() || undefined
       );
@@ -341,7 +342,7 @@ export default function () {
                 <TeamRanks
                   teams={teams()}
                   page={page()}
-                  pageSize={pageSize()}
+                  pageSize={pageSize()!}
                   total={total()}
                   showTime={false}
                   loading={loading()}
@@ -360,7 +361,7 @@ export default function () {
                 <TeamRanks
                   teams={teams()}
                   page={page()}
-                  pageSize={pageSize()}
+                  pageSize={pageSize()!}
                   showTime={!showLargePanel()}
                   loading={loading()}
                   onPageChange={(p) => setPage(p)}
