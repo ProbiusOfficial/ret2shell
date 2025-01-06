@@ -16,7 +16,6 @@ pub async fn login(params) {
                                code: code,
                            })?).send().await?.json().await?;
     let token = token_resp.access_token;
-    dbg(token);
     let user = client.get(DATA_SERVER_URL)
                      .header("Accept", "application/json")
                      .header("User-Agent", "ret2shell/3")
