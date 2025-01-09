@@ -97,15 +97,15 @@ pre code > [data-line] {
   @apply before:w-[1.8em] pl-[2.8em] relative;
 }
 
-/* pre code:has(:nth-child(10)) > [data-line] {
+/* pre code:has([data-line]:nth-child(10)) > [data-line] {
   @apply before:w-[1.8em] pl-[2.8em];
 } */
 
-pre code:has(:nth-child(100)) > [data-line] {
+pre code:has([data-line]:nth-child(100)) > [data-line] {
   @apply before:w-[2.4em] pl-[3.4em];
 }
 
-pre code:has(:nth-child(1000)) > [data-line] {
+pre code:has([data-line]:nth-child(1000)) > [data-line] {
   @apply before:w-[3em] pl-[4em];
 }
 
