@@ -11,7 +11,15 @@ import { Popover as ArkPopover } from "@ark-ui/solid";
 import UploadButton from "@blocks/upload-button";
 import type { Challenge, ChallengeImage } from "@models/challenge";
 import type { RegistryConfig } from "@models/config";
-import { createForm, pattern, required, setValue, setValues } from "@modular-forms/solid";
+import {
+  createForm,
+  custom,
+  getValue,
+  pattern,
+  required,
+  setValue,
+  setValues,
+} from "@modular-forms/solid";
 import { A } from "@solidjs/router";
 import { challengeStore, refreshChallengeAssets } from "@storage/challenge";
 import { gameStore } from "@storage/game";
@@ -30,7 +38,16 @@ import Slider from "@widgets/slider";
 import type { Pod } from "kubernetes-types/core/v1";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { For, Match, Show, Switch, createEffect, createSignal, onMount, untrack } from "solid-js";
+import {
+  For,
+  Match,
+  Show,
+  Switch,
+  createEffect,
+  createSignal,
+  onMount,
+  untrack,
+} from "solid-js";
 
 function CreateForm(fnProps: {
   repos: string[];
@@ -61,12 +78,16 @@ function CreateForm(fnProps: {
   async function onSubmit(result: ChallengeImage) {
     setAdding(true);
     try {
-      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-        internet: challengeStore.env?.internet || false,
-        restricted: challengeStore.env?.restricted ?? null,
-        images: [...(challengeStore.env?.images || []), result],
-        pull_secret: challengeStore.env?.pull_secret || null,
-      });
+      await updateChallengeEnv(
+        challengeStore!.current!.game_id,
+        challengeStore!.current!.id,
+        {
+          internet: challengeStore.env?.internet || false,
+          restricted: challengeStore.env?.restricted ?? null,
+          images: [...(challengeStore.env?.images || []), result],
+          pull_secret: challengeStore.env?.pull_secret || null,
+        },
+      );
       addToast({
         level: "success",
         description: t("game.challenge.addEnvSuccess")!,
@@ -95,7 +116,10 @@ function CreateForm(fnProps: {
           name="name"
           validate={[
             required(t("game.challenge.envContainerNameRequired")!),
-            pattern(/^[a-z\-]{3,40}$/, t("game.challenge.envContainerNameFormat")!),
+            pattern(
+              /^[a-z\-]{3,40}$/,
+              t("game.challenge.envContainerNameFormat")!,
+            ),
           ]}
         >
           {(field, props) => (
@@ -111,7 +135,10 @@ function CreateForm(fnProps: {
             />
           )}
         </Field>
-        <Field name="tag" validate={[required(t("game.challenge.envContainerTagRequired")!)]}>
+        <Field
+          name="tag"
+          validate={[required(t("game.challenge.envContainerTagRequired")!)]}
+        >
           {(field, props) => (
             <Show
               when={fnProps.registryConfig?.enabled}
@@ -119,7 +146,9 @@ function CreateForm(fnProps: {
                 <div class="flex-1 flex flex-row space-x-2">
                   <Input
                     class="flex-1"
-                    icon={<span class="icon-[fluent--flag-20-regular] w-5 h-5" />}
+                    icon={
+                      <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
+                    }
                     title={t("game.challenge.envContainerTag")}
                     placeholder={t("game.challenge.envContainerTag")}
                     error={field.error}
@@ -157,7 +186,9 @@ function CreateForm(fnProps: {
                     <ArkPopover.Anchor class="w-full">
                       <Input
                         class="w-full"
-                        icon={<span class="icon-[fluent--flag-20-regular] w-5 h-5" />}
+                        icon={
+                          <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
+                        }
                         title={t("game.challenge.envContainerTag")}
                         placeholder={t("game.challenge.envContainerTag")}
                         error={field.error}
@@ -186,7 +217,11 @@ function CreateForm(fnProps: {
                             <Show when={loading()}>
                               <LoadingTips />
                             </Show>
-                            <For each={fnProps.repos.filter((repo) => repo.includes(searchedRepo()))}>
+                            <For
+                              each={fnProps.repos.filter((repo) =>
+                                repo.includes(searchedRepo()),
+                              )}
+                            >
                               {(repo) => (
                                 <Button
                                   class="btn-sm"
@@ -215,7 +250,9 @@ function CreateForm(fnProps: {
                     label={t("game.challenge.envContainerTagVersion")!}
                     error={field.error}
                     class="flex-1"
-                    placeholder={t("game.challenge.selectEnvContainerTagVersion")}
+                    placeholder={t(
+                      "game.challenge.selectEnvContainerTagVersion",
+                    )}
                     items={
                       tags().map((tag) => ({
                         value: tag,
@@ -228,7 +265,7 @@ function CreateForm(fnProps: {
                       setValue(
                         form,
                         "tag",
-                        `${fnProps.registryConfig?.external}/${gameStore.current!.bucket}/${searchedRepo()}:${e.value.at(0)}`
+                        `${fnProps.registryConfig?.external}/${gameStore.current!.bucket}/${searchedRepo()}:${e.value.at(0)}`,
                       );
                     }}
                   />
@@ -268,7 +305,17 @@ function CreateForm(fnProps: {
           )}
         </Field>
         <div class="flex flex-row space-x-2 flex-1">
-          <Field name="service_type">
+          <Field
+            name="service_type"
+            validate={[
+              custom((value) => {
+                if (!value && getValue(form, "description")) {
+                  return false;
+                }
+                return true;
+              }, t("game.challenge.selectEnvContainerServiceType")!),
+            ]}
+          >
             {(field, props) => (
               <Select
                 label={t("game.challenge.envContainerServiceType")}
@@ -286,28 +333,49 @@ function CreateForm(fnProps: {
                     icon: "icon-[fluent--globe-20-regular]",
                   },
                 ]}
+                disabled={!getValue(form, "description")}
                 value={field.value ? [field.value as string] : undefined}
                 inputProps={props}
+                error={field.error}
               />
             )}
           </Field>
-          <Field name="port" type="number">
+          <Field
+            name="port"
+            type="number"
+            validate={[
+              custom((value) => {
+                if (!value && getValue(form, "description")) {
+                  return false;
+                }
+                return true;
+              }, t("game.challenge.envContainerPort")!),
+            ]}
+          >
             {(field, props) => (
               <Input
                 class="flex-1"
-                icon={<span class="icon-[fluent--cloud-link-20-regular] w-5 h-5" />}
+                icon={
+                  <span class="icon-[fluent--cloud-link-20-regular] w-5 h-5" />
+                }
                 title={t("game.challenge.envContainerPort")}
+                disabled={!getValue(form, "description")}
                 placeholder={t("game.challenge.envContainerPort")}
                 type="number"
                 {...props}
                 value={field.value || undefined}
+                error={field.error}
               />
             )}
           </Field>
         </div>
       </div>
       <div class="flex flex-row space-x-2">
-        <Field name="cpu" type="number" validate={[required(t("game.challenge.envContainerCpuRequired")!)]}>
+        <Field
+          name="cpu"
+          type="number"
+          validate={[required(t("game.challenge.envContainerCpuRequired")!)]}
+        >
           {(field, props) => (
             <Slider
               class="flex-1"
@@ -321,7 +389,10 @@ function CreateForm(fnProps: {
             />
           )}
         </Field>
-        <Field name="mem" validate={[required(t("game.challenge.envContainerMemRequired")!)]}>
+        <Field
+          name="mem"
+          validate={[required(t("game.challenge.envContainerMemRequired")!)]}
+        >
           {(field, props) => (
             <>
               <Slider
@@ -331,7 +402,9 @@ function CreateForm(fnProps: {
                 min={32}
                 step={32}
                 name={field.name}
-                value={[Number.parseInt(field.value?.replace("Mi", "") || "32") || 32]}
+                value={[
+                  Number.parseInt(field.value?.replace("Mi", "") || "32") || 32,
+                ]}
                 onValueChange={(e) => {
                   setValue(form, "mem", `${e.value[0]}Mi`);
                 }}
@@ -340,7 +413,12 @@ function CreateForm(fnProps: {
             </>
           )}
         </Field>
-        <Field name="storage" validate={[required(t("game.challenge.envContainerStorageRequired")!)]}>
+        <Field
+          name="storage"
+          validate={[
+            required(t("game.challenge.envContainerStorageRequired")!),
+          ]}
+        >
           {(field, props) => (
             <>
               <Slider
@@ -350,17 +428,30 @@ function CreateForm(fnProps: {
                 min={1}
                 step={1}
                 name={field.name}
-                value={[Number.parseInt(field.value?.replace("Gi", "") || "3") || 3]}
+                value={[
+                  Number.parseInt(field.value?.replace("Gi", "") || "3") || 3,
+                ]}
                 onValueChange={(e) => {
                   setValue(form, "storage", `${e.value[0]}Gi`);
                 }}
               />
-              <input hidden {...props} value={field.value || "3Gi"} class="hidden" />
+              <input
+                hidden
+                {...props}
+                value={field.value || "3Gi"}
+                class="hidden"
+              />
             </>
           )}
         </Field>
       </div>
-      <Button type="submit" level="primary" class="!mt-4" loading={adding()} disabled={adding()}>
+      <Button
+        type="submit"
+        level="primary"
+        class="!mt-4"
+        loading={adding()}
+        disabled={adding()}
+      >
         {t("form.add")}
       </Button>
     </Form>
@@ -373,9 +464,17 @@ function InstanceList() {
     if (challengeStore.current) {
       untrack(async () => {
         try {
-          setPods(await getChallengeInstance(challengeStore!.current!.game_id, challengeStore!.current!.id));
+          setPods(
+            await getChallengeInstance(
+              challengeStore!.current!.game_id,
+              challengeStore!.current!.id,
+            ),
+          );
         } catch (err) {
-          handleHttpError(err as Error, t("game.challenge.fetchEnvInstancesFailed")!);
+          handleHttpError(
+            err as Error,
+            t("game.challenge.fetchEnvInstancesFailed")!,
+          );
         }
       });
     }
@@ -411,12 +510,23 @@ function InstanceList() {
             </A>
             <span class="flex-1" />
             <span class="opacity-60">{pod.status?.phase}</span>
-            <Popover btnContent={<span class="icon-[fluent--production-20-regular] w-5 h-5" />} ghost square size="sm">
+            <Popover
+              btnContent={
+                <span class="icon-[fluent--production-20-regular] w-5 h-5" />
+              }
+              ghost
+              square
+              size="sm"
+            >
               <Card contentClass="py-2 px-4 flex flex-col max-w-xl">
                 <Show when={pod.metadata}>
                   <div class="py-2 flex flex-row space-x-2 items-center border-b border-b-layer-content/5">
                     <span class="icon-[fluent--clock-20-regular] w-5 h-5" />
-                    <span>{DateTime.fromISO(pod.metadata!.creationTimestamp!).toFormat("yyyy-MM-dd HH:mm:ss")}</span>
+                    <span>
+                      {DateTime.fromISO(
+                        pod.metadata!.creationTimestamp!,
+                      ).toFormat("yyyy-MM-dd HH:mm:ss")}
+                    </span>
                   </div>
                 </Show>
                 <For each={pod.status?.containerStatuses || []}>
@@ -427,10 +537,15 @@ function InstanceList() {
                       <div class="w-16" />
                       <Switch>
                         <Match when={container.state?.running}>
-                          <span class="text-success">Running {container.state?.running?.startedAt}</span>
+                          <span class="text-success">
+                            Running {container.state?.running?.startedAt}
+                          </span>
                         </Match>
                         <Match when={container.state?.waiting}>
-                          <span class="text-error" title={container.state?.waiting?.message}>
+                          <span
+                            class="text-error"
+                            title={container.state?.waiting?.message}
+                          >
                             Waiting {container.state?.waiting?.reason}
                           </span>
                         </Match>
@@ -451,13 +566,17 @@ export default function (_props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
-  const [registryConfig, setRegistryConfig] = createSignal<RegistryConfig | null>(null);
+  const [registryConfig, setRegistryConfig] =
+    createSignal<RegistryConfig | null>(null);
   let pullSecretInput: HTMLInputElement;
   onMount(async () => {
     try {
       setRegistryConfig(await getRegistryConfig(gameStore.current!.id));
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.fetchEnvRegistryConfigFailed")!);
+      handleHttpError(
+        err as Error,
+        t("game.challenge.fetchEnvRegistryConfigFailed")!,
+      );
     }
   });
   const [repos, setRepos] = createSignal<string[]>([]);
@@ -475,12 +594,16 @@ export default function (_props: {
   });
   async function onToggleInternet() {
     try {
-      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-        internet: !challengeStore.env?.internet,
-        restricted: challengeStore.env?.restricted ?? null,
-        images: challengeStore.env?.images || [],
-        pull_secret: challengeStore.env?.pull_secret || null,
-      });
+      await updateChallengeEnv(
+        challengeStore!.current!.game_id,
+        challengeStore!.current!.id,
+        {
+          internet: !challengeStore.env?.internet,
+          restricted: challengeStore.env?.restricted ?? null,
+          images: challengeStore.env?.images || [],
+          pull_secret: challengeStore.env?.pull_secret || null,
+        },
+      );
       addToast({
         level: "success",
         description: t("game.challenge.toggleEnvInternetSuccess")!,
@@ -488,17 +611,24 @@ export default function (_props: {
       });
       refreshChallengeAssets();
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.toggleEnvInternetFailed")!);
+      handleHttpError(
+        err as Error,
+        t("game.challenge.toggleEnvInternetFailed")!,
+      );
     }
   }
   async function onToggleRestricted() {
     try {
-      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-        internet: challengeStore.env?.internet || false,
-        restricted: !challengeStore.env?.restricted,
-        images: challengeStore.env?.images || [],
-        pull_secret: challengeStore.env?.pull_secret || null,
-      });
+      await updateChallengeEnv(
+        challengeStore!.current!.game_id,
+        challengeStore!.current!.id,
+        {
+          internet: challengeStore.env?.internet || false,
+          restricted: !challengeStore.env?.restricted,
+          images: challengeStore.env?.images || [],
+          pull_secret: challengeStore.env?.pull_secret || null,
+        },
+      );
       addToast({
         level: "success",
         description: t("game.challenge.toggleEnvInternetSuccess")!,
@@ -506,17 +636,27 @@ export default function (_props: {
       });
       refreshChallengeAssets();
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.toggleEnvInternetFailed")!);
+      handleHttpError(
+        err as Error,
+        t("game.challenge.toggleEnvInternetFailed")!,
+      );
     }
   }
   async function onDeleteImage(name: string) {
     try {
-      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-        internet: challengeStore.env?.internet || false,
-        restricted: challengeStore.env?.restricted ?? null,
-        images: challengeStore.env?.images?.filter((image) => image.name !== name) || [],
-        pull_secret: challengeStore.env?.pull_secret || null,
-      });
+      await updateChallengeEnv(
+        challengeStore!.current!.game_id,
+        challengeStore!.current!.id,
+        {
+          internet: challengeStore.env?.internet || false,
+          restricted: challengeStore.env?.restricted ?? null,
+          images:
+            challengeStore.env?.images?.filter(
+              (image) => image.name !== name,
+            ) || [],
+          pull_secret: challengeStore.env?.pull_secret || null,
+        },
+      );
       addToast({
         level: "success",
         description: t("game.challenge.deleteEnvImageSuccess")!,
@@ -529,7 +669,10 @@ export default function (_props: {
   }
   async function onDeleteEnv() {
     try {
-      await deleteChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id);
+      await deleteChallengeEnv(
+        challengeStore!.current!.game_id,
+        challengeStore!.current!.id,
+      );
       addToast({
         level: "success",
         description: t("game.challenge.deleteEnvSuccess")!,
@@ -542,12 +685,16 @@ export default function (_props: {
   }
   async function onSavePullSecret(n: string) {
     try {
-      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-        internet: challengeStore.env?.internet || false,
-        restricted: challengeStore.env?.restricted ?? null,
-        images: challengeStore.env?.images || [],
-        pull_secret: n ?? null,
-      });
+      await updateChallengeEnv(
+        challengeStore!.current!.game_id,
+        challengeStore!.current!.id,
+        {
+          internet: challengeStore.env?.internet || false,
+          restricted: challengeStore.env?.restricted ?? null,
+          images: challengeStore.env?.images || [],
+          pull_secret: n ?? null,
+        },
+      );
       addToast({
         level: "success",
         description: t("form.saveSuccess")!,
@@ -565,7 +712,9 @@ export default function (_props: {
         <span class="icon-[fluent--settings-20-regular] w-5 h-5 flex-shrink-0" />
         <span class="flex-1 text-start">{t("game.challenge.envImages")}</span>
         <Show when={registryConfig()?.enabled}>
-          <span class="font-bold">{t("game.challenge.uploadImageToRegistry")}:</span>
+          <span class="font-bold">
+            {t("game.challenge.uploadImageToRegistry")}:
+          </span>
           <UploadButton
             size="sm"
             url={`${api_root}/game/${gameStore.current!.id}/registry`}
@@ -600,13 +749,22 @@ export default function (_props: {
           />
         </Dialog>
         <Show when={challengeStore.env}>
-          <Popover level="error" size="sm" btnContent={<span>{t("game.challenge.deleteEnv")}</span>}>
+          <Popover
+            level="error"
+            size="sm"
+            btnContent={<span>{t("game.challenge.deleteEnv")}</span>}
+          >
             <Card contentClass="p-2 flex flex-col space-x-2 max-w-96">
               <span class="inline-block space-x-2">
                 <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
                 <span>{t("game.challenge.deleteEnvTips")}</span>
               </span>
-              <Button level="primary" size="sm" class="self-end" onClick={onDeleteEnv}>
+              <Button
+                level="primary"
+                size="sm"
+                class="self-end"
+                onClick={onDeleteEnv}
+              >
                 {t("platform.accept")}
               </Button>
             </Card>
@@ -620,7 +778,9 @@ export default function (_props: {
             onToggleInternet();
           }}
         >
-          <span class="flex-1 text-start">{t("game.challenge.envHasInternet")}</span>
+          <span class="flex-1 text-start">
+            {t("game.challenge.envHasInternet")}
+          </span>
         </Checkbox>
         <Checkbox
           checked={challengeStore.env?.restricted ?? false}
@@ -662,7 +822,10 @@ export default function (_props: {
             <div class="flex flex-row space-x-2 items-center">
               <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
               <span>{image.name}</span>
-              <span class="opacity-60 flex-1 text-end truncate" title={image.tag}>
+              <span
+                class="opacity-60 flex-1 text-end truncate"
+                title={image.tag}
+              >
                 {image.tag}
               </span>
               <Popover
@@ -670,14 +833,21 @@ export default function (_props: {
                 ghost
                 size="sm"
                 square
-                btnContent={<span class="icon-[fluent--delete-20-regular] w-5 h-5" />}
+                btnContent={
+                  <span class="icon-[fluent--delete-20-regular] w-5 h-5" />
+                }
               >
                 <Card contentClass="p-2 flex flex-col space-y-2 max-w-96">
                   <span class="inline-block space-x-2">
                     <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
                     <span>{t("game.challenge.deleteEnvImageTips")}</span>
                   </span>
-                  <Button level="primary" size="sm" class="self-end" onClick={() => onDeleteImage(image.name)}>
+                  <Button
+                    level="primary"
+                    size="sm"
+                    class="self-end"
+                    onClick={() => onDeleteImage(image.name)}
+                  >
                     {t("platform.accept")}
                   </Button>
                 </Card>
@@ -701,7 +871,9 @@ export default function (_props: {
       <Show when={challengeStore.env}>
         <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
           <span class="icon-[fluent--settings-20-regular] w-5 h-5 flex-shrink-0" />
-          <span class="flex-1 text-start">{t("game.challenge.envInstances")}</span>
+          <span class="flex-1 text-start">
+            {t("game.challenge.envInstances")}
+          </span>
         </header>
         <InstanceList />
       </Show>
