@@ -212,7 +212,6 @@ where
     .filter(Column::TeamId.eq(team_id))
     .filter(Column::Checked.eq(false))
     .filter(Column::IsAdmin.eq(is_admin))
-    .order_by(Column::CreatedAt, Order::Asc)
     .distinct_on([(Entity, Column::TeamId), (Entity, Column::ChallengeId)])
     .all(conn)
     .await?;
