@@ -28,7 +28,7 @@ import clsx from "clsx";
 import { Transition } from "solid-transition-group";
 import type { Chat } from "@models/chat";
 
-export default function () {
+export default function() {
   const navigate = useNavigate();
   if (accountStore.token === null) {
     navigate(`/account/login?redirect=/games/${gameStore.current ? gameStore.current.id : ""}`);
@@ -120,7 +120,7 @@ export default function () {
   let prevUnreadChats: Chat[] = [];
   // hammer chats timer
   const chatsRefreshTimer = setInterval(async () => {
-    if (gameStore.current) {
+    if (gameStore.current && gameStore.team) {
       try {
         const unreadChats = await checkUnreadMessages(gameStore.current.id);
         for (const chat of unreadChats) {
