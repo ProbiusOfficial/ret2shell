@@ -287,8 +287,8 @@ impl Cluster {
   pub async fn delete_outdated_envs(&self) -> Result<(bool, i32, i32), ClusterError> {
     // cleanup unknown services first
     self.cleanup_services().await?;
-    // then check outdated pods, when pod is outdated, the corresponding service will be deleted
-    // together
+    // then check outdated pods, when pod is outdated, the corresponding service
+    // will be deleted together
     self.delete_outdated_pods().await
   }
 

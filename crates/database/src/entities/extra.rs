@@ -36,6 +36,15 @@ pub struct ExModel {
   pub challenge_name: Option<String>,
 }
 
+impl ExModel {
+  pub fn desensitize(self) -> ExModel {
+    ExModel {
+      hint_id: None,
+      ..self
+    }
+  }
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
   #[sea_orm(

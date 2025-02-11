@@ -874,10 +874,7 @@ async fn unlock_hint(
         team_id: team.id,
         challenge_id: Some(challenge.id),
         hint_id: Some(hint.id),
-        reason: format!(
-          "unlocked hint [{}] in challenge {}",
-          hint.id, challenge.name
-        ),
+        reason: format!("Unlocked hint in challenge {}", challenge.name),
         ..Default::default()
       },
     )

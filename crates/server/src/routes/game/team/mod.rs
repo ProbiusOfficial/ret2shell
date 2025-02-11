@@ -17,7 +17,7 @@ use r2s_migrator::Database;
 use serde::Deserialize;
 use tracing::info;
 
-use super::worker;
+use super::{is_game_admin, worker};
 use crate::{
   middleware::{auth, data},
   traits::{GlobalState, ResponseError},
@@ -263,9 +263,20 @@ async fn get_team_list(
 }
 
 async fn get_team_extra(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(token): Extension<auth::Token>,
+  Extension(game): Extension<game::Model>, Extension(team): Extension<team::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  Ok(Json(extra::get_list_ex(&db.conn, team.id).await?))
+  let resp = extra::get_list_ex(&db.conn, team.id).await?;
+  if is_game_admin!(&token, &game) {
+    Ok(Json(resp))
+  } else {
+    let self_team = team::get_by_user_id(&db.conn, team.game_id, token.id).await?;
+    if self_team.is_none_or(|t| t.id != team.id) {
+      Ok(Json(resp.into_iter().map(|e| e.desensitize()).collect()))
+    } else {
+      Ok(Json(resp))
+    }
+  }
 }
 
 #[derive(Deserialize)]
