@@ -18,7 +18,7 @@ use r2s_queue::Queue;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tower_governor::{key_extractor::KeyExtractor, GovernorError};
-use tracing::{debug, error, warn};
+use tracing::{debug, debug_span, error, warn, Instrument};
 
 use super::auth::Token;
 use crate::traits::ResponseError;
@@ -315,22 +315,29 @@ pub async fn ip_record(
       ip.to_string()
     }
     None => {
-      warn!("Unable to get client IP address from request");
+      warn!("Unable to get client IP address from request {req:?}");
       return Ok(next.run(req).await);
     }
   };
-  debug!("Client IP address: {}", ip);
+  debug!("Client IP address: {ip}");
   queue
     .publish(
       "ip-record",
       IpRecord {
-        ip,
+        ip: ip.clone(),
         user_id: token.id,
       },
     )
     .await?;
   debug!("IP record message published");
-  Ok(next.run(req).await)
+  let span =
+    debug_span!("http",from = %ip.to_string(), method = %req.method(), uri = %req.uri().path());
+  async move {
+    let res = next.run(req).await;
+    Ok(res)
+  }
+  .instrument(span)
+  .await
 }
 
 async fn ip_record_worker_exec(message: jetstream::Message, db: &Database) -> anyhow::Result<()> {

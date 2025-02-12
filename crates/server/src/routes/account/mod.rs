@@ -216,7 +216,7 @@ async fn bind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!("client {} has no permission to bind account", ip),
+        format!("client {ip} has no permission to bind account"),
       ));
     }
   };
@@ -225,7 +225,7 @@ async fn bind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!("client {} has no permission to bind account", ip),
+        format!("client {ip} has no permission to bind account"),
       ));
     }
   };
@@ -263,7 +263,7 @@ async fn unbind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!("client {} has no permission to bind account", ip),
+        format!("client {ip} has no permission to bind account"),
       ));
     }
   };
@@ -272,7 +272,7 @@ async fn unbind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!("client {} has no permission to bind account", ip),
+        format!("client {ip} has no permission to bind account"),
       ));
     }
   };
@@ -283,7 +283,7 @@ async fn unbind_account_by_code(
       if user.institute_id.is_some_and(|v| v != institute.id) {
         return Err(ResponseError::Forbidden(
           "permission denied".to_owned(),
-          format!("client {} has no permission to unbind account", ip),
+          format!("client {ip} has no permission to unbind account"),
         ));
       }
       user.institute_id = None;
