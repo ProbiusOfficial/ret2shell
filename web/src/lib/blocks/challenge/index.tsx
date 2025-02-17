@@ -173,6 +173,9 @@ function BottomPanel(props: {
             <Popover
               ghost
               open={challengeStateWarningDialogOpen()}
+              onEscapeKeyDown={() => setChallengeStateWarningDialogOpen(false)}
+              onPointerDownOutside={() => setChallengeStateWarningDialogOpen(false)}
+              onFocusOutside={() => setChallengeStateWarningDialogOpen(false)}
               onOpenChange={(details) => setChallengeStateWarningDialogOpen(details.open)}
               onClick={() => setChallengeStateWarningDialogOpen(true)}
               btnContent={
@@ -252,7 +255,7 @@ function BottomPanel(props: {
   );
 }
 
-export default function(props: {
+export default function (props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
