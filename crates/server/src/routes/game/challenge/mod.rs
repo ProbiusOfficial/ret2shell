@@ -837,7 +837,9 @@ async fn get_challenge_hints(
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
   let hints = hint::get_list(&db.conn, challenge.id).await?;
-  if challenge.archive_at.is_some_and(|t| t > Utc::now()) {
+  if game.archive_policy.challenge.show_hints
+    && challenge.archive_at.is_some_and(|t| t > Utc::now())
+  {
     return Ok(Json(hints));
   }
   if game.start_at < Utc::now() && !game.in_progress() {
@@ -1334,12 +1336,16 @@ async fn get_answer(
   State(bucket): State<Bucket>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let archived_hide = game.archive_policy.challenge.show_answer
-    && challenge.archive_at.is_none_or(|t| t > Utc::now());
+  let not_archived_or_hide_after_archiving = if challenge.archive_at.is_some_and(|t| t < Utc::now())
+  {
+    !game.archive_policy.challenge.show_answer
+  } else {
+    true
+  };
   if game.host_type == HostType::Game
     && !game.archived()
     && !is_game_admin!(token, game)
-    && archived_hide
+    && not_archived_or_hide_after_archiving
   {
     return Err(ResponseError::Forbidden(
       format!(
