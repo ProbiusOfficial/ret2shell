@@ -16,8 +16,7 @@ impl MigrationTrait for Migration {
       .alter_table(
         Table::alter()
           .table(Game::Table)
-          .add_column_if_not_exists(
-            ColumnDef::new(Game::ArchivePolicy).json_binary())
+          .add_column_if_not_exists(ColumnDef::new(Game::ArchivePolicy).json_binary())
           .to_owned(),
       )
       .await?;
