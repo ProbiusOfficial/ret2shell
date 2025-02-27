@@ -33,7 +33,14 @@ export default function (props: TextInputProps & ComponentProps<"input">) {
             {inputProps.extraLabel}
           </label>
         </Show>
-        <div class="flex flex-row">
+        <div
+          class={clsx(
+            "flex flex-row",
+            props.icon
+              ? "rounded has-[input:focus]:outline-2 has-[input:focus]:outline-offset-2 has-[input:focus]:outline-layer-content/60"
+              : ""
+          )}
+        >
           <Show when={props.icon}>
             {/* rounded-l-lg rounded-l-md */}
             <div
@@ -54,7 +61,7 @@ export default function (props: TextInputProps & ComponentProps<"input">) {
             class={clsx(
               // input-sm input-md
               `input w-0 flex-1 input-${size}`,
-              inputProps.icon && "!rounded-l-none",
+              inputProps.icon && "!rounded-l-none outline-none",
               (others.type === "password" || inputProps.extraBtn) && "!rounded-r-none",
               error() && "input-error"
             )}

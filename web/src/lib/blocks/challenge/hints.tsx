@@ -35,6 +35,8 @@ export default function (_props: {
   const [hints, setHints] = createSignal([] as Hint[]);
   const [extras, setExtras] = createSignal([] as Extra[]);
   const [unlocking, setUnlocking] = createSignal(false);
+  const ptsInputIcon = ["icon-[fluent--subtract-20-regular]", "icon-[fluent--add-20-regular]"];
+  const [ptsInputIconIndex, setPtsInputIconIndex] = createSignal(0);
   const lorem = new LoremIpsum({
     wordsPerSentence: {
       max: 8,
@@ -50,7 +52,7 @@ export default function (_props: {
       created_at: DateTime.now(),
       challenge_id: challengeStore.current!.id,
       content: result.content,
-      cost: result.cost || 0,
+      cost: (result.cost || 0) * (ptsInputIconIndex() === 0 ? 1 : -1),
     } as Hint;
     try {
       await createChallengeHint(challengeStore.current!.game_id, challengeStore.current!.id, hint);
@@ -61,6 +63,7 @@ export default function (_props: {
       });
       resetForm(form);
       refreshHint();
+      setPtsInputIconIndex(0);
       setValues(form, {
         content: "",
         cost: 0,
@@ -250,30 +253,32 @@ export default function (_props: {
                 {...props}
                 onInput={(e) => {
                   // set num to `null` for prevValue
-                  const setNumber = (num: number | null, str?: string) => {
-                    if (typeof str === "string") e.currentTarget.value = str;
+                  const setNumber = (num: number | null, str: string, _switch: boolean) => {
+                    if (_switch) {
+                      setPtsInputIconIndex(ptsInputIconIndex() === 0 ? 1 : 0);
+                    }
+                    e.currentTarget.value = str;
                     Object.defineProperty(e.currentTarget, "valueAsNumber", { writable: true });
                     e.currentTarget.valueAsNumber = num || 0;
                     Object.freeze(e.currentTarget.valueAsNumber);
                   };
                   // manually parse number
-                  function parseNumber(_v: string): [number | null, string] {
+                  function parseNumber(_v: string): [number | null, string, boolean] {
                     let value = _v;
-                    if (value === "0-") return [0, "-"];
-                    const neg = value.startsWith("-");
-                    // const neg = false; // disable negative
+                    if (value === "0-") return [0, "0", true];
+                    const neg = (/^(-*)/.exec(value)?.[1].length ?? 0) % 2 === 1;
                     value = value.replace(/[^\d]/g, "").replace(/^0+(?=\d)/, "");
-                    value = neg ? `-${value}` : value;
                     const n = Number.parseInt(value);
-                    return [!Number.isNaN(n) ? n : 0, value];
+                    return [!Number.isNaN(n) ? n : 0, value, neg];
                   }
                   setNumber(...parseNumber(e.currentTarget.value));
                   return props.onInput(e);
                 }}
                 noLabel
                 placeholder={t("game.challenge.createHintCost")}
-                class="w-24"
+                class="w-32"
                 size="sm"
+                icon={<span class={ptsInputIcon[ptsInputIconIndex()]} />}
               />
             )}
           </Field>
