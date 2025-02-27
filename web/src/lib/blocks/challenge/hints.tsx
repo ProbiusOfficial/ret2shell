@@ -9,7 +9,7 @@ import {
 import type { Challenge } from "@models/challenge";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
-import { createForm, required, setValue, reset as resetForm, setValues } from "@modular-forms/solid";
+import { createForm, required, reset as resetForm, setValue, setValues } from "@modular-forms/solid";
 import { challengeStore } from "@storage/challenge";
 import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
@@ -223,12 +223,7 @@ export default function (_props: {
       <Show when={isGameAdmin()}>
         <Form onSubmit={onSubmit} class="px-2 min-h-12 border-b border-b-layer-content/10 flex items-center space-x-2">
           <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary shrink-0" />
-          <Field
-            name="content"
-            validate={[required(t("game.challenge.hintRequired")!)]}
-            validateOn="submit"
-            revalidateOn="submit"
-          >
+          <Field name="content" validate={[required(t("game.challenge.hintRequired")!)]} revalidateOn="submit">
             {(field, props) => (
               <Input
                 type="text"
