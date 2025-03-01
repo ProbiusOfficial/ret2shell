@@ -94,13 +94,9 @@ pub async fn extract_user_info(
     ""
   };
 
-  let valid = cache.at("token").exists(token_str).await?;
+  let exists = cache.at("token").exists(token_str).await?;
 
-  let token = if valid {
-    decode_token(token_str, signing_key).await
-  } else {
-    Token::default()
-  };
+  let token = decode_token(token_str, signing_key).await;
   debug!("user requested with token {token:?}");
 
   let last_time = token.exp - Utc::now().timestamp();
@@ -118,9 +114,10 @@ pub async fn extract_user_info(
 
   let mut resp = next.run(req).await;
 
-  if token_tracker
-    .renew_requested
-    .load(std::sync::atomic::Ordering::Relaxed)
+  if exists
+    && token_tracker
+      .renew_requested
+      .load(std::sync::atomic::Ordering::Relaxed)
   {
     let original_token_str = token_tracker.original.as_ref().unwrap();
     cache.at("token").del(original_token_str).await.ok();
@@ -147,6 +144,23 @@ pub async fn extract_user_info(
       "Set-Token",
       token_str.parse().expect("failed to parse token"),
     );
+  }
+
+  if !exists && AtomicBool::new(last_time > 0).load(std::sync::atomic::Ordering::Relaxed) {
+    let token_str = token_tracker.original.as_ref().unwrap();
+    cache
+      .at("token")
+      .set_ex(token_str, token.id, last_time)
+      .await
+      .map_err(|err| {
+        error!("failed to store token: {:?}", err);
+      })
+      .ok();
+    cache
+      .at("token")
+      .push(format!("user-{}", token.id), token_str)
+      .await
+      .ok();
   }
 
   Ok(resp)
