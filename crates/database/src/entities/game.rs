@@ -31,7 +31,7 @@ use crate::team;
 pub enum HostType {
   #[default]
   Training = 0,
-  Game     = 1,
+  Game = 1,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
@@ -49,16 +49,14 @@ pub struct AccessPolicy {
   pub sync: i32,
 }
 
-/// ----------------------------------------------------------------------------
-/// NOTE: Archive policy
-/// Each struct must have a default implementation for all their fields.
-/// And please add `#[serde(default)]` to each field.
-/// It's because that the policy may update its fields in the future, and it's
-/// hard to update all this column in the database for all outdated games.
-/// ----------------------------------------------------------------------------
+// NOTE: Archive policy
+// Each struct must have a default implementation for all their fields.
+// And please add `#[serde(default)]` to each field.
+// It's because that the policy may update its fields in the future, and it's
+// hard to update all this column in the database for all outdated games.
 
 /// Archive policy -> Challenge
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
 pub struct ArchivePolicyChallenge {
   #[serde(default)]
   pub show_answer: bool,
@@ -66,31 +64,12 @@ pub struct ArchivePolicyChallenge {
   pub show_hints: bool,
 }
 
-impl Default for ArchivePolicyChallenge {
-  fn default() -> Self {
-    Self {
-      show_answer: false,
-      show_hints: false,
-    }
-  }
-}
-
 /// Archive policy
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
 pub struct ArchivePolicy {
   #[serde(default)]
   pub challenge: ArchivePolicyChallenge,
 }
-
-impl Default for ArchivePolicy {
-  fn default() -> Self {
-    Self {
-      challenge: ArchivePolicyChallenge::default(),
-    }
-  }
-}
-
-/// ----------------------------------------------------------------------------
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
 pub struct Admins(pub Vec<i64>);
@@ -241,7 +220,8 @@ impl ActiveModelBehavior for ActiveModel {}
 
 pub async fn get<C>(db: &C, game_id: i64) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(game_id).one(db).await
 }
 
@@ -250,7 +230,8 @@ pub async fn get_page<C>(
   with_hidden: bool,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let page_size = page_size.max(1);
   let page = page.max(1);
   let mut sql = Entity::find();
@@ -278,7 +259,8 @@ pub async fn get_list<C>(
   end_at: Option<DateTime<Utc>>, archive_at: Option<DateTime<Utc>>,
 ) -> Result<Vec<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let mut sql = Entity::find().filter(Column::HostType.eq(HostType::Game));
   if let Some(register_at) = register_at {
     sql = sql.filter(Column::RegisterAt.lte(register_at));
@@ -298,7 +280,8 @@ where
 
 pub async fn get_statistics<C>(db: &C) -> Result<Vec<StatisticsModel>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let mut sql = Entity::find().select_only().columns(vec![
     Column::Id,
     Column::Name,
@@ -332,7 +315,8 @@ where
 
 pub async fn create<C>(db: &C, game: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let game = ActiveModel {
     id: ActiveValue::NotSet,
     updated_at: ActiveValue::Set(Utc::now()),
@@ -343,7 +327,8 @@ where
 
 pub async fn update<C>(db: &C, game: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let game = ActiveModel {
     id: ActiveValue::Unchanged(game.id),
     updated_at: ActiveValue::Set(Utc::now()),
@@ -354,6 +339,7 @@ where
 
 pub async fn delete<C>(db: &C, game_id: i64) -> Result<(), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::delete_by_id(game_id).exec(db).await.map(|_| ())
 }

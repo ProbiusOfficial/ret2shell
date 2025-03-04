@@ -140,7 +140,7 @@ async fn update_user(
 
   if token.id == user.id {
     *(token_tracker.token.lock().await) = Token {
-      id: user.id.clone(),
+      id: user.id,
       account: user.account.clone(),
       nickname: user.nickname.clone(),
       permissions: user.permissions.clone(),
