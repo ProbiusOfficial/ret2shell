@@ -115,7 +115,7 @@ export default function () {
             <span>{t("form.edit")}</span>
           </A>
           <button
-            class="font-bold hover:underline flex flex-row space-x-2 items-center print:hidden"
+            class="cursor-pointer font-bold hover:underline flex flex-row space-x-2 items-center print:hidden"
             onClick={onDelete}
             type="button"
           >
@@ -124,7 +124,7 @@ export default function () {
           </button>
         </Show>
         <button
-          class="font-bold hover:underline flex flex-row space-x-2 items-center print:hidden"
+          class="cursor-pointer font-bold hover:underline flex flex-row space-x-2 items-center print:hidden"
           onClick={() => print()}
           type="button"
         >
