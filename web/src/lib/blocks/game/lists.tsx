@@ -78,11 +78,11 @@ export function AuditList() {
   const matches = createBreakpoints(breakpoints);
   return (
     <>
-      <div class="flex-1 flex flex-col">
+      <div class="grid grid-cols-1 w-full">
         <For
           each={audits()}
           fallback={
-            <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
+            <div class="min-h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
               <Show
                 when={loading()}
                 fallback={
@@ -98,66 +98,73 @@ export function AuditList() {
           }
         >
           {(audit) => (
-            <div class="h-12 flex flex-row space-x-2 px-2 border-b border-b-layer-content/10 items-center">
-              <A class="font-bold" href={`/users/${audit.user_id}`}>
-                {audit.user_name}
-              </A>
-              <span class="text-info opacity-60">@</span>
-              <A class="font-bold opacity-60" href={`/games/${gameStore.current?.id}/teams/${audit.team_id}`}>
-                {audit.team_name ?? "wheel"}
-              </A>
-              <span class="flex-1 w-0 truncate" title={audit.reason}>
-                {audit.reason}
-              </span>
-              <A
-                class="hover:underline flex space-x-2 items-center"
-                href={`/games/${gameStore.current?.id}/challenges?challenge=${audit.challenge_id}`}
-              >
-                <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-                <span>{audit.challenge_name}</span>
-              </A>
-              <Tag
-                level={
-                  audit.state === AuditState.Pending
-                    ? "warning"
-                    : audit.state === AuditState.Misjudged
-                      ? "layer-content"
-                      : "error"
-                }
-              >
-                <span>
-                  {audit.state === AuditState.Pending
-                    ? t("game.admin.monitor.needReview")
-                    : audit.state === AuditState.Misjudged
-                      ? t("game.admin.monitor.misjudged")
-                      : t("game.admin.monitor.confirmed")}
+            <div class="min-h-12 py-2 gap-y-2 px-2 border-b border-b-layer-content/10 flex flex-row flex-wrap justify-end space-x-2 items-center">
+              <div class="flex flex-row">
+                <span class="inline space-x-2 text-wrap">
+                  <A class="font-bold" href={`/users/${audit.user_id}`}>
+                    {audit.user_name}
+                  </A>
+                  <span class="text-info opacity-60">@</span>
+                  <A class="font-bold opacity-60" href={`/games/${gameStore.current?.id}/teams/${audit.team_id}`}>
+                    {audit.team_name ?? "wheel"}
+                  </A>
+                  <span title={audit.reason}>{audit.reason}</span>
                 </span>
-              </Tag>
-              <Button
-                size="sm"
-                ghost
-                square
-                title={t("game.admin.monitor.misjudged")}
-                level="success"
-                onClick={() => handleMisjudged(audit)}
-              >
-                <span class="icon-[fluent--alert-snooze-20-regular] w-5 h-5" />
-              </Button>
-              <Button
-                size="sm"
-                ghost
-                square
-                title={t("game.admin.monitor.confirmed")}
-                level="error"
-                onClick={() => handleConfirmed(audit)}
-              >
-                <span class="icon-[fluent--emoji-angry-20-regular] w-5 h-5" />
-              </Button>
-              <span>
-                <Switch fallback={audit.created_at.toFormat("MM-dd HH:mm:ss")}>
-                  <Match when={matches.xl}>{audit.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}</Match>
-                </Switch>
-              </span>
+              </div>
+              <span class="flex-1" />
+              <div class="flex flex-row space-x-2 items-center flex-wrap">
+                <A
+                  class="hover:underline flex space-x-2 items-center"
+                  href={`/games/${gameStore.current?.id}/challenges?challenge=${audit.challenge_id}`}
+                >
+                  <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
+                  <span>{audit.challenge_name}</span>
+                </A>
+                <Tag
+                  level={
+                    audit.state === AuditState.Pending
+                      ? "warning"
+                      : audit.state === AuditState.Misjudged
+                        ? "layer-content"
+                        : "error"
+                  }
+                >
+                  <span>
+                    {audit.state === AuditState.Pending
+                      ? t("game.admin.monitor.needReview")
+                      : audit.state === AuditState.Misjudged
+                        ? t("game.admin.monitor.misjudged")
+                        : t("game.admin.monitor.confirmed")}
+                  </span>
+                </Tag>
+              </div>
+              <div class="gap-y-2 flex flex-row space-x-2 items-center flex-wrap justify-end">
+                <Button
+                  size="sm"
+                  ghost
+                  square
+                  title={t("game.admin.monitor.misjudged")}
+                  level="success"
+                  onClick={() => handleMisjudged(audit)}
+                >
+                  <span class="icon-[fluent--alert-snooze-20-regular] w-5 h-5" />
+                </Button>
+                <Button
+                  size="sm"
+                  ghost
+                  square
+                  title={t("game.admin.monitor.confirmed")}
+                  level="error"
+                  onClick={() => handleConfirmed(audit)}
+                >
+                  <span class="icon-[fluent--emoji-angry-20-regular] w-5 h-5" />
+                </Button>
+                <span>
+                  <Switch fallback={audit.created_at.toFormat("MM-dd HH:mm:ss")}>
+                    <Match when={matches.xl}>{audit.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}</Match>
+                  </Switch>
+                </span>
+              </div>
             </div>
           )}
         </For>
@@ -207,11 +214,11 @@ export function SubmissionList(props: {
   const matches = createBreakpoints(breakpoints);
   return (
     <>
-      <div class="flex-1 flex flex-col">
+      <div class="grid grid-cols-1 w-full">
         <For
           each={submissions()}
           fallback={
-            <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
+            <div class="min-h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
               <Show
                 when={loading()}
                 fallback={
@@ -227,45 +234,48 @@ export function SubmissionList(props: {
           }
         >
           {(submission) => (
-            <div class="h-12 flex flex-row space-x-2 px-2 border-b border-b-layer-content/10 items-center">
-              <A class="font-bold" href={`/users/${submission.user_id}`}>
-                {submission.user_name}
-              </A>
-              <Show when={props.inGame}>
-                <span class="text-info opacity-60">@</span>
-                <A class="font-bold opacity-60" href={`/games/${gameStore.current?.id}/teams/${submission.team_id}`}>
-                  {submission.team_name ?? "wheel"}
+            <div class="min-h-12 py-2 gap-y-2 px-2 border-b border-b-layer-content/10 flex flex-row flex-wrap justify-end space-x-2 items-center">
+              <div class="flex flex-row space-x-2 items-center overflow-hidden *:whitespace-nowrap">
+                <A class="font-bold" href={`/users/${submission.user_id}`}>
+                  {submission.user_name}
                 </A>
-              </Show>
-              <span>{t("game.monitor.submit")}</span>
-              <span class="flex-1 w-0 overflow-hidden flex items-center" title={submission.content!}>
-                <span class="max-w-full truncate py-1 px-2 rounded-lg bg-layer-content/5">{submission.content}</span>
-              </span>
-              <A
-                class="hover:underline flex space-x-2 items-center"
-                href={
-                  props.inGame
-                    ? `/games/${gameStore.current?.id}/challenges?challenge=${submission.challenge_id}`
-                    : `/training/${gameStore.current?.id}?challenge=${submission.challenge_id}`
-                }
-              >
-                <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-                <span>{submission.challenge_name}</span>
-              </A>
-              <Tag level={submission.solved ? "success" : "warning"}>
+                <Show when={props.inGame}>
+                  <span class="text-info opacity-60">@</span>
+                  <A class="font-bold opacity-60" href={`/games/${gameStore.current?.id}/teams/${submission.team_id}`}>
+                    {submission.team_name ?? "wheel"}
+                  </A>
+                </Show>
+                <span>{t("game.monitor.submit")}</span>
+                <span class="flex-1 truncate py-1 px-2 rounded-lg bg-layer-content/5">{submission.content}</span>
+              </div>
+              <span class="flex-1" />
+              <div class="gap-y-2 flex flex-row space-x-2 items-center flex-wrap justify-end">
+                <A
+                  class="hover:underline flex space-x-2 items-center"
+                  href={
+                    props.inGame
+                      ? `/games/${gameStore.current?.id}/challenges?challenge=${submission.challenge_id}`
+                      : `/training/${gameStore.current?.id}?challenge=${submission.challenge_id}`
+                  }
+                >
+                  <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
+                  <span>{submission.challenge_name}</span>
+                </A>
+                <Tag level={submission.solved === null ? "info" : submission.solved ? "success" : "warning"}>
+                  <span>
+                    {submission.solved === null
+                      ? t("game.admin.monitor.pending")
+                      : submission.solved
+                        ? t("game.admin.monitor.solved")
+                        : t("game.admin.monitor.notSolved")}
+                  </span>
+                </Tag>
                 <span>
-                  {submission.solved === null
-                    ? t("game.admin.monitor.pending")
-                    : submission.solved
-                      ? t("game.admin.monitor.solved")
-                      : t("game.admin.monitor.notSolved")}
+                  <Switch fallback={submission.created_at.toFormat("MM-dd HH:mm:ss")}>
+                    <Match when={matches.xl}>{submission.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}</Match>
+                  </Switch>
                 </span>
-              </Tag>
-              <span>
-                <Switch fallback={submission.created_at.toFormat("MM-dd HH:mm:ss")}>
-                  <Match when={matches.xl}>{submission.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}</Match>
-                </Switch>
-              </span>
+              </div>
             </div>
           )}
         </For>
