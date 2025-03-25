@@ -422,16 +422,6 @@ export default function (props: { inGame?: boolean }) {
                           <Tag level="info">
                             <span>{image.service_type}</span>
                           </Tag>
-                          <Show when={wsrx.connected() === WsrxState.Connected}>
-                            <ClipboardBtn
-                              size="sm"
-                              icon="icon-[fluent--copy-add-20-regular]"
-                              iconCopied="icon-[fluent--checkmark-circle-20-regular]"
-                              title={t("instance.copyWsrxAddr")}
-                              value={getWsrxLink(instance()!.traffic, image.port!)}
-                              label="WSRX"
-                            />
-                          </Show>
                         </div>
                         <span class="flex-1" />
                         <Show when={wsrx.connected() === WsrxState.Connected}>
@@ -446,7 +436,19 @@ export default function (props: { inGame?: boolean }) {
                             )}
                           </For>
                         </Show>
-                        <Show when={instance()?.exposed_ports?.find((v) => v.name === image.name)}>
+                        <Show
+                          when={instance()?.exposed_ports?.find((v) => v.name === image.name)}
+                          fallback={
+                            <ClipboardBtn
+                              size="sm"
+                              icon="icon-[fluent--copy-add-20-regular]"
+                              iconCopied="icon-[fluent--checkmark-circle-20-regular]"
+                              title={t("instance.copyWsrxAddr")}
+                              value={getWsrxLink(instance()!.traffic, image.port!)}
+                              label="WSRX"
+                            />
+                          }
+                        >
                           <ClipboardBtn
                             size="sm"
                             title={t("instance.copyRemoteAddr")}
@@ -454,6 +456,7 @@ export default function (props: { inGame?: boolean }) {
                             label={instance()?.exposed_ports?.find((v) => v.name === image.name)?.address}
                           />
                         </Show>
+
                         <div class="block" />
                       </section>
                     </Show>
