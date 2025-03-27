@@ -121,7 +121,7 @@ function UserList() {
           value={filter() ?? ""}
           placeholder={t("admin.users.filterPlaceholder")}
           onChange={(e) => {
-            setSearchParams({ filter: e.target.value || undefined });
+            setSearchParams({ filter: e.target.value || undefined, page: null });
             setTimeout(refreshUsers, 100);
           }}
         />

@@ -120,7 +120,7 @@ export default function () {
             value={filter() ?? ""}
             placeholder={t("game.admin.teams.filterPlaceholder")}
             onChange={(e) => {
-              setSearchParams({ filter: e.target.value || undefined });
+              setSearchParams({ filter: e.target.value || undefined, page: null });
               setTimeout(refreshTeams, 100);
             }}
           />
