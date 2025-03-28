@@ -15,7 +15,7 @@ services:
     #   - '5432:5432'
 
   cache:
-    image: valkey/valkey:7-alpine
+    image: valkey/valkey:8-alpine
     restart: unless-stopped
     volumes:
       - cache:/data
