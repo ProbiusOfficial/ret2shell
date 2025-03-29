@@ -26,6 +26,7 @@ export type Team = {
   score: number;
   history: TeamScoreHistory[];
   last_active_at: DateTime;
+  tag: string | null;
 };
 
 export function stringifyState(state: TeamState) {

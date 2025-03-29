@@ -864,6 +864,9 @@
         "nameMaxLength": "チーム名は最長32文字まで",
         "namePlaceholder": "かっこいい名前を付けましょう〜",
         "nameRequired": "チーム名を入力してください",
+        "tag": "チームタグ",
+        "tagPlaceholder": "チームタグを入力",
+        "tagMaxLength": "チームタグは最長32文字まで",
         "reject": "いや、私は異議があります。",
         "rulesTitle": "参加要項",
         "title": "チームを作成"

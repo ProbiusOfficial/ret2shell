@@ -90,6 +90,11 @@ export default function TeamRanks(props: {
                     </span>
                   </Tag>
                 </Show>
+                <Show when={team.tag}>
+                  <Tag level="info">
+                    <span class="flex-1 truncate">{team.tag}</span>
+                  </Tag>
+                </Show>
               </span>
               <span class={clsx("text-end", currentTimelinePeriod() && props.showTime ? "w-48" : "w-20")}>
                 <span>{team.score}</span>

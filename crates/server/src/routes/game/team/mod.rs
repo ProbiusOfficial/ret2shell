@@ -75,18 +75,22 @@ async fn get_self_team(
 #[derive(Deserialize)]
 struct UpdateTeamRequest {
   pub name: String,
+  pub tag: Option<String>,
   pub institute_id: Option<i64>,
 }
 
 async fn update_self_team(
   State(ref db): State<Database>, State(ref auditor): State<Auditor>,
-  Extension(game): Extension<game::Model>, Extension(team): Extension<Option<team::Model>>,
-  Json(req): Json<UpdateTeamRequest>,
+  Extension(token): Extension<auth::Token>, Extension(game): Extension<game::Model>,
+  Extension(team): Extension<Option<team::Model>>, Json(req): Json<UpdateTeamRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let mut team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   if game.team_size > 1 {
     team.name = req.name;
+  } else {
+    team.name = token.nickname.clone();
   }
+  team.tag = req.tag;
   if game.archived() {
     return Err(ResponseError::PreconditionFailed(
       "game is archived".to_owned(),
@@ -282,6 +286,7 @@ async fn get_team_extra(
 #[derive(Deserialize)]
 struct CreateTeamRequest {
   pub name: String,
+  pub tag: Option<String>,
 }
 
 async fn create_team(
@@ -338,6 +343,7 @@ async fn create_team(
       state,
       token: team_token,
       institute_id: user.institute_id,
+      tag: req.tag,
       ..Default::default()
     },
   )

@@ -23,6 +23,7 @@ pub enum Team {
   Score,
   History,
   LastActiveAt,
+  Tag,
 }
 
 #[async_trait::async_trait]
