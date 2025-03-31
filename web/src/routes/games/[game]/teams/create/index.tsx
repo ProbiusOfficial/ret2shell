@@ -20,6 +20,7 @@ import { Show, createEffect, createSignal, untrack } from "solid-js";
 
 type TeamCreateForm = {
   name: string;
+  tag: string;
   accepted: boolean;
 };
 
@@ -148,6 +149,18 @@ export default function () {
                       </Popover>
                     </>
                   }
+                />
+              )}
+            </Field>
+            <Field name="tag" validate={[maxLength(32, t("game.team.create.tagMaxLength")!)]}>
+              {(field, props) => (
+                <Input
+                  icon={<span class="icon-[fluent--tag-20-regular] w-5 h-5" />}
+                  title={t("game.team.create.tag")}
+                  placeholder={t("game.team.create.tagPlaceholder")}
+                  {...props}
+                  value={field.value}
+                  error={field.error}
                 />
               )}
             </Field>

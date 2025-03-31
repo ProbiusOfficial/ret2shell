@@ -75,6 +75,7 @@ pub struct Model {
   pub history: TeamScoreHistoryList,
   #[serde(with = "ts_seconds")]
   pub last_active_at: DateTime<Utc>,
+  pub tag: Option<String>,
 }
 
 impl Model {
@@ -100,6 +101,7 @@ pub struct ExModel {
   pub history: TeamScoreHistoryList,
   #[serde(with = "ts_seconds")]
   pub last_active_at: DateTime<Utc>,
+  pub tag: Option<String>,
 }
 
 impl ExModel {
@@ -125,6 +127,7 @@ impl From<Model> for ExModel {
       score: model.score,
       history: model.history,
       last_active_at: model.last_active_at,
+      tag: model.tag,
     }
   }
 }

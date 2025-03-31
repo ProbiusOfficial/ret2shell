@@ -43,6 +43,7 @@ import Sidebar from "./_blocks/sidebar";
 
 type TeamAdminUpdateForm = {
   name: string;
+  tag: string;
   state: string;
   institute_id: string;
 };
@@ -57,6 +58,7 @@ function AdminManagement(props: {
       untrack(() => {
         setValues(form, {
           name: props.team!.name,
+          tag: props.team?.tag || "",
           institute_id: props.team?.institute_id?.toString() || "0",
           state: props.team?.state.toString() || "0",
         });
@@ -86,6 +88,7 @@ function AdminManagement(props: {
       const team = await updateTeamInfo(gameStore.current!.id, props.team!.id, {
         ...props.team!,
         name: result.name,
+        tag: result.tag || null,
         state: Number.parseInt(result.state),
         institute_id: Number.parseInt(result.institute_id) || null,
       });
@@ -182,6 +185,19 @@ function AdminManagement(props: {
               )}
             </Field>
           </div>
+          <Field name="tag" validate={[maxLength(32, t("game.team.create.tagMaxLength")!)]}>
+            {(field, props) => (
+              <Input
+                class="flex-1"
+                icon={<span class="icon-[fluent--tag-20-regular] w-5 h-5" />}
+                title={t("game.team.create.tag")!}
+                placeholder={t("game.team.create.tagPlaceholder")!}
+                {...props}
+                value={field.value}
+                error={field.error}
+              />
+            )}
+          </Field>
           <Button type="submit" level="primary" class="!mt-4" loading={updating()} disabled={updating()}>
             {t("form.save")}
           </Button>
@@ -194,6 +210,7 @@ function AdminManagement(props: {
 
 type TeamSelfUpdateForm = {
   name: string;
+  tag: string;
   institute_id: string;
 };
 
@@ -204,6 +221,7 @@ function SelfManagement(props: { members: User[] }) {
       untrack(() => {
         setValues(form, {
           name: gameStore.team!.name,
+          tag: gameStore.team?.tag || "",
           institute_id: gameStore.team?.institute_id?.toString() || "0",
         });
       });
@@ -236,6 +254,7 @@ function SelfManagement(props: { members: User[] }) {
     try {
       const team = await updateSelfteam(gameStore.current!.id, {
         name: result.name,
+        tag: result.tag || null,
         institute_id: Number.parseInt(result.institute_id) || null,
       });
       setGameStore({ team });
@@ -301,6 +320,20 @@ function SelfManagement(props: { members: User[] }) {
               )}
             </Field>
           </div>
+          <Field name="tag" validate={[maxLength(32, t("game.team.create.tagMaxLength")!)]}>
+            {(field, props) => (
+              <Input
+                class="flex-1"
+                icon={<span class="icon-[fluent--tag-20-regular] w-5 h-5" />}
+                title={t("game.team.create.tag")!}
+                placeholder={t("game.team.create.tagPlaceholder")!}
+                {...props}
+                value={field.value}
+                error={field.error}
+                disabled={gameStore.current?.team_size === 1}
+              />
+            )}
+          </Field>
           <Button type="submit" level="primary" class="!mt-4" loading={updating()} disabled={updating()}>
             {t("form.save")}
           </Button>
@@ -385,7 +418,9 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
                   setPtsInputIconIndex(ptsInputIconIndex() === 0 ? 1 : 0);
                 }
                 e.currentTarget.value = str;
-                Object.defineProperty(e.currentTarget, "valueAsNumber", { writable: true });
+                Object.defineProperty(e.currentTarget, "valueAsNumber", {
+                  writable: true,
+                });
                 e.currentTarget.valueAsNumber = num || 0;
                 Object.freeze(e.currentTarget.valueAsNumber);
               };

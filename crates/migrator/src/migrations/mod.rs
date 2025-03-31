@@ -27,3 +27,4 @@ pub mod m_20241226_000001_game_traffic;
 pub mod m_20250105_000001_create_oauth_provider;
 pub mod m_20250114_000001_create_oauth_index;
 pub mod m_20250226_000001_game_archive_policy;
+pub mod m_20250330_000001_create_team_tag;

@@ -283,6 +283,7 @@ export async function updateSelfteam(
   game_id: number,
   team: {
     name: string;
+    tag: string | null;
     institute_id: number | null;
   }
 ) {
@@ -309,6 +310,7 @@ export async function createTeam(
   game_id: number,
   team: {
     name: string;
+    tag: string | null;
   }
 ) {
   return await api.post(`${api_root}/game/${game_id}/team`, { json: team }).json<Team>();
