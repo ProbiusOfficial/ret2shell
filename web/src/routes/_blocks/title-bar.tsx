@@ -17,6 +17,7 @@ import LoadingTips from "@widgets/loading-tips";
 import Popover from "@widgets/popover";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
+import { WsrxState } from "@xdsec/wsrx";
 import clsx from "clsx";
 import { DateTime } from "luxon";
 import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
@@ -215,7 +216,8 @@ export default function TitleBar() {
                               ? "icon-[fluent--fluid-20-filled]"
                               : "icon-[fluent--fluid-20-regular]",
                             "w-5 h-5",
-                            wsrx.instances().length > 0 && (wsrx.connected() ? "text-success" : "text-warning")
+                            wsrx.instances().length > 0 &&
+                              (wsrx.state() === WsrxState.Usable ? "text-success" : "text-warning")
                           )}
                         />
                         <span>{t("instance.box")}</span>

@@ -22,8 +22,3 @@ export type Instance = {
       }[]
     | null;
 };
-
-export type Traffic = {
-  remote: string;
-  local: string;
-};

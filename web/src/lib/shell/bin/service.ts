@@ -1,10 +1,11 @@
 import { delayGameSelfEnv, getChallengeEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
 import { deunicode } from "@api/rpc";
-import { WsrxState, getWsrxLink, wsrx } from "@lib/wsrx";
+import { getWsrxLink, wsrx } from "@lib/wsrx";
 import type { Instance } from "@models/instance";
 import { accountStore } from "@storage/account";
 import { challengeStore } from "@storage/challenge";
 import { t } from "@storage/theme";
+import { WsrxState } from "@xdsec/wsrx";
 import ansiColors from "ansi-colors";
 import { HTTPError } from "ky";
 import type { ParseEntry } from "shell-quote";
@@ -128,8 +129,8 @@ export class Service implements Command {
       }
     }
     await new Promise((r) => setTimeout(r, 500));
-    await wsrx.refreshInstances();
-    await wsrx.deleteOutdatedTraffic();
+    await wsrx.syncRemote();
+    await wsrx.deleteOutdatedLocal();
     return 0;
   }
 
@@ -149,7 +150,7 @@ export class Service implements Command {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
-    await wsrx.refreshInstances();
+    await wsrx.syncRemote();
     const inst = wsrx.instances().find((instance) => instance.challenge_id === challengeStore.current?.id);
     const d_service_name = await deunicode(challengeStore.current!.name);
     io.println(`${inst ? ansiColors.greenBright("●") : ansiColors.dim("○")} ${d_service_name}.service`);
@@ -166,14 +167,14 @@ export class Service implements Command {
     io.println(`     Active: ${getInstState(inst)}`);
     if (inst) {
       // await wsrx.openAllTraffic();
-      await wsrx.refreshTraffic();
+      await wsrx.syncLocal();
       // wsrx-local.service
       const inst_wsrx_local = Object.assign(Object.create(inst), {
         state: {
-          [WsrxState.Disconnected]: "Stopped",
+          [WsrxState.Invalid]: "Stopped",
           [WsrxState.Pending]: "Pending",
-          [WsrxState.Connected]: "Running",
-        }[wsrx.connected()],
+          [WsrxState.Usable]: "Running",
+        }[wsrx.state()],
       });
       io.println(`       ${ansiColors.dim("└─")} wsrx-local.service: ${getInstState(inst_wsrx_local, false)}`);
       // wsrx address
@@ -199,7 +200,7 @@ export class Service implements Command {
           for (const local of locals) {
             if (local) {
               io.println(
-                `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(link(`${image.service_type}://${local.local}`, `${image.service_type}://${local.local}`))} *-> wsrx-local.service`
+                `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(link(`${image.service_type}://${local.local}`, `${image.service_type}://${local.local}`))} *-> wsrx-local.service (${ansiColors.green(`${local.latency}ms`)})`
               );
             }
           }

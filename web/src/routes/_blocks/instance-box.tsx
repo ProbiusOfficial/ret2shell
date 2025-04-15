@@ -1,11 +1,10 @@
 import Spin from "@assets/animates/spin";
-import { WsrxState, wsrx } from "@lib/wsrx";
+import { wsrx } from "@lib/wsrx";
 import type { Instance } from "@models/instance";
 import { useLocation } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
@@ -13,8 +12,9 @@ import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
+import { WsrxState } from "@xdsec/wsrx";
 import clsx from "clsx";
-import { For, Show, createEffect, createSignal, onCleanup, untrack } from "solid-js";
+import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 export function InstanceBoxContent() {
   const [connecting, setConnecting] = createSignal(false);
@@ -34,50 +34,27 @@ export function InstanceBoxContent() {
     return `/games/${i.game_id}/challenges?challenge=${i.challenge_id}`;
   }
 
-  function retryConnect() {
-    wsrx.tryConnect().catch(() => {});
-    setConnecting(true);
-    setTimeout(async () => {
-      await wsrx.checkConnection();
-      setConnecting(false);
-    }, 1000);
+  async function retryConnect() {
+    await wsrx.check();
+    if (wsrx.state() !== WsrxState.Usable) {
+      setConnecting(true);
+      setTimeout(async () => {
+        await wsrx.connect();
+        setConnecting(false);
+      }, 1000);
+    }
   }
 
   createEffect(() => {
     if (accountStore.token) untrack(retryConnect);
   });
 
-  let cachedState = WsrxState.Disconnected;
-
-  createEffect(() => {
-    if (wsrx.connected() === WsrxState.Disconnected && cachedState !== WsrxState.Disconnected) {
-      addToast({
-        level: "warning",
-        description: t("instance.wsrxDisconnected")!,
-        duration: 10 * 1000,
-      });
-    }
-    cachedState = wsrx.connected();
-  });
-
-  const heartbeatTimer = setInterval(async () => {
-    // Pending or Connected
-    if (wsrx.connected()) {
-      const state = await wsrx.checkConnection();
-      if (state === WsrxState.Connected) {
-        wsrx.refreshTraffic();
-      }
-    }
-  }, 5 * 1000);
-  onCleanup(() => {
-    clearInterval(heartbeatTimer);
-  });
   return (
     <div class="flex flex-col space-y-2 max-w-96 w-[calc(100vw-1rem)]">
       <Card contentClass="p-2 flex flex-row space-x-2">
         <Button
           disabled={connecting()}
-          loading={connecting() || wsrx.connected() === WsrxState.Pending}
+          loading={connecting() || wsrx.state() === WsrxState.Pending}
           class="flex-1"
           justify="start"
           ghost
@@ -85,11 +62,11 @@ export function InstanceBoxContent() {
           size="sm"
           onClick={retryConnect}
         >
-          <Show when={!connecting() && wsrx.connected() !== WsrxState.Pending}>
+          <Show when={!connecting() && wsrx.state() !== WsrxState.Pending}>
             <span
               class={clsx(
                 "icon-[fluent--fluid-20-regular] w-5 h-5",
-                wsrx.connected() === WsrxState.Connected ? "text-success" : "text-warning"
+                wsrx.state() === WsrxState.Usable ? "text-success" : "text-warning"
               )}
             />
           </Show>
@@ -97,16 +74,16 @@ export function InstanceBoxContent() {
             class={
               connecting()
                 ? "text-base opacity-60"
-                : wsrx.connected() === WsrxState.Connected
+                : wsrx.state() === WsrxState.Usable
                   ? "text-success font-bold"
                   : "text-warning"
             }
           >
             {connecting()
               ? t("instance.connecting")
-              : wsrx.connected() === WsrxState.Connected
+              : wsrx.state() === WsrxState.Usable
                 ? t("instance.connected")
-                : wsrx.connected() === WsrxState.Pending
+                : wsrx.state() === WsrxState.Pending
                   ? t("instance.pending")
                   : t("instance.disconnected")}
           </span>
@@ -161,8 +138,7 @@ export function InstanceBoxContent() {
             >
               <span class="icon-[fluent--arrow-reset-20-regular] w-5 h-5" />
             </Button>
-            {/* NOTE: Just a placable button, when you click it, the input box will trigger `onBlur` to save it. */}
-            <Button size="sm" square title={t("form.save")} ghost>
+            <Button size="sm" square title={t("form.save")} ghost onClick={retryConnect}>
               <span class="icon-[fluent--checkmark-20-regular] w-5 h-5" />
             </Button>
           </div>
@@ -176,7 +152,7 @@ export function InstanceBoxContent() {
               title={t("instance.refreshWsrxTraffic")}
               onClick={() => {
                 setRefreshingTraffic(true);
-                wsrx.refreshTraffic().finally(() => setRefreshingTraffic(false));
+                wsrx.syncLocal().finally(() => setRefreshingTraffic(false));
               }}
               disabled={refreshingTraffic()}
             >
@@ -197,7 +173,7 @@ export function InstanceBoxContent() {
                 setOpeningAllTraffic(true);
                 wsrx
                   .openAllTraffic()
-                  .then(() => wsrx.refreshTraffic())
+                  .then(() => wsrx.syncLocal())
                   .finally(() => setOpeningAllTraffic(false));
               }}
               disabled={openingAllTraffic()}
@@ -215,8 +191,8 @@ export function InstanceBoxContent() {
               onClick={() => {
                 setDeletingOutdatedTraffic(true);
                 wsrx
-                  .deleteOutdatedTraffic()
-                  .then(() => wsrx.refreshTraffic())
+                  .deleteOutdatedLocal()
+                  .then(() => wsrx.syncLocal())
                   .finally(() => setDeletingOutdatedTraffic(false));
               }}
               disabled={deletingOutdatedTraffic()}
@@ -237,8 +213,8 @@ export function InstanceBoxContent() {
               onClick={() => {
                 setDeletingAllTraffic(true);
                 wsrx
-                  .deleteAllTraffic()
-                  .then(() => wsrx.refreshTraffic())
+                  .deleteAllLocal()
+                  .then(() => wsrx.syncLocal())
                   .finally(() => setDeletingAllTraffic(false));
               }}
               disabled={deletingAllTraffic()}

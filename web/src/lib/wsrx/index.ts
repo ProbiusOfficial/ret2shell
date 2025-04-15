@@ -1,55 +1,74 @@
 import { getGameSelfEnvs } from "@api/game";
-import type { Instance, Traffic } from "@models/instance";
+import type { Instance } from "@models/instance";
 import { gameStore } from "@storage/game";
+import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
-import ky, { HTTPError } from "ky";
+import { Wsrx, WsrxFeature, type WsrxInstance, type WsrxOptions, WsrxState } from "@xdsec/wsrx";
 import { DateTime } from "luxon";
-import { type Accessor, createSignal } from "solid-js";
+import { type Accessor, createEffect, createSignal } from "solid-js";
 
-export enum WsrxState {
-  Disconnected = 0,
-  Pending = 1,
-  Connected = 2,
-}
-
-export class Wsrx {
+export class WsrxWrapper {
   apiAddr: Accessor<string>;
   setApiAddr: (apiAddr: string) => void;
-  connected: Accessor<WsrxState>;
-  setConnected: (connected: WsrxState) => void;
+  state: Accessor<WsrxState>;
+  setState: (state: WsrxState) => void;
   instances: Accessor<Instance[]>;
   setInstances: (instances: Instance[]) => void;
-  traffic: Accessor<Traffic[]>;
-  setTraffic: (traffic: Traffic[]) => void;
+  traffics: Accessor<WsrxInstance[]>;
+  setTraffics: (traffic: WsrxInstance[]) => void;
+  private wsrx: Wsrx;
   constructor() {
-    [this.connected, this.setConnected] = createSignal(WsrxState.Disconnected);
+    [this.state, this.setState] = createSignal(WsrxState.Invalid);
     [this.instances, this.setInstances] = createSignal([]);
-    [this.traffic, this.setTraffic] = createSignal([]);
+    [this.traffics, this.setTraffics] = createSignal([]);
     [this.apiAddr, this.setApiAddr] = createSignal("http://127.0.0.1:3307");
-  }
-
-  async checkConnection() {
-    try {
-      const resp = await ky.get(`${this.apiAddr()}/connect`);
-      if (resp.status === 201) {
-        this.setConnected(WsrxState.Pending);
-      } else {
-        this.setConnected(WsrxState.Connected);
+    this.wsrx = new Wsrx({
+      api: this.apiAddr(),
+      name: platformStore.config.name || location.host,
+      features: [WsrxFeature.Basic],
+    });
+    this.wsrx.onStateChange((state) => {
+      if (state === WsrxState.Invalid && this.state() !== WsrxState.Invalid) {
+        addToast({
+          level: "warning",
+          description: t("instance.wsrxDisconnected")!,
+          duration: 10 * 1000,
+        });
       }
-    } catch {
-      this.setConnected(WsrxState.Disconnected);
-    }
-    return this.connected();
-  }
+      this.setState(state);
+    });
+    this.wsrx.onInstancesChange(() => {
+      this.setTraffics(this.wsrx.list());
+    });
 
-  async tryConnect() {
-    await ky.post(`${this.apiAddr()}/connect`, {
-      json: location.origin,
+    createEffect(() => {
+      if (this.apiAddr() && platformStore.config.name) {
+        this.wsrx.setOptions({
+          api: this.apiAddr(),
+          name: platformStore.config.name,
+        });
+      }
     });
   }
 
-  public async refreshInstances() {
+  setOptions(options: Partial<WsrxOptions>) {
+    this.wsrx.setOptions(options);
+  }
+
+  async check() {
+    try {
+      await this.wsrx.check();
+    } catch {}
+  }
+
+  async connect() {
+    try {
+      await this.wsrx.connect();
+    } catch {}
+  }
+
+  public async syncRemote() {
     if (gameStore.current) {
       try {
         const result = await getGameSelfEnvs(gameStore.current.id);
@@ -57,159 +76,100 @@ export class Wsrx {
           result.filter((instance) => instance.created_at.plus({ hours: instance.renew_count + 1 }) > DateTime.now())
         );
       } catch (err) {
-        if (err instanceof HTTPError) {
-          if (err.response.status !== 404) {
+        addToast({
+          level: "error",
+          description: `${t("traffic.fetchFailed")}: ${err}`,
+          duration: 5000,
+        });
+      }
+    }
+  }
+
+  public async syncLocal() {
+    if (this.wsrx.getState() === WsrxState.Usable) {
+      try {
+        await this.wsrx.sync();
+      } catch (err) {
+        addToast({
+          level: "error",
+          description: `${t("traffic.fetchFailed")}: ${err}`,
+          duration: 5000,
+        });
+      }
+    }
+  }
+
+  async deleteLocal(local: string) {
+    if (this.wsrx.getState() === WsrxState.Usable) {
+      try {
+        await this.wsrx.delete(local);
+      } catch (err) {
+        addToast({
+          level: "error",
+          description: `${t("traffic.deleteFailed")}: ${err}`,
+          duration: 5000,
+        });
+      }
+    }
+  }
+
+  public async deleteOutdatedLocal() {
+    if (this.wsrx.getState() === WsrxState.Usable) {
+      for (const { local, remote } of this.traffics()) {
+        if (!this.instances().some((instance) => remote.includes(instance.traffic))) {
+          await this.deleteLocal(local);
+        }
+      }
+    }
+  }
+
+  public async deleteAllLocal() {
+    if (this.wsrx.getState() === WsrxState.Usable) {
+      for (const { local } of this.traffics()) {
+        await this.deleteLocal(local);
+      }
+    }
+  }
+
+  public async addLocal(instance: Instance) {
+    if (this.wsrx.getState() === WsrxState.Usable) {
+      for (const port of instance.ports) {
+        const remote = getWsrxLink(instance.traffic, port);
+        if (!this.traffics().some((t) => t.remote === remote)) {
+          try {
+            await this.wsrx.add({
+              label: `${instance.name} (${port})`,
+              local: "127.0.0.1:0",
+              remote,
+            });
+          } catch (err) {
             addToast({
               level: "error",
-              description: `${t("instance.fetchFailed")}: ${await err.response.text()}`,
+              description: `${t("traffic.openFailed")}: ${err}`,
               duration: 5000,
             });
           }
         }
       }
-    }
-  }
-
-  public async refreshTraffic() {
-    if (this.connected() === WsrxState.Connected) {
-      try {
-        const resp = await ky.get(`${this.apiAddr()}/pool`).json<{
-          [key: string]: {
-            from: string;
-            to: string;
-          };
-        }>();
-        const traffic: Traffic[] = [];
-        for (const [_, { from, to }] of Object.entries(resp)) {
-          traffic.push({
-            remote: to,
-            local: from,
-          });
-        }
-        this.setTraffic(traffic);
-      } catch (err) {
-        if (err instanceof HTTPError) {
-          addToast({
-            level: "error",
-            description: `${t("traffic.fetchFailed")}: ${await err.response.text()}`,
-            duration: 5000,
-          });
-        } else {
-          addToast({
-            level: "error",
-            description: `${t("traffic.fetchFailed")}: ${err}`,
-            duration: 5000,
-          });
-        }
-      }
-    }
-  }
-
-  async deleteTraffic(local: string) {
-    if (this.connected() === WsrxState.Connected) {
-      try {
-        await ky.delete(`${this.apiAddr()}/pool`, {
-          json: {
-            key: local,
-          },
-        });
-      } catch (err) {
-        if (err instanceof HTTPError) {
-          addToast({
-            level: "error",
-            description: `${t("traffic.deleteFailed")}: ${await err.response.text()}`,
-            duration: 5000,
-          });
-        } else {
-          addToast({
-            level: "error",
-            description: `${t("traffic.deleteFailed")}: ${err}`,
-            duration: 5000,
-          });
-        }
-      }
-    }
-  }
-
-  public async deleteOutdatedTraffic() {
-    if (this.connected() === WsrxState.Connected) {
-      const prefix = location.protocol === "https:" ? "wss" : "ws";
-      const host = location.host;
-      for (const { local, remote } of this.traffic()) {
-        if (
-          remote.startsWith(`${prefix}://${host}`) &&
-          !this.instances().some((instance) => remote.includes(instance.traffic))
-        ) {
-          await this.deleteTraffic(local);
-        }
-      }
-    }
-  }
-
-  public async deleteAllTraffic() {
-    if (this.connected() === WsrxState.Connected) {
-      const prefix = location.protocol === "https:" ? "wss" : "ws";
-      const host = location.host;
-      for (const { local, remote } of this.traffic()) {
-        if (remote.startsWith(`${prefix}://${host}`)) await this.deleteTraffic(local);
-      }
-    }
-  }
-
-  public async openTraffic(remote: string) {
-    if (this.connected() === WsrxState.Connected) {
-      try {
-        await ky.post(`${this.apiAddr()}/pool`, {
-          json: {
-            to: remote,
-            from: "127.0.0.1:0",
-          },
-        });
-      } catch (err) {
-        if (err instanceof HTTPError) {
-          addToast({
-            level: "error",
-            description: `${t("traffic.openFailed")}: ${await err.response.text()}`,
-            duration: 5000,
-          });
-        } else {
-          addToast({
-            level: "error",
-            description: `${t("traffic.openFailed")}: ${err}`,
-            duration: 5000,
-          });
-        }
-      }
-    }
-  }
-
-  public async openInstanceTraffic(instance: Instance) {
-    if (this.connected() === WsrxState.Connected) {
-      const prefix = location.protocol === "https:" ? "wss" : "ws";
-      const host = location.host;
-      for (const port of instance.ports) {
-        const remote = `${prefix}://${host}/api/traffic/${instance.traffic}?port=${port}`;
-        if (!this.traffic().some((t) => t.remote === remote)) await this.openTraffic(remote);
-      }
-      this.refreshTraffic();
+      this.syncLocal();
     }
   }
 
   public async openAllTraffic() {
-    if (this.connected() === WsrxState.Connected) {
-      await this.refreshTraffic();
+    if (this.wsrx.getState() === WsrxState.Usable) {
+      await this.syncLocal();
       for (const instance of this.instances()) {
-        await this.openInstanceTraffic(instance);
+        await this.addLocal(instance);
       }
     }
   }
 
   public getTrafficLocal(instance: Instance, port: number) {
-    return this.traffic().filter((t) => t.remote === getWsrxLink(instance.traffic, port));
+    return this.traffics().filter((t) => t.remote === getWsrxLink(instance.traffic, port));
   }
 }
 
-export const wsrx = new Wsrx();
+export const wsrx = new WsrxWrapper();
 
 export function getWsrxLink(wsrx: string, port: number) {
   const prefix = location.protocol === "https:" ? "wss" : "ws";

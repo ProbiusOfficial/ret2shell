@@ -2,7 +2,7 @@ import { api_root, handleHttpError } from "@api";
 import { getCalmdownStatus } from "@api/cluster";
 import { delayGameSelfEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
 import Spin from "@assets/animates/spin";
-import { WsrxState, getWsrxLink, wsrx } from "@lib/wsrx";
+import { getWsrxLink, wsrx } from "@lib/wsrx";
 import { accountStore } from "@storage/account";
 import { challengeStore, refreshStatus } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
@@ -14,6 +14,7 @@ import Divider from "@widgets/divider";
 import Tag from "@widgets/tag";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
+import { WsrxState } from "@xdsec/wsrx";
 import clsx from "clsx";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
@@ -61,10 +62,10 @@ export default function (props: { inGame?: boolean }) {
 
   let instanceStateIter = 0;
   async function maintainInstances() {
-    await wsrx.refreshInstances();
-    await wsrx.deleteOutdatedTraffic();
+    await wsrx.syncRemote();
+    await wsrx.deleteOutdatedLocal();
     await wsrx.openAllTraffic();
-    await wsrx.refreshTraffic();
+    await wsrx.syncLocal();
   }
   function maintainInstancesWorker() {
     if (instance()?.state === "Pending" || instanceStateIter === 0) {
@@ -434,14 +435,14 @@ export default function (props: { inGame?: boolean }) {
                           </Tag>
                         </div>
                         <span class="flex-1" />
-                        <Show when={wsrx.connected() === WsrxState.Connected}>
+                        <Show when={wsrx.state() === WsrxState.Usable}>
                           <For each={wsrx.getTrafficLocal(instance()!, image.port!)}>
                             {(local) => (
                               <ClipboardBtn
                                 size="sm"
                                 title={t("instance.copyLocalAddr")}
                                 value={local.local}
-                                label={local.local}
+                                label={`${local.local} +${local.latency}ms`}
                               />
                             )}
                           </For>

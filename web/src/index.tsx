@@ -19,27 +19,6 @@ function checkEdition() {
       localStorage.getItem("account") !== null ||
       localStorage.getItem("platform") !== null);
   if (compact_edition && needReload) {
-    // const systemPrefersLocale = (window.navigator.language || window.navigator.languages[0])
-    //   .replace("-", "_")
-    //   .toLowerCase();
-    // switch (systemPrefersLocale) {
-    //   case "zh_cn":
-    //     alert("回归终端进行了一项非兼容更新，将重新加载此页面以应用更新。请注意您可能需要重新登录。");
-    //     break;
-    //   case "zh_tw":
-    //     alert("回歸終端進行了一項非相容更新，將重新載入此頁面以套用更新。請注意您可能需要重新登入。");
-    //     break;
-    //   case "ja_jp":
-    //     alert(
-    //       "Ret2Shell がメジャーアップデートを行いました、これを適用するためにこのページを再読み込みします。再ログインが必要な場合があります。"
-    //     );
-    //     break;
-    //   default:
-    //     alert(
-    //       "Ret2Shell has done a major update, we will reload this page to apply it. Please note that you may need re-login."
-    //     );
-    //     break;
-    // }
     localStorage.clear();
     localStorage.removeItem("theme");
     localStorage.setItem("edition", compact_edition);
