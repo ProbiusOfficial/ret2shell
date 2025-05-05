@@ -123,12 +123,12 @@ export default function (_props: {
       await updateChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, script());
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
       refreshScript();
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
   }
 
@@ -137,33 +137,33 @@ export default function (_props: {
       <header class="min-h-12 border-b border-b-layer-content/10 flex flex-row flex-wrap justify-end space-x-2 items-center gap-y-2 py-2">
         <span class="flex flex-row space-x-2 items-center overflow-hidden">
           <span class="icon-[fluent--code-20-regular] w-5 h-5 shrink-0" />
-          <span class="font-bold inline-block whitespace-nowrap">{t("game.challenge.checkerScript")}</span>
+          <span class="font-bold inline-block whitespace-nowrap">{t("challenge.checker.script")}</span>
           <span class="opacity-60 truncate">checker/main.rx</span>
         </span>
         <span class="flex-1" />
         <span class="flex flex-row justify-end items-center flex-wrap gap-y-2 gap-x-2">
           <Select
             class="w-60 min-w-10"
-            placeholder={t("game.challenge.selectPresetScripts")}
+            placeholder={t("challenge.checker.preset.placeholder")}
             size="sm"
             items={[
               {
-                label: t("game.challenge.simpleCheckerScriptPreset")!,
+                label: t("challenge.checker.preset.simple.label")!,
                 value: "simple",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
               {
-                label: t("game.challenge.dynamicLeetCheckerScriptPreset")!,
+                label: t("challenge.checker.preset.leet.label")!,
                 value: "dynamic-leet",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
               {
-                label: t("game.challenge.dynamicUuidCheckerScriptPreset")!,
+                label: t("challenge.checker.preset.uuid.label")!,
                 value: "dynamic-uuid",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
               {
-                label: t("game.challenge.mappedCheckerScriptPreset")!,
+                label: t("challenge.checker.preset.mapped.label")!,
                 value: "mapped",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
@@ -177,7 +177,9 @@ export default function (_props: {
               <span class="icon-[fluent--arrow-reset-20-regular] w-5 h-5" />
             </Button>
             <Button level="info" size="sm" onClick={handleUpdateScript}>
-              {t("form.saveAndCompile")}
+              {t("general.actions.save.title")}
+              <span>&</span>
+              {t("general.actions.compile.title")}
             </Button>
           </span>
         </span>

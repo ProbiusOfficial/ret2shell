@@ -83,8 +83,8 @@ export function mergeChats(
       id: 0,
       user_id: 0,
       user_name: "Ciallo～(∠・ω< )⌒☆",
-      avatar: platformAvatar,
-      content: `${t("game.challenge.chatSolvedMessage")} ٩(๑•ω•๑)۶`,
+      avatar: undefined,
+      content: `${t("challenge.hammer.solved")} ٩(๑•ω•๑)۶`,
       created_at: solvedAt,
       is_admin: true,
       challenge_id: challengeId,
@@ -149,7 +149,7 @@ export default function (props: {
         setChat("");
         refreshChats();
       } catch (err) {
-        handleHttpError(err as Error, t("game.challenge.sendChatError")!);
+        handleHttpError(err as Error, t("challenge.hammer.errors.send.title")!);
       } finally {
         setSending(false);
       }
@@ -167,10 +167,11 @@ export default function (props: {
         const [changed, r] = mergeChats(challengeStore.current.id, gameStore.team?.id ?? 0, chats(), result, s);
         setChats([...r]);
         if (changed) {
+          // @ts-expect-error chatBottomEl is bound by SolidJS after rendered
           setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 700);
         }
       } catch (err) {
-        handleHttpError(err as Error, t("game.challenge.fetchSolveError")!);
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title")!);
       }
       setLoading(false);
     }
@@ -192,7 +193,7 @@ export default function (props: {
         const s = resp.find((x) => x.challenge_id === challengeStore.current?.id);
         return s?.created_at ?? null;
       } catch (err) {
-        handleHttpError(err as Error, t("game.challenge.fetchSolveError")!);
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetchSolve.title")!);
       }
       return null;
     }
@@ -210,6 +211,7 @@ export default function (props: {
   const [editorExpanded, setEditorExpanded] = createSignal(false);
 
   onMount(() => {
+    // @ts-expect-error chatBottomEl is bound by SolidJS after rendered
     setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 300);
   });
 
@@ -226,7 +228,7 @@ export default function (props: {
               link="/magic/sakana"
               nameLabel="Ciallo～(∠・ω< )⌒☆"
               labelClasses="text-primary"
-              content={t("game.admin.hammer.shouldGoto")!}
+              content={t("challenge.hammer.adminGoto")!}
               sendAt={gameStore.current!.start_at}
               isChecked
             />
@@ -239,7 +241,7 @@ export default function (props: {
             link="/magic/sakana"
             nameLabel="Ciallo～(∠・ω< )⌒☆"
             labelClasses="text-primary"
-            content={t("game.challenge.hammerTips")!}
+            content={t("challenge.hammer.tips.0")!}
             sendAt={gameStore.current!.start_at}
             isChecked
           />
@@ -249,7 +251,7 @@ export default function (props: {
             link="/magic/sakana"
             nameLabel="Ciallo～(∠・ω< )⌒☆"
             labelClasses="text-primary"
-            content={`${t("game.challenge.hammerTips2")}\n\n${t("game.challenge.hammerTips3")} [bpa.st](https://bpa.st), [0x0.st](https://0x0.st)`}
+            content={`${t("challenge.hammer.tips.1")}\n\n${t("challenge.hammer.tips.2")} [GitHub Gists](https://gist.github.com), [bpa.st](https://bpa.st), [0x0.st](https://0x0.st)`}
             sendAt={gameStore.current!.start_at}
             isChecked
           />
@@ -263,8 +265,8 @@ export default function (props: {
                 chat.id === 0
                   ? ">_<"
                   : chat.is_admin
-                    ? t("game.challenge.chatAdminRole")!
-                    : t("game.challenge.chatPlayerRole")!
+                    ? t("challenge.hammer.role.admin")!
+                    : t("challenge.hammer.role.player")!
               }
               link={chat.id === 0 ? "Ciallo～(∠・ω< )⌒☆" : `/users/${chat.user_id}`}
               nameLabel={chat.user_name || "Unknown"}
@@ -283,8 +285,8 @@ export default function (props: {
             <span class={clsx("w-2 h-2 rounded-full", availableMsg() <= 0 ? "bg-error" : "bg-success")} />
             <span class="opacity-60">
               {availableMsg() <= 0
-                ? t("game.challenge.hammerInputAlreadySend")
-                : t("game.challenge.hammerLastMessage", {
+                ? t("challenge.hammer.errors.maxMessageLimit.title")
+                : t("challenge.hammer.freeMessages", {
                     last: availableMsg(),
                   })}
             </span>
@@ -302,7 +304,7 @@ export default function (props: {
             rel="noreferrer"
           >
             <span class="icon-[fluent--question-circle-20-regular] w-5 h-5" />
-            <span class="hidden lg:inline-block">{t("game.challenge.hammerHowto")}</span>
+            <span class="hidden lg:inline-block">{t("challenge.hammer.markdownHoto")}</span>
           </Link>
           <Button
             size="sm"
@@ -324,13 +326,13 @@ export default function (props: {
             loading={sending()}
           >
             <span class="icon-[fluent--send-20-regular] w-5 h-5" />
-            <span>{t("game.challenge.hammerSend")}</span>
+            <span>{t("general.actions.send.title")}</span>
           </Button>
         </div>
         <EditorBare
           class={clsx(editorExpanded() ? "h-64" : "h-16")}
           value={chat()}
-          placeholder={t("game.challenge.hammerInput")}
+          placeholder={t("challenge.hammer.markdownSupport")}
           lang="markdown"
           onValueChanged={(v) => setChat(v)}
           commands={[

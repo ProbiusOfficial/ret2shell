@@ -3,7 +3,7 @@ import { t } from "@storage/theme";
 import type { ButtonProps } from "@widgets/button";
 import Button from "@widgets/button";
 import clsx from "clsx";
-import type { DownloadProgress } from "ky";
+import type { Progress as DownloadProgress } from "ky";
 import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
 import { downloadFile } from "../api/file";
 import { humanFileSize } from "../utils/size";
@@ -37,7 +37,7 @@ export default function DownloadButton(
       a.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setDownloading(false);
     setDownloadComplete(true);

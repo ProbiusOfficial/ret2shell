@@ -6,7 +6,6 @@ import { getWsrxLink, wsrx } from "@lib/wsrx";
 import { accountStore } from "@storage/account";
 import { challengeStore, refreshStatus } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
 import ClipboardBtn from "@widgets/clipboard-btn";
@@ -100,7 +99,7 @@ export default function (props: { inGame?: boolean }) {
         maintainInstances();
       }, 500);
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.startEnvFailed")!);
+      handleHttpError(err as Error, t("challenge.instance.errors.start.title")!);
     }
     setStarting(false);
   }
@@ -115,7 +114,7 @@ export default function (props: { inGame?: boolean }) {
           maintainInstances();
         }, 500);
       } catch (err) {
-        handleHttpError(err as Error, t("game.challenge.delayEnvFailed")!);
+        handleHttpError(err as Error, t("challenge.instance.errors.delay.title")!);
       }
       setDelaying(false);
     }, 500);
@@ -126,17 +125,12 @@ export default function (props: { inGame?: boolean }) {
     setTimeout(async () => {
       try {
         await stopGameSelfEnv(challengeStore.current!.game_id);
-        addToast({
-          level: "success",
-          description: t("game.challenge.stopEnvSuccess")!,
-          duration: 5000,
-        });
         setTimeout(() => {
           maintainInstances();
           refreshCalmdown();
         }, 500);
       } catch (err) {
-        handleHttpError(err as Error, t("game.challenge.stopEnvFailed")!);
+        handleHttpError(err as Error, t("challenge.instance.errors.stop.title")!);
       }
       setStopping(false);
     }, 500);
@@ -201,11 +195,11 @@ export default function (props: { inGame?: boolean }) {
                 <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 py-2 gap-y-2">
                   <span class="flex flex-row space-x-2 items-center overflow-hidden">
                     <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-info" />
-                    <span class="text-info flex-1 truncate text-start">{t("game.challenge.notReleased")}</span>
+                    <span class="text-info flex-1 truncate text-start">{t("challenge.status.unreleased.message")}</span>
                   </span>
                   <span class="flex-1" />
                   <span class="text-end">
-                    <span class="inline-block">{t("game.challenge.releaseTips")}:</span>
+                    <span class="inline-block">{t("challenge.status.unreleased.countdown")}:</span>
                     <Timer end={challengeStore.current!.release_at!} hasHours />
                   </span>
                 </section>
@@ -214,7 +208,9 @@ export default function (props: { inGame?: boolean }) {
                 <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 py-2 gap-y-2">
                   <span class="flex flex-row space-x-2 items-center overflow-hidden">
                     <span class="icon-[fluent--archive-20-regular] w-5 h-5 text-warning" />
-                    <span class="text-warning flex-1 truncate text-start">{t("game.challenge.archivedTips")}</span>
+                    <span class="text-warning flex-1 truncate text-start">
+                      {t("challenge.status.archived.message")}
+                    </span>
                   </span>
                   <span class="flex-1" />
                   <span class="text-warning text-end">
@@ -232,17 +228,12 @@ export default function (props: { inGame?: boolean }) {
                 <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 py-2 gap-y-2">
                   <span class="flex flex-row space-x-2 items-center overflow-hidden">
                     <span class="icon-[fluent--clock-20-regular] w-5 h-5 text-info" />
-                    <span class="text-info flex-1 truncate text-start">{t("game.challenge.periodTips")}</span>
+                    <span class="text-info flex-1 truncate text-start">{t("challenge.status.inPeriod.message")}</span>
                   </span>
                   <span class="flex-1" />
-                  <span class="text-info text-end">
-                    <span class="inline-block">
-                      {challengeStore.current?.release_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
-                    </span>
-                    <span>&nbsp;-&nbsp;</span>
-                    <span class="inline-block">
-                      {challengeStore.current?.archive_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
-                    </span>
+                  <span class="text-end">
+                    <span class="inline-block">{t("challenge.status.inPeriod.countdown")}:</span>
+                    <Timer end={challengeStore.current!.archive_at!} hasHours />
                   </span>
                 </section>
               </Match>
@@ -251,7 +242,7 @@ export default function (props: { inGame?: boolean }) {
               <section class="inline-flex flex-row items-center flex-wrap min-h-12 border-b border-b-layer-content/15">
                 <h3 class="font-bold flex space-x-2 items-center">
                   <span class="icon-[fluent--folder-zip-20-regular] w-5 h-5" />
-                  <span>{t("game.challenge.files")}:</span>
+                  <span>{t("challenge.file.title")}:</span>
                 </h3>
                 <div class="w-4" />
                 <For each={challengeStore.files}>
@@ -280,24 +271,24 @@ export default function (props: { inGame?: boolean }) {
                       )}
                     />
                     <Switch
-                      fallback={<span class="opacity-80 flex-1 truncate">{t("game.challenge.envNotStart")}</span>}
+                      fallback={
+                        <span class="opacity-80 flex-1 truncate">{t("challenge.instance.status.idle.title")}</span>
+                      }
                     >
                       <Match when={instance()?.state === "Running"}>
-                        <span class="flex-1 truncate">
-                          {t("game.challenge.envIsRunning")}: {instance()?.traffic}
-                        </span>
+                        <span class="flex-1 truncate">{t("challenge.instance.status.running.title")}</span>
                       </Match>
                       <Match when={instance()?.state === "Pending"}>
                         <Spin width={20} height={20} />
-                        <span class="flex-1 truncate">{t("game.challenge.envIsPending")}</span>
+                        <span class="flex-1 truncate">{t("challenge.instance.status.pending.title")}</span>
                       </Match>
                       <Match when={instance()}>
                         <Spin width={20} height={20} />
-                        <span class="flex-1 truncate text-error">{t("game.challenge.envHasError")}</span>
+                        <span class="flex-1 truncate text-error">{t("challenge.instance.status.failed.title")}</span>
                       </Match>
                       <Match when={userExplicitInstance()}>
                         <span class="text-warning flex-1 truncate">
-                          {t("game.challenge.otherChallengeEnvIsRunning")}: {userExplicitInstance()?.challenge_name}
+                          {t("challenge.instance.status.inUse.title")}: {userExplicitInstance()?.challenge_name}
                         </span>
                       </Match>
                     </Switch>
@@ -323,12 +314,12 @@ export default function (props: { inGame?: boolean }) {
                           fallback={
                             <>
                               <span class="icon-[fluent--play-20-regular] w-5 h-5 text-success" />
-                              <span>{t("game.challenge.startEnv")}</span>
+                              <span>{t("challenge.instance.actions.start.title")}</span>
                             </>
                           }
                         >
                           <span class="icon-[fluent--history-20-regular] w-5 h-5" />
-                          <span class="opacity-60">{t("game.challenge.calmDownBeforeStartEnv")}</span>
+                          <span class="opacity-60">{t("challenge.instance.errors.calmdown.title")}</span>
                           <Timer
                             end={calmdownStart()!.plus({ minutes: 1 })}
                             onTimeout={() => {
@@ -368,14 +359,14 @@ export default function (props: { inGame?: boolean }) {
                         fallback={
                           <Button ghost size="sm">
                             <span class="icon-[fluent--lock-closed-20-regular] w-5 h-5 text-error" />
-                            <span>{t("game.challenge.managedByMate")}</span>
+                            <span>{t("challenge.instance.errors.managedByMate.title")}</span>
                           </Button>
                         }
                       >
                         <Button
                           ghost
                           size="sm"
-                          title={t("game.challenge.delayEnv")}
+                          title={t("challenge.instance.actions.delay.title")}
                           square
                           onClick={handleDelaySelfEnv}
                           loading={delaying()}
@@ -388,7 +379,7 @@ export default function (props: { inGame?: boolean }) {
                         <Button
                           ghost
                           size="sm"
-                          title={t("game.challenge.stopEnv")}
+                          title={t("challenge.instance.actions.stop.title")}
                           square
                           onClick={handleStopSelfEnv}
                           loading={stopping()}
@@ -405,7 +396,7 @@ export default function (props: { inGame?: boolean }) {
                         ghost
                         size="sm"
                         square
-                        title={t("game.challenge.stopEnv")}
+                        title={t("challenge.instance.actions.stop.title")}
                         onClick={handleStopSelfEnv}
                         loading={stopping()}
                         disabled={stopping()}
@@ -447,7 +438,7 @@ export default function (props: { inGame?: boolean }) {
                                 <ClipboardBtn
                                   size="sm"
                                   class="!rounded-r-none"
-                                  title={t("instance.copyLocalAddr")}
+                                  title={t("wsrx.actions.copyLocal.title")}
                                   value={local.local}
                                   label={local.local}
                                 />
@@ -477,7 +468,7 @@ export default function (props: { inGame?: boolean }) {
                               size="sm"
                               icon="icon-[fluent--copy-add-20-regular]"
                               iconCopied="icon-[fluent--checkmark-circle-20-regular]"
-                              title={t("instance.copyWsrxAddr")}
+                              title={t("wsrx.actions.copy.title")}
                               value={getWsrxLink(instance()!.traffic, image.port!)}
                               label="WSRX"
                             />
@@ -485,7 +476,7 @@ export default function (props: { inGame?: boolean }) {
                         >
                           <ClipboardBtn
                             size="sm"
-                            title={t("instance.copyRemoteAddr")}
+                            title={t("challenge.instance.actions.copy.title")}
                             value={instance()?.exposed_ports?.find((v) => v.name === image.name)?.address}
                             label={instance()?.exposed_ports?.find((v) => v.name === image.name)?.address}
                           />

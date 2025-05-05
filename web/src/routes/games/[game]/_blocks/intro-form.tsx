@@ -51,13 +51,13 @@ export default function IntroForm(props: {
         weight: 0,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">
-      <Field name="content" validate={[required(t("game.introRequired")!)]}>
+      <Field name="content" validate={[required(t("game.form.introduction.required")!)]}>
         {(field) => (
           <Editor
             form={form}
@@ -65,7 +65,7 @@ export default function IntroForm(props: {
             class="flex-1"
             lang="markdown"
             placeholder="MARKDOWN"
-            title={t("game.introPlaceholder")}
+            title={t("game.form.introduction.label")}
             name="content"
             value={field.value}
             error={field.error}
@@ -73,7 +73,7 @@ export default function IntroForm(props: {
         )}
       </Field>
       <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
-        {t("form.save")}
+        {t("general.actions.save.title")}
       </Button>
     </Form>
   );

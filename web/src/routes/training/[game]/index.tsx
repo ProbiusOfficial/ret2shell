@@ -1,29 +1,28 @@
-import Challenge from "@blocks/challenge";
-import type { Challenge as ChallengeModel } from "@models/challenge";
-import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
-import { gameStore, setGameStore } from "@storage/game";
-import { fullTheme, t } from "@storage/theme";
-import LoadingTips from "@widgets/loading-tips";
-import { Match, Switch, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
-import Intro from "../_blocks/intro";
-
 import { handleHttpError } from "@api";
 import { createChallenge, getChallenge, updateGame } from "@api/game";
+import Challenge from "@blocks/challenge";
 import Form, { type ChallengeForm } from "@blocks/challenge/form";
 import Tabs from "@blocks/challenge/tabs";
 import AdministratorsManagement from "@blocks/game/administrators";
 import GameEdit, { type GameForm } from "@blocks/game/form";
 import { SubmissionList } from "@blocks/game/lists";
 import GameStatistics from "@blocks/game/statistics";
+import type { Challenge as ChallengeModel } from "@models/challenge";
 import { Permission } from "@models/user";
+import { useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallengeStore } from "@storage/challenge";
+import { gameStore, setGameStore } from "@storage/game";
 import { Title } from "@storage/header";
+import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
+import LoadingTips from "@widgets/loading-tips";
 import Tag from "@widgets/tag";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
+import { Match, Switch, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
+import Intro from "../_blocks/intro";
 
 export default function () {
   const navigate = useNavigate();
@@ -35,7 +34,7 @@ export default function () {
   if (!accountStore.permissions.includes(Permission.Verified)) {
     addToast({
       level: "warning",
-      description: t("account.settings.verify.notVerified")!,
+      description: t("account.status.unverified.message")!,
       duration: 5000,
     });
     navigate("/account/settings/info");
@@ -77,7 +76,7 @@ export default function () {
       });
       refreshChallenges();
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.createFailed")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
     }
     setCreating(false);
   }
@@ -94,7 +93,7 @@ export default function () {
           setChallengeStore({ current: resp });
           refreshChallengeAssets();
         } catch (err) {
-          handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
+          handleHttpError(err as Error, t("challenge.errors.fetch.title")!);
           setSearchParams({ challenge: null, create: null });
         }
         setLoadingChallenge(false);
@@ -104,7 +103,12 @@ export default function () {
     }
   });
   onCleanup(() => {
-    setGameStore({ current: null, preload: null, team: null, showTeamCover: false });
+    setGameStore({
+      current: null,
+      preload: null,
+      team: null,
+      showTeamCover: false,
+    });
     setChallengeStore({ current: null, challenges: [], solves: [] });
   });
 
@@ -121,19 +125,19 @@ export default function () {
         archive_at: gameStore.current?.archive_at ?? DateTime.fromFormat("2077-01-01 10:00", "yyyy-MM-dd HH:mm"),
         register_at: gameStore.current?.register_at ?? DateTime.fromFormat("2002-05-05 10:00", "yyyy-MM-dd HH:mm"),
         award_rates: [
-          result.award_rate_1 ?? result.award_rate ?? 0,
-          result.award_rate_2 ?? ((result.award_rate ?? 0) * 2) / 3,
-          result.award_rate_3 ?? (result.award_rate ?? 0) / 3,
+          result.first_blood_award ?? result.award_rate ?? 0,
+          result.second_blood_award ?? ((result.award_rate ?? 0) * 2) / 3,
+          result.third_blood_award ?? (result.award_rate ?? 0) / 3,
         ],
       });
       setGameStore({ current: resp });
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("form.saveFailed")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
     }
     setEditing(false);
   }
@@ -204,7 +208,7 @@ export default function () {
                   <div class="w-full flex flex-col p-3 lg:p-6">
                     <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2 w-full">
                       <span class="icon-[fluent--flash-flow-20-regular] w-5 h-5" />
-                      <span class="flex-1 text-start">{t("game.admin.monitor.title")}</span>
+                      <span class="flex-1 text-start">{t("game.monitor.title")}</span>
                       <Tag level="success">
                         <span>{t("game.monitor.autoRefreshEnabled")}</span>
                       </Tag>

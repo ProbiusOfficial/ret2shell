@@ -26,7 +26,7 @@ export default function () {
         validator: resp.captcha.validator,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("errors.500")!);
+      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title")!);
     }
   });
   async function onSubmit(result: CaptchaConfig) {
@@ -34,7 +34,7 @@ export default function () {
     if (!config()) {
       addToast({
         level: "error",
-        description: t("admin.platform.fetchNotReady")!,
+        description: t("platform.errors.fetchConfig.notReady")!,
         duration: 5000,
       });
       return;
@@ -52,22 +52,22 @@ export default function () {
       setConfig(mergedConfig);
       addToast({
         level: "success",
-        description: t("admin.platform.updateSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("admin.platform.updateFailed")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
     }
     setLoading(false);
   }
   return (
     <>
-      <Title page={t("admin.captcha.title")} route="/admin/captcha" />
+      <Title page={t("captcha.title")} route="/admin/captcha" />
       <div class="flex-1 flex flex-col items-center p-3 lg:p-6">
         <Form onSubmit={onSubmit} class="w-full max-w-5xl flex flex-col space-y-2">
           <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
             <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
-            <span>{t("admin.captcha.title")}</span>
+            <span>{t("captcha.title")}</span>
           </h3>
           <div class="flex flex-col space-y-2 lg:flex-row lg:space-y-0 lg:space-x-2 lg:items-end">
             <Field name="enabled" type="boolean">
@@ -77,30 +77,30 @@ export default function () {
                   inputProps={props}
                   checked={field.value}
                   error={field.error}
-                  title={t("captcha.enabled")}
+                  title={t("captcha.form.enabled.label")}
                 >
-                  <span class="flex-1 text-start">{t("captcha.enabled")}</span>
+                  <span class="flex-1 text-start">{t("captcha.form.enabled.label")}</span>
                 </Checkbox>
               )}
             </Field>
-            <Field name="validator" validate={[required(t("admin.captcha.validatorRequired")!)]}>
+            <Field name="validator" validate={[required(t("captcha.form.validator.required")!)]}>
               {(field, props) => (
                 <Select
                   name={field.name}
-                  label={t("admin.captcha.validator")!}
+                  label={t("captcha.form.validator.label")!}
                   disabled={getValue(form, "enabled") === false}
                   class="flex-1"
                   error={field.error}
-                  placeholder={t("admin.captcha.select")}
+                  placeholder={t("captcha.form.validator.placeholder")!}
                   items={[
                     {
                       value: "pow",
-                      label: t("admin.captcha.pow")!,
+                      label: t("captcha.form.validator.type.pow")!,
                       icon: "icon-[fluent--code-20-regular]",
                     },
                     {
                       value: "image",
-                      label: t("admin.captcha.image")!,
+                      label: t("captcha.form.validator.type.image")!,
                       icon: "icon-[fluent--image-20-regular]",
                     },
                   ]}
@@ -115,7 +115,7 @@ export default function () {
               <Slider
                 disabled={getValue(form, "enabled") === false}
                 class="flex-1"
-                label={t("admin.captcha.difficulty")!}
+                label={t("captcha.form.difficulty.label")!}
                 max={10}
                 min={1}
                 step={1}
@@ -129,7 +129,7 @@ export default function () {
             )}
           </Field>
           <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={!config() || loading()}>
-            {t("form.save")}
+            {t("general.actions.save.title")}
           </Button>
         </Form>
       </div>

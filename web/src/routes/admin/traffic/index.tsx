@@ -38,7 +38,7 @@ export default function Traffic() {
       const resp = await getPlatformConfig();
       setConfig(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("errors.500")!);
+      handleHttpError(err as Error, t("platform.errors.fetchConfig.title")!);
     }
   });
   const [preset, setPreset] = createSignal(null as PresetTraffic | null);
@@ -73,11 +73,11 @@ export default function Traffic() {
       }
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setSaving(false);
   }
@@ -90,11 +90,11 @@ export default function Traffic() {
       setScript("");
       addToast({
         level: "success",
-        description: t("form.deleteSuccess")!,
+        description: t("general.actions.delete.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.deleteFailed")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
     }
     setSaving(false);
   }
@@ -105,11 +105,11 @@ export default function Traffic() {
       await updateDefaultNodeSelector(nodeSelector());
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setSaving(false);
   }
@@ -120,28 +120,28 @@ export default function Traffic() {
       await deleteDefaultNodeSelector();
       addToast({
         level: "success",
-        description: t("form.deleteSuccess")!,
+        description: t("general.actions.delete.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.deleteFailed")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
     }
     setSaving(false);
   }
   return (
     <>
-      <Title page={t("admin.traffic.title")} route="/admin/traffic" />
+      <Title page={t("traffic.title")} route="/admin/traffic" />
       <div class="flex-1 flex flex-col items-center p-3 lg:p-6 relative">
         <div class="flex-1 flex flex-col w-full">
           <h2 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
             <span class="icon-[fluent--cloud-flow-20-regular] w-5 h-5" />
-            <span class="flex-1 text-start">{t("game.admin.traffic.nodeSelector")}</span>
+            <span class="flex-1 text-start">{t("traffic.nodeSelector")}</span>
           </h2>
           <div class="flex flex-row space-x-2 py-2 items-center">
             <span class="text-primary">ret.sh.cn/workload = </span>
             <Input size="sm" class="flex-1" value={nodeSelector()} onInput={(e) => setNodeSelector(e.target.value)} />
             <Button size="sm" level="primary" onClick={handleUpdateNodeSelector} loading={saving()}>
-              {t("form.save")}
+              {t("general.actions.save.title")}
             </Button>
             <Show when={config()?.cluster.node_selector}>
               <Popover
@@ -154,10 +154,10 @@ export default function Traffic() {
                 <Card contentClass="p-2 flex flex-col space-y-2 max-w-96">
                   <span class="inline-block space-x-2">
                     <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
-                    <span>{t("game.admin.traffic.deleteTips")}</span>
+                    <span>{t("general.actions.delete.message")}</span>
                   </span>
                   <Button level="primary" size="sm" class="self-end" onClick={handleDeleteNodeSelector}>
-                    {t("platform.accept")}
+                    {t("general.actions.yes.title")}
                   </Button>
                 </Card>
               </Popover>
@@ -167,21 +167,21 @@ export default function Traffic() {
           <h2 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
             <span class="icon-[fluent--cloud-flow-20-regular] w-5 h-5" />
             <span class="flex-1 flex items-center justify-start space-x-2">
-              <span>{t("game.admin.traffic.title")}</span>
+              <span>{t("traffic.title")}</span>
               <span class="opacity-60">$GLOBAL/traffic.rx</span>
             </span>
             <Select
               class="w-60 hidden lg:flex"
-              placeholder={t("game.admin.traffic.selectPresetScripts")}
+              placeholder={t("traffic.preset.title")!}
               size="sm"
               items={[
                 {
-                  label: t("game.admin.traffic.singleNodeDirectScript")!,
+                  label: t("traffic.preset.singleNodeDirectScript")!,
                   value: "single-node-direct",
                   icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
                 },
                 {
-                  label: t("game.admin.traffic.multiNodeDirectScript")!,
+                  label: t("traffic.preset.multiNodeDirectScript")!,
                   value: "multi-node-direct",
                   icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
                 },
@@ -191,7 +191,7 @@ export default function Traffic() {
               }}
             />
             <Button size="sm" level="primary" onClick={handleUpdateTraffic} loading={saving()}>
-              {t("form.save")}
+              {t("general.actions.save.title")}
             </Button>
             <Show when={config()?.cluster.traffic}>
               <Popover
@@ -204,10 +204,10 @@ export default function Traffic() {
                 <Card contentClass="p-2 flex flex-col space-y-2 max-w-96">
                   <span class="inline-block space-x-2">
                     <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
-                    <span>{t("game.admin.traffic.deleteTips")}</span>
+                    <span>{t("general.actions.delete.message")}</span>
                   </span>
                   <Button level="primary" size="sm" class="self-end" onClick={handleDeleteTraffic}>
-                    {t("platform.accept")}
+                    {t("general.actions.yes.title")}
                   </Button>
                 </Card>
               </Popover>

@@ -63,18 +63,21 @@ export default function (props: {
       });
       props.onDone(resp);
     } catch (err) {
-      handleHttpError(err as HTTPError, props.editSource ? t("form.saveFailed")! : t("form.createFailed")!);
+      handleHttpError(
+        err as HTTPError,
+        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")!
+      );
     }
     setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 w-full max-w-5xl flex-1">
-      <Field name="title" validate={[required(t("bulletin.titleRequired")!)]}>
+      <Field name="title" validate={[required(t("bulletin.form.title.required")!)]}>
         {(field, props) => (
           <Input
             icon={<span class="icon-[fluent--megaphone-20-regular] w-5 h-5" />}
-            placeholder={t("bulletin.titlePlaceholder")}
-            title={t("bulletin.titlePlaceholder")}
+            placeholder={t("bulletin.form.title.placeholder")!}
+            title={t("bulletin.form.title.label")!}
             {...props}
             value={field.value}
             error={field.error}
@@ -98,7 +101,7 @@ export default function (props: {
                   {(field, props) => (
                     <IconCheckbox
                       class="!rounded-l-none"
-                      title={t("bulletin.enableComment")}
+                      title={t("bulletin.form.enableComment.label")!}
                       uncheckedIcon="icon-[fluent--chat-20-regular]"
                       checkedIcon="icon-[fluent--chat-20-filled]"
                       inputProps={props}
@@ -113,7 +116,7 @@ export default function (props: {
           />
         )}
       </Field>
-      <Field name="content" validate={[required(t("bulletin.contentRequired")!)]}>
+      <Field name="content" validate={[required(t("bulletin.form.content.required")!)]}>
         {(field) => (
           <Editor
             form={form}
@@ -121,7 +124,7 @@ export default function (props: {
             class="flex-1"
             lang="markdown"
             placeholder="MARKDOWN"
-            title={t("bulletin.contentPlaceholder")}
+            title={t("bulletin.form.content.label")!}
             name="content"
             value={field.value}
             error={field.error}
@@ -129,7 +132,7 @@ export default function (props: {
         )}
       </Field>
       <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
-        {props.editSource ? t("form.save") : t("form.create")}
+        {props.editSource ? t("general.actions.save.title") : t("general.actions.create.title")}
       </Button>
     </Form>
   );

@@ -28,7 +28,7 @@ export default function (props: {
           const data = await getChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id);
           setAnswer(data);
         } catch (err) {
-          handleHttpError(err as Error, t("game.challenge.fetchFailed")!);
+          handleHttpError(err as Error, t("challenge.answer.errors.fetchAnswer.title")!);
         }
         setLoading(false);
       });
@@ -40,13 +40,13 @@ export default function (props: {
       await updateChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id, answer());
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
       setInEdit(false);
       if (props.onStateChange) props.onStateChange();
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setSubmitting(false);
   }
@@ -55,7 +55,7 @@ export default function (props: {
     <div class="min-h-full flex-1 flex flex-col space-y-2 p-3 lg:p-6 items-center">
       <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold w-full">
         <span class="icon-[fluent--book-20-regular] w-5 h-5 shrink-0" />
-        <span class="flex-1 text-start">{t("game.challenge.answer")}</span>
+        <span class="flex-1 text-start">{t("challenge.answer.title")}</span>
         <Show when={isGameAdmin()}>
           <Show
             when={!inEdit()}
@@ -67,7 +67,7 @@ export default function (props: {
                 loading={submitting()}
                 disabled={submitting()}
               >
-                {t("form.save")}
+                {t("general.actions.save.title")}
               </Button>
             }
           >
@@ -78,7 +78,7 @@ export default function (props: {
                 setInEdit(true);
               }}
             >
-              {t("form.edit")}
+              {t("general.actions.edit.title")}
             </Button>
           </Show>
         </Show>

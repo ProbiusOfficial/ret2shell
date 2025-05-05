@@ -69,7 +69,7 @@ function AdminManagement(props: {
     const result = [] as { value: string; label: string; icon: string }[];
     result.push({
       value: "0",
-      label: t("game.team.noInstitute")!,
+      label: t("institute.empty")!,
       icon: "icon-[fluent--earth-20-regular] w-5 h-5",
     });
     for (const institute of accountStore.institutes) {
@@ -95,11 +95,11 @@ function AdminManagement(props: {
       props.onDone?.(team);
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setUpdating(false);
   }
@@ -107,28 +107,25 @@ function AdminManagement(props: {
     <>
       <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
         <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
-        <span>{t("game.team.selfManagement")}</span>
+        <span>{t("team.selfManagement")}</span>
       </h3>
       <section class="flex flex-col space-y-2 mt-2">
         <div class="flex flex-col space-y-1">
-          <header class="label">{t("game.team.token")}</header>
+          <header class="label">{t("team.token")}</header>
           <Clipboard value={props.team?.token || undefined} />
         </div>
         <Form class="flex flex-col space-y-2" onSubmit={onSubmit}>
           <div class="flex flex-row space-x-2">
             <Field
               name="name"
-              validate={[
-                required(t("game.team.create.nameRequired")!),
-                maxLength(32, t("game.team.create.nameMaxLength")!),
-              ]}
+              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength")!)]}
             >
               {(field, props) => (
                 <Input
                   class="flex-1"
                   icon={<span class="icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
-                  title={t("game.team.name")}
-                  placeholder={t("game.team.name")}
+                  title={t("team.form.name.label")!}
+                  placeholder={t("team.form.name.placeholder")!}
                   {...props}
                   value={field.value}
                   error={field.error}
@@ -140,8 +137,8 @@ function AdminManagement(props: {
               {(field, props) => (
                 <Select
                   class="flex-1 min-w-0"
-                  label={t("admin.users.institute")}
-                  placeholder={t("admin.users.selectInstitute")}
+                  label={t("team.form.institute.label")!}
+                  placeholder={t("team.form.institute.placeholder")!}
                   items={institutesSelect()}
                   name={field.name}
                   error={field.error}
@@ -154,26 +151,26 @@ function AdminManagement(props: {
               {(field, props) => (
                 <Select
                   class="flex-1 min-w-0"
-                  label={t("game.team.state.title")!}
+                  label={t("team.status.title")!}
                   items={[
                     {
                       value: "0",
-                      label: t("game.team.state.banned")!,
+                      label: t("team.status.banned.title")!,
                       icon: "icon-[fluent--dismiss-circle-20-regular] w-5 h-5 text-error",
                     },
                     {
                       value: "1",
-                      label: t("game.team.state.pending")!,
+                      label: t("team.status.pending.title")!,
                       icon: "icon-[fluent--question-circle-20-regular] w-5 h-5 text-warning",
                     },
                     {
                       value: "2",
-                      label: t("game.team.state.hidden")!,
+                      label: t("team.status.hidden.title")!,
                       icon: "icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning",
                     },
                     {
                       value: "3",
-                      label: t("game.team.state.passed")!,
+                      label: t("team.status.passed.title")!,
                       icon: "icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success",
                     },
                   ]}
@@ -185,13 +182,13 @@ function AdminManagement(props: {
               )}
             </Field>
           </div>
-          <Field name="tag" validate={[maxLength(32, t("game.team.create.tagMaxLength")!)]}>
+          <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength")!)]}>
             {(field, props) => (
               <Input
                 class="flex-1"
                 icon={<span class="icon-[fluent--tag-20-regular] w-5 h-5" />}
-                title={t("game.team.create.tag")!}
-                placeholder={t("game.team.create.tagPlaceholder")!}
+                title={t("team.form.tag.label")!}
+                placeholder={t("team.form.tag.placeholder")!}
                 {...props}
                 value={field.value}
                 error={field.error}
@@ -199,7 +196,7 @@ function AdminManagement(props: {
             )}
           </Field>
           <Button type="submit" level="primary" class="!mt-4" loading={updating()} disabled={updating()}>
-            {t("form.save")}
+            {t("general.actions.save.title")}
           </Button>
         </Form>
       </section>
@@ -231,7 +228,7 @@ function SelfManagement(props: { members: User[] }) {
     const result = [] as { value: string; label: string; icon: string }[];
     result.push({
       value: "0",
-      label: t("game.team.noInstitute")!,
+      label: t("institute.empty")!,
       icon: "icon-[fluent--earth-20-regular] w-5 h-5",
     });
     const institute_id = props.members.at(0)?.institute_id ?? null;
@@ -260,11 +257,11 @@ function SelfManagement(props: { members: User[] }) {
       setGameStore({ team });
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setUpdating(false);
   }
@@ -272,28 +269,25 @@ function SelfManagement(props: { members: User[] }) {
     <>
       <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
         <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
-        <span>{t("game.team.selfManagement")}</span>
+        <span>{t("team.selfManagement")}</span>
       </h3>
       <section class="flex flex-col space-y-2 mt-2">
         <div class="flex flex-col space-y-1">
-          <header class="label">{t("game.team.token")}</header>
+          <header class="label">{t("team.token")}</header>
           <Clipboard value={gameStore.team?.token || undefined} />
         </div>
         <Form class="flex flex-col space-y-2" onSubmit={onSubmit}>
           <div class="flex flex-row space-x-2">
             <Field
               name="name"
-              validate={[
-                required(t("game.team.create.nameRequired")!),
-                maxLength(32, t("game.team.create.nameMaxLength")!),
-              ]}
+              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength")!)]}
             >
               {(field, props) => (
                 <Input
                   class="flex-1"
                   icon={<span class="icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
-                  title={t("game.team.name")}
-                  placeholder={t("game.team.name")}
+                  title={t("team.form.name.label")!}
+                  placeholder={t("team.form.name.placeholder")!}
                   {...props}
                   value={field.value}
                   error={field.error}
@@ -306,8 +300,8 @@ function SelfManagement(props: { members: User[] }) {
               {(field, props) => (
                 <Select
                   class="flex-1 min-w-0"
-                  label={t("admin.users.institute")}
-                  placeholder={t("admin.users.selectInstitute")}
+                  label={t("team.form.institute.label")!}
+                  placeholder={t("team.form.institute.placeholder")!}
                   items={institutesSelect()}
                   name={field.name}
                   error={field.error}
@@ -320,13 +314,13 @@ function SelfManagement(props: { members: User[] }) {
               )}
             </Field>
           </div>
-          <Field name="tag" validate={[maxLength(32, t("game.team.create.tagMaxLength")!)]}>
+          <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength")!)]}>
             {(field, props) => (
               <Input
                 class="flex-1"
                 icon={<span class="icon-[fluent--tag-20-regular] w-5 h-5" />}
-                title={t("game.team.create.tag")!}
-                placeholder={t("game.team.create.tagPlaceholder")!}
+                title={t("team.form.tag.label")!}
+                placeholder={t("team.form.tag.placeholder")!}
                 {...props}
                 value={field.value}
                 error={field.error}
@@ -335,7 +329,7 @@ function SelfManagement(props: { members: User[] }) {
             )}
           </Field>
           <Button type="submit" level="primary" class="!mt-4" loading={updating()} disabled={updating()}>
-            {t("form.save")}
+            {t("general.actions.save.title")}
           </Button>
         </Form>
       </section>
@@ -376,7 +370,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
       });
       props.onDone?.();
     } catch (err) {
-      handleHttpError(err as Error, t("game.team.createExtraFailed")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
     }
     setLoading(false);
   }
@@ -384,7 +378,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
   return (
     <Form onSubmit={onSubmit} class="min-h-12 border-b border-b-layer-content/10 flex flex-1 items-center space-x-2">
       <span class="icon-[fluent--add-circle-20-regular] w-5 h-5 text-info" />
-      <Field name="reason" validate={[required(t("game.team.extraReasonRequired")!)]}>
+      <Field name="reason" validate={[required(t("team.form.extraReason.required")!)]}>
         {(field, props) => (
           <Input
             type="text"
@@ -393,7 +387,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
             {...props}
             required
             noLabel
-            placeholder={t("game.team.createExtraReason")}
+            placeholder={t("team.form.extraReason.placeholder")}
             class="flex-1"
             size="sm"
             onBlur={(e) => {
@@ -403,7 +397,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
           />
         )}
       </Field>
-      <Field name="score" type="number" validate={[required(t("game.team.extraScoreRequired")!)]}>
+      <Field name="score" type="number" validate={[required(t("team.form.extraScore.required")!)]}>
         {(field, props) => (
           <Input
             type="text" // use text, we will convert to number manually
@@ -437,7 +431,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
               return props.onInput(e);
             }}
             noLabel
-            placeholder={t("game.team.extraScore")}
+            placeholder={t("team.form.extraScore.placeholder")}
             class="w-32"
             size="sm"
             icon={<span class={ptsInputIcon[ptsInputIconIndex()]} />}
@@ -448,7 +442,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
       <span class="w-8" />
       <Button size="sm" level="primary" type="submit" loading={loading()} disabled={loading()}>
         <span class="icon-[fluent--add-20-regular] w-5 h-5" />
-        <span>{t("form.create")}</span>
+        <span>{t("general.actions.create.title")}</span>
       </Button>
     </Form>
   );
@@ -467,7 +461,7 @@ export default function () {
       const resp = await getTeamExtras(gameStore.current!.id, teamId()!);
       setExtras(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("game.team.fetchTeamExtrasFailed")!);
+      handleHttpError(err as Error, t("team.errors.fetchExtra.title")!);
     }
   }
   async function refreshInfo() {
@@ -477,7 +471,7 @@ export default function () {
       if (err instanceof HTTPError && err.response.status === 404) {
         navigate("/sigtrap/404");
       }
-      handleHttpError(err as Error, t("game.team.fetchTeamFailed")!);
+      handleHttpError(err as Error, t("team.errors.fetch.title")!);
     }
   }
   async function refreshSolves() {
@@ -485,7 +479,7 @@ export default function () {
       const resp = await getTeamSolves(gameStore.current!.id, teamId()!);
       setSolves(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("game.team.fetchTeamSubmissionsFailed")!);
+      handleHttpError(err as Error, t("team.errors.fetchSolves.title")!);
     }
   }
   createEffect(() => {
@@ -516,7 +510,7 @@ export default function () {
         try {
           setMembers(await getTeamMembers(gameStore.current!.id, team()!.id));
         } catch (err) {
-          handleHttpError(err as Error, t("game.team.fetchMembersFailed")!);
+          handleHttpError(err as Error, t("team.errors.fetchMember.title")!);
         }
         setLoadingMembers(false);
       });
@@ -527,10 +521,7 @@ export default function () {
 
   return (
     <>
-      <Title
-        page={team()?.name ?? t("game.team.title")}
-        route={`/games/${gameStore.current?.id}/teams/${team()?.id}`}
-      />
+      <Title page={team()?.name ?? t("team.title")} route={`/games/${gameStore.current?.id}/teams/${team()?.id}`} />
       <SidebarLayout
         leftBar={() => <Sidebar team={team()} members={members()} loading={loadingMembers()} />}
         showLeftBar={showSidebar()}
@@ -550,7 +541,7 @@ export default function () {
             </Show>
             <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
               <span class="icon-[fluent--data-trending-20-regular] w-5 h-5" />
-              <span>{t("game.team.scoreChart")}</span>
+              <span>{t("team.scoreChart")}</span>
             </h3>
             <section class="w-full h-64 lg:h-96">
               <Chart
@@ -600,7 +591,7 @@ export default function () {
             </section>
             <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
               <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-              <span>{t("game.team.solves")}</span>
+              <span>{t("team.solves")}</span>
             </h3>
             <section class="flex flex-col">
               <For
@@ -608,7 +599,7 @@ export default function () {
                 fallback={
                   <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
                     <span class="icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
-                    <span>{t("game.team.noSolves")}</span>
+                    <span>{t("team.noSolves")}</span>
                   </div>
                 }
               >
@@ -619,7 +610,7 @@ export default function () {
                   >
                     <span class="icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success" />
                     <span class="flex-1 text-start truncate">
-                      {t("game.team.solvesJournal", {
+                      {t("team.solvesJournal", {
                         challenge: submission.challenge_name!,
                         user: submission.user_name!,
                       })}
@@ -633,7 +624,7 @@ export default function () {
             <div class="h-16" />
             <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
               <span class="icon-[fluent--trophy-20-regular] w-5 h-5" />
-              <span>{t("game.team.extras")}</span>
+              <span>{t("team.extras")}</span>
             </h3>
             <section class="flex flex-col">
               <For
@@ -641,7 +632,7 @@ export default function () {
                 fallback={
                   <div class="h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
                     <span class="icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
-                    <span>{t("game.team.noExtras")}</span>
+                    <span>{t("team.noExtras")}</span>
                   </div>
                 }
               >

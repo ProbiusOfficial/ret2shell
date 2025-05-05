@@ -45,7 +45,7 @@ function UserList() {
       setUsers(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("admin.users.fetchFailed")!);
+      handleHttpError(err as Error, t("user.errors.fetchList.title")!);
     }
     setLoading(false);
   }
@@ -68,13 +68,13 @@ function UserList() {
       <h3 class="min-h-12 flex flex-wrap justify-end py-2 gap-y-2 items-center border-b border-b-layer-content/10 font-bold space-x-2">
         <div class="flex flex-row items-center space-x-2">
           <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
-          <span class="flex-1 text-start">{t("admin.users.title")}</span>
+          <span class="flex-1 text-start">{t("user.list.title")}</span>
         </div>
         <span class="flex-1" />
         <Select
           class="flex-1 max-w-48 min-w-32"
           size="sm"
-          placeholder={t("admin.users.sortBy")}
+          placeholder={t("user.sortBy")}
           items={[
             {
               value: "id",
@@ -83,17 +83,17 @@ function UserList() {
             },
             {
               value: "account",
-              label: t("admin.users.account")!,
+              label: t("account.form.account.label")!,
               icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
             },
             {
               value: "institute_id",
-              label: t("admin.users.institute")!,
+              label: t("account.form.institute.label")!,
               icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
             },
             {
               value: "registered_at",
-              label: t("admin.users.registeredAt")!,
+              label: t("account.form.registeredAt.label")!,
               icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
             },
           ]}
@@ -106,7 +106,7 @@ function UserList() {
         <Select
           class="flex-1 max-w-64 min-w-48"
           size="sm"
-          placeholder={t("admin.users.selectInstitute")}
+          placeholder={t("account.form.institute.label")!}
           items={institutesSelect()}
           onValueChange={(v) => {
             setSearchParams({ institute: (v.value.at(0) && Number.parseInt(v.value.at(0)!)) || null });
@@ -119,7 +119,7 @@ function UserList() {
           size="sm"
           icon={<span class="icon-[fluent--filter-16-regular] w-5 h-5" />}
           value={filter() ?? ""}
-          placeholder={t("admin.users.filterPlaceholder")}
+          placeholder={t("user.filter")}
           onChange={(e) => {
             setSearchParams({ filter: e.target.value || undefined, page: null });
             setTimeout(refreshUsers, 100);
@@ -196,7 +196,7 @@ export default function () {
           const resp = await getUser(inEdit()!);
           setUser(resp);
         } catch (err) {
-          handleHttpError(err as Error, t("admin.users.fetchUserFailed")!);
+          handleHttpError(err as Error, t("user.errors.fetch.title")!);
         }
       });
     } else {
@@ -211,12 +211,12 @@ export default function () {
       await updateUser(user);
       addToast({
         level: "success",
-        description: t("form.saveSuccess")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
       setUser(user);
     } catch (err) {
-      handleHttpError(err as Error, t("form.saveFailed")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
     }
     setUpdatingUser(false);
   }
@@ -226,7 +226,7 @@ export default function () {
   });
   return (
     <>
-      <Title page={t("admin.users.title")} route="/admin/users" />
+      <Title page={t("user.list.title")} route="/admin/users" />
       <div class="flex-1 flex flex-col items-center">
         <Show when={inEdit()} fallback={<UserList />}>
           <Form editSource={user() || undefined} onDone={handleUpdateUser} loading={updatingUser()} />

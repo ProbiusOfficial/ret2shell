@@ -32,7 +32,7 @@ export default function (_props: {
       setChallengeStore({ adminFiles: attachments });
       refreshChallengeAssets();
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.fetchFilesFailed")!);
+      handleHttpError(err as Error, t("challenge.file.errors.fetchFiles.title")!);
     }
     setLoading(false);
   }
@@ -47,17 +47,17 @@ export default function (_props: {
       await deleteChallengeAttachment(challengeStore.current!.game_id, challengeStore.current!.id, folder, file);
       await fetchAttachments();
     } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.deleteFileFailed")!);
+      handleHttpError(err as Error, t("challenge.file.errors.deleteFiles.title")!);
     }
   }
   function folderTips() {
     switch (folder()) {
       case "static":
-        return t("game.challenge.staticAttachmentTips");
+        return t("challenge.file.type.static.tip");
       case "mapped":
-        return t("game.challenge.mappedAttachmentTips");
+        return t("challenge.file.type.mapped.tip");
       case "checker":
-        return t("game.challenge.checkerAttachmentTips");
+        return t("challenge.file.type.checker.tip");
     }
   }
   return (
@@ -71,7 +71,7 @@ export default function (_props: {
             title="$BUCKET/static"
           >
             <div class="flex flex-col py-2 items-start w-full">
-              <span>{t("game.challenge.staticAttachment")}</span>
+              <span>{t("challenge.file.type.static.title")}</span>
               <span class="font-normal opacity-60 w-full text-start truncate">$BUCKET/static</span>
             </div>
           </Button>
@@ -84,7 +84,7 @@ export default function (_props: {
             title="$BUCKET/mapped"
           >
             <div class="flex flex-col py-2 items-start w-full">
-              <span>{t("game.challenge.mappedAttachment")}</span>
+              <span>{t("challenge.file.type.mapped.title")}</span>
               <span class="font-normal opacity-60 w-full text-start truncate">$BUCKET/mapped</span>
             </div>
           </Button>
@@ -97,7 +97,7 @@ export default function (_props: {
             title="$BUCKET/checker"
           >
             <div class="flex flex-col py-2 items-start w-full">
-              <span>{t("game.challenge.checkerAttachment")}</span>
+              <span>{t("challenge.file.type.checker.title")}</span>
               <span class="font-normal opacity-60 w-full text-start truncate">$BUCKET/checker</span>
             </div>
           </Button>
@@ -107,7 +107,7 @@ export default function (_props: {
       <div class="flex-1 flex flex-col w-0 space-y-2 p-3 lg:p-6">
         <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
           <span class="icon-[fluent--folder-zip-20-regular] w-5 h-5 shrink-0" />
-          <span class="flex-1 text-start">{t("game.challenge.uploadFiles")}</span>
+          <span class="flex-1 text-start">{t("general.actions.upload.title")}</span>
           <UploadButton
             size="sm"
             url={`${api_root}/game/${gameStore.current?.id}/challenge/${challengeStore.current?.id}/file?folder=${folder()}`}
