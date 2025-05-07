@@ -80,7 +80,7 @@ export default function TeamRanks(props: {
                   </span>
                 </Show>
               </div>
-              <span class={clsx("flex flex-row items-center space-x-2", props.showTime && "flex-1 w-0")}>
+              <span class={clsx("flex flex-row items-center space-x-2", props.showTime && matches.lg && "flex-1 w-0")}>
                 <span class="flex-1" />
                 <Show when={team.state === TeamState.Hidden}>
                   <Tag level="warning">
