@@ -17,17 +17,20 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
 #[derive(Deserialize)]
 struct GenericQuery {
   text: String,
+  keep_case: Option<bool>,
 }
 
 async fn generate_deunicode(
   Query(query): Query<GenericQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  Ok(
-    deunicode_with_tofu(&query.text, "_")
-      .trim()
-      .to_owned()
-      .to_snake_case(),
-  )
+  let result = deunicode_with_tofu(&query.text.replace(" ", "_"), "_")
+    .trim()
+    .to_owned();
+  if query.keep_case.unwrap_or(false) {
+    Ok(result.replace(" ", ""))
+  } else {
+    Ok(result.to_snake_case())
+  }
 }
 
 async fn generate_leet(

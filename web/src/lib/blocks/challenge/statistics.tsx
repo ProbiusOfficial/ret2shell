@@ -1,6 +1,7 @@
 import { handleHttpError } from "@api";
 import { getChallengeCommitHistory, getChallengeSubmission } from "@api/game";
-import type { Challenge, CommitHistory } from "@models/challenge";
+import type { Challenge } from "@models/challenge";
+import type { CommitHistory } from "@models/git";
 import type { Submission } from "@models/submission";
 import { createBreakpoints } from "@solid-primitives/media";
 import { challengeStore } from "@storage/challenge";
@@ -12,7 +13,15 @@ import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
 import Tag from "@widgets/tag";
 import { DateTime } from "luxon";
-import { For, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
+import {
+  For,
+  Match,
+  Show,
+  Switch,
+  createEffect,
+  createSignal,
+  untrack,
+} from "solid-js";
 
 function StatisticsPanel() {
   const [solves, setSolves] = createSignal([] as Submission[]);
@@ -29,12 +38,15 @@ function StatisticsPanel() {
         challengeStore.current!.id,
         page(),
         pageSize(),
-        onlySolved()
+        onlySolved(),
       );
       setSolves(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("challenge.statistics.errors.fetchSubmission.title")!);
+      handleHttpError(
+        err as Error,
+        t("challenge.statistics.errors.fetchSubmission.title")!,
+      );
     }
     setLoading(false);
   }
@@ -62,7 +74,9 @@ function StatisticsPanel() {
         >
           <span
             class={
-              onlySolved() ? "icon-[fluent--eye-20-regular] w-5 h-5" : "icon-[fluent--eye-20-regular] w-5 h-5 text-info"
+              onlySolved()
+                ? "icon-[fluent--eye-20-regular] w-5 h-5"
+                : "icon-[fluent--eye-20-regular] w-5 h-5 text-info"
             }
           />
           <span>{t("challenge.statistics.showAll")}</span>
@@ -78,15 +92,24 @@ function StatisticsPanel() {
           <div class="min-h-12 w-full flex flex-row py-2 gap-y-2 px-2 flex-wrap justify-end space-x-2 p-2 items-center border-b border-b-layer-content/10 overflow-hidden">
             <div class="flex flex-row space-x-2 items-center overflow-hidden *:whitespace-nowrap mx-0">
               <span class="icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success shrink-0" />
-              <a class="truncate hover:underline" href={`/users/${item.user_id}`}>
+              <a
+                class="truncate hover:underline"
+                href={`/users/${item.user_id}`}
+              >
                 {item.user_name}
               </a>
               <span class="opacity-60">@</span>
-              <a class="truncate hover:underline" href={`/games/${gameStore.current?.id}/teams/${item.team_id}`}>
+              <a
+                class="truncate hover:underline"
+                href={`/games/${gameStore.current?.id}/teams/${item.team_id}`}
+              >
                 {item.team_name ?? "wheel"}
               </a>
               <span>{t("challenge.submission.submit")}</span>
-              <span class="flex-1 truncate py-1 px-2 rounded-lg bg-layer-content/5" title={item.content || ""}>
+              <span
+                class="flex-1 truncate py-1 px-2 rounded-lg bg-layer-content/5"
+                title={item.content || ""}
+              >
                 {item.content}
               </span>
             </div>
@@ -101,9 +124,14 @@ function StatisticsPanel() {
                       : t("challenge.submission.status.failed.title")}
                 </span>
               </Tag>
-              <span class="opacity-40" title={item.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}>
+              <span
+                class="opacity-40"
+                title={item.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
+              >
                 <Switch fallback={item.created_at.toFormat("MM-dd HH:mm:ss")}>
-                  <Match when={matches.xl}>{item.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}</Match>
+                  <Match when={matches.xl}>
+                    {item.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
+                  </Match>
                 </Switch>
               </span>
             </div>
@@ -129,9 +157,17 @@ function HistoryPanel() {
       untrack(async () => {
         setLoading(true);
         try {
-          setHistory(await getChallengeCommitHistory(gameStore.current!.id, challengeStore.current!.id));
+          setHistory(
+            await getChallengeCommitHistory(
+              gameStore.current!.id,
+              challengeStore.current!.id,
+            ),
+          );
         } catch (err) {
-          handleHttpError(err as Error, t("challenge.statistics.errors.fetchCommitHistory")!);
+          handleHttpError(
+            err as Error,
+            t("challenge.statistics.errors.fetchCommitHistory")!,
+          );
         }
         setLoading(false);
       });
@@ -158,15 +194,35 @@ function HistoryPanel() {
             </span>
             <span class="flex-1" />
             <span class="font-bold">{item.author.name}</span>
-            <span class="font-bold text-primary opacity-40 truncate">{item.abbreviated_commit}</span>
+            <span class="font-bold text-primary opacity-40 truncate">
+              {item.abbreviated_commit}
+            </span>
             <span class="opacity-40 whitespace-nowrap">
-              <Switch fallback={DateTime.fromSeconds(item.author.date).toFormat("MM-dd")}>
+              <Switch
+                fallback={DateTime.fromSeconds(item.author.date).toFormat(
+                  "MM-dd",
+                )}
+              >
                 <Match when={matches.xl}>
-                  {DateTime.fromSeconds(item.author.date).toFormat("yyyy-MM-dd HH:mm:ss")}
+                  {DateTime.fromSeconds(item.author.date).toFormat(
+                    "yyyy-MM-dd HH:mm:ss",
+                  )}
                 </Match>
-                <Match when={matches.lg}>{DateTime.fromSeconds(item.author.date).toFormat("MM-dd HH:mm:ss")}</Match>
-                <Match when={matches.md}>{DateTime.fromSeconds(item.author.date).toFormat("MM-dd HH:mm:ss")}</Match>
-                <Match when={matches.sm}>{DateTime.fromSeconds(item.author.date).toFormat("MM-dd HH:mm")}</Match>
+                <Match when={matches.lg}>
+                  {DateTime.fromSeconds(item.author.date).toFormat(
+                    "MM-dd HH:mm:ss",
+                  )}
+                </Match>
+                <Match when={matches.md}>
+                  {DateTime.fromSeconds(item.author.date).toFormat(
+                    "MM-dd HH:mm:ss",
+                  )}
+                </Match>
+                <Match when={matches.sm}>
+                  {DateTime.fromSeconds(item.author.date).toFormat(
+                    "MM-dd HH:mm",
+                  )}
+                </Match>
               </Switch>
             </span>
           </div>

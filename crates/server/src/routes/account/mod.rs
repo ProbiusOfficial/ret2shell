@@ -322,6 +322,15 @@ async fn login(
   {
     captcha_protected!(cache, &body.captcha_id, &body.captcha_answer);
   }
+
+  let attempts = cache.at("login").get::<i64>(&body.account).await?;
+  if attempts.is_some_and(|attempts| attempts > 5) {
+    return Err(ResponseError::TooManyRequests(
+      "this account is frozen in 30 mins".to_owned(),
+      format!("account {} has too many login attempts", &body.account),
+    ));
+  }
+
   let user = get_user_by_account!(db, &body.account);
 
   if user.banned || !user.permissions.0.contains(&Permission::Basic) {

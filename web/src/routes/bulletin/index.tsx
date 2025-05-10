@@ -11,7 +11,15 @@ import Divider from "@widgets/divider";
 import Link from "@widgets/link";
 import Pagination from "@widgets/pagination";
 import clsx from "clsx";
-import { For, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
+import {
+  For,
+  Match,
+  Show,
+  Switch,
+  createEffect,
+  createSignal,
+  untrack,
+} from "solid-js";
 
 export default function () {
   const [articles, setArticles] = createSignal<Article[]>([]);
@@ -48,25 +56,36 @@ export default function () {
                 <span>{t("general.actions.create.title")}</span>
               </Link>
             </Show>
-            <Divider class="absolute bottom-0 left-2 right-2" />
+            <Divider class="absolute bottom-0 left-0 w-full" />
           </div>
           <For each={articles()}>
             {(article) => (
               <>
-                <Link ghost justify="start" href={`/bulletin/${article.id}`} class="overflow-hidden relative">
+                <Link
+                  ghost
+                  justify="start"
+                  href={`/bulletin/${article.id}`}
+                  class="overflow-hidden relative"
+                >
                   <span
                     class={clsx(
-                      article.weight >= 1 ? "text-primary" : "text-layer-content",
+                      article.weight >= 1
+                        ? "text-primary"
+                        : "text-layer-content",
                       article.weight >= 1
                         ? "icon-[fluent--megaphone-20-filled]"
                         : "icon-[fluent--megaphone-20-regular]",
-                      "w-5 h-5"
+                      "w-5 h-5",
                     )}
                   />
-                  <span class="flex-1 text-start truncate font-normal">{article.title}</span>
-                  <span class="opacity-60">{article.created_at.toFormat("yyyy-MM-dd")}</span>
-                  <Divider class="absolute bottom-0 left-2 right-2" />
+                  <span class="flex-1 text-start truncate font-normal">
+                    {article.title}
+                  </span>
+                  <span class="opacity-60">
+                    {article.created_at.toFormat("yyyy-MM-dd")}
+                  </span>
                 </Link>
+                <Divider class="w-full" />
               </>
             )}
           </For>

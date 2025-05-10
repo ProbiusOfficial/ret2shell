@@ -483,9 +483,19 @@ impl IntoResponse for ResponseError {
         )
       }
     };
-    Response::builder()
-      .status(status)
-      .body(message.into())
-      .unwrap()
+
+    if status == StatusCode::UNAUTHORIZED || status == StatusCode::FORBIDDEN {
+      Response::builder()
+        .status(status)
+        .header("WWW-Authenticate", "Bearer")
+        .header("WWW-Authenticate", "Basic realm=\"ret2shell git service\"")
+        .body(message.into())
+        .unwrap()
+    } else {
+      Response::builder()
+        .status(status)
+        .body(message.into())
+        .unwrap()
+    }
   }
 }

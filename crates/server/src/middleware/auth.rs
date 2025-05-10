@@ -7,19 +7,21 @@ use axum::{
   middleware::Next,
   response::IntoResponse,
 };
+use base64::Engine;
 use chrono::Utc;
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use r2s_cache::Cache;
 use r2s_config::auth;
 use r2s_database::{
   challenge, config, game, team,
-  user::{Permission, Permissions},
+  user::{self, Permission, Permissions},
 };
+use r2s_migrator::Database;
 use serde::{Deserialize, Serialize};
 use tokio::sync::Mutex;
-use tracing::{debug, error};
+use tracing::{debug, error, info};
 
-use crate::traits::ResponseError;
+use crate::{traits::ResponseError, utility::password::verify_password};
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
 pub struct Token {
@@ -66,52 +68,170 @@ async fn distribute_token(token: &Token, key: &str, expires_time: i64) -> String
   token
 }
 
+async fn extract_bearer_token(
+  auth_config: &auth::Config, cache: &Cache, token: &str,
+) -> Result<(Token, TokenTracker), ResponseError> {
+  let token = token.split_whitespace().nth(1).unwrap_or_default();
+  let valid = cache.at("token").exists(token).await?;
+
+  let token_obj = if valid {
+    decode_token(token, &auth_config.signing_key).await
+  } else {
+    Token::default()
+  };
+  debug!("user requested with token {token:?}, {token_obj:?}");
+
+  let last_time = token_obj.exp - Utc::now().timestamp();
+
+  let token_tracker = TokenTracker {
+    token: Arc::new(Mutex::new(token_obj.clone())),
+    renew_requested: Arc::new(AtomicBool::new(
+      last_time > 0 && last_time < auth_config.buffer_time,
+    )),
+    original: Some(token.to_owned()),
+  };
+
+  debug!("extracted token: {token:?}");
+
+  Ok((token_obj, token_tracker))
+}
+
+async fn extract_basic_token(
+  db: &Database, cache: &Cache, token: &str,
+) -> Result<(Token, TokenTracker), ResponseError> {
+  // NOTE: we should limit login attempts here to prevent brute force attacks
+  // this auth method is not recommended, but client such as git or curl may use it, which is hard
+  // to integrate CAPTCHA protections
+
+  // NOTE: the basic auth token is equivalent to a bearer token, include account operations
+  // there may exists security risk, waiting for further discussion
+  // limit the attempts to 5 times
+
+  let (account, password) = {
+    let decoded = base64::engine::general_purpose::STANDARD
+      .decode(token.split_whitespace().nth(1).unwrap_or_default())
+      .map_err(|_| ResponseError::BadRequest("Invalid basic token".to_owned()))?;
+    let result = String::from_utf8(decoded)
+      .map_err(|_| ResponseError::BadRequest("Invalid basic token".to_owned()))?;
+    match result.split_once(':') {
+      Some((account, password)) => (account.to_owned(), password.to_owned()),
+      None => {
+        return Err(ResponseError::BadRequest("Invalid basic token".to_owned()));
+      }
+    }
+  };
+
+  // debug!("user auth requested with basic auth: {account:?}, {password:?}");
+
+  let attempts = cache.at("login").get::<i64>(&account).await?;
+  if attempts.is_some_and(|attempts| attempts > 5) {
+    return Err(ResponseError::TooManyRequests(
+      "this account is frozen in 30 mins".to_owned(),
+      format!("account {} has too many login attempts", account),
+    ));
+  }
+  cache.at("login").incr(&account).await?;
+  cache.at("login").expire(&account, 60 * 30).await?;
+
+  let user = user::get_by_account_or_email(&db.conn, &account).await?;
+  let user = match user {
+    Some(user) => user,
+    None => {
+      return Err(ResponseError::Forbidden(
+        "account or password is wrong".to_owned(),
+        format!("user requested account {} does not exist", account),
+      ));
+    }
+  };
+
+  if user.banned || !user.permissions.0.contains(&Permission::Basic) {
+    return Err(ResponseError::Forbidden(
+      "account is banned".to_owned(),
+      format!(
+        "user {}:'{}' ({}) is banned",
+        user.id, user.account, user.nickname
+      ),
+    ));
+  }
+
+  let password_hash = user.password.unwrap_or(String::new());
+
+  match verify_password(&password, &password_hash)? {
+    true => {
+      info!(
+        "User logged in with basic auth (oneshot): {}:'{}' ({}) <{}>",
+        user.id,
+        user.account,
+        user.nickname,
+        user.email.unwrap_or_default()
+      );
+
+      let token = Token {
+        id: user.id,
+        account: user.account,
+        nickname: user.nickname,
+        permissions: user.permissions,
+        // NOTE: expires immidiately here, only oneshot
+        exp: Utc::now().timestamp(),
+      };
+      let token_tracker = TokenTracker {
+        token: Arc::new(Mutex::new(token.clone())),
+        renew_requested: Arc::new(AtomicBool::new(false)),
+        original: None,
+      };
+      Ok((token, token_tracker))
+    }
+    false => Err(ResponseError::Forbidden(
+      "account or password is wrong".to_owned(),
+      format!(
+        "user {}:'{}' ({}) requested with wrong password",
+        user.id, user.account, user.nickname
+      ),
+    )),
+  }
+}
+
 pub async fn extract_user_info(
-  State(ref mut cache): State<Cache>, Extension(config): Extension<config::Model>,
-  mut req: Request, next: Next,
+  State(ref database): State<Database>, State(ref mut cache): State<Cache>,
+  Extension(config): Extension<config::Model>, mut req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let auth_config = config.auth.ok_or(ResponseError::InternalServerError(
-    "auth config missing".into(),
-    "auth section is not configured.".into(),
-  ))?;
-  let auth::Config {
-    ref signing_key,
-    buffer_time,
-    expires_time,
-    ..
-  } = auth_config;
+  let auth_config = config
+    .auth
+    .clone()
+    .ok_or(ResponseError::InternalServerError(
+      "auth config missing".into(),
+      "auth section is not configured.".into(),
+    ))?;
+  debug!("auth req: {req:?}");
   let auth_header = req
     .headers()
     .get(header::AUTHORIZATION)
     .and_then(|header| header.to_str().ok());
 
   let token_str = if let Some(auth_header) = auth_header {
-    auth_header
-      .strip_prefix("Bearer ")
-      .unwrap_or(auth_header)
-      .trim()
+    auth_header.trim()
   } else {
     ""
   };
 
-  let valid = cache.at("token").exists(token_str).await?;
-
-  let token = if valid {
-    decode_token(token_str, signing_key).await
-  } else {
-    Token::default()
+  let method = token_str.split_whitespace().next();
+  let (token, token_tracker) = match method {
+    Some("Bearer") => extract_bearer_token(&auth_config, cache, token_str).await?,
+    Some("Basic") => extract_basic_token(database, cache, token_str).await?,
+    Some(_) => {
+      return Err(ResponseError::Unauthorized(
+        "Unsupported auth method".to_owned(),
+      ));
+    }
+    None => (
+      Token::default(),
+      TokenTracker {
+        token: Arc::new(Mutex::new(Token::default())),
+        renew_requested: Arc::new(AtomicBool::new(false)),
+        original: None,
+      },
+    ),
   };
-  debug!("user requested with token {token:?}");
-
-  let last_time = token.exp - Utc::now().timestamp();
-
-  let token_tracker = TokenTracker {
-    token: Arc::new(Mutex::new(token.clone())),
-    renew_requested: Arc::new(AtomicBool::new(last_time > 0 && last_time < buffer_time)),
-    original: Some(token_str.to_owned()),
-  };
-
-  debug!("extracted token: {token:?}");
 
   req.extensions_mut().insert(token_tracker.clone());
   req.extensions_mut().insert(token.clone());
@@ -122,17 +242,27 @@ pub async fn extract_user_info(
     .renew_requested
     .load(std::sync::atomic::Ordering::Relaxed)
   {
-    let original_token_str = token_tracker.original.as_ref().unwrap();
-    cache.at("token").del(original_token_str).await.ok();
     let token_stored = token_tracker.token.lock().await.clone();
+    match token_tracker.original.as_ref() {
+      Some(t) => {
+        cache.at("token").del(t).await.ok();
+        cache
+          .at("token")
+          .rem(format!("user-{}", token_stored.id), t)
+          .await
+          .ok()
+      }
+      None => None,
+    };
+    let token_str = distribute_token(
+      &token_stored,
+      &auth_config.signing_key,
+      auth_config.expires_time,
+    )
+    .await;
     cache
       .at("token")
-      .rem(format!("user-{}", token_stored.id), original_token_str)
-      .await?;
-    let token_str = distribute_token(&token_stored, signing_key, expires_time).await;
-    cache
-      .at("token")
-      .set_ex(&token_str, token_stored.id, expires_time)
+      .set_ex(&token_str, token_stored.id, auth_config.expires_time)
       .await
       .map_err(|err| {
         error!("failed to store new token: {:?}", err);
@@ -266,6 +396,9 @@ pub async fn game_admin_required(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>, req: Request,
   next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if token.id <= 0 {
+    return Err(ResponseError::Unauthorized("please login first".to_owned()));
+  }
   if is_game_admin!(token, game) {
     Ok(next.run(req).await)
   } else {
@@ -283,6 +416,9 @@ pub async fn game_access_required(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
   team_ext: Extension<Option<team::Model>>, req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if token.id <= 0 {
+    return Err(ResponseError::Unauthorized("please login first".to_owned()));
+  }
   if is_game_admin!(token, game) {
     return Ok(next.run(req).await);
   }
@@ -325,6 +461,9 @@ pub async fn challenge_access_required(
   Extension(challenge): Extension<challenge::Model>, team_ext: Extension<Option<team::Model>>,
   req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if token.id <= 0 {
+    return Err(ResponseError::Unauthorized("please login first".to_owned()));
+  }
   if game.id != challenge.game_id {
     return Err(ResponseError::Forbidden(
       "permission denied".to_owned(),

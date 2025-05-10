@@ -19,7 +19,7 @@ use crate::{
 pub struct GameBucket {
   pub name: String,
   path: PathBuf,
-  git: Git,
+  pub git: Git,
   locked: bool,
 }
 
@@ -27,7 +27,7 @@ pub struct GameBucket {
 #[repr(i32)]
 pub enum HostType {
   CTFTraining = 0,
-  CTFGame     = 1,
+  CTFGame = 1,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

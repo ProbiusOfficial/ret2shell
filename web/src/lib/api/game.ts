@@ -1,6 +1,7 @@
 import type { Article } from "@models/article";
 import type { Audit } from "@models/audit";
-import type { Challenge, ChallengeEnv, CommitHistory } from "@models/challenge";
+import type { Challenge, ChallengeEnv } from "@models/challenge";
+import type { CommitHistory, ObjectInfo } from "@models/git";
 import type { Chat, ChatSession } from "@models/chat";
 import type { RegistryConfig } from "@models/config";
 import type { Game, HostType } from "@models/game";
@@ -15,7 +16,12 @@ import api, { api_root } from ".";
 import type { Extra } from "../models/extra";
 import type { Hint } from "../models/hint";
 
-export async function getGames(page?: number, page_size?: number, host_type?: HostType, weight?: number) {
+export async function getGames(
+  page?: number,
+  page_size?: number,
+  host_type?: HostType,
+  weight?: number,
+) {
   return (
     await api.get(`${api_root}/game`, {
       searchParams: JSON.parse(
@@ -24,7 +30,7 @@ export async function getGames(page?: number, page_size?: number, host_type?: Ho
           page_size,
           host_type,
           weight,
-        })
+        }),
       ) as SearchParamsOption,
     })
   ).json<[Game[], number]>();
@@ -51,7 +57,9 @@ export async function getGameIntroduction(id: number) {
 }
 
 export async function updateGameIntroduction(id: number, article: Article) {
-  return await api.patch(`${api_root}/game/${id}/introduction`, { json: article }).json<Article>();
+  return await api
+    .patch(`${api_root}/game/${id}/introduction`, { json: article })
+    .json<Article>();
 }
 
 export async function getGameScoreboard(
@@ -59,7 +67,7 @@ export async function getGameScoreboard(
   page?: number,
   page_size?: number,
   with_hidden?: boolean,
-  institute_id?: number
+  institute_id?: number,
 ) {
   return (
     await api.get(`${api_root}/game/${id}/team`, {
@@ -71,31 +79,39 @@ export async function getGameScoreboard(
           institute_id,
           asc: false,
           order: "score",
-        })
+        }),
       ) as SearchParamsOption,
     })
   ).json<[Team[], number]>();
 }
 
-export async function getChallengeList(game_id: number, page?: number, page_size?: number) {
+export async function getChallengeList(
+  game_id: number,
+  page?: number,
+  page_size?: number,
+) {
   return (
     await api.get(`${api_root}/game/${game_id}/challenge`, {
       searchParams: JSON.parse(
         JSON.stringify({
           page,
           page_size,
-        })
+        }),
       ) as SearchParamsOption,
     })
   ).json<[Challenge[], number]>();
 }
 
 export async function getChallenge(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}`).json<Challenge>();
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}`)
+    .json<Challenge>();
 }
 
 export async function createChallenge(game_id: number, challenge: Challenge) {
-  return await api.post(`${api_root}/game/${game_id}/challenge`, { json: challenge }).json<Challenge>();
+  return await api
+    .post(`${api_root}/game/${game_id}/challenge`, { json: challenge })
+    .json<Challenge>();
 }
 
 export async function updateChallenge(game_id: number, challenge: Challenge) {
@@ -107,22 +123,34 @@ export async function updateChallenge(game_id: number, challenge: Challenge) {
 }
 
 export async function upChallenge(game_id: number, challenge_id: number) {
-  return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/publish`).json<Challenge>();
+  return await api
+    .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/publish`)
+    .json<Challenge>();
 }
 
 export async function downChallenge(game_id: number, challenge_id: number) {
-  return await api.delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/publish`).json<Challenge>();
+  return await api
+    .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/publish`)
+    .json<Challenge>();
 }
 
 export async function deleteChallenge(game_id: number, challenge_id: number) {
-  return await api.delete(`${api_root}/game/${game_id}/challenge/${challenge_id}`).json<void>();
+  return await api
+    .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}`)
+    .json<void>();
 }
 
 export async function getChallengeHint(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`).json<Hint[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`)
+    .json<Hint[]>();
 }
 
-export async function unlockChallengeHint(game_id: number, challenge_id: number, hint_id: number) {
+export async function unlockChallengeHint(
+  game_id: number,
+  challenge_id: number,
+  hint_id: number,
+) {
   return await api
     .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint/unlock`, {
       json: {
@@ -132,7 +160,11 @@ export async function unlockChallengeHint(game_id: number, challenge_id: number,
     .json<Extra>();
 }
 
-export async function createChallengeHint(game_id: number, challenge_id: number, hint: Hint) {
+export async function createChallengeHint(
+  game_id: number,
+  challenge_id: number,
+  hint: Hint,
+) {
   return await api
     .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`, {
       json: hint,
@@ -140,7 +172,11 @@ export async function createChallengeHint(game_id: number, challenge_id: number,
     .json<Hint[]>();
 }
 
-export async function deleteChallengeHint(game_id: number, challenge_id: number, hint_id: number) {
+export async function deleteChallengeHint(
+  game_id: number,
+  challenge_id: number,
+  hint_id: number,
+) {
   return await api
     .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`, {
       searchParams: {
@@ -154,7 +190,7 @@ export async function getChallengeAttachments(
   game_id: number,
   challenge_id: number,
   all?: boolean,
-  folder?: "static" | "mapped" | "checker"
+  folder?: "static" | "mapped" | "checker",
 ) {
   return await api
     .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
@@ -162,7 +198,7 @@ export async function getChallengeAttachments(
         JSON.stringify({
           all,
           folder,
-        })
+        }),
       ) as SearchParamsOption,
     })
     .json<{ folder: "static" | "mapped" | "checker"; file: string }[]>();
@@ -172,7 +208,7 @@ export async function deleteChallengeAttachment(
   game_id: number,
   challenge_id: number,
   folder: "static" | "mapped" | "checker",
-  file: string
+  file: string,
 ) {
   return await api
     .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
@@ -185,14 +221,25 @@ export async function deleteChallengeAttachment(
 }
 
 export async function getChallengeEnv(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`).json<ChallengeEnv | null>();
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`)
+    .json<ChallengeEnv | null>();
 }
 
-export async function getChallengeInstance(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/instance`).json<Pod[]>();
+export async function getChallengeInstance(
+  game_id: number,
+  challenge_id: number,
+) {
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/instance`)
+    .json<Pod[]>();
 }
 
-export async function updateChallengeEnv(game_id: number, challenge_id: number, env: ChallengeEnv) {
+export async function updateChallengeEnv(
+  game_id: number,
+  challenge_id: number,
+  env: ChallengeEnv,
+) {
   return await api
     .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`, {
       json: env,
@@ -200,17 +247,26 @@ export async function updateChallengeEnv(game_id: number, challenge_id: number, 
     .json<void>();
 }
 
-export async function deleteChallengeEnv(game_id: number, challenge_id: number) {
-  return await api.delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`).json<void>();
+export async function deleteChallengeEnv(
+  game_id: number,
+  challenge_id: number,
+) {
+  return await api
+    .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`)
+    .json<void>();
 }
 
-export async function getChallengeCheckerScript(game_id: number, challenge_id: number, lint?: boolean) {
+export async function getChallengeCheckerScript(
+  game_id: number,
+  challenge_id: number,
+  lint?: boolean,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/checker`, {
       searchParams: JSON.parse(
         JSON.stringify({
           lint,
-        })
+        }),
       ),
     })
     .json<{
@@ -219,7 +275,11 @@ export async function getChallengeCheckerScript(game_id: number, challenge_id: n
     }>();
 }
 
-export async function updateChallengeCheckerScript(game_id: number, challenge_id: number, content: string) {
+export async function updateChallengeCheckerScript(
+  game_id: number,
+  challenge_id: number,
+  content: string,
+) {
   return await api
     .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/checker`, {
       json: {
@@ -234,38 +294,51 @@ export async function getChallengeSubmission(
   challenge_id: number,
   page: number,
   page_size: number,
-  only_solved: boolean
+  only_solved: boolean,
 ) {
   return (
-    await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/submission`, {
-      searchParams: JSON.parse(
-        JSON.stringify({
-          page,
-          page_size,
-          only_solved,
-        })
-      ) as SearchParamsOption,
-    })
+    await api.get(
+      `${api_root}/game/${game_id}/challenge/${challenge_id}/submission`,
+      {
+        searchParams: JSON.parse(
+          JSON.stringify({
+            page,
+            page_size,
+            only_solved,
+          }),
+        ) as SearchParamsOption,
+      },
+    )
   ).json<[Submission[], number]>();
 }
 
-export async function getTeamInfo(game_id: number, team_id: number, ex?: boolean) {
+export async function getTeamInfo(
+  game_id: number,
+  team_id: number,
+  ex?: boolean,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/team/${team_id}`, {
       searchParams: JSON.parse(
         JSON.stringify({
           ex,
-        })
+        }),
       ),
     })
     .json<Team>();
 }
 
 export async function getTeamRank(game_id: number, team_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/team/${team_id}/rank`).json<number>();
+  return await api
+    .get(`${api_root}/game/${game_id}/team/${team_id}/rank`)
+    .json<number>();
 }
 
-export async function updateTeamInfo(game_id: number, team_id: number, team: Team) {
+export async function updateTeamInfo(
+  game_id: number,
+  team_id: number,
+  team: Team,
+) {
   return await api
     .patch(`${api_root}/game/${game_id}/team/${team_id}`, {
       json: team,
@@ -274,7 +347,9 @@ export async function updateTeamInfo(game_id: number, team_id: number, team: Tea
 }
 
 export async function getTeamMembers(game_id: number, team_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/team/${team_id}/member`).json<User[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/team/${team_id}/member`)
+    .json<User[]>();
 }
 
 export async function getSelfTeam(game_id: number) {
@@ -287,16 +362,24 @@ export async function updateSelfteam(
     name: string;
     tag: string | null;
     institute_id: number | null;
-  }
+  },
 ) {
-  return await api.patch(`${api_root}/game/${game_id}/team/self`, { json: team }).json<Team>();
+  return await api
+    .patch(`${api_root}/game/${game_id}/team/self`, { json: team })
+    .json<Team>();
 }
 
 export async function getTeamExtras(game_id: number, team_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/team/${team_id}/extra`).json<Extra[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/team/${team_id}/extra`)
+    .json<Extra[]>();
 }
 
-export async function createTeamExtra(game_id: number, team_id: number, extra: Extra) {
+export async function createTeamExtra(
+  game_id: number,
+  team_id: number,
+  extra: Extra,
+) {
   return await api
     .post(`${api_root}/game/${game_id}/team/${team_id}/extra`, {
       json: extra,
@@ -305,7 +388,9 @@ export async function createTeamExtra(game_id: number, team_id: number, extra: E
 }
 
 export async function getTeamSolves(game_id: number, team_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/team/${team_id}/solve`).json<Submission[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/team/${team_id}/solve`)
+    .json<Submission[]>();
 }
 
 export async function createTeam(
@@ -313,9 +398,11 @@ export async function createTeam(
   team: {
     name: string;
     tag: string | null;
-  }
+  },
 ) {
-  return await api.post(`${api_root}/game/${game_id}/team`, { json: team }).json<Team>();
+  return await api
+    .post(`${api_root}/game/${game_id}/team`, { json: team })
+    .json<Team>();
 }
 
 export async function joinTeam(game_id: number, token: string) {
@@ -335,7 +422,9 @@ export type EventDeviceInfo = {
 };
 
 export async function getGameDevices(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/device`).json<EventDeviceInfo[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/device`)
+    .json<EventDeviceInfo[]>();
 }
 
 export async function regenerateGameToken(game_id: number) {
@@ -347,11 +436,15 @@ export async function regenerateGameToken(game_id: number) {
 }
 
 export async function getGameAdmins(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/administrator`).json<User[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/administrator`)
+    .json<User[]>();
 }
 
 export async function updateGameAdmins(game_id: number, admins: number[]) {
-  return await api.patch(`${api_root}/game/${game_id}/administrator`, { json: admins }).json<Game>();
+  return await api
+    .patch(`${api_root}/game/${game_id}/administrator`, { json: admins })
+    .json<Game>();
 }
 
 export async function getGameSelfEnvs(game_id: number) {
@@ -367,14 +460,25 @@ export async function stopGameSelfEnv(game_id: number) {
 }
 
 export async function startChallengeEnv(game_id: number, challenge_id: number) {
-  return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`).json<void>();
+  return await api
+    .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`)
+    .json<void>();
 }
 
-export async function getChallengeCommitHistory(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/history`).json<CommitHistory[]>();
+export async function getChallengeCommitHistory(
+  game_id: number,
+  challenge_id: number,
+) {
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/history`)
+    .json<CommitHistory[]>();
 }
 
-export async function submitFlag(game_id: number, challenge_id: number, flag: string) {
+export async function submitFlag(
+  game_id: number,
+  challenge_id: number,
+  flag: string,
+) {
   return await api
     .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/submit`, {
       json: {
@@ -384,7 +488,11 @@ export async function submitFlag(game_id: number, challenge_id: number, flag: st
     .json<Submission>();
 }
 
-export async function checkSubmissionStatus(game_id: number, challenge_id: number, submission_id: number) {
+export async function checkSubmissionStatus(
+  game_id: number,
+  challenge_id: number,
+  submission_id: number,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/submit`, {
       searchParams: {
@@ -395,30 +503,45 @@ export async function checkSubmissionStatus(game_id: number, challenge_id: numbe
 }
 
 export async function getSelfSolves(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/solve`).json<Submission[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/solve`)
+    .json<Submission[]>();
 }
 
-export async function getChallengeSolveStatus(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/submit`).json<{
-    solved: boolean;
-    solves: number;
-  }>();
+export async function getChallengeSolveStatus(
+  game_id: number,
+  challenge_id: number,
+) {
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/submit`)
+    .json<{
+      solved: boolean;
+      solves: number;
+    }>();
 }
 
-export async function getGameAdminChatSessions(game_id: number, page?: number, page_size?: number) {
+export async function getGameAdminChatSessions(
+  game_id: number,
+  page?: number,
+  page_size?: number,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/chat/admin`, {
       searchParams: JSON.parse(
         JSON.stringify({
           page,
           page_size,
-        })
+        }),
       ) as SearchParamsOption,
     })
     .json<[ChatSession[], number]>();
 }
 
-export async function getGameAdminChatMessages(game_id: number, challenge_id: number, team_id: number) {
+export async function getGameAdminChatMessages(
+  game_id: number,
+  challenge_id: number,
+  team_id: number,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/chat/admin/session`, {
       searchParams: {
@@ -433,7 +556,7 @@ export async function sendGameAdminChatMessage(
   game_id: number,
   challenge_id: number,
   team_id: number,
-  content: string
+  content: string,
 ) {
   return await api
     .post(`${api_root}/game/${game_id}/chat/admin/session`, {
@@ -448,11 +571,20 @@ export async function sendGameAdminChatMessage(
     .json<void>();
 }
 
-export async function getGamePlayerChatMessages(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/chat/${challenge_id}`).json<Chat[]>();
+export async function getGamePlayerChatMessages(
+  game_id: number,
+  challenge_id: number,
+) {
+  return await api
+    .get(`${api_root}/game/${game_id}/chat/${challenge_id}`)
+    .json<Chat[]>();
 }
 
-export async function sendGamePlayerChatMessage(game_id: number, challenge_id: number, content: string) {
+export async function sendGamePlayerChatMessage(
+  game_id: number,
+  challenge_id: number,
+  content: string,
+) {
   return await api
     .post(`${api_root}/game/${game_id}/chat/${challenge_id}`, {
       json: {
@@ -463,7 +595,9 @@ export async function sendGamePlayerChatMessage(game_id: number, challenge_id: n
 }
 
 export async function checkUnreadMessages(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/chat/unread`).json<Chat[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/chat/unread`)
+    .json<Chat[]>();
 }
 
 export async function getTeamList(
@@ -472,7 +606,7 @@ export async function getTeamList(
   page_size?: number,
   order?: string,
   filter?: string,
-  institute_id?: number
+  institute_id?: number,
 ) {
   return await api
     .get(`${api_root}/game/${game_id}/team`, {
@@ -485,39 +619,51 @@ export async function getTeamList(
           order,
           filter,
           institute_id,
-        })
+        }),
       ) as SearchParamsOption,
     })
     .json<[Team[], number]>();
 }
 
-export async function getGameSubmissions(game_id: number, page?: number, page_size?: number) {
+export async function getGameSubmissions(
+  game_id: number,
+  page?: number,
+  page_size?: number,
+) {
   return (
     await api.get(`${api_root}/game/${game_id}/submission`, {
       searchParams: JSON.parse(
         JSON.stringify({
           page,
           page_size,
-        })
+        }),
       ) as SearchParamsOption,
     })
   ).json<[Submission[], number]>();
 }
 
-export async function getGameAuditLogs(game_id: number, page?: number, page_size?: number) {
+export async function getGameAuditLogs(
+  game_id: number,
+  page?: number,
+  page_size?: number,
+) {
   return (
     await api.get(`${api_root}/game/${game_id}/audit`, {
       searchParams: JSON.parse(
         JSON.stringify({
           page,
           page_size,
-        })
+        }),
       ) as SearchParamsOption,
     })
   ).json<[Audit[], number]>();
 }
 
-export async function updateGameAuditLog(game_id: number, audit_id: number, audit: Audit) {
+export async function updateGameAuditLog(
+  game_id: number,
+  audit_id: number,
+  audit: Audit,
+) {
   return await api
     .patch(`${api_root}/game/${game_id}/audit/${audit_id}`, {
       json: audit,
@@ -537,14 +683,18 @@ export type GameStatistics = {
   challenge_solves: { [key: number]: number };
 };
 
-export async function getGameStatistics(game_id: number, in_game?: boolean, institute?: number) {
+export async function getGameStatistics(
+  game_id: number,
+  in_game?: boolean,
+  institute?: number,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/statistics`, {
       searchParams: JSON.parse(
         JSON.stringify({
           in_game,
           institute,
-        })
+        }),
       ),
     })
     .json<GameStatistics>();
@@ -556,24 +706,37 @@ export type GameStatisticsExport = {
   audits: Audit[];
 };
 
-export async function getGameStatisticsExport(game_id: number, in_game?: boolean, institute?: number) {
+export async function getGameStatisticsExport(
+  game_id: number,
+  in_game?: boolean,
+  institute?: number,
+) {
   return await api
     .get(`${api_root}/game/${game_id}/statistics/export`, {
       searchParams: JSON.parse(
         JSON.stringify({
           in_game,
           institute,
-        })
+        }),
       ),
     })
     .json<GameStatisticsExport>();
 }
 
-export async function getChallengeAnswer(game_id: number, challenge_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/answer`).json<string>();
+export async function getChallengeAnswer(
+  game_id: number,
+  challenge_id: number,
+) {
+  return await api
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/answer`)
+    .json<string>();
 }
 
-export async function updateChallengeAnswer(game_id: number, challenge_id: number, answer: string) {
+export async function updateChallengeAnswer(
+  game_id: number,
+  challenge_id: number,
+  answer: string,
+) {
   return await api
     .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/answer`, {
       json: answer,
@@ -582,7 +745,9 @@ export async function updateChallengeAnswer(game_id: number, challenge_id: numbe
 }
 
 export async function getRegistryConfig(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/registry/config`).json<RegistryConfig>();
+  return await api
+    .get(`${api_root}/game/${game_id}/registry/config`)
+    .json<RegistryConfig>();
 }
 
 export async function getRegistryRepositories(game_id: number) {
@@ -590,11 +755,15 @@ export async function getRegistryRepositories(game_id: number) {
 }
 
 export async function refreshRegistry(game_id: number) {
-  return await api.delete(`${api_root}/game/${game_id}/registry/refresh`).json<void>();
+  return await api
+    .delete(`${api_root}/game/${game_id}/registry/refresh`)
+    .json<void>();
 }
 
 export async function getRegistryImageTags(game_id: number, repo: string) {
-  return await api.get(`${api_root}/game/${game_id}/registry/${repo}`).json<string[]>();
+  return await api
+    .get(`${api_root}/game/${game_id}/registry/${repo}`)
+    .json<string[]>();
 }
 
 export async function updateGameTraffic(game_id: number, traffic: string) {
@@ -613,7 +782,10 @@ export async function deleteGameTraffic(game_id: number) {
   return await api.delete(`${api_root}/game/${game_id}/traffic`).json<void>();
 }
 
-export async function updateGameNodeSelector(game_id: number, node_selector: string) {
+export async function updateGameNodeSelector(
+  game_id: number,
+  node_selector: string,
+) {
   return await api
     .patch(`${api_root}/game/${game_id}/node-selector`, {
       json: {
@@ -624,5 +796,17 @@ export async function updateGameNodeSelector(game_id: number, node_selector: str
 }
 
 export async function deleteGameNodeSelector(game_id: number) {
-  return await api.delete(`${api_root}/game/${game_id}/node-selector`).json<void>();
+  return await api
+    .delete(`${api_root}/game/${game_id}/node-selector`)
+    .json<void>();
+}
+
+export async function getGameRepo(game_id: number, path: string) {
+  return await api
+    .get(`${api_root}/game/${game_id}/repo`, {
+      searchParams: {
+        path,
+      },
+    })
+    .json<ObjectInfo[]>();
 }

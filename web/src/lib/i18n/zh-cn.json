@@ -600,7 +600,13 @@
       "audits": "审计事件"
     },
     "git": {
-      "title": "题目仓库"
+      "title": "题目仓库",
+      "cloneTip": "使用如下链接可以将比赛数据克隆到本地，访问仓库所使用的账户与平台账户保持一致，方便备份与后续迁移。请注意，用户与队伍等信息不包含在此。通过仓库修改题目的功能尚未支持，请不要试图将本地更改推送至此仓库。",
+      "errors": {
+        "fetchRepo": {
+          "title": "获取题目仓库失败"
+        }
+      }
     },
     "form": {
       "title": "编辑信息",
@@ -2011,7 +2017,7 @@
     "preset": {
       "title": "脚本预设",
       "singleNodeDirectScript": "单节点直连",
-      "multiNodeDirectScript": "多节点直连"
+      "multiNodeDirectScript": "多���点直连"
     }
   },
   "cluster": {

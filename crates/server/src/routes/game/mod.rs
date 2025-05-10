@@ -2,7 +2,12 @@ use std::collections::HashMap;
 
 use axum::{
   Extension, Json, Router,
+  body::{Body, Bytes},
   extract::{DefaultBodyLimit, Multipart, Path, Query, State},
+  http::{
+    HeaderMap, StatusCode,
+    header::{CACHE_CONTROL, CONTENT_TYPE},
+  },
   middleware,
   response::IntoResponse,
   routing::{delete, get, patch, post},
@@ -10,7 +15,7 @@ use axum::{
 use chrono::{DateTime, Utc, serde::ts_seconds};
 use futures::TryStreamExt;
 use nanoid::nanoid;
-use r2s_bucket::Bucket;
+use r2s_bucket::{Bucket, git::to_pkt_line};
 use r2s_cache::Cache;
 use r2s_cluster::{CHALLENGE_NS, Cluster, ClusterError, Pod, traffic::MappedPort};
 use r2s_config::GlobalConfig;
@@ -26,10 +31,12 @@ use r2s_event::{
 };
 use r2s_migrator::Database;
 use r2s_queue::Queue;
+use regex::Regex;
 use sea_orm::TransactionTrait;
 use serde::{Deserialize, Serialize};
-use tokio_util::io::StreamReader;
-use tracing::{info, warn};
+use tokio_stream::StreamExt;
+use tokio_util::io::{ReaderStream, StreamReader};
+use tracing::{error, info, warn};
 
 use crate::{
   middleware::{
@@ -76,21 +83,25 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           "/node-selector",
           patch(update_game_node_selector).delete(delete_game_node_selector),
         )
-        // .nest(
-        //   "/repo",
-        //   Router::new().route("/", get(get_game_repo_git)).nest(
-        //     "/{repo}",
-        //     Router::new()
-        //       .route(
-        //         "/git-upload-pack",
-        //         post(game_repo_git_upload_pack).options(game_repo_git_upload_pack),
-        //       )
-        //       .route(
-        //         "/info/refs",
-        //         get(game_repo_info_refs).options(game_repo_info_refs),
-        //       ),
-        //   ),
-        // )
+        .nest(
+          "/repo",
+          Router::new().route("/", get(get_game_repo_git)).nest(
+            "/{repo}",
+            Router::new()
+              .route(
+                "/git-upload-pack",
+                post(game_repo_git_upload_pack).options(game_repo_git_upload_pack),
+              )
+              .route(
+                "/git-receive-pack",
+                post(game_repo_git_receive_pack).options(game_repo_git_receive_pack),
+              )
+              .route(
+                "/info/refs",
+                get(game_repo_info_refs).options(game_repo_info_refs),
+              ),
+          ),
+        )
         .nest(
           "/registry",
           Router::new()
@@ -273,8 +284,8 @@ async fn update_game(
   game_bucket
     .commit(
       ":construction: update game config",
-      "platform",
-      "platform@private.ret.sh.cn",
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
     )
     .await?;
   txn.commit().await?;
@@ -389,8 +400,8 @@ async fn update_game_intro(
   game_bucket
     .commit(
       ":memo: update README.md",
-      "platform",
-      "platform@private.ret.sh.cn",
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
     )
     .await?;
   txn.commit().await?;
@@ -1175,4 +1186,212 @@ async fn delete_game_node_selector(
   .await?;
   cache.at("game").del(game.id).await?;
   Ok(())
+}
+
+#[derive(Deserialize)]
+struct GameRepoGitQuery {
+  pub path: Option<String>,
+}
+
+async fn get_game_repo_git(
+  State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+  Query(query): Query<GameRepoGitQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let game_bucket = bucket
+    .at(
+      game
+        .bucket
+        .clone()
+        .ok_or(ResponseError::PreconditionFailed(
+          "game bucket not found".to_owned(),
+        ))?,
+    )
+    .await?;
+  let path = match query.path {
+    Some(path) => path,
+    None => ".".to_owned(),
+  };
+
+  Ok(Json(game_bucket.git.list_objects(&path).await?))
+}
+
+#[derive(Clone, Deserialize)]
+struct InfoRefsQuery {
+  pub service: String,
+}
+
+impl InfoRefsQuery {
+  pub fn service_trimmed(&self) -> String {
+    self.service.trim_start_matches("git-").to_owned()
+  }
+}
+
+fn check_git_protocol_safe(protocol: impl AsRef<str>) -> bool {
+  let re = Regex::new(r"^[0-9a-zA-Z]+=[0-9a-zA-Z]+(:[0-9a-zA-Z]+=[0-9a-zA-Z]+)*$").unwrap();
+  re.is_match(protocol.as_ref())
+}
+
+fn get_protocol(headers: &HeaderMap) -> Result<String, ResponseError> {
+  let protocol = headers.get("Git-Protocol");
+  if let Some(protocol) = protocol {
+    let protocol = protocol.to_str().map_err(|err| {
+      error!("Invalid git protocol: {}", err);
+      ResponseError::BadRequest("invalid git protocol".to_owned())
+    })?;
+    if check_git_protocol_safe(protocol) {
+      Ok(protocol.to_owned())
+    } else {
+      Err(ResponseError::BadRequest("invalid git protocol".to_owned()))
+    }
+  } else {
+    Ok("".to_owned())
+  }
+}
+
+async fn game_repo_info_refs(
+  State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+  Query(query): Query<InfoRefsQuery>, headers: HeaderMap, body: Body,
+) -> Result<impl IntoResponse, ResponseError> {
+  // let config = config.read().await;
+  let service = query.service_trimmed();
+  let protocol = get_protocol(&headers)?;
+  let mut headers = HeaderMap::new();
+
+  headers.insert(
+    CONTENT_TYPE,
+    format!("application/x-git-{}-advertisement", service)
+      .parse()
+      .unwrap(),
+  );
+  headers.insert(CACHE_CONTROL, "no-cache".parse().unwrap());
+
+  let game_bucket = bucket
+    .at(
+      game
+        .bucket
+        .clone()
+        .ok_or(ResponseError::PreconditionFailed(
+          "game bucket not found".to_owned(),
+        ))?,
+    )
+    .await?;
+
+  let stream_reader = StreamReader::new(
+    body
+      .into_data_stream()
+      .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, err)),
+  );
+
+  let stdout = match service.as_str() {
+    "upload-pack" => {
+      game_bucket
+        .git
+        .info_refs_upload(protocol, stream_reader)
+        .await
+    }
+    "receive-pack" => {
+      game_bucket
+        .git
+        .info_refs_receive(protocol, stream_reader)
+        .await
+    }
+    _ => return Err(ResponseError::BadRequest("Invalid git service".to_owned())),
+  };
+
+  let stdout = match stdout {
+    Ok(stdout) => stdout,
+    Err(err) => {
+      error!("Failed to run git rpc: {}", err);
+      return Err(ResponseError::InternalServerError(
+        "failed to run git rpc".to_owned(),
+        err.to_string(),
+      ));
+    }
+  };
+
+  let stdout_stream = ReaderStream::new(stdout);
+  let header = tokio_stream::once(Ok(Bytes::from(format!(
+    "{}0000",
+    to_pkt_line(format!("# service=git-{}\n", service))
+  ))));
+  let stream = header.chain(stdout_stream);
+
+  Ok((StatusCode::OK, headers, Body::from_stream(stream)))
+}
+
+async fn game_repo_git_rpc(
+  service_name: &str, bucket: Bucket, game: game::Model, headers: HeaderMap, body: Body,
+) -> Result<impl IntoResponse, ResponseError> {
+  let expected_content_type = format!("application/x-git-{}-request", service_name);
+  let content_type = headers.get(CONTENT_TYPE).ok_or(ResponseError::BadRequest(
+    "missing content type for git rpc".to_owned(),
+  ))?;
+  if content_type
+    .to_str()
+    .map_err(|_| ResponseError::BadRequest("invalid content type for git rpc".to_owned()))?
+    != expected_content_type
+  {
+    return Err(ResponseError::BadRequest(
+      "invalid content type for git rpc".to_owned(),
+    ));
+  }
+
+  let protocol = get_protocol(&headers)?;
+  let mut headers = HeaderMap::new();
+  headers.insert(
+    CONTENT_TYPE,
+    format!("application/x-git-{}-result", service_name)
+      .parse()
+      .unwrap(),
+  );
+
+  let game_bucket = bucket
+    .at(
+      game
+        .bucket
+        .clone()
+        .ok_or(ResponseError::PreconditionFailed(
+          "game bucket not found".to_owned(),
+        ))?,
+    )
+    .await?;
+  let stream_reader = StreamReader::new(
+    body
+      .into_data_stream()
+      .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e)),
+  );
+
+  let stdout = match service_name {
+    "upload-pack" => game_bucket.git.upload_pack(protocol, stream_reader).await,
+    "receive-pack" => game_bucket.git.receive_pack(protocol, stream_reader).await,
+    _ => return Err(ResponseError::BadRequest("invalid git service".to_owned())),
+  };
+
+  let stdout = match stdout {
+    Ok(stdout) => stdout,
+    Err(err) => {
+      error!("Failed to run git rpc: {}", err);
+      return Err(ResponseError::InternalServerError(
+        "failed to run git rpc".to_owned(),
+        err.to_string(),
+      ));
+    }
+  };
+
+  let stdout_stream = ReaderStream::new(stdout);
+
+  Ok((StatusCode::OK, headers, Body::from_stream(stdout_stream)))
+}
+
+async fn game_repo_git_receive_pack() -> Result<(), ResponseError> {
+  Err(ResponseError::Gone(
+    "this feature is not implemented".to_owned(),
+  ))
+}
+
+async fn game_repo_git_upload_pack(
+  State(bucket): State<Bucket>, Extension(game): Extension<game::Model>, headers: HeaderMap,
+  body: Body,
+) -> Result<impl IntoResponse, ResponseError> {
+  game_repo_git_rpc("upload-pack", bucket, game, headers, body).await
 }

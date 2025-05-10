@@ -33,14 +33,3 @@ export type ChallengeEnv = {
   images: ChallengeImage[];
   pull_secret: string | null;
 };
-
-export type CommitHistory = {
-  abbreviated_commit: string;
-  subject: string;
-  body: string;
-  author: {
-    name: string;
-    email: string;
-    date: number;
-  };
-};

@@ -5,7 +5,11 @@ use std::{
 };
 
 use serde::{Deserialize, Serialize};
-use tokio::{fs::create_dir_all, io::AsyncRead, process::Command};
+use tokio::{
+  fs::create_dir_all,
+  io::AsyncRead,
+  process::{ChildStdout, Command},
+};
 use tracing::{debug, trace, warn};
 
 use crate::BucketError;
@@ -30,6 +34,16 @@ pub struct CommitLog {
   author: CommitAuthor,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ObjectInfo {
+  path: String,
+  commit: String,
+  r#type: String, // "blob" or "tree" or "commit"
+  last_modified: Option<i64>,
+  subject: Option<String>,
+  author: Option<String>,
+}
+
 impl Git {
   pub async fn try_open(path: impl AsRef<Path>) -> Result<Self, BucketError> {
     if path.as_ref().exists() {
@@ -50,7 +64,7 @@ impl Git {
     if output.status.success() {
       trace!("opened git repository: {:?}", output);
       Ok(Self {
-        path: path.as_ref().to_path_buf(),
+        path: path.as_ref().to_path_buf().canonicalize()?,
       })
     } else {
       warn!("failed to open git repository: {:?}", output);
@@ -88,7 +102,7 @@ impl Git {
     if output.status.success() {
       trace!("initialized git repository: {:?}", output);
       Ok(Self {
-        path: path.as_ref().to_path_buf(),
+        path: path.as_ref().to_path_buf().canonicalize()?,
       })
     } else {
       warn!("failed to initialize git repository: {:?}", output);
@@ -277,12 +291,17 @@ impl Git {
   }
 
   pub async fn logs(&self, sub_path: impl AsRef<str>) -> Result<Vec<CommitLog>, BucketError> {
+    let sub_path = self.path.join(sub_path.as_ref()).canonicalize()?;
+    // check path traversal
+    if !sub_path.starts_with(&self.path) && sub_path != self.path {
+      return Err(BucketError::PathTraversal);
+    }
     let output = Command::new("git")
       .current_dir(&self.path)
       .arg("log")
       .arg("--date=unix")
       .arg("--pretty=format:{\"abbreviated_commit\":\"%h\",\"subject\":\"%s\",\"body\":\"%b\",\"author\":{\"name\":\"%aN\",\"email\":\"%aE\",\"date\":%at}}")
-      .arg(self.path.join(sub_path.as_ref()).canonicalize()?)
+      .arg(&sub_path)
       .output()
       .await?;
     if output.status.success() {
@@ -298,6 +317,75 @@ impl Git {
       )
     } else {
       warn!("failed to get commits from git repository: {:?}", output);
+      Err(BucketError::GitCommandFailed(String::from_utf8(
+        output.stderr,
+      )?))
+    }
+  }
+
+  /// List all objects in the git repository
+  pub async fn list_objects(
+    &self, sub_path: impl AsRef<str>,
+  ) -> Result<Vec<ObjectInfo>, BucketError> {
+    let sub_path = self.path.join(sub_path.as_ref()).canonicalize()?;
+    // check path traversal
+    if !sub_path.starts_with(&self.path) && sub_path != self.path {
+      return Err(BucketError::PathTraversal);
+    }
+    let output = Command::new("git")
+      .current_dir(&self.path)
+      .arg("ls-tree")
+      .arg(
+        "--format={\"type\":\"%(objecttype)\",\"path\":\"%(path)\",\"commit\":\"%(objectname)\"}",
+      )
+      .arg("HEAD")
+      .arg(format!("{}/", sub_path.to_str().unwrap_or(".")))
+      .output()
+      .await?;
+    if output.status.success() {
+      trace!("got objects from git repository: {:?}", output);
+      let output = String::from_utf8(output.stdout)?;
+      trace!("output: {:?}", output);
+      let mut result: Vec<ObjectInfo> = output
+        .lines()
+        .map(serde_json::from_str)
+        .filter_map(Result::ok)
+        .collect();
+
+      // get each object info
+      for obj in result.iter_mut() {
+        let output = Command::new("git")
+          .current_dir(&self.path)
+          .arg("log")
+          .arg("--format={\"abbreviated_commit\":\"%h\",\"subject\":\"%s\",\"body\":\"%b\",\"author\":{\"name\":\"%aN\",\"email\":\"%aE\",\"date\":%at}}")
+          .arg("--date=unix")
+          .arg(format!("--find-object={}", obj.commit)).output().await?;
+
+        if output.status.success() {
+          trace!("got object info from git repository: {:?}", output);
+          let output = String::from_utf8(output.stdout)?;
+          trace!("output: {:?}", output);
+          let obj_info: CommitLog = serde_json::from_str(output.lines().next().ok_or(
+            BucketError::GitCommandFailed("failed to parse object info".to_string()),
+          )?)?;
+          obj.commit = obj_info.abbreviated_commit;
+          obj.subject = Some(obj_info.subject);
+          obj.author = Some(obj_info.author.name);
+          obj.last_modified = Some(obj_info.author.date);
+        } else {
+          warn!(
+            "failed to get object info from git repository: {:?}",
+            output
+          );
+          return Err(BucketError::GitCommandFailed(String::from_utf8(
+            output.stderr,
+          )?));
+        }
+      }
+
+      Ok(result)
+    } else {
+      warn!("failed to get objects from git repository: {:?}", output);
       Err(BucketError::GitCommandFailed(String::from_utf8(
         output.stderr,
       )?))
@@ -325,10 +413,11 @@ impl Git {
   async fn stream_internal<T, S>(
     &self, protocol: impl AsRef<OsStr>, subcmd: impl AsRef<OsStr>, args: T,
     mut stdin: impl AsyncRead + Unpin + Send + 'static,
-  ) -> Result<impl AsyncRead, BucketError>
+  ) -> Result<ChildStdout, BucketError>
   where
     T: IntoIterator<Item = S>,
-    S: AsRef<OsStr>, {
+    S: AsRef<OsStr>,
+  {
     let mut cmd = Command::new("git");
     cmd
       .stdin(Stdio::piped())
@@ -349,7 +438,7 @@ impl Git {
 
   pub async fn info_refs_receive(
     &self, protocol: impl AsRef<OsStr>, stdin: impl AsyncRead + Unpin + Send + 'static,
-  ) -> Result<impl AsyncRead, BucketError> {
+  ) -> Result<ChildStdout, BucketError> {
     self
       .stream_internal(
         protocol,
@@ -362,7 +451,7 @@ impl Git {
 
   pub async fn info_refs_upload(
     &self, protocol: impl AsRef<OsStr>, stdin: impl AsyncRead + Unpin + Send + 'static,
-  ) -> Result<impl AsyncRead, BucketError> {
+  ) -> Result<ChildStdout, BucketError> {
     debug!("get info refs for repo: {:?}", self.path);
     self
       .stream_internal(
@@ -376,7 +465,7 @@ impl Git {
 
   pub async fn upload_pack(
     &self, protocol: impl AsRef<OsStr>, stdin: impl AsyncRead + Unpin + Send + 'static,
-  ) -> Result<impl AsyncRead, BucketError> {
+  ) -> Result<ChildStdout, BucketError> {
     self
       .stream_internal(protocol, "upload-pack", ["--stateless-rpc"], stdin)
       .await
@@ -384,9 +473,33 @@ impl Git {
 
   pub async fn receive_pack(
     &self, protocol: impl AsRef<OsStr>, stdin: impl AsyncRead + Unpin + Send + 'static,
-  ) -> Result<impl AsyncRead, BucketError> {
+  ) -> Result<ChildStdout, BucketError> {
     self
       .stream_internal(protocol, "receive-pack", ["--stateless-rpc"], stdin)
       .await
   }
+}
+
+// covert a message to PKT-LINE format
+/// Converts a message to the PKT-LINE format used in Git's protocol.
+///
+/// This function takes a message as input and returns a string in the PKT-LINE format,
+/// which is used in Git's protocol for communication between the client and server.
+///
+/// # Arguments
+///
+/// * `msg` - A reference to the message that needs to be converted to PKT-LINE format.
+///
+/// # Returns
+///
+/// * `String` - The message converted to PKT-LINE format.
+///
+/// # Examples
+///
+/// ```
+/// let message = "Hello, world!";
+/// let pkt_line = to_pkt_line(message);
+/// ```
+pub fn to_pkt_line(msg: impl AsRef<str>) -> String {
+  format!("{:04x}{}", msg.as_ref().len() + 4, msg.as_ref())
 }

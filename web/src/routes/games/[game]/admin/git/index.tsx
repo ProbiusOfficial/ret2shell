@@ -1,14 +1,18 @@
-import NotImplemented from "@blocks/not-implemented";
 import { gameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 
-export default function Git() {
+import GitBlock from "@blocks/game/git";
+
+export default function () {
   return (
     <>
-      <Title page={t("game.git.title")} route={`/games/${gameStore.current?.id}/admin/git`} />
-      <div class="flex-1 flex items-center justify-center">
-        <NotImplemented />
+      <Title
+        page={t("game.git.title")}
+        route={`/games/${gameStore.current?.id}/admin/git`}
+      />
+      <div class="flex flex-col p-3 lg:p-6 w-full items-center">
+        <GitBlock />
       </div>
     </>
   );
