@@ -129,7 +129,7 @@ function CreateForm(fnProps: {
           name="name"
           validate={[
             required(t("challenge.instance.image.form.containerName.required")!),
-            pattern(/^[a-z\-]{3,40}$/, t("challenge.instance.image.form.containerName.mustBeValidName")!),
+            pattern(/^[a-z0-9\-]{3,40}$/, t("challenge.instance.image.form.containerName.mustBeValidName")!),
           ]}
         >
           {(field, props) => (
