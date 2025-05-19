@@ -67,11 +67,12 @@ impl Merge for Option<Config> {
   }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum ServiceType {
-  HTTP,
-  TCP,
+  Http,
+  Tcp,
+  Udp,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -82,7 +83,7 @@ pub struct ChallengeImage {
   pub mem: String,
   pub storage: Option<String>,
   pub port: Option<u16>,
-  pub service_type: Option<String>,
+  pub service_type: Option<ServiceType>,
   pub description: Option<String>,
   pub restricted: Option<bool>,
 }

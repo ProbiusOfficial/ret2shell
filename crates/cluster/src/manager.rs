@@ -19,7 +19,7 @@ use kube::{
   api::{DeleteParams, ListParams, LogParams, ObjectList, ObjectMeta, PartialObjectMetaExt, Patch},
   runtime::reflector::Lookup,
 };
-use r2s_config::cluster::{ChallengeEnv, Config};
+use r2s_config::cluster::{ChallengeEnv, Config, ServiceType};
 use tokio_util::{codec::Framed, sync::CancellationToken};
 use tracing::{debug, error, info, warn};
 
@@ -501,7 +501,17 @@ impl Cluster {
             ports: image.port.map(|port| {
               vec![ContainerPort {
                 container_port: port as i32,
-                protocol: Some("TCP".to_owned()),
+                protocol: Some(
+                  if image
+                    .service_type
+                    .clone()
+                    .is_some_and(|s| s == ServiceType::Udp)
+                  {
+                    "UDP".to_owned()
+                  } else {
+                    "TCP".to_owned()
+                  },
+                ),
                 ..Default::default()
               }]
             }),
