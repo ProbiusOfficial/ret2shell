@@ -3,7 +3,7 @@ use std::sync::{Arc, atomic::AtomicBool};
 use axum::{
   Extension,
   extract::{Request, State},
-  http::header,
+  http::header::{self, WWW_AUTHENTICATE},
   middleware::Next,
   response::IntoResponse,
 };
@@ -283,6 +283,50 @@ pub async fn extract_user_info(
       "Set-Token",
       token_str.parse().expect("failed to parse token"),
     );
+  }
+
+  Ok(resp)
+}
+
+pub async fn create_auth_header_by_user_agent(
+  req: Request, next: Next,
+) -> Result<impl IntoResponse, ResponseError> {
+  let req_headers = req.headers();
+  let user_agent = req_headers
+    .get(header::USER_AGENT)
+    .and_then(|header| header.to_str().ok())
+    .unwrap_or_default()
+    .to_owned();
+
+  let mut resp = next.run(req).await;
+  if resp.status() == 401 {
+    let resp_headers = resp.headers_mut();
+    // test git, docker and curl here
+    match user_agent {
+      u if u.contains("git") => {
+        resp_headers.insert(
+          WWW_AUTHENTICATE,
+          header::HeaderValue::from_static("Basic realm=\"ret2shell\""),
+        );
+      }
+      u if u.contains("docker") || u.contains("containers") => {
+        resp_headers.insert(
+          WWW_AUTHENTICATE,
+          header::HeaderValue::from_static("Basic realm=\"ret2shell\""),
+        );
+      }
+      u if u.contains("curl") => {
+        resp_headers.insert(
+          WWW_AUTHENTICATE,
+          header::HeaderValue::from_static("Bearer realm=\"ret2shell\""),
+        );
+        resp_headers.insert(
+          WWW_AUTHENTICATE,
+          header::HeaderValue::from_static("Basic realm=\"ret2shell\""),
+        );
+      }
+      _ => {}
+    }
   }
 
   Ok(resp)

@@ -21,7 +21,7 @@ use tracing::{Span, debug, debug_span};
 use crate::{
   middleware::{
     self,
-    auth::extract_user_info,
+    auth::{create_auth_header_by_user_agent, extract_user_info},
     codec,
     forwarded::{ProxiedIpExtractor, ip_record, ip_record_worker},
   },
@@ -107,7 +107,8 @@ fn construct_router(state: &GlobalState) -> Router<GlobalState> {
     .nest("/traffic", traffic::router(state))
     .route("/ping", get(ping))
     .route_layer(from_fn_with_state(state.clone(), ip_record))
-    .route_layer(from_fn_with_state(state.clone(), extract_user_info));
+    .route_layer(from_fn_with_state(state.clone(), extract_user_info))
+    .route_layer(from_fn(create_auth_header_by_user_agent));
 
   let route = if let Some(config) = state.config.server.clone().unwrap_or_default().rate_limit {
     let governor_conf = Arc::new(
