@@ -134,12 +134,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route("/", patch(update_game).delete(delete_game))
         .route_layer(middleware::from_fn(auth::game_admin_required))
         .route("/solve", get(get_self_solves))
-        .route(
-          "/env",
-          get(get_self_envs)
-            .patch(delay_self_env)
-            .delete(stop_self_env),
-        )
+        .route("/env", get(get_self_envs))
         .nest("/challenge", challenge::router(state))
         .nest("/team", team::router(state))
         .nest("/notification", notification::router(state))
@@ -448,6 +443,8 @@ macro_rules! get_pod_field {
   }};
 }
 
+pub(crate) use get_pod_field;
+
 impl TryFrom<Pod> for Instance {
   type Error = ResponseError;
   fn try_from(value: Pod) -> Result<Self, Self::Error> {
@@ -632,26 +629,6 @@ async fn get_self_envs(
   }
 
   Ok(Json(result))
-}
-
-async fn delay_self_env(
-  State(cluster): State<Cluster>, Extension(token): Extension<Token>,
-) -> Result<impl IntoResponse, ResponseError> {
-  cluster
-    .at(CHALLENGE_NS)
-    .delay_challenge_env(token.id)
-    .await?;
-  Ok(())
-}
-
-async fn stop_self_env(
-  State(cluster): State<Cluster>, Extension(token): Extension<Token>,
-) -> Result<impl IntoResponse, ResponseError> {
-  cluster
-    .at(CHALLENGE_NS)
-    .stop_challenge_env(token.id)
-    .await?;
-  Ok(())
 }
 
 #[derive(Serialize)]

@@ -1142,9 +1142,6 @@
         },
         "failed": {
           "title": "Failed to start challenge instance"
-        },
-        "inUse": {
-          "title": "Another challenge instance is running"
         }
       },
       "image": {
@@ -1269,9 +1266,10 @@
           "title": "This challenge does not provide an online instance"
         },
         "singleton": {
-          "title": "Only one challenge instance can be started at the same time.",
-          "current": "The instance currently running",
-          "action": "Stop other challenge instances and start the current one?"
+          "title": "You have reached the limit of challenge instances you can start at the same time",
+          "current": "Currently running instances",
+          "action": "Do you want to stop other challenge instances and start the current one?",
+          "stop": "Please select a challenge instance to stop and start the current one"
         },
         "noAction": {
           "title": "No action will be taken."

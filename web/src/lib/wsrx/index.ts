@@ -1,4 +1,4 @@
-import { getGameSelfEnvs } from "@api/game";
+import { getGameInstances } from "@api/game";
 import type { Instance } from "@models/instance";
 import { gameStore } from "@storage/game";
 import { platformStore } from "@storage/platform";
@@ -64,7 +64,7 @@ export class WsrxWrapper {
   public async syncRemote() {
     if (gameStore.current) {
       try {
-        const result = await getGameSelfEnvs(gameStore.current.id);
+        const result = await getGameInstances(gameStore.current.id);
         this.setInstances(
           result.filter((instance) => instance.created_at.plus({ hours: instance.renew_count + 1 }) > DateTime.now())
         );

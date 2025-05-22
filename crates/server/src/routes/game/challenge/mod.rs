@@ -39,7 +39,7 @@ use serde::{Deserialize, Serialize};
 use tokio_util::io::{ReaderStream, StreamReader};
 use tracing::{debug, info, warn};
 
-use super::worker;
+use super::{get_pod_field, worker};
 use crate::{
   middleware::{
     auth::{self, Token, is_game_admin},
@@ -78,7 +78,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route("/history", get(get_challenge_update_history))
         .route(
           "/env",
-          patch(update_challenge_env).delete(delete_challenge_env),
+          patch(update_challenge_env_config).delete(delete_challenge_env_config),
         )
         .route("/instance", get(get_all_running_instances_for_challenge))
         .route("/submission", get(get_challenge_submissions))
@@ -99,7 +99,13 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         ))
         .route("/answer", get(get_answer))
         .route("/file", get(get_player_attachment))
-        .route("/env", get(get_challenge_env).post(start_challenge_env))
+        .route("/env", get(get_challenge_env_config))
+        .route(
+          "/instance",
+          post(start_challenge_instance)
+            .patch(delay_challenge_instance)
+            .delete(stop_challenge_instance),
+        )
         .route("/hint", get(get_challenge_hints))
         .route("/hint/unlock", post(unlock_hint))
         .route(
@@ -1050,7 +1056,7 @@ async fn sync_challenge_hint_with_bucket(
   Ok(())
 }
 
-async fn get_challenge_env(
+async fn get_challenge_env_config(
   State(ref bucket): State<Bucket>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
@@ -1064,13 +1070,14 @@ async fn get_challenge_env(
 }
 
 #[allow(clippy::too_many_arguments)]
-async fn start_challenge_env(
+async fn start_challenge_instance(
   State(bucket): State<Bucket>, State(cluster): State<Cluster>, State(cache): State<Cache>,
   State(mut checker): State<Checker>, Extension(config): Extension<config::Model>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Extension(token): Extension<Token>, team_ext: Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
+  // NOTE: this is important for scoring
   let team = if team.is_some()
     && game.in_progress()
     && challenge.archive_at.is_none_or(|t| t > Utc::now())
@@ -1092,19 +1099,41 @@ async fn start_challenge_env(
       "please wait for rebuilding cargo crates".to_owned(),
     ));
   }
-  if cluster
-    .at("ret2shell-challenge")
-    .get_challenge_env_by_user(token.id)
-    .await?
-    .is_some_and(|v| {
-      v.status
-        .is_some_and(|s| s.phase.is_some_and(|p| p == "Pending" || p == "Running"))
-    })
-  {
-    return Err(ResponseError::PreconditionFailed(
-      "you can only start one environment at the same time".to_owned(),
-    ));
+
+  match team.clone() {
+    Some(team) => {
+      let pods = cluster
+        .at(CHALLENGE_NS)
+        .get_challenge_env_by_team(team.id)
+        .await?;
+      if pods.len() >= game.team_size as usize {
+        return Err(ResponseError::PreconditionFailed(format!(
+          "your team can only start {} instance(s) at the same time",
+          game.team_size
+        )));
+      }
+      for pod in pods.iter() {
+        if get_pod_field!(pod, labels, "ret.sh.cn/challenge") == challenge.id.to_string() {
+          return Err(ResponseError::Conflict(
+            "this challenge instance is already launched".to_owned(),
+          ));
+        }
+      }
+    }
+    None => {
+      if cluster
+        .at(CHALLENGE_NS)
+        .get_challenge_env_by_user(token.id)
+        .await?
+        .is_some()
+      {
+        return Err(ResponseError::PreconditionFailed(
+          "you can only start one instance at the same time".to_owned(),
+        ));
+      }
+    }
   }
+
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge.clone());
 
   if let Some(env_config) = challenge_bucket.env().await? {
@@ -1114,10 +1143,19 @@ async fn start_challenge_env(
       ));
     }
 
-    info!(
-      "starting challenge env {}:'{}' for user {}:'{}' ({})",
-      challenge.id, challenge.name, token.id, token.account, token.nickname
-    );
+    if team.is_some() {
+      let team = team.clone().unwrap();
+      info!(
+        "starting challenge env {}:'{}' for user {}:'{}' ({}) in team {}:'{}'",
+        challenge.id, challenge.name, token.id, token.account, token.nickname, team.id, team.name
+      );
+    } else {
+      info!(
+        "starting challenge env {}:'{}' for user {}:'{}' ({})",
+        challenge.id, challenge.name, token.id, token.account, token.nickname
+      );
+    }
+
     debug!("env_config: {:?}", env_config);
     let ports = env_config
       .clone()
@@ -1214,7 +1252,75 @@ async fn start_challenge_env(
   }
 }
 
-async fn update_challenge_env(
+async fn delay_challenge_instance(
+  State(ref cluster): State<Cluster>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  team_ext: Extension<Option<team::Model>>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let team = extract_team!(game, team_ext, token);
+
+  let count = if let Some(team) = team {
+    info!(
+      "delaying challenge env {}:'{}' for user {}:'{}' ({}) in team {}:'{}'",
+      challenge.id, challenge.name, token.id, token.account, token.nickname, team.id, team.name
+    );
+    cluster
+      .at(CHALLENGE_NS)
+      .delay_challenge_env_by_team(challenge.id, team.id)
+      .await?
+  } else {
+    0
+  };
+  if count != 0 {
+    return Ok(());
+  }
+
+  info!(
+    "delaying challenge env {} :'{}' for user {}:'{}' ({})",
+    challenge.id, challenge.name, token.id, token.account, token.nickname
+  );
+  cluster
+    .at(CHALLENGE_NS)
+    .delay_challenge_env_by_user(challenge.id, token.id)
+    .await?;
+  Ok(())
+}
+
+async fn stop_challenge_instance(
+  State(ref cluster): State<Cluster>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  team_ext: Extension<Option<team::Model>>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let team = extract_team!(game, team_ext, token);
+
+  let count = if let Some(team) = team {
+    info!(
+      "stop challenge env {}:'{}' for user {}:'{}' ({}) in team {}:'{}'",
+      challenge.id, challenge.name, token.id, token.account, token.nickname, team.id, team.name
+    );
+    cluster
+      .at(CHALLENGE_NS)
+      .stop_challenge_env_by_team(challenge.id, team.id)
+      .await?
+  } else {
+    0
+  };
+  if count != 0 {
+    return Ok(());
+  }
+
+  info!(
+    "stop challenge env {} :'{}' for user {}:'{}' ({})",
+    challenge.id, challenge.name, token.id, token.account, token.nickname
+  );
+  cluster
+    .at(CHALLENGE_NS)
+    .stop_challenge_env_by_user(challenge.id, token.id)
+    .await?;
+  Ok(())
+}
+
+async fn update_challenge_env_config(
   State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
   Extension(token): Extension<Token>, Extension(challenge): Extension<challenge::Model>,
   Json(env): Json<ChallengeEnv>,
@@ -1250,7 +1356,7 @@ async fn update_challenge_env(
   Ok(())
 }
 
-async fn delete_challenge_env(
+async fn delete_challenge_env_config(
   State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
   Extension(token): Extension<Token>, Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {

@@ -6,7 +6,7 @@ use axum::{
   routing::{get, patch},
 };
 use r2s_cache::Cache;
-use r2s_cluster::{Cluster, ClusterError};
+use r2s_cluster::{CHALLENGE_NS, Cluster, ClusterError};
 use r2s_config::cluster;
 use r2s_database::{config, user::Permission};
 use r2s_event::{
@@ -62,11 +62,7 @@ async fn cluster_maintain_worker(_state: GlobalState, cluster: Cluster, queue: Q
   let mut overloaded = false;
   loop {
     tokio::time::sleep(std::time::Duration::from_secs(30)).await;
-    match cluster
-      .at("ret2shell-challenge")
-      .delete_outdated_envs()
-      .await
-    {
+    match cluster.at(CHALLENGE_NS).delete_outdated_envs().await {
       Ok((o, running, pending)) => {
         if o {
           warn!(

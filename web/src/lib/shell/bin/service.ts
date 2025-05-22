@@ -1,8 +1,8 @@
-import { delayGameSelfEnv, getChallengeEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
+import { delayChallengeInstance, getChallengeEnv, startChallengeInstance, stopChallengeInstance } from "@api/game";
 import { deunicode } from "@api/rpc";
 import { getWsrxLink, wsrx } from "@lib/wsrx";
 import type { Instance } from "@models/instance";
-import { accountStore } from "@storage/account";
+import { gameStore, inProgress } from "@storage/game";
 import { challengeStore } from "@storage/challenge";
 import { t } from "@storage/theme";
 import { WsrxState } from "@xdsec/wsrx";
@@ -67,33 +67,43 @@ export class Service implements Command {
       io.error(t("challenge.instance.errors.noConfig.title")!);
       return 1;
     }
-    const inst = wsrx.instances().find((instance) => instance.user_id === accountStore.id);
-    if (inst) {
-      if (inst.challenge_id === challengeStore.current!.id) {
+    if (wsrx.instances().length > (inProgress() ? (gameStore.current?.team_size ?? 1) : 1)) {
+      if (wsrx.instances().find((v) => v.challenge_id === challengeStore.current!.id)) {
         await this.status(io);
         return 0;
       }
       io.warning(t("challenge.instance.errors.singleton.title")!);
       io.info(
-        `${t("challenge.instance.errors.singleton.current")}: ${link(inst.challenge_name!, `rnix://challenge/${inst.challenge_id}`)}`
+        `${t("challenge.instance.errors.singleton.current")}:\n\t${wsrx
+          .instances()
+          .map(
+            (inst) =>
+              `${link(ansiColors.bold(inst.challenge_id.toString()), `rnix://command/${inst.challenge_id}`)}: ${link(inst.challenge_name!, `rnix://challenge/${inst.challenge_id}`)}`
+          )
+          .join("\n\t")}`
       );
       io.print(
-        `${t("challenge.instance.errors.singleton.action")!} [${ansiColors.green(link("yes", "rnix://command/yes"))}/${ansiColors.red(link("NO", "rnix://command/no"))}]: `
+        `${t("challenge.instance.errors.singleton.stop")!} [${ansiColors.green("<id>")}/${ansiColors.red(link("quit", "rnix://command/quit"))}]: `
       );
       const choice = await io.input();
       io.println("");
-      if (choice === "yes") {
-        try {
-          await stopGameSelfEnv(challengeStore.current!.game_id);
-        } catch (e) {
-          if (e instanceof HTTPError) {
-            const text = await e.response.text();
-            io.error(`${t("challenge.instance.errors.stop.title")!}: ${text}`);
-          }
-        }
-      } else {
+      const chall_id = Number.parseInt(choice);
+      if (!chall_id) {
         io.warning(t("challenge.instance.errors.noAction.title")!);
         return 1;
+      }
+      try {
+        const inst = wsrx.instances().find((v) => v.challenge_id === chall_id);
+        if (!inst) {
+          io.warning(t("challenge.instance.errors.noAction.title")!);
+          return 1;
+        }
+        await stopChallengeInstance(inst.game_id, inst.challenge_id);
+      } catch (e) {
+        if (e instanceof HTTPError) {
+          const text = await e.response.text();
+          io.error(`${t("challenge.instance.errors.stop.title")!}: ${text}`);
+        }
       }
     }
     const d_service_name = await deunicode(challengeStore.current!.name);
@@ -104,7 +114,7 @@ export class Service implements Command {
     );
     await new Promise((r) => setTimeout(r, 500));
     try {
-      await startChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id);
+      await startChallengeInstance(challengeStore.current!.game_id, challengeStore.current!.id);
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();
@@ -127,7 +137,7 @@ export class Service implements Command {
       })!
     );
     try {
-      await stopGameSelfEnv(challengeStore.current!.game_id);
+      await stopChallengeInstance(challengeStore.current!.game_id, challengeStore.current!.id);
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();
@@ -223,7 +233,7 @@ export class Service implements Command {
       return 1;
     }
     try {
-      await delayGameSelfEnv(challengeStore.current!.game_id);
+      await delayChallengeInstance(challengeStore.current!.game_id, challengeStore.current!.id);
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();

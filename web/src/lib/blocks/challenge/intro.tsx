@@ -1,10 +1,10 @@
 import { api_root, handleHttpError } from "@api";
 import { getCalmdownStatus } from "@api/cluster";
-import { delayGameSelfEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
+import { delayChallengeInstance, startChallengeInstance, stopChallengeInstance } from "@api/game";
 import Spin from "@assets/animates/spin";
 import { getWsrxLink, wsrx } from "@lib/wsrx";
-import { accountStore } from "@storage/account";
 import { challengeStore, refreshStatus } from "@storage/challenge";
+import { gameStore, inProgress } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
@@ -73,15 +73,13 @@ export default function (props: { inGame?: boolean }) {
     instanceStateIter = instanceStateIter % 20;
     return maintainInstancesWorker;
   }
+  const instanceCountExceeded = createMemo(() => {
+    return wsrx.instances().length >= (inProgress() ? (gameStore.current?.team_size ?? 1) : 1);
+  });
+
   const timer = setInterval(maintainInstancesWorker(), 1000);
   onCleanup(() => {
     clearInterval(timer);
-  });
-  const userExplicitInstance = createMemo(() => {
-    if (challengeStore.current && challengeStore.env) {
-      return wsrx.instances().find((s) => s.user_id === accountStore.id) ?? null;
-    }
-    return null;
   });
 
   createEffect(() => {
@@ -91,10 +89,10 @@ export default function (props: { inGame?: boolean }) {
   });
 
   const [starting, setStarting] = createSignal(false);
-  async function handleStartChallengeEnv() {
+  async function handleStartChallengeInstance() {
     setStarting(true);
     try {
-      await startChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id);
+      await startChallengeInstance(challengeStore.current!.game_id, challengeStore.current!.id);
       setTimeout(() => {
         maintainInstances();
       }, 500);
@@ -105,11 +103,11 @@ export default function (props: { inGame?: boolean }) {
   }
 
   const [delaying, setDelaying] = createSignal(false);
-  function handleDelaySelfEnv() {
+  function handleDelayChallengeInstance() {
     setDelaying(true);
     setTimeout(async () => {
       try {
-        await delayGameSelfEnv(challengeStore.current!.game_id);
+        await delayChallengeInstance(challengeStore.current!.game_id, challengeStore.current!.id);
         setTimeout(() => {
           maintainInstances();
         }, 500);
@@ -120,11 +118,11 @@ export default function (props: { inGame?: boolean }) {
     }, 500);
   }
   const [stopping, setStopping] = createSignal(false);
-  function handleStopSelfEnv() {
+  function handleStopChallengeInstance() {
     setStopping(true);
     setTimeout(async () => {
       try {
-        await stopGameSelfEnv(challengeStore.current!.game_id);
+        await stopChallengeInstance(challengeStore.current!.game_id, challengeStore.current!.id);
         setTimeout(() => {
           maintainInstances();
           refreshCalmdown();
@@ -135,6 +133,24 @@ export default function (props: { inGame?: boolean }) {
       setStopping(false);
     }, 500);
   }
+
+  const [stoppingExplicit, setStoppingExplicit] = createSignal(0);
+  function handleStopChallengeInstanceExplicit(game_id: number, id: number) {
+    setStoppingExplicit(id);
+    setTimeout(async () => {
+      try {
+        await stopChallengeInstance(game_id, id);
+        setTimeout(() => {
+          maintainInstances();
+          refreshCalmdown();
+        }, 500);
+      } catch (err) {
+        handleHttpError(err as Error, t("challenge.instance.errors.stop.title")!);
+      }
+      setStoppingExplicit(0);
+    }, 500);
+  }
+
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
       <OverlayScrollbarsComponent
@@ -286,128 +302,120 @@ export default function (props: { inGame?: boolean }) {
                         <Spin width={20} height={20} />
                         <span class="flex-1 truncate text-error">{t("challenge.instance.status.failed.title")}</span>
                       </Match>
-                      <Match when={userExplicitInstance()}>
+                      <Match when={instanceCountExceeded()}>
                         <span class="text-warning flex-1 truncate">
-                          {t("challenge.instance.status.inUse.title")}: {userExplicitInstance()?.challenge_name}
+                          {t("challenge.instance.errors.singleton.title")}
                         </span>
                       </Match>
                     </Switch>
                   </h3>
                 </div>
                 <span class="flex-1" />
-                <div class="flex flex-row space-x-2 items-center">
-                  <Switch
-                    fallback={
-                      <Button
-                        ghost
-                        size="sm"
-                        onClick={handleStartChallengeEnv}
-                        loading={starting()}
-                        disabled={
-                          starting() ||
-                          calmdownStart() !== null ||
-                          challengeStore.env?.images.every((image) => !image.port)
+                <Switch
+                  fallback={
+                    <Button
+                      ghost
+                      size="sm"
+                      onClick={handleStartChallengeInstance}
+                      loading={starting()}
+                      disabled={
+                        starting() ||
+                        calmdownStart() !== null ||
+                        challengeStore.env?.images.every((image) => !image.port)
+                      }
+                    >
+                      <Show
+                        when={calmdownStart()}
+                        fallback={
+                          <>
+                            <span class="icon-[fluent--play-20-regular] w-5 h-5 text-success" />
+                            <span>{t("challenge.instance.actions.start.title")}</span>
+                          </>
                         }
                       >
-                        <Show
-                          when={calmdownStart()}
-                          fallback={
-                            <>
-                              <span class="icon-[fluent--play-20-regular] w-5 h-5 text-success" />
-                              <span>{t("challenge.instance.actions.start.title")}</span>
-                            </>
-                          }
-                        >
-                          <span class="icon-[fluent--history-20-regular] w-5 h-5" />
-                          <span class="opacity-60">{t("challenge.instance.errors.calmdown.title")}</span>
-                          <Timer
-                            end={calmdownStart()!.plus({ minutes: 1 })}
-                            onTimeout={() => {
-                              setTimeout(() => {
-                                refreshCalmdown();
-                              }, 500);
-                            }}
-                          />
-                        </Show>
-                      </Button>
-                    }
-                  >
-                    <Match when={instance()}>
-                      <div class="grid grid-cols-1 items-center justify-center px-4 relative">
+                        <span class="icon-[fluent--history-20-regular] w-5 h-5" />
+                        <span class="opacity-60">{t("challenge.instance.errors.calmdown.title")}</span>
                         <Timer
-                          end={instance()!.created_at.plus({
-                            hours: instance()!.renew_count + 1,
-                          })}
+                          end={calmdownStart()!.plus({ minutes: 1 })}
                           onTimeout={() => {
                             setTimeout(() => {
-                              maintainInstances();
+                              refreshCalmdown();
                             }, 500);
                           }}
-                          hasHours
                         />
-                        <TimeProgress
-                          class="w-full"
-                          startAt={instance()!.created_at}
-                          endAt={instance()!.created_at.plus({
-                            hours: instance()!.renew_count + 1,
-                          })}
-                        />
-                      </div>
-                      <Divider class="h-8" direction="horizontal" />
-                      <Show
-                        when={instance()?.user_id === accountStore.id}
-                        fallback={
-                          <Button ghost size="sm">
-                            <span class="icon-[fluent--lock-closed-20-regular] w-5 h-5 text-error" />
-                            <span>{t("challenge.instance.errors.managedByMate.title")}</span>
-                          </Button>
-                        }
-                      >
-                        <Button
-                          ghost
-                          size="sm"
-                          title={t("challenge.instance.actions.delay.title")}
-                          square
-                          onClick={handleDelaySelfEnv}
-                          loading={delaying()}
-                          disabled={delaying()}
-                        >
-                          <Show when={!delaying()}>
-                            <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />
-                          </Show>
-                        </Button>
+                      </Show>
+                    </Button>
+                  }
+                >
+                  <Match when={instance()}>
+                    <div class="grid grid-cols-1 items-center justify-center px-4 relative">
+                      <Timer
+                        end={instance()!.created_at.plus({
+                          hours: instance()!.renew_count + 1,
+                        })}
+                        onTimeout={() => {
+                          setTimeout(() => {
+                            maintainInstances();
+                          }, 500);
+                        }}
+                        hasHours
+                      />
+                      <TimeProgress
+                        class="w-full"
+                        startAt={instance()!.created_at}
+                        endAt={instance()!.created_at.plus({
+                          hours: instance()!.renew_count + 1,
+                        })}
+                      />
+                    </div>
+                    <Divider class="h-8" direction="horizontal" />
+                    <Button
+                      ghost
+                      size="sm"
+                      title={t("challenge.instance.actions.delay.title")}
+                      square
+                      onClick={handleDelayChallengeInstance}
+                      loading={delaying()}
+                      disabled={delaying()}
+                    >
+                      <Show when={!delaying()}>
+                        <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />
+                      </Show>
+                    </Button>
+                    <Button
+                      ghost
+                      size="sm"
+                      title={t("challenge.instance.actions.stop.title")}
+                      square
+                      onClick={handleStopChallengeInstance}
+                      loading={stopping()}
+                      disabled={stopping()}
+                    >
+                      <Show when={!stopping()}>
+                        <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
+                      </Show>
+                    </Button>
+                  </Match>
+                  <Match when={instanceCountExceeded()}>
+                    <For each={wsrx.instances()}>
+                      {(inst) => (
                         <Button
                           ghost
                           size="sm"
                           title={t("challenge.instance.actions.stop.title")}
-                          square
-                          onClick={handleStopSelfEnv}
-                          loading={stopping()}
-                          disabled={stopping()}
+                          disabled={stopping() || !!stoppingExplicit()}
+                          loading={stoppingExplicit() === inst.challenge_id}
+                          onClick={() => handleStopChallengeInstanceExplicit(inst.game_id, inst.challenge_id)}
                         >
-                          <Show when={!stopping()}>
+                          <Show when={stoppingExplicit() !== inst.challenge_id}>
                             <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
                           </Show>
+                          <span>{inst.challenge_name}</span>
                         </Button>
-                      </Show>
-                    </Match>
-                    <Match when={userExplicitInstance()}>
-                      <Button
-                        ghost
-                        size="sm"
-                        square
-                        title={t("challenge.instance.actions.stop.title")}
-                        onClick={handleStopSelfEnv}
-                        loading={stopping()}
-                        disabled={stopping()}
-                      >
-                        <Show when={!stopping()}>
-                          <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
-                        </Show>
-                      </Button>
-                    </Match>
-                  </Switch>
-                </div>
+                      )}
+                    </For>
+                  </Match>
+                </Switch>
               </section>
               <Show when={instance()}>
                 <For each={challengeStore.env?.images}>

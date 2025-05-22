@@ -355,20 +355,20 @@ export async function updateGameAdmins(game_id: number, admins: number[]) {
   return await api.patch(`${api_root}/game/${game_id}/administrator`, { json: admins }).json<Game>();
 }
 
-export async function getGameSelfEnvs(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/env`).json<Instance[]>();
+export async function getGameInstances(game_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/instance`).json<Instance[]>();
 }
 
-export async function delayGameSelfEnv(game_id: number) {
-  return await api.patch(`${api_root}/game/${game_id}/env`).json<void>();
+export async function startChallengeInstance(game_id: number, challenge_id: number) {
+  return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/instance`).json<void>();
 }
 
-export async function stopGameSelfEnv(game_id: number) {
-  return await api.delete(`${api_root}/game/${game_id}/env`).json<void>();
+export async function delayChallengeInstance(game_id: number, challenge_id: number) {
+  return await api.patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/instance`, {}).json<void>();
 }
 
-export async function startChallengeEnv(game_id: number, challenge_id: number) {
-  return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`).json<void>();
+export async function stopChallengeInstance(game_id: number, challenge_id: number) {
+  return await api.delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/instance`).json<void>();
 }
 
 export async function getChallengeCommitHistory(game_id: number, challenge_id: number) {

@@ -632,27 +632,65 @@ impl Cluster {
     Ok(pod)
   }
 
-  pub async fn delay_challenge_env(&self, user_id: i64) -> Result<(), ClusterError> {
+  pub async fn delay_challenge_env_by_user(
+    &self, challenge_id: i64, user_id: i64,
+  ) -> Result<usize, ClusterError> {
     let pod = self
-      .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
+      .get_pods_by_label(&format!(
+        "ret.sh.cn/challenge={challenge_id},ret.sh.cn/user={user_id}"
+      ))
       .await?;
-    for p in pod {
+    for p in pod.iter() {
       self.renew_pod(p.metadata.name.as_ref().unwrap()).await?;
     }
-    Ok(())
+    Ok(pod.len())
   }
 
-  pub async fn stop_challenge_env(&self, user_id: i64) -> Result<(), ClusterError> {
+  pub async fn delay_challenge_env_by_team(
+    &self, challenge_id: i64, team_id: i64,
+  ) -> Result<usize, ClusterError> {
     let pod = self
-      .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
+      .get_pods_by_label(&format!(
+        "ret.sh.cn/challenge={challenge_id},ret.sh.cn/team={team_id}"
+      ))
       .await?;
-    for p in pod {
+    for p in pod.iter() {
+      self.renew_pod(p.metadata.name.as_ref().unwrap()).await?;
+    }
+    Ok(pod.len())
+  }
+
+  pub async fn stop_challenge_env_by_user(
+    &self, challenge_id: i64, user_id: i64,
+  ) -> Result<usize, ClusterError> {
+    let pod = self
+      .get_pods_by_label(&format!(
+        "ret.sh.cn/challenge={challenge_id},ret.sh.cn/user={user_id}"
+      ))
+      .await?;
+    for p in pod.iter() {
       self.delete_pod(p.metadata.name.as_ref().unwrap()).await?;
       self
         .delete_service(p.metadata.name.as_ref().unwrap())
         .await?;
     }
-    Ok(())
+    Ok(pod.len())
+  }
+  pub async fn stop_challenge_env_by_team(
+    &self, challenge_id: i64, team_id: i64,
+  ) -> Result<usize, ClusterError> {
+    let pod = self
+      .get_pods_by_label(&format!(
+        "ret.sh.cn/challenge={challenge_id},ret.sh.cn/team={team_id}"
+      ))
+      .await?;
+    for p in pod.iter() {
+      self.delete_pod(p.metadata.name.as_ref().unwrap()).await?;
+      self
+        .delete_service(p.metadata.name.as_ref().unwrap())
+        .await?;
+    }
+    Ok(pod.len())
   }
 
   pub async fn wsrx_link(&self, token: &str, port: u16, ws: WebSocket) -> Result<(), ClusterError> {
