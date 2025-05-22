@@ -618,11 +618,11 @@ impl Cluster {
     Ok(pod)
   }
 
-  pub async fn get_challenge_env_by_user(&self, user_id: i64) -> Result<Option<Pod>, ClusterError> {
+  pub async fn get_challenge_env_by_user(&self, user_id: i64) -> Result<Vec<Pod>, ClusterError> {
     let pod = self
       .get_pods_by_label(&format!("ret.sh.cn/user={user_id}"))
       .await?;
-    Ok(pod.first().cloned())
+    Ok(pod)
   }
 
   pub async fn get_challenge_env_by_team(&self, team_id: i64) -> Result<Vec<Pod>, ClusterError> {

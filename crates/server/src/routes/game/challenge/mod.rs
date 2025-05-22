@@ -1121,11 +1121,11 @@ async fn start_challenge_instance(
       }
     }
     None => {
-      if cluster
+      if !cluster
         .at(CHALLENGE_NS)
         .get_challenge_env_by_user(token.id)
         .await?
-        .is_some()
+        .is_empty()
       {
         return Err(ResponseError::PreconditionFailed(
           "you can only start one instance at the same time".to_owned(),

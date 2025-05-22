@@ -534,9 +534,7 @@ async fn get_self_instances(
   let mut envs = cluster
     .at(CHALLENGE_NS)
     .get_challenge_env_by_user(token.id)
-    .await?
-    .map(|pod| Vec::from([pod]))
-    .unwrap_or_default();
+    .await?;
   if let Some(team) = team {
     envs.extend(
       cluster
