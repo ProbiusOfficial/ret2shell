@@ -542,8 +542,9 @@ async fn get_self_instances(
         .get_challenge_env_by_team(team.id)
         .await?,
     );
-    envs.dedup_by(|a, b| a.metadata.name == b.metadata.name);
   }
+  envs.sort_by(|a, b| a.metadata.name.cmp(&b.metadata.name));
+  envs.dedup_by(|a, b| a.metadata.name == b.metadata.name);
   let config = if let Some(config) = &config.cluster {
     config
   } else {
