@@ -208,7 +208,13 @@ export default function () {
             <Card level="warning" contentClass="p-2 flex flex-row space-x-2 items-center pl-4">
               <span class="icon-[fluent--warning-20-filled] w-5 h-5 text-warning" />
               <span class="flex-1 text-start">{t("account.status.unverified.message")}</span>
-              <Button size="sm" type="button" onClick={handleResendVerifyEmail} loading={sendingEmail()} disabled={sendingEmail()}>
+              <Button
+                size="sm"
+                type="button"
+                onClick={handleResendVerifyEmail}
+                loading={sendingEmail()}
+                disabled={sendingEmail()}
+              >
                 <span>{t("account.status.unverified.action")}</span>
               </Button>
             </Card>
