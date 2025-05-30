@@ -465,10 +465,10 @@ function CreateForm(fnProps: {
               {(field2) => (
                 <RangeSlider
                   class="flex-1"
-                  label={`${t("challenge.instance.image.form.service.storage.label")} (GB)`}
-                  max={20}
-                  min={0.1}
-                  step={0.1}
+                  label={`${t("challenge.instance.image.form.service.storage.label")} (MB)`}
+                  max={20480}
+                  min={32}
+                  step={32}
                   name={field1.name}
                   value={[
                     Number.parseInt(field2.value?.replace("Mi", "") || "64") || 64,
@@ -589,7 +589,7 @@ function InstanceList() {
   );
 }
 
-export default function (_props: {
+export default function(_props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
@@ -735,9 +735,9 @@ export default function (_props: {
             onOpenChange={(details) => {
               setFormOpen(details.open);
             }}
-            // onClick={() => {
-            //   setFormOpen(true);
-            // }}
+          // onClick={() => {
+          //   setFormOpen(true);
+          // }}
           >
             <CreateForm
               repos={repos()}
