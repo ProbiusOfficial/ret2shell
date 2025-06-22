@@ -13,7 +13,7 @@ export default function Choose() {
       />
       <div class="flex-1 flex flex-col items-center justify-center p-3 md:p-6 space-y-4">
         <Card
-          class="relative w-full max-w-xl"
+          class="relative w-full max-w-xl group"
           contentClass="p-6 flex flex-row items-center space-x-4"
         >
           <span class="icon-[fluent-emoji-flat--loudspeaker] w-10 h-10 shrink-0" />
@@ -21,7 +21,7 @@ export default function Choose() {
             <h3 class="font-bold">{t("team.create.title")}</h3>
             <p class="opacity-60">{t("team.create.tips")}</p>
           </div>
-          <span class="icon-[fluent--chevron-double-right-20-regular] w-0 group-hover:w-10 h-10 shrink-0" />
+          <span class="icon-[fluent--chevron-double-right-20-regular] w-0 group-hover:w-10 h-10 shrink-0 transition-all" />
           <A
             href={`/games/${gameStore.current?.id}/teams/create`}
             class="absolute top-0 left-0 w-full h-full"
@@ -36,7 +36,7 @@ export default function Choose() {
             <h3 class="font-bold">{t("team.join.title")}</h3>
             <p class="opacity-60">{t("team.join.tips")}</p>
           </div>
-          <span class="icon-[fluent--chevron-double-right-20-regular] w-0 group-hover:w-10 h-10 shrink-0" />
+          <span class="icon-[fluent--chevron-double-right-20-regular] w-0 group-hover:w-10 h-10 shrink-0 transition-all" />
           <A
             href={`/games/${gameStore.current?.id}/teams/join`}
             class="absolute top-0 left-0 w-full h-full"

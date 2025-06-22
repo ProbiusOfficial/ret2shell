@@ -269,7 +269,7 @@ function GameNav(props: { size: "sm" | "md" }) {
                 size={props.size}
               >
                 <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
-                <span>{t("admin.title")}</span>
+                <span>{t("admin.platformTitle")}</span>
               </Link>
             </li>
           </Show>
