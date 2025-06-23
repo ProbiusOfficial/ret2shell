@@ -1,9 +1,5 @@
 import { handleHttpError } from "@api";
-import {
-  getGamePlayerChatMessages,
-  getTeamSolves,
-  sendGamePlayerChatMessage,
-} from "@api/game";
+import { getGamePlayerChatMessages, getTeamSolves, sendGamePlayerChatMessage } from "@api/game";
 import platformAvatar from "@assets/imgs/rx.webp";
 import { mediaPath } from "@lib/utils/media";
 import type { Challenge } from "@models/challenge";
@@ -21,16 +17,7 @@ import { EditorBare } from "@widgets/editor";
 import Link from "@widgets/link";
 import clsx from "clsx";
 import type { DateTime } from "luxon";
-import {
-  For,
-  Show,
-  Switch,
-  Match,
-  createMemo,
-  createSignal,
-  onCleanup,
-  onMount,
-} from "solid-js";
+import { For, Match, Show, Switch, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 export function ChatBlock(props: {
   avatar?: string;
@@ -46,22 +33,10 @@ export function ChatBlock(props: {
   const matches = createBreakpoints(breakpoints);
   return (
     <>
-      <div
-        class={clsx(
-          "self-start flex-row flex items-center",
-          matches.lg ? "w-[calc(100%-4rem)]" : "w-full",
-        )}
-      >
-        <Show
-          when={props.showAvatar}
-          fallback={<div class="w-10 h-10 shrink-0 self-start" />}
-        >
+      <div class={clsx("self-start flex-row flex items-center", matches.lg ? "w-[calc(100%-4rem)]" : "w-full")}>
+        <Show when={props.showAvatar} fallback={<div class="w-10 h-10 shrink-0 self-start" />}>
           <A class="w-10 h-10 shrink-0 self-start mt-2" href={props.link}>
-            <Avatar
-              class="w-full h-full"
-              src={props.avatar}
-              fallback={props.nameLabel}
-            />
+            <Avatar class="w-full h-full" src={props.avatar} fallback={props.nameLabel} />
           </A>
         </Show>
         <div class="w-2 shrink-0" />
@@ -74,22 +49,14 @@ export function ChatBlock(props: {
               </A>
             </header>
           </Show>
-          <Article
-            class="!max-w-full"
-            content={props.content}
-            noExtraPaddings
-            compact
-            extra
-          />
+          <Article class="!max-w-full" content={props.content} noExtraPaddings compact extra />
           <footer class="text-xs flex items-center space-x-2">
             <span class="opacity-30 group-hover:opacity-80 transition-opacity duration-300">
               {props.sendAt.toFormat("yyyy-MM-dd HH:mm")}
             </span>
             <Show
               when={props.isChecked}
-              fallback={
-                <span class="shrink-0 icon-[fluent--circle-16-regular] w-4 h-4 text-gray-500" />
-              }
+              fallback={<span class="shrink-0 icon-[fluent--circle-16-regular] w-4 h-4 text-gray-500" />}
             >
               <span class="shrink-0 icon-[fluent--checkmark-16-regular] w-4 h-4 text-success" />
             </Show>
@@ -105,7 +72,7 @@ export function mergeChats(
   teamId: number,
   a: Chat[],
   b: Chat[],
-  solvedAt: DateTime | null,
+  solvedAt: DateTime | null
 ): [boolean, Chat[]] {
   if (solvedAt) {
     b.push({
@@ -123,9 +90,7 @@ export function mergeChats(
     });
   }
   const bb = b.sort((x, y) => x.id - y.id);
-  const aa = a
-    .filter((x) => x.challenge_id === challengeId && x.team_id === teamId)
-    .sort((x, y) => x.id - y.id);
+  const aa = a.filter((x) => x.challenge_id === challengeId && x.team_id === teamId).sort((x, y) => x.id - y.id);
 
   let i = 0;
   const iLen = aa.length;
@@ -158,10 +123,7 @@ export function mergeChats(
     changed = true;
     j++;
   }
-  return [
-    changed,
-    aa.sort((x, y) => x.created_at.toMillis() - y.created_at.toMillis()),
-  ];
+  return [changed, aa.sort((x, y) => x.created_at.toMillis() - y.created_at.toMillis())];
 }
 
 export default function (props: {
@@ -179,11 +141,7 @@ export default function (props: {
     if (gameStore.current && challengeStore.current) {
       setSending(true);
       try {
-        await sendGamePlayerChatMessage(
-          gameStore.current.id,
-          challengeStore.current.id,
-          chat(),
-        );
+        await sendGamePlayerChatMessage(gameStore.current.id, challengeStore.current.id, chat());
         setChat("");
         refreshChats();
       } catch (err) {
@@ -201,30 +159,18 @@ export default function (props: {
       try {
         setLoading(true);
         const s = await getSolveStatus();
-        const result = await getGamePlayerChatMessages(
-          gameStore.current.id,
-          challengeStore.current.id,
-        );
-        const [changed, r] = mergeChats(
-          challengeStore.current.id,
-          gameStore.team?.id ?? 0,
-          chats(),
-          result,
-          s,
-        );
+        const result = await getGamePlayerChatMessages(gameStore.current.id, challengeStore.current.id);
+        const [changed, r] = mergeChats(challengeStore.current.id, gameStore.team?.id ?? 0, chats(), result, s);
         setChats([...r]);
         if (changed) {
           setTimeout(
             // @ts-expect-error chatBottomEl is bound by SolidJS after rendered
             () => chatBottomEl?.scrollIntoView({ behavior: "smooth" }),
-            700,
+            700
           );
         }
       } catch (err) {
-        handleHttpError(
-          err as Error,
-          t("challenge.hammer.errors.fetch.title")!,
-        );
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title")!);
       }
       setLoading(false);
     }
@@ -246,15 +192,10 @@ export default function (props: {
     if (gameStore.current?.id && gameStore.team?.id && !isGameAdmin()) {
       const resp = await getTeamSolves(gameStore.current.id, gameStore.team.id);
       try {
-        const s = resp.find(
-          (x) => x.challenge_id === challengeStore.current?.id,
-        );
+        const s = resp.find((x) => x.challenge_id === challengeStore.current?.id);
         return s?.created_at ?? null;
       } catch (err) {
-        handleHttpError(
-          err as Error,
-          t("challenge.hammer.errors.fetchSolve.title")!,
-        );
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetchSolve.title")!);
       }
       return null;
     }
@@ -306,12 +247,7 @@ export default function (props: {
             </>
           }
         >
-          <Match
-            when={
-              !gameStore.current?.hammer_policy?.enabled &&
-              gameStore.current?.hammer_policy?.outer_url
-            }
-          >
+          <Match when={!gameStore.current?.hammer_policy?.enabled && gameStore.current?.hammer_policy?.outer_url}>
             <ChatBlock
               avatar={platformAvatar}
               showAvatar
@@ -354,17 +290,8 @@ export default function (props: {
         <For each={chats()}>
           {(chat, index) => (
             <ChatBlock
-              avatar={
-                chat.id === 0
-                  ? platformAvatar
-                  : chat.avatar
-                    ? mediaPath(chat.avatar)
-                    : undefined
-              }
-              showAvatar={
-                index() === 0 ||
-                chats().at(index() - 1)?.user_id !== chat.user_id
-              }
+              avatar={chat.id === 0 ? platformAvatar : chat.avatar ? mediaPath(chat.avatar) : undefined}
+              showAvatar={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}
               roleLabel={
                 chat.id === 0
                   ? ">_<"
@@ -372,9 +299,7 @@ export default function (props: {
                     ? t("challenge.hammer.role.admin")!
                     : t("challenge.hammer.role.player")!
               }
-              link={
-                chat.id === 0 ? "Ciallo～(∠・ω< )⌒☆" : `/users/${chat.user_id}`
-              }
+              link={chat.id === 0 ? "Ciallo～(∠・ω< )⌒☆" : `/users/${chat.user_id}`}
               nameLabel={chat.user_name || "Unknown"}
               labelClasses={chat.is_admin ? "text-success" : "text-warning"}
               content={chat.content}
@@ -388,12 +313,7 @@ export default function (props: {
       <div class="sticky bottom-0 flex flex-col space-y-2 p-3 border-t border-t-layer-content/5 backdrop-blur">
         <div class="flex flex-row items-center h-8 space-x-2">
           <span class="hidden lg:flex items-center space-x-2">
-            <span
-              class={clsx(
-                "w-2 h-2 rounded-full",
-                availableMsg() <= 0 ? "bg-error" : "bg-success",
-              )}
-            />
+            <span class={clsx("w-2 h-2 rounded-full", availableMsg() <= 0 ? "bg-error" : "bg-success")} />
             <span class="opacity-60">
               {availableMsg() <= 0
                 ? t("challenge.hammer.errors.maxMessageLimit.title")
@@ -415,9 +335,7 @@ export default function (props: {
             rel="noreferrer"
           >
             <span class="shrink-0 icon-[fluent--question-circle-20-regular] w-5 h-5" />
-            <span class="hidden lg:inline-block">
-              {t("challenge.hammer.markdownHoto")}
-            </span>
+            <span class="hidden lg:inline-block">{t("challenge.hammer.markdownHoto")}</span>
           </Link>
           <Button
             size="sm"
@@ -429,9 +347,7 @@ export default function (props: {
           >
             <Show
               when={editorExpanded()}
-              fallback={
-                <span class="shrink-0 icon-[fluent--arrow-expand-20-regular] w-5 h-5" />
-              }
+              fallback={<span class="shrink-0 icon-[fluent--arrow-expand-20-regular] w-5 h-5" />}
             >
               <span class="shrink-0 icon-[fluent--arrow-minimize-20-regular] w-5 h-5" />
             </Show>
@@ -440,12 +356,7 @@ export default function (props: {
             level="primary"
             size="sm"
             onClick={handleSendChat}
-            disabled={
-              sending() ||
-              availableMsg() <= 0 ||
-              isGameAdmin() ||
-              !gameStore.current?.hammer_policy?.enabled
-            }
+            disabled={sending() || availableMsg() <= 0 || isGameAdmin() || !gameStore.current?.hammer_policy?.enabled}
             loading={sending()}
           >
             <span class="shrink-0 icon-[fluent--send-20-regular] w-5 h-5" />

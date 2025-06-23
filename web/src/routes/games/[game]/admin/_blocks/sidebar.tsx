@@ -9,15 +9,13 @@ import ChatList from "./chat-list";
 
 export default function SideBar() {
   const location = useLocation();
-  const expanded = createMemo(
-    () => !location.pathname.endsWith("/admin/hammers"),
-  );
+  const expanded = createMemo(() => !location.pathname.endsWith("/admin/hammers"));
   return (
     <div class="flex flex-row h-full">
       <ul
         class={clsx(
           "flex flex-col h-full space-y-2 transition-all duration-300",
-          expanded() ? "w-full p-3 lg:p-6" : "w-16 p-2",
+          expanded() ? "w-full p-3 lg:p-6" : "w-16 p-2"
         )}
       >
         <li class="w-full">

@@ -7,7 +7,7 @@ import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
-import { Show, onMount, createEffect } from "solid-js";
+import { Show, createEffect, onMount } from "solid-js";
 // import Calendar from "./calendar";
 
 export default function () {
@@ -43,9 +43,7 @@ export default function () {
             <div class="flex-1" />
             <h1 class="text-3xl font-bold opacity-80">
               &nbsp;&nbsp;
-              <span>
-                [&nbsp;{platformStore.config.name || t("platform.name")}&nbsp;]
-              </span>
+              <span>[&nbsp;{platformStore.config.name || t("platform.name")}&nbsp;]</span>
               &nbsp;
               <span class="text-primary animate-ping">_</span>
             </h1>
@@ -60,10 +58,7 @@ export default function () {
             <div class="flex-1" />
             <div class="h-24" />
             <div class="absolute bottom-4 flex flex-row flex-wrap items-center justify-center h-auto p-2 space-x-2 opacity-60">
-              <Button
-                ghost
-                class="inline-flex flex-row space-x-1 flex-wrap h-auto max-w-full"
-              >
+              <Button ghost class="inline-flex flex-row space-x-1 flex-wrap h-auto max-w-full">
                 <span>(C) 2022 - {new Date().getFullYear()}</span>
                 <a
                   class="hover:underline"
@@ -75,12 +70,7 @@ export default function () {
                 </a>
                 <Show when={platformStore.config.record}>
                   <span class="opacity-40">|</span>
-                  <a
-                    class="hover:underline"
-                    href="https://beian.miit.gov.cn"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a class="hover:underline" href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">
                     {platformStore.config.record}
                   </a>
                 </Show>
@@ -115,17 +105,11 @@ export default function () {
                 ghost
                 popContentClass="p-2"
                 square
-                btnContent={
-                  <span class="shrink-0 icon-[fluent--info-20-regular] w-5 h-5" />
-                }
+                btnContent={<span class="shrink-0 icon-[fluent--info-20-regular] w-5 h-5" />}
               >
                 <div class="w-max flex flex-col space-y-2">
                   <Card contentClass="p-2">
-                    <Link
-                      ghost
-                      href="/magic/about"
-                      class="flex flex-row items-center !h-auto space-x-2 pl-2 pr-3 py-1"
-                    >
+                    <Link ghost href="/magic/about" class="flex flex-row items-center !h-auto space-x-2 pl-2 pr-3 py-1">
                       <LogoAnimate width={56} height={56} />
                       <div class="flex flex-col">
                         <h2 class="text-xl font-bold flex flex-row">
@@ -134,25 +118,16 @@ export default function () {
                           <span class="opacity-60">&nbsp;2&nbsp;</span>
                           <span class="text-error">S</span>
                           <span class="opacity-80">hell</span>
-                          <span class="opacity-60">
-                            &nbsp;v{platformStore.version?.[0] || "3"}
-                          </span>
+                          <span class="opacity-60">&nbsp;v{platformStore.version?.[0] || "3"}</span>
                         </h2>
                         <p class="opacity-60 space-x-2 flex">
                           <Show
-                            when={(platformStore.version || "UNKNOWN").includes(
-                              "*",
-                            )}
+                            when={(platformStore.version || "UNKNOWN").includes("*")}
                             fallback={<span class="text-primary">REL</span>}
                           >
                             <span class="text-warning">DEV</span>
                           </Show>
-                          <span class="flex-1 truncate">
-                            {(platformStore.version || "UNKNOWN").replace(
-                              "*",
-                              "",
-                            )}
-                          </span>
+                          <span class="flex-1 truncate">{(platformStore.version || "UNKNOWN").replace("*", "")}</span>
                         </p>
                       </div>
                     </Link>
@@ -166,9 +141,7 @@ export default function () {
                       rel="noreferrer"
                     >
                       <span class="shrink-0 icon-[fluent--mail-20-regular] w-5 h-5" />
-                      <span class="font-normal opacity-60">
-                        support@ret.sh.cn
-                      </span>
+                      <span class="font-normal opacity-60">support@ret.sh.cn</span>
                     </a>
                     <Link
                       href="https://github.com/ret2shell"

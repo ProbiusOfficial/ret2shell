@@ -5,22 +5,11 @@ import { Permission } from "@models/user";
 import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
-import {
-  frontendCompatVersion,
-  platformStore,
-  setPlatformStore,
-} from "@storage/platform";
+import { frontendCompatVersion, platformStore, setPlatformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import { addToast, removeToast } from "@storage/toast";
 import { HTTPError } from "ky";
-import {
-  type JSX,
-  Show,
-  createEffect,
-  createSignal,
-  onMount,
-  untrack,
-} from "solid-js";
+import { type JSX, Show, createEffect, createSignal, onMount, untrack } from "solid-js";
 import { Transition } from "solid-transition-group";
 import TitleBar from "./_blocks/title-bar";
 import Toasts from "./_blocks/toasts";
@@ -52,16 +41,12 @@ export default function (props: { children?: JSX.Element }) {
   let platformName = `\xa0\xa0[\xa0${platformStore.config.name || t("platform.name")}\xa0]\xa0`;
   const [platformTyped, setPlatformTyped] = createSignal("");
   const [hideAnimation, setHideAnimation] = createSignal(false);
-  let showAnimation =
-    useLocation().pathname === "/" && useSearchParams()[0].event === undefined;
+  let showAnimation = useLocation().pathname === "/" && useSearchParams()[0].event === undefined;
   const navigate = useNavigate();
   const location = useLocation();
   const inDocs = () => location.pathname.startsWith("/docs");
   function checkEmailVerification() {
-    if (
-      accountStore.token &&
-      !accountStore.permissions.includes(Permission.Verified)
-    ) {
+    if (accountStore.token && !accountStore.permissions.includes(Permission.Verified)) {
       addToast({
         level: "warning",
         description: t("account.status.unverified.message")!,
@@ -85,11 +70,7 @@ export default function (props: { children?: JSX.Element }) {
       if (err instanceof HTTPError && err.response?.status === 503) {
         setPlatformStore({ under_maintenance: true });
         if (!inDocs()) navigate("/");
-      } else if (
-        err instanceof HTTPError &&
-        err.response?.status === 502 &&
-        !inDocs()
-      ) {
+      } else if (err instanceof HTTPError && err.response?.status === 502 && !inDocs()) {
         addToast({
           level: "error",
           description: `${t("platform.errors.offline.title")}: ${t("platform.errors.offline.message")}`,
@@ -141,13 +122,10 @@ export default function (props: { children?: JSX.Element }) {
       if (!version.startsWith(frontendCompatVersion)) {
         addToast({
           level: "warning",
-          description: `${t("platform.errors.versionMismatch.title")}: ${t(
-            "platform.errors.versionMismatch.message",
-            {
-              frontend: frontendCompatVersion,
-              backend: version,
-            },
-          )}`,
+          description: `${t("platform.errors.versionMismatch.title")}: ${t("platform.errors.versionMismatch.message", {
+            frontend: frontendCompatVersion,
+            backend: version,
+          })}`,
         });
       }
       console.log(
@@ -163,7 +141,7 @@ export default function (props: { children?: JSX.Element }) {
         "color: #808080;text-decoration: underline;",
         "color: #808080;",
         "color: currentColor;",
-        "color: currentColor;",
+        "color: currentColor;"
       );
 
       const resp = await getPlatformLicense();
@@ -189,10 +167,7 @@ export default function (props: { children?: JSX.Element }) {
 
   return (
     <>
-      <Title
-        domain={platformStore.config.name ?? t("platform.name")}
-        route="/"
-      />
+      <Title domain={platformStore.config.name ?? t("platform.name")} route="/" />
       <Background />
       <TitleBar />
       {props.children}

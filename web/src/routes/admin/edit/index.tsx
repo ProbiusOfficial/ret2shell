@@ -84,29 +84,21 @@ export default function () {
         zen_game: resp.server.zen_game || null,
       });
     } catch (err) {
-      handleHttpError(
-        err as HTTPError,
-        t("platform.errors.fetchConfig.title")!,
-      );
+      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title")!);
     }
   });
   return (
     <>
       <Title page={t("platform.form.title")} route="/admin/edit" />
       <div class="flex-1 flex flex-col items-center p-3 lg:p-6">
-        <Form
-          onSubmit={onSubmit}
-          class="w-full max-w-5xl flex flex-col space-y-2"
-        >
+        <Form onSubmit={onSubmit} class="w-full max-w-5xl flex flex-col space-y-2">
           <div class="p-6 flex items-center justify-center">
             <LogoAnimate width={128} height={128} />
           </div>
           <Field name="name">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
                 placeholder={t("platform.name")}
                 title={t("platform.form.name.label")}
                 {...props}
@@ -118,9 +110,7 @@ export default function () {
           <Field name="footer_info">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--phone-footer-arrow-down-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--phone-footer-arrow-down-20-regular] w-5 h-5" />}
                 placeholder={t("platform.form.footerInfo.placeholder")}
                 title={t("platform.form.footerInfo.label")}
                 {...props}
@@ -132,9 +122,7 @@ export default function () {
           <Field name="footer_url">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--link-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--link-20-regular] w-5 h-5" />}
                 placeholder={t("platform.form.footerUrl.placeholder")}
                 title={t("platform.form.footerUrl.label")}
                 {...props}
@@ -146,9 +134,7 @@ export default function () {
           <Field name="subject_info">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--subtitles-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--subtitles-20-regular] w-5 h-5" />}
                 placeholder={t("platform.subject")}
                 title={t("platform.form.subjectInfo.label")}
                 {...props}
@@ -160,9 +146,7 @@ export default function () {
           <Field name="subject_url">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--link-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--link-20-regular] w-5 h-5" />}
                 placeholder="https://github.com/ret2shell"
                 title={t("platform.form.subjectUrl.label")}
                 {...props}
@@ -174,9 +158,7 @@ export default function () {
           <Field name="highlight_banner">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--image-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--image-20-regular] w-5 h-5" />}
                 placeholder={t("platform.form.highlightBanner.placeholder")}
                 title={t("platform.form.highlightBanner.label")}
                 {...props}
@@ -188,9 +170,7 @@ export default function () {
           <Field name="zen_game" type="number">
             {(field, props) => (
               <Input
-                icon={
-                  <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
                 placeholder="Zen Game ID"
                 title="Zen Game ID"
                 {...props}
@@ -205,9 +185,7 @@ export default function () {
               {(field, props) => (
                 <Input
                   class="flex-1"
-                  icon={
-                    <span class="shrink-0 icon-[fluent--record-20-regular] w-5 h-5" />
-                  }
+                  icon={<span class="shrink-0 icon-[fluent--record-20-regular] w-5 h-5" />}
                   placeholder={t("platform.form.record.placeholder")}
                   title={t("platform.form.record.label")}
                   {...props}
@@ -231,29 +209,17 @@ export default function () {
               {(field, props) => (
                 <Checkbox
                   inputProps={props}
-                  checked={
-                    platformStore.license?.level !== "enterprise"
-                      ? false
-                      : field.value
-                  }
+                  checked={platformStore.license?.level !== "enterprise" ? false : field.value}
                   error={field.error}
                   title={t("platform.form.hideMaker.label")}
                   disabled={platformStore.license?.level !== "enterprise"}
                 >
-                  <span class="flex-1 text-start">
-                    {t("platform.form.hideMaker.label")}
-                  </span>
+                  <span class="flex-1 text-start">{t("platform.form.hideMaker.label")}</span>
                 </Checkbox>
               )}
             </Field>
           </div>
-          <Button
-            type="submit"
-            level="primary"
-            class="!mt-4"
-            loading={loading()}
-            disabled={!config() || loading()}
-          >
+          <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={!config() || loading()}>
             {t("general.actions.save.title")}
           </Button>
         </Form>

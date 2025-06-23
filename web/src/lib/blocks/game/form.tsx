@@ -1,11 +1,5 @@
 import type { Game } from "@models/game";
-import {
-  createForm,
-  maxRange,
-  minRange,
-  required,
-  setValues,
-} from "@modular-forms/solid";
+import { createForm, maxRange, minRange, required, setValues } from "@modular-forms/solid";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Checkbox from "@widgets/checkbox";
@@ -53,29 +47,18 @@ export default function GameEdit(props: {
           end_at: props.editSource!.end_at.toSeconds(),
           register_at: props.editSource!.register_at.toSeconds(),
           archive_at: props.editSource!.archive_at.toSeconds(),
-          first_blood_award:
-            props.editSource!.award_rates?.[0] || props.editSource!.award_rate,
-          second_blood_award: Math.floor(
-            props.editSource!.award_rates?.[1] ||
-              (props.editSource!.award_rate * 2) / 3,
-          ),
-          third_blood_award: Math.floor(
-            props.editSource!.award_rates?.[2] ||
-              props.editSource!.award_rate / 3,
-          ),
+          first_blood_award: props.editSource!.award_rates?.[0] || props.editSource!.award_rate,
+          second_blood_award: Math.floor(props.editSource!.award_rates?.[1] || (props.editSource!.award_rate * 2) / 3),
+          third_blood_award: Math.floor(props.editSource!.award_rates?.[2] || props.editSource!.award_rate / 3),
           enable_hammer: props.editSource!.hammer_policy?.enabled || false,
-          outer_hammer_label:
-            props.editSource!.hammer_policy?.outer_label || "",
+          outer_hammer_label: props.editSource!.hammer_policy?.outer_label || "",
           outer_hammer_url: props.editSource!.hammer_policy?.outer_url || "",
         });
       });
     }
   });
   return (
-    <Form
-      onSubmit={props.onDone}
-      class="flex flex-col w-full max-w-5xl space-y-2 relative"
-    >
+    <Form onSubmit={props.onDone} class="flex flex-col w-full max-w-5xl space-y-2 relative">
       <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
         <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
         <span>{t("game.form.title")}</span>
@@ -85,9 +68,7 @@ export default function GameEdit(props: {
           <Input
             title={t("game.form.name.label")}
             placeholder={t("game.form.name.placeholder")}
-            icon={
-              <span class="shrink-0 icon-[fluent--number-symbol-20-regular] w-5 h-5" />
-            }
+            icon={<span class="shrink-0 icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
             value={field.value}
             error={field.error}
             {...props}
@@ -99,9 +80,7 @@ export default function GameEdit(props: {
           <Input
             title={t("game.form.brief.label")}
             placeholder={t("game.form.brief.placeholder")}
-            icon={
-              <span class="shrink-0 icon-[fluent--list-20-regular] w-5 h-5" />
-            }
+            icon={<span class="shrink-0 icon-[fluent--list-20-regular] w-5 h-5" />}
             value={field.value}
             error={field.error}
             {...props}
@@ -109,29 +88,13 @@ export default function GameEdit(props: {
         )}
       </Field>
       <Show when={props.inGame}>
-        <Field
-          name="start_at"
-          type="number"
-          validate={[required(t("game.form.startAt.required")!)]}
-        >
+        <Field name="start_at" type="number" validate={[required(t("game.form.startAt.required")!)]}>
           {(startAtField) => (
-            <Field
-              name="end_at"
-              type="number"
-              validate={[required(t("game.form.endAt.required")!)]}
-            >
+            <Field name="end_at" type="number" validate={[required(t("game.form.endAt.required")!)]}>
               {(endAtField) => (
-                <Field
-                  name="register_at"
-                  type="number"
-                  validate={[required(t("game.form.registerAt.required")!)]}
-                >
+                <Field name="register_at" type="number" validate={[required(t("game.form.registerAt.required")!)]}>
                   {(registerAtField) => (
-                    <Field
-                      name="archive_at"
-                      type="number"
-                      validate={[required(t("game.form.archiveAt.required")!)]}
-                    >
+                    <Field name="archive_at" type="number" validate={[required(t("game.form.archiveAt.required")!)]}>
                       {(archiveAtField) => (
                         <div class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4">
                           <TimePicker
@@ -147,15 +110,9 @@ export default function GameEdit(props: {
                             valueNext={endAtField.value}
                             error={startAtField.error || endAtField.error}
                             startEdge={
-                              (registerAtField.value &&
-                                DateTime.fromSeconds(registerAtField.value)) ||
-                              undefined
+                              (registerAtField.value && DateTime.fromSeconds(registerAtField.value)) || undefined
                             }
-                            endEdge={
-                              (archiveAtField.value &&
-                                DateTime.fromSeconds(archiveAtField.value)) ||
-                              undefined
-                            }
+                            endEdge={(archiveAtField.value && DateTime.fromSeconds(archiveAtField.value)) || undefined}
                           />
                           <TimePicker
                             class="flex-1"
@@ -168,19 +125,9 @@ export default function GameEdit(props: {
                             value={registerAtField.value}
                             nameNext={archiveAtField.name}
                             valueNext={archiveAtField.value}
-                            error={
-                              registerAtField.error || archiveAtField.error
-                            }
-                            startEdge={
-                              (startAtField.value &&
-                                DateTime.fromSeconds(startAtField.value)) ||
-                              undefined
-                            }
-                            endEdge={
-                              (endAtField.value &&
-                                DateTime.fromSeconds(endAtField.value)) ||
-                              undefined
-                            }
+                            error={registerAtField.error || archiveAtField.error}
+                            startEdge={(startAtField.value && DateTime.fromSeconds(startAtField.value)) || undefined}
+                            endEdge={(endAtField.value && DateTime.fromSeconds(endAtField.value)) || undefined}
                             reverseEdge
                           />
                         </div>
@@ -202,9 +149,7 @@ export default function GameEdit(props: {
               checked={field.value ?? false}
               error={field.error}
             >
-              <span class="flex-1 text-start truncate">
-                {t("game.form.hidden.label")}
-              </span>
+              <span class="flex-1 text-start truncate">{t("game.form.hidden.label")}</span>
             </Checkbox>
           )}
         </Field>
@@ -217,9 +162,7 @@ export default function GameEdit(props: {
                 checked={field.value ?? false}
                 error={field.error}
               >
-                <span class="flex-1 text-start truncate">
-                  {t("game.form.frozen.label")}
-                </span>
+                <span class="flex-1 text-start truncate">{t("game.form.frozen.label")}</span>
               </Checkbox>
             )}
           </Field>
@@ -231,9 +174,7 @@ export default function GameEdit(props: {
                 checked={field.value ?? false}
                 error={field.error}
               >
-                <span class="flex-1 text-start truncate">
-                  {t("game.form.offline.label")}
-                </span>
+                <span class="flex-1 text-start truncate">{t("game.form.offline.label")}</span>
               </Checkbox>
             )}
           </Field>
@@ -271,9 +212,7 @@ export default function GameEdit(props: {
                 checked={field.value ?? false}
                 error={field.error}
               >
-                <span class="flex-1 text-start truncate">
-                  {t("game.form.enableTeamAudit.label")}
-                </span>
+                <span class="flex-1 text-start truncate">{t("game.form.enableTeamAudit.label")}</span>
               </Checkbox>
             )}
           </Field>
@@ -285,9 +224,7 @@ export default function GameEdit(props: {
                 checked={field.value ?? false}
                 error={field.error}
               >
-                <span class="flex-1 text-start truncate">
-                  {t("game.form.canRegisterAfterStart.label")}
-                </span>
+                <span class="flex-1 text-start truncate">{t("game.form.canRegisterAfterStart.label")}</span>
               </Checkbox>
             )}
           </Field>
@@ -386,9 +323,7 @@ export default function GameEdit(props: {
                 error={field.error}
                 class="flex-1"
               >
-                <span class="flex-1 text-start truncate">
-                  {t("game.form.enableHammer.label")}
-                </span>
+                <span class="flex-1 text-start truncate">{t("game.form.enableHammer.label")}</span>
               </Checkbox>
             )}
           </Field>
@@ -398,9 +333,7 @@ export default function GameEdit(props: {
                 class="flex-1"
                 title={t("game.form.outerHammerLabel.label")}
                 placeholder={t("game.form.outerHammerLabel.placeholder")}
-                icon={
-                  <span class="shrink-0 icon-[fluent--send-20-regular] w-5 h-5" />
-                }
+                icon={<span class="shrink-0 icon-[fluent--send-20-regular] w-5 h-5" />}
                 value={field.value}
                 error={field.error}
                 {...props}
@@ -413,9 +346,7 @@ export default function GameEdit(props: {
             <Input
               title={t("game.form.outerHammerUrl.label")}
               placeholder={t("game.form.outerHammerUrl.placeholder")}
-              icon={
-                <span class="shrink-0 icon-[fluent--link-20-regular] w-5 h-5" />
-              }
+              icon={<span class="shrink-0 icon-[fluent--link-20-regular] w-5 h-5" />}
               value={field.value}
               error={field.error}
               {...props}
@@ -423,13 +354,7 @@ export default function GameEdit(props: {
           )}
         </Field>
       </Show>
-      <Button
-        type="submit"
-        level="primary"
-        class="!mt-4"
-        loading={props.loading}
-        disabled={props.loading}
-      >
+      <Button type="submit" level="primary" class="!mt-4" loading={props.loading} disabled={props.loading}>
         {t("general.actions.save.title")}
       </Button>
     </Form>

@@ -40,9 +40,7 @@ function GlobalTitleLink() {
       <LogoAnimate class="hidden lg:inline-block" width={24} height={24} />
       <span />
       <span>
-        {inDocs()
-          ? `${t("docs.title")} - ${t("platform.name")}`
-          : platformStore.config.name || t("platform.name")}
+        {inDocs() ? `${t("docs.title")} - ${t("platform.name")}` : platformStore.config.name || t("platform.name")}
       </span>
     </Link>
   );
@@ -51,16 +49,8 @@ function GlobalTitleLink() {
 function GameTitleLink() {
   return (
     <Link ghost href={`/games/${gameStore.current?.id}/`}>
-      <Show
-        when={gameStore.current?.logo}
-        fallback={<LogoAnimate width={24} height={24} />}
-      >
-        <img
-          src={mediaPath(gameStore.current!.logo!)}
-          width={24}
-          height={24}
-          alt="CTF"
-        />
+      <Show when={gameStore.current?.logo} fallback={<LogoAnimate width={24} height={24} />}>
+        <img src={mediaPath(gameStore.current!.logo!)} width={24} height={24} alt="CTF" />
       </Show>
       <span />
       <span>{gameStore.current?.name}</span>
@@ -90,53 +80,25 @@ function GlobalNav(props: { size: "sm" | "md" }) {
         }
       >
         <li class="nav whitespace-nowrap">
-          <Link
-            class="w-full"
-            href="/wiki"
-            activeMatch="partial"
-            ghost
-            justify="start"
-            size={props.size}
-          >
+          <Link class="w-full" href="/wiki" activeMatch="partial" ghost justify="start" size={props.size}>
             <span class="shrink-0 icon-[fluent--book-number-20-regular] w-5 h-5" />
             <span>{t("wiki.title")}</span>
           </Link>
         </li>
         <li class="nav whitespace-nowrap">
-          <Link
-            class="w-full"
-            href="/training"
-            activeMatch="partial"
-            ghost
-            justify="start"
-            size={props.size}
-          >
+          <Link class="w-full" href="/training" activeMatch="partial" ghost justify="start" size={props.size}>
             <span class="shrink-0 icon-[fluent--dumbbell-20-regular] w-5 h-5" />
             <span>{t("training.title")}</span>
           </Link>
         </li>
         <li class="nav whitespace-nowrap">
-          <Link
-            class="w-full"
-            href="/games"
-            activeMatch="partial"
-            ghost
-            justify="start"
-            size={props.size}
-          >
+          <Link class="w-full" href="/games" activeMatch="partial" ghost justify="start" size={props.size}>
             <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
             <span>{t("game.title")}</span>
           </Link>
         </li>
         <li class="nav whitespace-nowrap">
-          <Link
-            class="w-full"
-            href="/bulletin"
-            activeMatch="partial"
-            ghost
-            justify="start"
-            size={props.size}
-          >
+          <Link class="w-full" href="/bulletin" activeMatch="partial" ghost justify="start" size={props.size}>
             <span class="shrink-0 icon-[fluent--megaphone-20-regular] w-5 h-5" />
             <span>{t("bulletin.title")}</span>
           </Link>
@@ -152,14 +114,7 @@ function GlobalNav(props: { size: "sm" | "md" }) {
         }
       >
         <li class="nav whitespace-nowrap">
-          <Link
-            class="w-full"
-            href="/admin"
-            activeMatch="partial"
-            ghost
-            justify="start"
-            size={props.size}
-          >
+          <Link class="w-full" href="/admin" activeMatch="partial" ghost justify="start" size={props.size}>
             <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
             <span>{t("admin.title")}</span>
           </Link>
@@ -260,14 +215,7 @@ function GameNav(props: { size: "sm" | "md" }) {
             }
           >
             <li class="nav whitespace-nowrap">
-              <Link
-                class="w-full"
-                href="/admin"
-                activeMatch="partial"
-                ghost
-                justify="start"
-                size={props.size}
-              >
+              <Link class="w-full" href="/admin" activeMatch="partial" ghost justify="start" size={props.size}>
                 <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
                 <span>{t("admin.platformTitle")}</span>
               </Link>
@@ -276,14 +224,7 @@ function GameNav(props: { size: "sm" | "md" }) {
         }
       >
         <li class="nav whitespace-nowrap">
-          <Link
-            class="w-full"
-            href={"/games/"}
-            ghost
-            justify="start"
-            size={props.size}
-            level="warning"
-          >
+          <Link class="w-full" href={"/games/"} ghost justify="start" size={props.size} level="warning">
             <span class="shrink-0 icon-[fluent--arrow-exit-20-regular] w-5 h-5" />
             <span>{t("general.actions.back.title")}</span>
           </Link>
@@ -294,9 +235,9 @@ function GameNav(props: { size: "sm" | "md" }) {
 }
 
 export default function TitleBar() {
-  const [additionalMobileBox, setAdditionalMobileBox] = createSignal<
-    "wsrx" | "notification" | "theme" | "i18n" | null
-  >(null);
+  const [additionalMobileBox, setAdditionalMobileBox] = createSignal<"wsrx" | "notification" | "theme" | "i18n" | null>(
+    null
+  );
   const params = useParams();
   const location = useLocation();
   const inDocs = () => location.pathname.startsWith("/docs");
@@ -313,11 +254,7 @@ export default function TitleBar() {
     <>
       <div id="page-top" class="print:hidden" />
       <div class="hidden print:flex flex-row border-b border-b-layer-content/60 w-full">
-        <span>
-          {inDocs()
-            ? t("docs.tip")
-            : platformStore.config.name || t("platform.name")}
-        </span>
+        <span>{inDocs() ? t("docs.tip") : platformStore.config.name || t("platform.name")}</span>
         <span class="flex-1" />
         <span>{DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")}</span>
       </div>
@@ -325,9 +262,7 @@ export default function TitleBar() {
         <div class="bg-layer-content/5 w-full h-full px-2 py-0 flex flex-row items-center relative">
           <div class="lg:hidden">
             <Popover
-              btnContent={
-                <span class="shrink-0 icon-[fluent--navigation-20-regular] w-5 h-5" />
-              }
+              btnContent={<span class="shrink-0 icon-[fluent--navigation-20-regular] w-5 h-5" />}
               square
               ghost
               popContentClass="pt-2"
@@ -364,7 +299,7 @@ export default function TitleBar() {
                             toastStore.toasts.length > 0
                               ? "icon-[fluent--alert-badge-20-filled] text-primary"
                               : "icon-[fluent--alert-20-regular]",
-                            "w-5 h-5",
+                            "w-5 h-5"
                           )}
                         />
                         <span>{t("notification.title")}</span>
@@ -446,9 +381,7 @@ export default function TitleBar() {
               <Match when={inDocs()}>
                 <span class="flex flex-row items-center space-x-2">
                   <span class="opacity-60">{t("docs.forVersion")}:</span>
-                  <span class="font-bold opacity-80">
-                    {platformStore.version}
-                  </span>
+                  <span class="font-bold opacity-80">{platformStore.version}</span>
                 </span>
               </Match>
               <Match when={platformStore.isOnline}>
@@ -459,25 +392,12 @@ export default function TitleBar() {
           <div class="flex-1" />
           <div class="flex flex-row space-x-2">
             <div class="hidden lg:flex flex-row space-x-2">
-              <Show
-                when={
-                  platformStore.isOnline &&
-                  accountStore.token !== null &&
-                  gameStore.current
-                }
-              >
+              <Show when={platformStore.isOnline && accountStore.token !== null && gameStore.current}>
                 <Switch>
-                  <Match
-                    when={
-                      gameStore.current &&
-                      gameStore.current.host_type === HostType.Training
-                    }
-                  >
+                  <Match when={gameStore.current && gameStore.current.host_type === HostType.Training}>
                     <div class="grid grid-cols-1 items-center justify-center px-4 relative">
                       <div>
-                        <span class="space-x-2 truncate max-w-full">
-                          {t("training.openForever")}
-                        </span>
+                        <span class="space-x-2 truncate max-w-full">{t("training.openForever")}</span>
                         <TimeProgress
                           class="w-full"
                           startAt={gameStore.current!.start_at}
@@ -492,14 +412,8 @@ export default function TitleBar() {
                         <div class="space-x-2 truncate max-w-full">
                           <Show when={currentTimelinePeriod()?.end_at}>
                             <span>[</span>
-                            <span class="font-bold text-primary">
-                              {currentTimelinePeriod()?.label ?? ""}
-                            </span>
-                            <Timer
-                              class="text-primary"
-                              end={currentTimelinePeriod()!.end_at}
-                              hasHours
-                            />
+                            <span class="font-bold text-primary">{currentTimelinePeriod()?.label ?? ""}</span>
+                            <Timer class="text-primary" end={currentTimelinePeriod()!.end_at} hasHours />
                             <span>]</span>
                           </Show>
                           <Timer end={gameStore.current!.end_at} hasHours />
@@ -521,11 +435,7 @@ export default function TitleBar() {
             </div>
             <Switch
               fallback={
-                <Button
-                  level="error"
-                  loading={offlineLoading()}
-                  onClick={reloadPage}
-                >
+                <Button level="error" loading={offlineLoading()} onClick={reloadPage}>
                   <Show when={!offlineLoading()}>
                     <span class="shrink-0 icon-[fluent--dismiss-circle-20-filled] w-5 h-5" />
                   </Show>
@@ -537,11 +447,7 @@ export default function TitleBar() {
                 <UserBox />
               </Match>
               <Match when={platformStore.under_maintenance}>
-                <Button
-                  level="warning"
-                  loading={offlineLoading()}
-                  onClick={reloadPage}
-                >
+                <Button level="warning" loading={offlineLoading()} onClick={reloadPage}>
                   <Show when={!offlineLoading()}>
                     <span class="shrink-0 icon-[fluent--warning-20-filled] w-5 h-5" />
                   </Show>
@@ -553,9 +459,7 @@ export default function TitleBar() {
           <Show when={platformStore.config.highlight_banner && !bannerRead()}>
             <div class="absolute left-0 right-0 top-16 h-12 bg-primary/30 flex items-center px-2 space-x-2 backdrop-blur-lg">
               <span class="shrink-0 icon-[fluent--warning-20-filled] mx-2" />
-              <span class="font-bold flex-1 truncate">
-                {platformStore.config.highlight_banner}
-              </span>
+              <span class="font-bold flex-1 truncate">{platformStore.config.highlight_banner}</span>
               <Button ghost size="sm" onClick={() => setBannerRead(true)}>
                 <span class="shrink-0 icon-[fluent--dismiss-20-regular] w-5 h-5" />
               </Button>
