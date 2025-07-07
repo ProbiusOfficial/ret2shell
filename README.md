@@ -4,7 +4,7 @@
   </a>
   <p><em>A feature-riches CTF challenge platform</em></p>
 
-[![MSRV 1.85.0+](https://img.shields.io/badge/MSRV-1.85.0+-blue)](https://releases.rs/docs/1.85.0/)
+[![MSRV 1.88.0+](https://img.shields.io/badge/MSRV-1.88.0+-blue)](https://releases.rs/docs/1.88.0/)
 [![Solid.js 1.9+](https://img.shields.io/badge/Solid.js-1.9+-orange)](https://www.solidjs.com/)
 
 </div>
@@ -128,10 +128,18 @@ The built files will be produced in `web/dist`.
 To build backend server binary:
 
 ```bash
+# Recommended
+./release-image.fish
+# Or you do not use fish
+./release-image.sh
+# if you want to host it with systemd
 cargo build --release --bin r2s-server
+# or you want to host it in an older linux distro
+cargo build --release --bin r2s-server --target x86_64-unknown-linux-musl
 ```
 
-The built binary will be produced in `target/release/`.
+The built binary will be produced in `target/release/`,
+musl binaries will be produced in `target/x86_64-unknown-linux-musl/release/`.
 
 ## License
 
