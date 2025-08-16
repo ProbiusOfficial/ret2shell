@@ -132,9 +132,7 @@ fn construct_router(state: &GlobalState) -> Router<GlobalState> {
       }
     });
 
-    route.layer(GovernorLayer {
-      config: governor_conf,
-    })
+    route.layer(GovernorLayer::new(governor_conf))
   } else {
     route
   };

@@ -68,7 +68,6 @@ tokio              = { version = "1.47", features = ["full"] }
 tokio-stream       = "0.1"
 tokio-util         = { version = "0.7", features = ["codec"] }
 toml               = "0.9"
-tower_governor     = "0.7"
 tracing            = "0.1"
 tracing-appender   = "0.2"
 tracing-core       = "0.1"
@@ -93,6 +92,11 @@ r2s-queue    = { version = "3", path = "crates/queue" }
 [workspace.dependencies.axum]
 features = ["ws", "http2", "tower-log", "tracing", "multipart", "macros"]
 version  = "0.8"
+
+[workspace.dependencies.tower_governor]
+default-features = false
+features         = ["axum"]
+version          = "0.8"
 
 [workspace.dependencies.tower]
 features = ["limit"]
