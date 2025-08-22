@@ -73,6 +73,12 @@ async fn get_media(
         ResponseError::InternalServerError("failed to parse mime type".to_string(), e.to_string())
       })?,
   );
+  headers.insert(
+    "Content-Security-Policy",
+    HeaderValue::from_static(
+      "script-src 'none'; object-src 'none'; report-uri /cspreport; sandbox",
+    ),
+  );
   Ok((StatusCode::OK, headers, Body::from_stream(stream)))
 }
 
