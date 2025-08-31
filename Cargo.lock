@@ -6683,9 +6683,9 @@ checksum = "ea2f10b9bb0928dfb1b42b65e1f9e36f7f54dbdf08457afefb38afcdec4fa2bb"
 
 [[package]]
 name = "wsrx"
-version = "0.5.10"
+version = "0.5.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "755c03c9bb7177e0a6e496f348684a3039da453cfcf0d8d2e1d7795e11e86280"
+checksum = "d6d27a69b41c0d718edc6a4ee4170ac6328c470c0f32222cd5effe72500ba980"
 dependencies = [
  "axum",
  "futures-util",
