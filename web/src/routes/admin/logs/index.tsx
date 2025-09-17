@@ -38,7 +38,9 @@ function DataSpanField(log: Log) {
       {([key, value]) =>
         key.startsWith("span.data-") && (
           <>
-            <span class="italic opacity-60">{key.replace("span.data-", "")}</span>
+            <span class="italic opacity-60">
+              {key.replace("span.data-", "")}
+            </span>
             <span class="opacity-60">=</span>
             <span>{value as string}&nbsp;&nbsp;</span>
           </>
@@ -48,14 +50,16 @@ function DataSpanField(log: Log) {
   );
 }
 
-export default function() {
+export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const logFiles = useQuery(() => ({
     queryKey: ["platform", "logs", "files"],
-    queryFn: async () => (await getPlatformLogs()).sort((a, b) => b.localeCompare(a)),
-    onError: (err: Error) => {
+    queryFn: async () =>
+      (await getPlatformLogs()).sort((a, b) => b.localeCompare(a)),
+    throwOnError: (err) => {
       handleHttpError(err, t("platform.logs.errors.fetchList.title")!);
+      return true;
     },
   }));
 
@@ -63,7 +67,6 @@ export default function() {
     queryKey: [
       "platform",
       "logs",
-      "stream",
       searchParams.started_at,
       searchParams.ended_at,
       searchParams.limit,
@@ -76,12 +79,18 @@ export default function() {
       return (
         await queryPlatformLog({
           started_at: searchParams.started_at
-            ? DateTime.fromSeconds(Number.parseInt(searchParams.started_at as string, 10))
+            ? DateTime.fromSeconds(
+                Number.parseInt(searchParams.started_at as string, 10),
+              )
             : DateTime.now().minus({ day: 1 }),
           ended_at: searchParams.ended_at
-            ? DateTime.fromSeconds(Number.parseInt(searchParams.ended_at as string, 10))
+            ? DateTime.fromSeconds(
+                Number.parseInt(searchParams.ended_at as string, 10),
+              )
             : DateTime.now(),
-          limit: searchParams.limit ? Number.parseInt((searchParams.limit as string) || "NaN", 10) : 20,
+          limit: searchParams.limit
+            ? Number.parseInt((searchParams.limit as string) || "NaN", 10)
+            : 20,
           level: searchParams.level as string | undefined,
           trace: searchParams.trace as string | undefined,
           from: searchParams.from as string | undefined,
@@ -89,11 +98,15 @@ export default function() {
           query: searchParams.query as string | undefined,
         })
       ).sort((a, b) => {
-        return DateTime.fromISO(a._time).toMillis() - DateTime.fromISO(b._time).toMillis();
+        return (
+          DateTime.fromISO(a._time).toMillis() -
+          DateTime.fromISO(b._time).toMillis()
+        );
       });
     },
-    onError: (err: Error) => {
+    throwOnError: (err: Error) => {
       handleHttpError(err, t("platform.logs.errors.fetchLogs.title")!);
+      return false;
     },
   }));
 
@@ -102,7 +115,9 @@ export default function() {
   const timer = setInterval(() => {
     if (enableTimer()) {
       setSearchParams({
-        started_at: Math.floor(DateTime.now().minus({ day: 1 }).toSeconds()).toString(),
+        started_at: Math.floor(
+          DateTime.now().minus({ day: 1 }).toSeconds(),
+        ).toString(),
         ended_at: Math.floor(DateTime.now().toSeconds()).toString(),
         limit: searchParams.limit,
         level: searchParams.level,
@@ -130,7 +145,8 @@ export default function() {
     }
   }
 
-  const time = (ts: string, format: string) => DateTime.fromISO(ts).toFormat(format);
+  const time = (ts: string, format: string) =>
+    DateTime.fromISO(ts).toFormat(format);
   const matches = createBreakpoints(breakpoints);
   let bottomDiv: HTMLDivElement;
   return (
@@ -200,7 +216,13 @@ export default function() {
             level={enableTimer() ? "error" : "success"}
             onClick={() => setEnableTimer(!enableTimer())}
           >
-            <span class={clsx(enableTimer() ? "icon-[fluent--stop-16-regular]" : "icon-[fluent--play-16-regular]")} />
+            <span
+              class={clsx(
+                enableTimer()
+                  ? "icon-[fluent--stop-16-regular]"
+                  : "icon-[fluent--play-16-regular]",
+              )}
+            />
           </Button>
         </div>
         <div class="inline-flex flex-row items-center flex-wrap p-3 lg:p-6 !pb-0">
@@ -224,23 +246,34 @@ export default function() {
               <div
                 class={clsx(
                   "group min-h-8 flex flex-col h-auto",
-                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0"
+                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0",
                 )}
               >
                 <span class="w-full grid grid-cols-[repeat(3,auto)_1fr]">
-                  <span class={clsx("w-16 mr-2 inline-block", getColor(log.level))}>{log.level}</span>
+                  <span
+                    class={clsx("w-16 mr-2 inline-block", getColor(log.level))}
+                  >
+                    {log.level}
+                  </span>
                   <span class="mr-2 text-success font-bold" title={log.target}>
                     {log.target}
                   </span>
                   <span class={clsx("truncate", getColor(log.level))}>
-                    {(log["span.method"] as string) && <span>{log["span.method"] as string}&nbsp;</span>}
-                    {(log["span.uri"] as string) && <span>{log["span.uri"] as string}&nbsp;</span>}
+                    {(log["span.method"] as string) && (
+                      <span>{log["span.method"] as string}&nbsp;</span>
+                    )}
+                    {(log["span.uri"] as string) && (
+                      <span>{log["span.uri"] as string}&nbsp;</span>
+                    )}
                   </span>
                   <span class="text-right font-bold ml-2 whitespace-nowrap">
                     {(log["span.user-account"] as string) && (
                       <span class="font-bold mr-2">
                         <span class="icon-[fluent--person-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A href={`/admin/logs?account=${log["span.user-account"]}`} class="hover:underline mr-2">
+                        <A
+                          href={`/admin/logs?account=${log["span.user-account"]}`}
+                          class="hover:underline mr-2"
+                        >
                           {log["span.user-account"] as string}
                         </A>
                         <A href={`/admin/users?user=${log["span.user-id"]}`}>
@@ -251,7 +284,10 @@ export default function() {
                     {(log["span.from"] as string) && (
                       <>
                         <span class="icon-[fluent--location-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A href={`/admin/logs?from=${log["span.from"] as string}`} class="hover:underline mr-2">
+                        <A
+                          href={`/admin/logs?from=${log["span.from"] as string}`}
+                          class="hover:underline mr-2"
+                        >
                           {log["span.from"] as string}
                         </A>
                         <A href={`/admin/users?filter=${log["span.from"]}`}>
@@ -262,22 +298,37 @@ export default function() {
                     {(log["span.trace"] as string) && (
                       <>
                         <span class="icon-[fluent--fire-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A href={`/admin/logs?trace=${log["span.trace"] as string}`} class="hover:underline mr-2">
+                        <A
+                          href={`/admin/logs?trace=${log["span.trace"] as string}`}
+                          class="hover:underline mr-2"
+                        >
                           TRACE
                         </A>
                       </>
                     )}
                     <span class="icon-[fluent--clock-16-filled] text-primary align-middle w-4 h-4 mr-1" />
                     <Switch fallback={time(log._time, "HH:mm:ss")}>
-                      <Match when={matches.xl}>{time(log._time, "yyyy-MM-dd HH:mm:ss")}</Match>
-                      <Match when={matches.lg}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
-                      <Match when={matches.md}>{time(log._time, "yyyy-MM-dd HH:mm:ss")}</Match>
-                      <Match when={matches.sm}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
+                      <Match when={matches.xl}>
+                        {time(log._time, "yyyy-MM-dd HH:mm:ss")}
+                      </Match>
+                      <Match when={matches.lg}>
+                        {time(log._time, "MM-dd HH:mm:ss")}
+                      </Match>
+                      <Match when={matches.md}>
+                        {time(log._time, "yyyy-MM-dd HH:mm:ss")}
+                      </Match>
+                      <Match when={matches.sm}>
+                        {time(log._time, "MM-dd HH:mm:ss")}
+                      </Match>
                     </Switch>
                   </span>
                 </span>
                 <div class="grid grid-cols-[1fr] group-hover:block w-full">
-                  <span class={clsx("truncate break-words group-hover:whitespace-normal")}>
+                  <span
+                    class={clsx(
+                      "truncate break-words group-hover:whitespace-normal",
+                    )}
+                  >
                     <span>{log._msg}&nbsp;&nbsp;</span>
                     {LogField(log)}
                     {DataSpanField(log)}
@@ -295,7 +346,6 @@ export default function() {
             <div class="flex-1 flex flex-col items-center justify-center space-y-8 opacity-60">
               <span class="shrink-0 icon-[fluent--code-20-regular] w-24 h-24" />
               <span>{t("platform.logs.notStreaming")}</span>
-              <span>{t("platform.logs.enableStreamWarning")}</span>
             </div>
           </Show>
           <div ref={bottomDiv!} />
