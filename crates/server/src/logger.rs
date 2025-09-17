@@ -37,7 +37,8 @@ pub enum LoggerError {
   FileLoggerInitError(#[from] rolling::InitError),
 }
 
-// A MakeWriter that provides a per-event writer, which pushes complete JSON lines to a background worker.
+// A MakeWriter that provides a per-event writer, which pushes complete JSON
+// lines to a background worker.
 #[derive(Clone)]
 struct VlMakeWriter {
   tx: mpsc::Sender<Vec<u8>>,
@@ -56,8 +57,9 @@ struct VlLineWriter {
 
 impl Write for VlLineWriter {
   fn write(&mut self, buf: &[u8]) -> IoResult<usize> {
-    // tracing-subscriber JSON formatter writes one JSON object per event/span-event,
-    // typically ending with '\n'. We split on newlines and send complete lines.
+    // tracing-subscriber JSON formatter writes one JSON object per
+    // event/span-event, typically ending with '\n'. We split on newlines and
+    // send complete lines.
     self.buf.extend_from_slice(buf);
 
     while let Some(pos) = self.buf.iter().position(|&b| b == b'\n') {
@@ -102,7 +104,8 @@ impl<'a> MakeWriter<'a> for VlMakeWriter {
   }
 }
 
-// Background task that batches and POSTs ndjson to VictoriaLogs via hyper_util legacy client
+// Background task that batches and POSTs ndjson to VictoriaLogs via hyper_util
+// legacy client
 async fn run_vl_worker(
   mut rx: mpsc::Receiver<Vec<u8>>, url: String, client: Client<HttpConnector, Body>,
 ) {
@@ -239,7 +242,8 @@ pub async fn initialize(config: &Option<logging::Config>) -> Result<Vec<WorkerGu
     let worker_client = client.clone();
     tokio::spawn(async move { run_vl_worker(rx, victoria_url, worker_client).await });
 
-    // Hook tracing to VictoriaLogs writer (as a Layer so we can flatten events and add span events)
+    // Hook tracing to VictoriaLogs writer (as a Layer so we can flatten events and
+    // add span events)
     let make_writer = VlMakeWriter::new(tx);
     let (non_blocking_victoria, victoria_guard) = non_blocking(make_writer.make_writer());
     let victoria_log_layer = Layer::new()

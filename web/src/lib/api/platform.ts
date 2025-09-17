@@ -1,9 +1,9 @@
 import type { AuthConfig, Config, ServerConfig } from "@models/config";
 import type { HostType } from "@models/game";
 import type { Institute } from "@models/institute";
+import { luxonReplacer } from "@models/utils";
 import type { DateTime } from "luxon";
 import api, { api_root } from ".";
-import { luxonReplacer } from "@models/utils";
 
 export async function getPlatformInfo() {
   return await api.get(`${api_root}/platform/info`).json<ServerConfig>();
@@ -46,9 +46,7 @@ export type PlatformStatistics = {
 };
 
 export async function getPlatformStatistics() {
-  return await api
-    .get(`${api_root}/platform/statistics`)
-    .json<PlatformStatistics>();
+  return await api.get(`${api_root}/platform/statistics`).json<PlatformStatistics>();
 }
 
 export async function getPlatformLogs() {
@@ -99,7 +97,5 @@ export async function getPlatformConfig() {
 }
 
 export async function updatePlatformConfig(config: Config) {
-  return await api
-    .patch(`${api_root}/platform/config`, { json: config })
-    .json<Config>();
+  return await api.patch(`${api_root}/platform/config`, { json: config }).json<Config>();
 }

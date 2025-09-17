@@ -1,18 +1,18 @@
 import { api_root, handleHttpError } from "@api";
-import { getPlatformLogs, queryPlatformLog, type Log } from "@api/platform";
+import { getPlatformLogs, type Log, queryPlatformLog } from "@api/platform";
 import DownloadButton from "@blocks/download-button";
-import Button from "@widgets/button";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A, useSearchParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { breakpoints, t } from "@storage/theme";
 import { useQuery } from "@tanstack/solid-query";
+import Button from "@widgets/button";
 import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
 import Select from "@widgets/select";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import { For, Match, Show, Switch, createSignal, onCleanup } from "solid-js";
+import { createSignal, For, Match, onCleanup, Show, Switch } from "solid-js";
 
 function LogField(log: Log) {
   if (!log) return null;
@@ -48,7 +48,7 @@ function DataSpanField(log: Log) {
   );
 }
 
-export default function() {
+export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const logFiles = useQuery(() => ({

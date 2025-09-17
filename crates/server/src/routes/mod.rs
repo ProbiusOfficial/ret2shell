@@ -12,9 +12,10 @@ use axum::{
 use r2s_config::server;
 use tower::{ServiceBuilder, buffer::BufferLayer};
 use tower_governor::{GovernorLayer, governor::GovernorConfigBuilder};
-use tower_http::{ServiceBuilderExt, request_id::RequestId};
 use tower_http::{
+  ServiceBuilderExt,
   cors::{Any, CorsLayer},
+  request_id::RequestId,
   trace::TraceLayer,
 };
 use tracing::{Span, debug, error_span};

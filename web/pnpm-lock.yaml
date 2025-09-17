@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@ark-ui/solid':
-        specifier: ^5.24.1
-        version: 5.24.1(solid-js@1.9.9)
+        specifier: ^5.25.0
+        version: 5.25.0(solid-js@1.9.9)
       '@e965/xlsx':
         specifier: ^0.20.3
         version: 0.20.3
@@ -54,8 +54,8 @@ importers:
         specifier: ^0.15.3
         version: 0.15.3(solid-js@1.9.9)
       '@tanstack/solid-query':
-        specifier: ^5.87.4
-        version: 5.87.4(solid-js@1.9.9)
+        specifier: ^5.89.0
+        version: 5.89.0(solid-js@1.9.9)
       '@xdsec/wsrx':
         specifier: ^0.5.0
         version: 0.5.0
@@ -184,8 +184,8 @@ importers:
         specifier: 2.2.4
         version: 2.2.4
       '@iconify-json/fluent':
-        specifier: ^1.2.30
-        version: 1.2.30
+        specifier: ^1.2.31
+        version: 1.2.31
       '@iconify-json/fluent-emoji-flat':
         specifier: ^1.2.5
         version: 1.2.5
@@ -200,7 +200,7 @@ importers:
         version: 0.5.16(tailwindcss@4.1.13)
       '@tailwindcss/vite':
         specifier: ^4.1.13
-        version: 4.1.13(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))
+        version: 4.1.13(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))
       '@types/howler':
         specifier: ^2.2.12
         version: 2.2.12
@@ -208,8 +208,8 @@ importers:
         specifier: ^3.7.1
         version: 3.7.1
       '@types/node':
-        specifier: ^24.4.0
-        version: 24.4.0
+        specifier: ^24.5.1
+        version: 24.5.1
       '@types/shell-quote':
         specifier: ^1.7.5
         version: 1.7.5
@@ -224,16 +224,16 @@ importers:
         version: 2.8.1
       vite:
         specifier: ^7.1.5
-        version: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+        version: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
       vite-plugin-compression:
         specifier: ^0.5.1
-        version: 0.5.1(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))
+        version: 0.5.1(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))
       vite-plugin-solid:
         specifier: ^2.11.8
-        version: 2.11.8(solid-js@1.9.9)(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))
+        version: 2.11.8(solid-js@1.9.9)(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))
       vitest:
         specifier: ^3.2.4
-        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
 
 packages:
 
@@ -243,8 +243,8 @@ packages:
   '@antfu/utils@8.1.1':
     resolution: {integrity: sha512-Mex9nXf9vR6AhcXmMrlz/HVgYYZpVGJ6YlPgwl7UnaFpnshXs6EK/oa5Gpf3CzENMjkvEx2tQtntGnb7UtSTOQ==}
 
-  '@ark-ui/solid@5.24.1':
-    resolution: {integrity: sha512-EG/vXtFUkEXuWn1UIDvMYF6XCz7jfz7pn43pqQT4a3YP7ttOq9OUVYXHvETc3/9z0L7g+WwWAjLjje9nRV7oJg==}
+  '@ark-ui/solid@5.25.0':
+    resolution: {integrity: sha512-MVuJhKYkyN/ygqH1tRc8M5zhZfm33leIAAUTRircCd2Ojhb1Wvahgw425xTnALz4/71vtWmkhLj37268ynPPDQ==}
     peerDependencies:
       solid-js: '>=1.6.0'
 
@@ -555,8 +555,8 @@ packages:
   '@iconify-json/fluent-emoji-flat@1.2.5':
     resolution: {integrity: sha512-5ShoOHJ0ezYEIMfp2zvbRiZpL1Af8Prg5v9pElaIQhfqwbyD57pzrp70g/rK2EjigajBq9/cPrJXh224HaP3TQ==}
 
-  '@iconify-json/fluent@1.2.30':
-    resolution: {integrity: sha512-tR0E0As25LGV95vryo/bZbLJ3kcUiOva99MP7nB7gQV82K08zaaaSYZWcyKbLgV4BxHOfMuBgNoOvQpYqm9Oyg==}
+  '@iconify-json/fluent@1.2.31':
+    resolution: {integrity: sha512-koe2/PVoRS6qzhkGAzbWcvTLImRx+pdO9dtzoJpB8xwmhDL3hbfSyU88uBxIVTVaApkiVdkDoXOvZ1EjyLQbyQ==}
 
   '@iconify-json/meteocons@1.2.4':
     resolution: {integrity: sha512-E7YV02ql5WmJgAOpXU/hoF9Mdshq73KjwR6fBxZ5SrqMJghMa3CIcRG6NQGwP4I1uBOhIjOFlAikYoPAKuT56A==}
@@ -923,11 +923,11 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
-  '@tanstack/query-core@5.87.4':
-    resolution: {integrity: sha512-uNsg6zMxraEPDVO2Bn+F3/ctHi+Zsk+MMpcN8h6P7ozqD088F6mFY5TfGM7zuyIrL7HKpDyu6QHfLWiDxh3cuw==}
+  '@tanstack/query-core@5.89.0':
+    resolution: {integrity: sha512-joFV1MuPhSLsKfTzwjmPDrp8ENfZ9N23ymFu07nLfn3JCkSHy0CFgsyhHTJOmWaumC/WiNIKM0EJyduCF/Ih/Q==}
 
-  '@tanstack/solid-query@5.87.4':
-    resolution: {integrity: sha512-JF/gKC9qatXg8KWsrpJsTgeIVMeOaHFFYfsvBqnpXZL1l9x46etZz+ek40SJy1ET7afFoc4PG3N4HBbS9+88lQ==}
+  '@tanstack/solid-query@5.89.0':
+    resolution: {integrity: sha512-m/1a7GhSUcYZDTBVG2b6kXKKYt4ozGaBBNm/GTl92hjRJ/LWXhKeJqIV00hjgoc+gt28wdH4Wcfbwdcu9RiU4w==}
     peerDependencies:
       solid-js: ^1.6.0
 
@@ -973,8 +973,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@24.4.0':
-    resolution: {integrity: sha512-gUuVEAK4/u6F9wRLznPUU4WGUacSEBDPoC2TrBkw3GAnOLHBL45QdfHOXp1kJ4ypBGLxTOB+t7NJLpKoC3gznQ==}
+  '@types/node@24.5.1':
+    resolution: {integrity: sha512-/SQdmUP2xa+1rdx7VwB9yPq8PaKej8TD5cQ+XfKDPWWC+VDJU4rvVVagXqKUzhKjtFoNA8rXDJAkCxQPAe00+Q==}
 
   '@types/shell-quote@1.7.5':
     resolution: {integrity: sha512-+UE8GAGRPbJVQDdxi16dgadcBfQ+KG2vgZhV1+3A1XmHbmwcdwhCUwIdy+d3pAGrbvgRoVSjeI9vOWyq376Yzw==}
@@ -1297,8 +1297,8 @@ packages:
     resolution: {integrity: sha512-L+YvJwGAgwJBV1p6ffpSTa2KRc69EeeYGYjRVWKs0GKrK+LON0GC0gV+rKSNtALEDvMDqkvCFq9r1r94/Gjwxw==}
     hasBin: true
 
-  browserslist@4.26.0:
-    resolution: {integrity: sha512-P9go2WrP9FiPwLv3zqRD/Uoxo0RSHjzFCiQz7d4vbmwNqQFo9T9WCeP/Qn5EbcKQY6DBbkxEXNcpJOmncNrb7A==}
+  browserslist@4.26.2:
+    resolution: {integrity: sha512-ECFzp6uFOSB+dcZ5BK/IBaGWssbSYBHvuMeMt3MMFyhI0Z8SqGgEkBLARgpRH3hutIgPVsALcMwbDrJqPxQ65A==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
@@ -1306,8 +1306,8 @@ packages:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
 
-  caniuse-lite@1.0.30001741:
-    resolution: {integrity: sha512-QGUGitqsc8ARjLdgAfxETDhRbJ0REsP6O3I96TAth/mVjh2cYzN2u+3AzPP3aVSm2FehEItaJw1xd+IGBXWeSw==}
+  caniuse-lite@1.0.30001743:
+    resolution: {integrity: sha512-e6Ojr7RV14Un7dz6ASD0aZDmQPT/A+eZU+nuTNfjqmRrmkmQlnTNWH0SKmqagx9PeW87UVqapSurtAXifmtdmw==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -1406,8 +1406,8 @@ packages:
   echarts@6.0.0:
     resolution: {integrity: sha512-Tte/grDQRiETQP4xz3iZWSvoHrkCQtwqd6hs+mifXcjrCuo2iKWbajFObuLJVBlDIJlOzgQPd1hsaKt/3+OMkQ==}
 
-  electron-to-chromium@1.5.218:
-    resolution: {integrity: sha512-uwwdN0TUHs8u6iRgN8vKeWZMRll4gBkz+QMqdS7DDe49uiK68/UX92lFb61oiFPrpYZNeZIqa4bA7O6Aiasnzg==}
+  electron-to-chromium@1.5.220:
+    resolution: {integrity: sha512-TWXijEwR1ggr4BdAKrb1nMNqYLTx1/4aD1fkeZU+FVJGTKu53/T7UyHKXlqEX3Ub02csyHePbHmkvnrjcaYzMA==}
 
   emoji-regex@10.5.0:
     resolution: {integrity: sha512-lb49vf1Xzfx080OKA0o6l8DQQpV+6Vg95zyCJX9VB/BqKYlhG7N4wgROUUHRA+ZPUefLnteQOad7z1kT2bV7bg==}
@@ -2095,8 +2095,8 @@ packages:
   ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
 
-  undici-types@7.11.0:
-    resolution: {integrity: sha512-kt1ZriHTi7MU+Z/r9DOdAI3ONdaR3M3csEaRc6ewa4f4dTvX4cQCbJ4NkEn0ohE4hHtq85+PhPSTY+pO/1PwgA==}
+  undici-types@7.12.0:
+    resolution: {integrity: sha512-goOacqME2GYyOZZfb5Lgtu+1IDmAlAEu5xnD3+xTzS10hT0vzpf0SPjkXwAw9Jm+4n/mQGDP3LO8CPbYROeBfQ==}
 
   unified@11.0.5:
     resolution: {integrity: sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==}
@@ -2284,7 +2284,7 @@ snapshots:
 
   '@antfu/utils@8.1.1': {}
 
-  '@ark-ui/solid@5.24.1(solid-js@1.9.9)':
+  '@ark-ui/solid@5.25.0(solid-js@1.9.9)':
     dependencies:
       '@internationalized/date': 3.9.0
       '@zag-js/accordion': 1.24.1
@@ -2388,7 +2388,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.28.4
       '@babel/helper-validator-option': 7.27.1
-      browserslist: 4.26.0
+      browserslist: 4.26.2
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -2589,7 +2589,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/fluent@1.2.30':
+  '@iconify-json/fluent@1.2.31':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -2914,18 +2914,18 @@ snapshots:
       postcss-selector-parser: 6.0.10
       tailwindcss: 4.1.13
 
-  '@tailwindcss/vite@4.1.13(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))':
+  '@tailwindcss/vite@4.1.13(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))':
     dependencies:
       '@tailwindcss/node': 4.1.13
       '@tailwindcss/oxide': 4.1.13
       tailwindcss: 4.1.13
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
 
-  '@tanstack/query-core@5.87.4': {}
+  '@tanstack/query-core@5.89.0': {}
 
-  '@tanstack/solid-query@5.87.4(solid-js@1.9.9)':
+  '@tanstack/solid-query@5.89.0(solid-js@1.9.9)':
     dependencies:
-      '@tanstack/query-core': 5.87.4
+      '@tanstack/query-core': 5.89.0
       solid-js: 1.9.9
 
   '@types/babel__core@7.20.5':
@@ -2977,9 +2977,9 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@24.4.0':
+  '@types/node@24.5.1':
     dependencies:
-      undici-types: 7.11.0
+      undici-types: 7.12.0
 
   '@types/shell-quote@1.7.5': {}
 
@@ -2995,13 +2995,13 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 2.0.0
 
-  '@vitest/mocker@3.2.4(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))':
+  '@vitest/mocker@3.2.4(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))':
     dependencies:
       '@vitest/spy': 3.2.4
       estree-walker: 3.0.3
       magic-string: 0.30.19
     optionalDependencies:
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
 
   '@vitest/pretty-format@3.2.4':
     dependencies:
@@ -3586,17 +3586,17 @@ snapshots:
 
   baseline-browser-mapping@2.8.4: {}
 
-  browserslist@4.26.0:
+  browserslist@4.26.2:
     dependencies:
       baseline-browser-mapping: 2.8.4
-      caniuse-lite: 1.0.30001741
-      electron-to-chromium: 1.5.218
+      caniuse-lite: 1.0.30001743
+      electron-to-chromium: 1.5.220
       node-releases: 2.0.21
-      update-browserslist-db: 1.1.3(browserslist@4.26.0)
+      update-browserslist-db: 1.1.3(browserslist@4.26.2)
 
   cac@6.7.14: {}
 
-  caniuse-lite@1.0.30001741: {}
+  caniuse-lite@1.0.30001743: {}
 
   ccount@2.0.1: {}
 
@@ -3670,7 +3670,7 @@ snapshots:
       tslib: 2.3.0
       zrender: 6.0.0
 
-  electron-to-chromium@1.5.218: {}
+  electron-to-chromium@1.5.220: {}
 
   emoji-regex@10.5.0: {}
 
@@ -4634,7 +4634,7 @@ snapshots:
 
   ufo@1.6.1: {}
 
-  undici-types@7.11.0: {}
+  undici-types@7.12.0: {}
 
   unified@11.0.5:
     dependencies:
@@ -4681,9 +4681,9 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  update-browserslist-db@1.1.3(browserslist@4.26.0):
+  update-browserslist-db@1.1.3(browserslist@4.26.2):
     dependencies:
-      browserslist: 4.26.0
+      browserslist: 4.26.2
       escalade: 3.2.0
       picocolors: 1.1.1
 
@@ -4712,13 +4712,13 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
-  vite-node@3.2.4(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1):
+  vite-node@3.2.4(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       es-module-lexer: 1.7.0
       pathe: 2.0.3
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
     transitivePeerDependencies:
       - '@types/node'
       - jiti
@@ -4733,16 +4733,16 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-compression@0.5.1(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)):
+  vite-plugin-compression@0.5.1(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)):
     dependencies:
       chalk: 4.1.2
       debug: 4.4.3
       fs-extra: 10.1.0
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
     transitivePeerDependencies:
       - supports-color
 
-  vite-plugin-solid@2.11.8(solid-js@1.9.9)(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)):
+  vite-plugin-solid@2.11.8(solid-js@1.9.9)(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)):
     dependencies:
       '@babel/core': 7.28.4
       '@types/babel__core': 7.20.5
@@ -4750,12 +4750,12 @@ snapshots:
       merge-anything: 5.1.7
       solid-js: 1.9.9
       solid-refresh: 0.6.3(solid-js@1.9.9)
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
-      vitefu: 1.1.1(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
+      vitefu: 1.1.1(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))
     transitivePeerDependencies:
       - supports-color
 
-  vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1):
+  vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1):
     dependencies:
       esbuild: 0.25.9
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4764,20 +4764,20 @@ snapshots:
       rollup: 4.50.2
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.4.0
+      '@types/node': 24.5.1
       fsevents: 2.3.3
       jiti: 2.5.1
       lightningcss: 1.30.1
 
-  vitefu@1.1.1(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)):
+  vitefu@1.1.1(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)):
     optionalDependencies:
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
 
-  vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1):
+  vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1):
     dependencies:
       '@types/chai': 5.2.2
       '@vitest/expect': 3.2.4
-      '@vitest/mocker': 3.2.4(vite@7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1))
+      '@vitest/mocker': 3.2.4(vite@7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1))
       '@vitest/pretty-format': 3.2.4
       '@vitest/runner': 3.2.4
       '@vitest/snapshot': 3.2.4
@@ -4795,12 +4795,12 @@ snapshots:
       tinyglobby: 0.2.15
       tinypool: 1.1.1
       tinyrainbow: 2.0.0
-      vite: 7.1.5(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
-      vite-node: 3.2.4(@types/node@24.4.0)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite: 7.1.5(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
+      vite-node: 3.2.4(@types/node@24.5.1)(jiti@2.5.1)(lightningcss@1.30.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/debug': 4.1.12
-      '@types/node': 24.4.0
+      '@types/node': 24.5.1
     transitivePeerDependencies:
       - jiti
       - less
