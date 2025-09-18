@@ -110,7 +110,8 @@ export default function () {
   );
   const [loading, setLoading] = createSignal(false);
   const [showPlane, setShowPlane] = createSignal(false);
-  const [showReal, setShowReal] = createSignal(!canAccessChallenges()[0]);
+  // const [showReal, setShowReal] = createSignal(!canAccessChallenges()[0]);
+  const [showReal, setShowReal] = createSignal(true);
   const matches = createBreakpoints(breakpoints);
 
   onMount(async () => {
