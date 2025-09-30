@@ -33,7 +33,7 @@ class Tmpl {
     this.context = context;
   }
 
-  static with_context(context: TmplContext) {
+  static withContext(context: TmplContext) {
     return new Tmpl(context);
   }
 
@@ -80,7 +80,7 @@ export default function (_props: { onStateChange?: (challenge?: Challenge) => vo
   const [preset, setPreset] = createSignal(null as PresetChecker | null);
   const presetChecker = createMemo(() => {
     if (!preset()) return null;
-    return Tmpl.with_context(checkerCtx).execute(checkerMap[preset()!]);
+    return Tmpl.withContext(checkerCtx).execute(checkerMap[preset()!]);
   });
   const [script, setScript] = createSignal("");
   const [lint, setLint] = createSignal(null as string | null);

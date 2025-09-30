@@ -327,9 +327,9 @@
           "placeholder": "Please enter the sender's name"
         },
         "username": {
-        "required": "SMTP username cannot be empty",
-        "label": "SMTP username",
-        "placeholder": "Please enter SMTP username"
+          "required": "SMTP username cannot be empty",
+          "label": "SMTP username",
+          "placeholder": "Please enter SMTP username"
         },
         "senderAddress": {
           "label": "Sender email address",

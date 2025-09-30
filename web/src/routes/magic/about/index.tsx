@@ -105,6 +105,11 @@ export default function () {
                         h4kuy4
                       </a>
                     </Tag>
+                    <Tag level="info" class="m-1">
+                      <a href="https://github.com/mnixry" target="_blank" rel="noreferrer">
+                        mnixry
+                      </a>
+                    </Tag>
                   </div>
                   <h3 class="font-bold">Opensource projects & 3rd libraries</h3>
                   <div class="flex flex-row flex-wrap justify-center">

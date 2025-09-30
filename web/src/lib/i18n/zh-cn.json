@@ -327,9 +327,9 @@
           "placeholder": "请输入发信人名称"
         },
         "username": {
-        "required": "SMTP 用户名不能为空",
-        "label": "SMTP 用户名",
-        "placeholder": "请输入 SMTP 用户名"
+          "required": "SMTP 用户名不能为空",
+          "label": "SMTP 用户名",
+          "placeholder": "请输入 SMTP 用户名"
         },
         "senderAddress": {
           "label": "发信邮箱地址",
