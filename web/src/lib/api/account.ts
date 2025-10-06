@@ -16,9 +16,17 @@ export async function getCaptcha() {
   return await api.get(`${api_root}/account/captcha`).json<Captcha>();
 }
 
-export function useCaptcha({ enabled, onError }: { enabled?: () => boolean; onError?: (err: Error) => void } = {}) {
+export function useCaptcha({
+  timestamp,
+  enabled,
+  onError,
+}: {
+  timestamp?: number;
+  enabled?: () => boolean;
+  onError?: (err: Error) => void;
+} = {}) {
   return useQuery(() => ({
-    queryKey: ["account", "captcha"],
+    queryKey: ["account", "captcha", timestamp],
     queryFn: async () => await getCaptcha(),
     enabled,
     throwOnError: (err: Error) => {
@@ -252,7 +260,7 @@ export async function getInstitutes() {
   return await api.get(`${api_root}/account/institute`).json<Institute[]>();
 }
 
-export function useInstitutes(props: { enabled?: () => boolean; onError?: (err: Error) => boolean }={}) {
+export function useInstitutes(props: { enabled?: () => boolean; onError?: (err: Error) => boolean } = {}) {
   return useQuery(() => ({
     queryKey: ["account", "institute"],
     queryFn: getInstitutes,
@@ -321,7 +329,7 @@ export async function getOAuthProviders() {
   return await api.get(`${api_root}/account/oauth/provider`).json<OAuthProvider[]>();
 }
 
-export function useOAuthProviders(props: { enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+export function useOAuthProviders(props: { enabled?: () => boolean; onError?: (err: Error) => boolean } = {}) {
   return useQuery(() => ({
     queryKey: ["account", "oauth", "providers"],
     queryFn: getOAuthProviders,
@@ -442,16 +450,27 @@ export async function loginWithOAuth(query: string) {
   }>();
 }
 
-export function useLoginWithOAuthMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
+export function useLoginWithOAuthMutation(
+  props: {
+    onSuccess?: (resp: {
+      token: string | null;
+      data: {
+        auth_key: string;
+        [key: string]: string;
+      } | null;
+    }) => void;
+    onError?: (err: Error) => void;
+  } = {}
+) {
   return useMutation(() => ({
     mutationFn: loginWithOAuth,
-    onSuccess: () => {
+    onSuccess: (resp) => {
       addToast({
         level: "success",
         description: t("account.login.status.success.message"),
         duration: 5000,
       });
-      props.onSuccess?.();
+      props.onSuccess?.(resp);
     },
     onError: (err: Error) => {
       handleHttpError(err, t("account.login.errors.login.title"));

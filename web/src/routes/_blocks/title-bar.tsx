@@ -1,3 +1,5 @@
+import { useGame } from "@api/game";
+import { useSelfTeam } from "@api/team";
 import LogoAnimate from "@assets/animates/logo-animate";
 import { mediaPath } from "@lib/utils/media";
 import { HostType } from "@models/game";
@@ -5,12 +7,11 @@ import { Permission } from "@models/user";
 import { useLocation, useParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import {
-  canAccessChallenges,
-  canParticipate,
   currentTimelinePeriod,
-  gameStore,
-  inProgress,
-  isGameAdmin,
+  isAdminOfGame,
+  isGameCanParticipate,
+  isGameInProgress,
+  isPlayerCanAccessChallenges,
 } from "@storage/game";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
@@ -47,13 +48,16 @@ function GlobalTitleLink() {
 }
 
 function GameTitleLink() {
+  const params = useParams();
+  const gameId = Number.parseInt(params.game, 10);
+  const game = useGame({ id: () => gameId, enabled: () => !!gameId });
   return (
-    <Link ghost href={`/games/${gameStore.current?.id}/`}>
-      <Show when={gameStore.current?.logo} fallback={<LogoAnimate width={24} height={24} />}>
-        <img src={mediaPath(gameStore.current!.logo!)} width={24} height={24} alt="CTF" />
+    <Link ghost href={`/games/${gameId}/`}>
+      <Show when={game.data?.logo} fallback={<LogoAnimate width={24} height={24} />}>
+        <img src={mediaPath(game.data!.logo!)} width={24} height={24} alt="CTF" />
       </Show>
       <span />
-      <span>{gameStore.current?.name}</span>
+      <span>{game.data?.name}</span>
     </Link>
   );
 }
@@ -125,18 +129,22 @@ function GlobalNav(props: { size: "sm" | "md" }) {
 }
 
 function GameNav(props: { size: "sm" | "md" }) {
+  const params = useParams();
+  const gameId = Number.parseInt(params.game, 10);
+  const game = useGame({ id: () => gameId, enabled: () => !!gameId });
+  const team = useSelfTeam({ game_id: () => gameId, enabled: () => !!accountStore.token && !!gameId });
   return (
     <>
       <li class="nav whitespace-nowrap">
         <Link
           class="w-full"
-          href={`/games/${gameStore.current?.id}/challenges`}
+          href={`/games/${gameId}/challenges`}
           activeMatch="partial"
           ghost
           justify="start"
           size={props.size}
-          disabled={!canAccessChallenges()[0]}
-          title={canAccessChallenges()[1]}
+          disabled={!isPlayerCanAccessChallenges(game.data)[0]}
+          title={isPlayerCanAccessChallenges(game.data)[1]}
         >
           <span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />
           <span>{t("challenge.title")}</span>
@@ -145,7 +153,7 @@ function GameNav(props: { size: "sm" | "md" }) {
       <li class="nav whitespace-nowrap">
         <Link
           class="w-full"
-          href={`/games/${gameStore.current?.id}/scoreboard`}
+          href={`/games/${gameId}/scoreboard`}
           activeMatch="partial"
           ghost
           justify="start"
@@ -156,11 +164,11 @@ function GameNav(props: { size: "sm" | "md" }) {
         </Link>
       </li>
       <Switch>
-        <Match when={gameStore.team}>
+        <Match when={team.data}>
           <li class="nav whitespace-nowrap">
             <Link
               class="w-full"
-              href={`/games/${gameStore.current?.id}/teams/${gameStore.team?.id}`}
+              href={`/games/${gameId}/teams/${team.data?.id}`}
               activeMatch="partial"
               ghost
               justify="start"
@@ -171,11 +179,11 @@ function GameNav(props: { size: "sm" | "md" }) {
             </Link>
           </li>
         </Match>
-        <Match when={canParticipate()}>
+        <Match when={isGameCanParticipate(game.data)}>
           <li class="nav whitespace-nowrap">
             <Link
               class="w-full"
-              href={`/games/${gameStore.current?.id}/teams/choose`}
+              href={`/games/${gameId}/teams/choose`}
               activeMatch="partial"
               ghost
               justify="start"
@@ -187,11 +195,11 @@ function GameNav(props: { size: "sm" | "md" }) {
           </li>
         </Match>
       </Switch>
-      <Show when={isGameAdmin()}>
+      <Show when={isAdminOfGame(game.data)}>
         <li class="nav whitespace-nowrap">
           <Link
             class="w-full"
-            href={`/games/${gameStore.current?.id}/admin`}
+            href={`/games/${gameId}/admin`}
             activeMatch="partial"
             ghost
             justify="start"
@@ -239,6 +247,8 @@ export default function TitleBar() {
     null
   );
   const params = useParams();
+  const gameId = Number.parseInt(params.game, 10);
+  const game = useGame({ id: () => gameId, enabled: () => !!gameId });
   const location = useLocation();
   const inDocs = () => location.pathname.startsWith("/docs");
   const [offlineLoading, setOfflineLoading] = createSignal(false);
@@ -273,9 +283,9 @@ export default function TitleBar() {
                     <Switch>
                       <Match
                         when={
-                          gameStore.current &&
-                          gameStore.current.host_type === HostType.Game &&
                           params.game &&
+                          game.data &&
+                          game.data.host_type === HostType.Game &&
                           location.pathname.startsWith(`/games/${params.game}`)
                         }
                       >
@@ -355,8 +365,8 @@ export default function TitleBar() {
           <Switch fallback={<GlobalTitleLink />}>
             <Match
               when={
-                gameStore.current &&
-                gameStore.current.host_type === HostType.Game &&
+                game.data &&
+                game.data.host_type === HostType.Game &&
                 params.game &&
                 location.pathname.startsWith(`/games/${params.game}`)
               }
@@ -370,8 +380,8 @@ export default function TitleBar() {
               <Match
                 when={
                   platformStore.isOnline &&
-                  gameStore.current &&
-                  gameStore.current.host_type === HostType.Game &&
+                  game.data &&
+                  game.data.host_type === HostType.Game &&
                   params.game &&
                   location.pathname.startsWith(`/games/${params.game}`)
                 }
@@ -392,37 +402,33 @@ export default function TitleBar() {
           <div class="flex-1" />
           <div class="flex flex-row space-x-2">
             <div class="hidden lg:flex flex-row space-x-2">
-              <Show when={platformStore.isOnline && accountStore.token !== null && gameStore.current}>
+              <Show when={platformStore.isOnline && accountStore.token !== null && game.data}>
                 <Switch>
-                  <Match when={gameStore.current && gameStore.current.host_type === HostType.Training}>
+                  <Match when={game.data && game.data.host_type === HostType.Training}>
                     <div class="grid grid-cols-1 items-center justify-center px-4 relative">
                       <div>
                         <span class="space-x-2 truncate max-w-full">{t("training.openForever")}</span>
                         <TimeProgress
                           class="w-full"
-                          startAt={gameStore.current!.start_at}
-                          endAt={gameStore.current!.start_at}
+                          startAt={game.data?.start_at || DateTime.now()}
+                          endAt={game.data?.start_at || DateTime.now()}
                         />
                       </div>
                     </div>
                   </Match>
-                  <Match when={inProgress()}>
+                  <Match when={isGameInProgress(game.data)}>
                     <div class="grid grid-cols-1 items-center justify-center px-4 relative">
                       <div>
                         <div class="space-x-2 truncate max-w-full">
-                          <Show when={currentTimelinePeriod()?.end_at}>
+                          <Show when={currentTimelinePeriod(game.data)?.end_at}>
                             <span>[</span>
-                            <span class="font-bold text-primary">{currentTimelinePeriod()?.label ?? ""}</span>
-                            <Timer class="text-primary" end={currentTimelinePeriod()!.end_at} hasHours />
+                            <span class="font-bold text-primary">{currentTimelinePeriod(game.data)?.label ?? ""}</span>
+                            <Timer class="text-primary" end={currentTimelinePeriod(game.data)!.end_at} hasHours />
                             <span>]</span>
                           </Show>
-                          <Timer end={gameStore.current!.end_at} hasHours />
+                          <Timer end={game.data!.end_at} hasHours />
                         </div>
-                        <TimeProgress
-                          class="w-full"
-                          startAt={gameStore.current!.start_at}
-                          endAt={gameStore.current!.end_at}
-                        />
+                        <TimeProgress class="w-full" startAt={game.data!.start_at} endAt={game.data!.end_at} />
                       </div>
                     </div>
                   </Match>

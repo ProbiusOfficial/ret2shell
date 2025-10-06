@@ -1,13 +1,7 @@
-import { handleHttpError } from "@api";
-import { getOAuthProviders, login } from "@api/account";
+import { useLoginMutation, useOAuthProviders } from "@api/account";
 import LogoAnimate from "@assets/animates/logo-animate";
-// import xdsecMascotCrying from "@assets/imgs/xdsec-mascot-crying.webp";
-// import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
-// import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
-// import xdsecMascotUnsee from "@assets/imgs/xdsec-mascot-unsee.webp";
 import Captcha from "@blocks/captcha";
 import { mediaPath } from "@lib/utils/media";
-import type { OAuthProvider } from "@models/oauth-provider";
 import { createForm, minLength, pattern, required, setValue } from "@modular-forms/solid";
 import { A, useLocation, useNavigate } from "@solidjs/router";
 import { accountStore } from "@storage/account";
@@ -21,7 +15,7 @@ import Input from "@widgets/input";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import { DateTime } from "luxon";
-import { createSignal, For, Match, onMount, Switch } from "solid-js";
+import { createSignal, For, Match, Switch } from "solid-js";
 
 type LoginForm = {
   account: string;
@@ -38,52 +32,38 @@ export default function () {
     return null;
   }
   const [form, { Form, Field }] = createForm<LoginForm>();
-  const [oauthServices, setOAuthServices] = createSignal([] as OAuthProvider[]);
+  const oauthProviders = useOAuthProviders();
 
-  onMount(async () => {
-    try {
-      setOAuthServices(await getOAuthProviders());
-    } catch (err) {
-      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title"));
-    }
-  });
-
-  const [_, setMascot] = createSignal(null as string | null);
-  const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
-  function handleLogin(result: LoginForm) {
-    setLoading(true);
-    setTimeout(async () => {
-      try {
-        await login(result);
-        addToast({
-          level: "success",
-          description: t("account.login.status.success.message"),
-          duration: 5000,
-          // img: xdsecMascotHappy,
-        });
-        const redirectUrl = location.query.redirect;
-        if (redirectUrl) {
-          const url = Array.isArray(redirectUrl) ? redirectUrl[0] : redirectUrl;
-          if (/^(\w+):\/\//.test(url)) {
-            navigate("/", { replace: true });
-            window.location.replace(url);
-          } else {
-            navigate(url, { replace: true });
-          }
-        } else {
+
+  const loginMutation = useLoginMutation({
+    onSuccess: () => {
+      addToast({
+        level: "success",
+        description: t("account.login.status.success.message"),
+        duration: 5000,
+        // img: xdsecMascotHappy,
+      });
+      const redirectUrl = location.query.redirect;
+      if (redirectUrl) {
+        const url = Array.isArray(redirectUrl) ? redirectUrl[0] : redirectUrl;
+        if (/^(\w+):\/\//.test(url)) {
           navigate("/", { replace: true });
+          window.location.replace(url);
+        } else {
+          navigate(url, { replace: true });
         }
-      } catch (err) {
-        handleHttpError(err as Error, t("account.login.errors.login.title"));
-        setTimestamp(DateTime.now().toMillis());
-        setValue(form, "password", "");
-        // setTimeout(() => {
-        //   setMascot(xdsecMascotCrying);
-        // }, 500);
+      } else {
+        navigate("/", { replace: true });
       }
-      setLoading(false);
-    }, 500);
+    },
+    onError: () => {
+      setTimestamp(DateTime.now().toMillis());
+      setValue(form, "password", "");
+    },
+  });
+  function handleLogin(result: LoginForm) {
+    loginMutation.mutate(result);
   }
   return (
     <>
@@ -116,7 +96,7 @@ export default function () {
                     // setMascot(xdsecMascotNormal);
                   }}
                   onFocusOut={() => {
-                    setMascot(null);
+                    // setMascot(null);
                   }}
                 />
               )}
@@ -153,7 +133,7 @@ export default function () {
                     // setMascot(xdsecMascotUnsee);
                   }}
                   onFocusOut={() => {
-                    setMascot(null);
+                    // setMascot(null);
                   }}
                 />
               )}
@@ -181,7 +161,7 @@ export default function () {
                 </Field>
               )}
             </Field>
-            <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+            <Button type="submit" level="primary" class="!mt-4" loading={loginMutation.isPending} disabled={loginMutation.isPending}>
               {t("account.login.title")}
             </Button>
           </Form>
@@ -195,9 +175,9 @@ export default function () {
               {t("account.register.tips")}
             </Link>
             <Switch>
-              <Match when={oauthServices().filter((s) => s.portal).length === 1}>
+              <Match when={oauthProviders.data?.filter((s) => s.portal).length === 1}>
                 {(() => {
-                  const svc = oauthServices().find((s) => s.portal)!;
+                  const svc = oauthProviders.data?.find((s) => s.portal)!;
                   return (
                     <Link class="w-full !mt-4" href={svc.portal} title={svc.name}>
                       <img src={mediaPath(svc.avatar ?? "")} alt={svc.name} width={24} height={24} />
@@ -206,7 +186,7 @@ export default function () {
                   );
                 })()}
               </Match>
-              <Match when={oauthServices().filter((s) => s.portal).length > 1}>
+              <Match when={oauthProviders.data && oauthProviders.data.filter((s) => s.portal).length > 1}>
                 <Popover
                   class="w-full !mt-4"
                   btnContent={
@@ -217,7 +197,7 @@ export default function () {
                   }
                 >
                   <Card contentClass="p-2 flex flex-col space-y-2">
-                    <For each={oauthServices().filter((s) => s.portal)}>
+                    <For each={oauthProviders.data?.filter((s) => s.portal)}>
                       {(service) => (
                         <Link class="w-full" justify="start" size="sm" href={service.portal} title={service.name} ghost>
                           <img src={mediaPath(service.avatar ?? "")} alt={service.name} width={24} height={24} />

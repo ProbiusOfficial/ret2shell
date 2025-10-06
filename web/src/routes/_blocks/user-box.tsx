@@ -2,7 +2,6 @@ import { logout } from "@api/account";
 import { mediaPath } from "@lib/utils/media";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, refreshUser, resetUser } from "@storage/account";
-import { resetGameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import { clearToasts } from "@storage/toast";
 import Avatar from "@widgets/avatar";
@@ -29,7 +28,6 @@ export default function UserBox() {
     setTimeout(() => {
       void logout().finally(() => {
         resetUser();
-        resetGameStore();
         navigate("/");
         clearToasts();
         setLoading(false);

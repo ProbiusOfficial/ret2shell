@@ -1,5 +1,5 @@
 import { handleHttpError } from "@api";
-import { forgotPassword } from "@api/account";
+import { useForgotPasswordMutation } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, email, minLength, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
@@ -21,34 +21,34 @@ type ForgotForm = {
 
 export default function () {
   const [form, { Form, Field }] = createForm<ForgotForm>();
-  const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
-  function handleSubmit(data: ForgotForm) {
-    setLoading(true);
-    setTimeout(async () => {
-      try {
-        await forgotPassword(data);
+
+  const submitMutation = useForgotPasswordMutation({
+    onSuccess: () => {
+      addToast({
+        level: "success",
+        description: t("account.forgot.status.success.message"),
+        duration: 5000,
+      });
+      navigate("/", { replace: true });
+    },
+    onError: (err: Error) => {
+      if (err instanceof HTTPError && err.response.status === 429) {
         addToast({
-          level: "success",
-          description: t("account.forgot.status.success.message"),
+          level: "error",
+          description: t("account.forgot.status.rateExceeded.message"),
           duration: 5000,
         });
-        navigate("/", { replace: true });
-      } catch (err) {
-        if (err instanceof HTTPError && err.response.status === 429) {
-          addToast({
-            level: "error",
-            description: t("account.forgot.status.rateExceeded.message"),
-            duration: 5000,
-          });
-        } else {
-          handleHttpError(err as Error, t("general.actions.create.status.fail"));
-          setTimestamp(DateTime.now().toMillis());
-        }
+      } else {
+        handleHttpError(err as Error, t("general.actions.create.status.fail"));
+        setTimestamp(DateTime.now().toMillis());
       }
-      setLoading(false);
-    }, 500);
+    },
+  });
+
+  function handleSubmit(data: ForgotForm) {
+    submitMutation.mutate(data);
   }
   return (
     <>
@@ -105,7 +105,13 @@ export default function () {
                 </Field>
               )}
             </Field>
-            <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+            <Button
+              type="submit"
+              level="primary"
+              class="!mt-4"
+              loading={submitMutation.isPending}
+              disabled={submitMutation.isPending}
+            >
               {t("general.actions.send.title")}
             </Button>
           </Form>

@@ -146,9 +146,9 @@ export function gameParticipateState(game: Game) {
 }
 
 // find the last one
-export function currentTimelinePeriod(game: Game) {
-  const len = game.timeline_presets?.length;
-  const sortedTimeline = game.timeline_presets?.sort(
+export function currentTimelinePeriod(game?: Game) {
+  const len = game?.timeline_presets?.length;
+  const sortedTimeline = game?.timeline_presets?.sort(
     (a, b) => a.start_at.toMillis() - b.start_at.toMillis()
   );
   if (!len) return null;
