@@ -1585,7 +1585,11 @@
       },
       "registeredAt": {
         "label": "Registration time"
-      }
+      },
+      "avatar": {
+        "uploadHint": "Click again to upload the avatar file to the server"
+      },
+      "saveHint": "Remember to save!!!"
     },
     "login": {
       "title": "Login",

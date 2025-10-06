@@ -110,7 +110,7 @@ export function useUpdateUserMutation(
   props: { onSuccess?: (user: User) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: ({ user }: { user: User }) => updateUser(user),
+    mutationFn: (user: User) => updateUser(user),
     onSuccess: (data: User) => {
       props.onSuccess?.(data);
     },

@@ -102,7 +102,7 @@ export function useUpdateDefaultNodeSelectorMutation(
   props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: updateDefaultNodeSelector,
+    mutationFn: ({ node_selector }: { node_selector: string }) => updateDefaultNodeSelector(node_selector),
     onSuccess: () => props.onSuccess?.(),
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.save.status.fail"));

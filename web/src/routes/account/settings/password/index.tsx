@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { changePassword } from "@api/account";
+import { useChangePasswordMutation } from "@api/account";
 import { createForm, custom, getValue, minLength, pattern, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, resetUser } from "@storage/account";
@@ -8,7 +7,6 @@ import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
-import { createSignal } from "solid-js";
 
 type ChangePasswordForm = {
   old_password: string;
@@ -18,15 +16,10 @@ type ChangePasswordForm = {
 
 export default function () {
   const [form, { Form, Field }] = createForm<ChangePasswordForm>();
-  const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
-  async function onSubmit(result: ChangePasswordForm) {
-    setLoading(true);
-    try {
-      await changePassword({
-        old_password: result.old_password,
-        new_password: result.new_password,
-      });
+
+  const mutation = useChangePasswordMutation({
+    onSuccess: () => {
       addToast({
         level: "success",
         description: t("general.actions.save.status.success"),
@@ -36,10 +29,11 @@ export default function () {
         resetUser();
         navigate("/account/login");
       }, 1000);
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail"));
-    }
-    setLoading(false);
+    },
+  });
+
+  async function onSubmit(result: ChangePasswordForm) {
+    mutation.mutate(result);
   }
   return (
     <>
@@ -125,7 +119,7 @@ export default function () {
               />
             )}
           </Field>
-          <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+          <Button type="submit" level="primary" class="!mt-4" loading={mutation.isPending} disabled={mutation.isPending}>
             {t("general.actions.save.title")}
           </Button>
         </Form>

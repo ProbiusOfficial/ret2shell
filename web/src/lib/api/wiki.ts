@@ -45,7 +45,7 @@ export function useCreateWikiMutation(
   props: { onSuccess?: (article: Article) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: ({ article }: { article: Article }) => createWiki(article),
+    mutationFn: (article: Article) => createWiki(article),
     onSuccess: (data: Article) => {
       props.onSuccess?.(data);
     },
@@ -64,7 +64,7 @@ export function useUpdateWikiMutation(
   props: { onSuccess?: (article: Article) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: ({ article }: { article: Article }) => updateWiki(article),
+    mutationFn: (article: Article) => updateWiki(article),
     onSuccess: (data: Article) => {
       props.onSuccess?.(data);
     },

@@ -1,8 +1,6 @@
-import { getProfile } from "@api/account";
-import type { Permission, Token, User } from "@models/user";
+import type { Permission, Token } from "@models/user";
 import { base64urlnopad } from "@scure/base";
 import { makePersisted } from "@solid-primitives/storage";
-import { HTTPError } from "ky";
 import { createStore } from "solid-js/store";
 
 export const [accountStore, setAccountStore] = makePersisted(
@@ -11,7 +9,6 @@ export const [accountStore, setAccountStore] = makePersisted(
     account: null as string | null,
     nickname: null as string | null,
     token: null as string | null,
-    info: null as User | null,
     permissions: [] as Permission[],
     warnedCodeGeneration: false,
   }),
@@ -36,19 +33,7 @@ export function resetUser() {
     account: null,
     nickname: null,
     token: null,
-    info: null,
     permissions: [],
     warnedCodeGeneration: false,
   });
-}
-
-export async function refreshUser() {
-  if (!accountStore.token) return;
-  try {
-    setAccountStore({ info: await getProfile() });
-  } catch (e) {
-    if (e instanceof HTTPError && e.response.status >= 400 && e.response.status < 500) {
-      resetUser();
-    }
-  }
 }

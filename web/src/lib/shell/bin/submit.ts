@@ -1,15 +1,15 @@
+import { useChallenge, useChallengeSolveStatus, useChallenges } from "@api/challenge";
 import { checkSubmissionStatus, submitFlag } from "@api/game";
+import { useSelfTeam } from "@api/team";
 import type { Challenge } from "@models/challenge";
 import type { Game } from "@models/game";
+import { isAdminOfGame, isGameInProgress } from "@storage/game";
 import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
 import { HTTPError } from "ky";
 import type { ParseEntry } from "shell-quote";
 import type { Stdio } from "../stdio";
 import type { Command } from "./interface";
-import { useChallenge, useChallenges, useChallengeSolveStatus } from "@api/challenge";
-import { useSelfTeam } from "@api/team";
-import { isAdminOfGame, isGameInProgress } from "@storage/game";
 
 export class Submit implements Command {
   name = "submit";

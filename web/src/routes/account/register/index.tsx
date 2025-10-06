@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { register, registerWithOAuth } from "@api/account";
+import { useRegisterMutation, useRegisterWithOAuthMutation } from "@api/account";
 import { deunicode, leet } from "@api/rpc";
 // import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
 import Captcha from "@blocks/captcha";
@@ -31,33 +30,36 @@ export default function () {
     return null;
   }
   const [form, { Form, Field }] = createForm<RegisterForm>();
-  const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
   let accountInputRef: HTMLInputElement;
   const [searchParams, _] = useSearchParams();
 
+  function onSuccess() {
+    addToast({
+      level: "success",
+      description: t("account.register.status.success.message"),
+      duration: 5000,
+      // img: xdsecMascotHappy,
+    });
+    navigate("/", { replace: true });
+  }
+
+  function onError() {
+    setTimestamp(DateTime.now().toMillis());
+  }
+
+  const mutation = useRegisterMutation({ onSuccess, onError });
+  const oauthMutation = useRegisterWithOAuthMutation({ onSuccess, onError });
+
   function onSubmit(result: RegisterForm) {
-    setLoading(true);
-    setTimeout(async () => {
-      try {
-        if (searchParams.token && searchParams.auth_key) {
-          await registerWithOAuth(searchParams.token as string, result);
-        } else {
-          await register(result);
-        }
-        addToast({
-          level: "success",
-          description: t("account.register.status.success.message"),
-          duration: 5000,
-          // img: xdsecMascotHappy,
-        });
-        navigate("/", { replace: true });
-      } catch (err) {
-        handleHttpError(err as Error, t("account.register.errors.register.title"));
-        setTimestamp(DateTime.now().toMillis());
-      }
-      setLoading(false);
-    }, 500);
+    if (searchParams.token && searchParams.auth_key) {
+      oauthMutation.mutate({
+        token: searchParams.token as string,
+        data: result,
+      });
+    } else {
+      mutation.mutate(result);
+    }
   }
 
   return (
@@ -221,7 +223,13 @@ export default function () {
                 )}
               </Field>
             </div>
-            <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+            <Button
+              type="submit"
+              level="primary"
+              class="!mt-4"
+              loading={mutation.isPending || oauthMutation.isPending}
+              disabled={mutation.isPending || oauthMutation.isPending}
+            >
               {t("account.register.title")}
             </Button>
           </Form>

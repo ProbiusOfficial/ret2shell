@@ -1585,7 +1585,11 @@
       },
       "registeredAt": {
         "label": "注册时间"
-      }
+      },
+      "avatar": {
+        "uploadHint": "再点一下将头像文件上传到服务器哦"
+      },
+      "saveHint": "记得保存！！！"
     },
     "login": {
       "title": "登录",

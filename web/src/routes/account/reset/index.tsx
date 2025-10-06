@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { resetPassword } from "@api/account";
+import { useResetPasswordMutation } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, email, minLength, pattern, required, setValue } from "@modular-forms/solid";
 import { useNavigate, useSearchParams } from "@solidjs/router";
@@ -38,25 +37,24 @@ export default function () {
   }
   setValue(form, "email", emailPredef as string);
   setValue(form, "token", tokenPredef as string);
-  const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
-  function handleSubmit(data: ResetForm) {
-    setLoading(true);
-    setTimeout(async () => {
-      try {
-        await resetPassword(data);
-        addToast({
+
+  const mutation = useResetPasswordMutation({
+    onSuccess: () => {
+      addToast({
           level: "success",
           description: t("account.reset.status.success.message"),
           duration: 5000,
         });
         navigate("/", { replace: true });
-      } catch (err) {
-        handleHttpError(err as Error, t("account.reset.errors.reset.title"));
+    },
+    onError: () => {
         setTimestamp(DateTime.now().toMillis());
-      }
-      setLoading(false);
-    }, 500);
+    }
+  });
+
+  function handleSubmit(data: ResetForm) {
+    mutation.mutate(data);
   }
   return (
     <>
@@ -162,7 +160,7 @@ export default function () {
                 </Field>
               )}
             </Field>
-            <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+            <Button type="submit" level="primary" class="!mt-4" loading={mutation.isPending} disabled={mutation.isPending}>
               {t("general.actions.confirm.title")}
             </Button>
           </Form>

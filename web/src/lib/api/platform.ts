@@ -218,7 +218,7 @@ export function useUpdatePlatformConfigMutation(
   props: { onSuccess?: (config: Config) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: ({ config }: { config: Config }) => updatePlatformConfig(config),
+    mutationFn: (config: Config) => updatePlatformConfig(config),
     onSuccess: (data: Config) => {
       props.onSuccess?.(data);
     },

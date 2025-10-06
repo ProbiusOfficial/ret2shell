@@ -1,12 +1,11 @@
-import { handleHttpError } from "@api";
-import { deleteSelf } from "@api/account";
+import { useDeleteSelfMutation } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, minLength, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, resetUser } from "@storage/account";
-import { resetGameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -24,20 +23,26 @@ export default function () {
   const [form, { Form, Field }] = createForm<CaptchaForm>();
   const navigate = useNavigate();
   const canDelete = () => name() === accountStore.account!;
-  const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
-  async function handleDeactivate(result: CaptchaForm) {
-    setLoading(true);
-    try {
-      await deleteSelf(result);
+  const mutation = useDeleteSelfMutation({
+    onSuccess: () => {
       resetUser();
-      resetGameStore();
       navigate("/");
-    } catch (err) {
-      handleHttpError(err as Error, t("account.delete.errors.delete.title"));
+      addToast({
+        level: "success",
+        description: t("account.delete.bye.message"),
+        duration: 5000,
+      });
+    },
+    onError: () => {
       setTimestamp(DateTime.now().toMillis());
     }
-    setLoading(false);
+  });
+  async function handleDeactivate(result: CaptchaForm) {
+    if (!canDelete()) {
+      return;
+    }
+    mutation.mutate(result);
   }
   return (
     <>
@@ -106,8 +111,8 @@ export default function () {
                 <Button
                   title={t("account.delete.bye.message")}
                   class="rounded-l-none text-error"
-                  disabled={!canDelete() || loading()}
-                  loading={loading()}
+                  disabled={!canDelete() || mutation.isPending}
+                  loading={mutation.isPending}
                 >
                   <span class="shrink-0 icon-[fluent--arrow-exit-20-regular] w-5 h-5" />
                   <span class="shrink-0 icon-[fluent--person-walking-20-regular] w-5 h-5" />
