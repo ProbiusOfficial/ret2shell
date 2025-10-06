@@ -1,7 +1,8 @@
+import { useChallenge } from "@api/challenge";
+import { useGame } from "@api/game";
 import type { Challenge } from "@models/challenge";
 import { useNavigate, useSearchParams } from "@solidjs/router";
-import { challengeStore } from "@storage/challenge";
-import { isGameAdmin } from "@storage/game";
+import { isAdminOfGame } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
@@ -11,12 +12,18 @@ import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createEffect, createMemo, createSignal, For, Show, untrack } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
 
-export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame?: boolean }) {
+export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame?: boolean; gameId: number }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const game = useGame({ id: () => props.gameId });
   const selectedChallengeId = createMemo(
     () => Number.parseInt((searchParams.challenge as string) || "NaN", 10) || null
   );
+  const challenge = useChallenge({
+    game_id: () => props.gameId,
+    challenge_id: () => (selectedChallengeId() ? selectedChallengeId()! : -1),
+    enabled: () => selectedChallengeId() !== null,
+  });
   const [challengeHistory, setChallengeHistory] = createSignal<{ id: number; name: string }[]>([]);
   const inCreate = createMemo(() => searchParams.create === "true");
   const inEditGame = createMemo(() => searchParams.edit === "true");
@@ -47,11 +54,9 @@ export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame
     setChallengeHistory([...challengeHistory().filter((s) => s.id !== challengeId)]);
   }
   createEffect(() => {
-    if (challengeStore.current) {
-      untrack(() => {
-        appendChallengeHistory(challengeStore.current!);
-      });
-    }
+    if (selectedChallengeId() === null) return;
+    if (challenge.isLoading || !challenge.data) return;
+    appendChallengeHistory(untrack(() => challenge.data!));
   });
   return (
     <OverlayScrollbarsComponent
@@ -89,7 +94,7 @@ export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame
                 <span>{t("game.welcome")}</span>
               </Show>
             </Button>
-            <Show when={isGameAdmin()}>
+            <Show when={isAdminOfGame(game.data)}>
               <Show when={!props.inGame}>
                 <Button
                   active={inStatistics()}

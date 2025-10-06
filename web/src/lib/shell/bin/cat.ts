@@ -1,5 +1,7 @@
-import { challengeStore } from "@storage/challenge";
-import { gameStore } from "@storage/game";
+import { getChallengeAttachments } from "@api/challenge";
+import type { Challenge } from "@models/challenge";
+import type { Game } from "@models/game";
+import type { Team } from "@models/team";
 import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
 import type { ParseEntry } from "shell-quote";
@@ -10,8 +12,8 @@ import type { Command } from "./interface";
 export class Cat implements Command {
   name = "cat";
   man = t("shell.cat.man");
-  func = async (io: Stdio, args: ParseEntry[]) => {
-    if (!gameStore.current || !challengeStore.current) {
+  func = async (io: Stdio, args: ParseEntry[], _: string, { game, team, challenge }: { game?: Game; team?: Team; challenge?: Challenge }) => {
+    if (!game || !team || !challenge) {
       io.error(t("shell.errors.noGameSpecified.title"));
       return 1;
     }
@@ -25,7 +27,7 @@ export class Cat implements Command {
     }
     const file = args[0].toString().trim();
     if (file === "README.md") {
-      io.println(challengeStore.current.content || "");
+      io.println(challenge?.content || "");
     } else if (file === "/etc/motd") {
       io.println(
         ansiColors.bold(
@@ -44,7 +46,8 @@ export class Cat implements Command {
       return 1;
     } else {
       try {
-        if (!challengeStore.files.find((f) => f.file === file)) {
+        const files = await getChallengeAttachments(game.id, challenge.id);
+        if (!files.find((f) => f.file === file)) {
           io.error(t("shell.cat.errors.fileNotFound.title"));
           return 1;
         }

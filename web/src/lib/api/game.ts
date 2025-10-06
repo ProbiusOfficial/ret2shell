@@ -754,8 +754,8 @@ export function useGameStatistics({
   onError,
 }: {
   game_id: () => number;
-  in_game?: () => boolean;
-  institute?: () => number;
+  in_game?: () => boolean | undefined;
+  institute?: () => number | undefined;
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {

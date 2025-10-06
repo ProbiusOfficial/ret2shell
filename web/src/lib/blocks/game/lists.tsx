@@ -1,90 +1,73 @@
-import { handleHttpError } from "@api";
-import { getGameAuditLogs, getGameSubmissions, updateGameAuditLog } from "@api/game";
+import { useGameAuditLogs, useGameSubmissions, useUpdateGameAuditLogMutation } from "@api/game";
 import { type Audit, AuditState } from "@models/audit";
-import type { Submission } from "@models/submission";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A, useSearchParams } from "@solidjs/router";
-import { gameStore } from "@storage/game";
 import { breakpoints, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
 import Tag from "@widgets/tag";
-import { createEffect, createMemo, createSignal, For, Match, onCleanup, Show, Switch, untrack } from "solid-js";
+import { createMemo, For, Match, onCleanup, Show, Switch } from "solid-js";
 
-export function AuditList() {
+export function AuditList(props: {gameId: number}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string, 10)) || 1);
   const pageSize = 15;
-  const [total, setTotal] = createSignal(0);
-  const [audits, setAudits] = createSignal([] as Audit[]);
-  const [loading, setLoading] = createSignal(false);
-  async function refreshAudits() {
-    setLoading(true);
-    try {
-      const resp = await getGameAuditLogs(gameStore.current!.id, page(), pageSize);
-      setAudits(resp[0]);
-      setTotal(resp[1]);
-    } catch (err) {
-      handleHttpError(err as Error, t("game.monitor.errors.fetchAudit.title"));
-    }
-    setLoading(false);
-  }
-  createEffect(() => {
-    if (gameStore.current && page()) {
-      untrack(refreshAudits);
+  const audits = useGameAuditLogs({
+    game_id: () => props.gameId,
+    page: () => page(),
+    page_size: () => pageSize,
+  });
+
+  const auditMutation = useUpdateGameAuditLogMutation({
+    onSuccess: () => {
+      audits.refetch();
+       addToast({
+        level: "success",
+        description: t("general.actions.save.status.success"),
+        duration: 5000,
+      });
     }
   });
+
   const timer = setInterval(() => {
-    refreshAudits();
+    audits.refetch();
   }, 5000);
   onCleanup(() => {
     clearInterval(timer);
   });
   async function handleMisjudged(audit: Audit) {
-    try {
-      await updateGameAuditLog(gameStore.current!.id, audit.id, {
+    auditMutation.mutate({
+      game_id: props.gameId,
+      audit_id: audit.id,
+      audit: {
         ...audit,
         state: AuditState.Misjudged,
-      });
-      refreshAudits();
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail"));
-    }
+      }
+    });
   }
 
   async function handleConfirmed(audit: Audit) {
-    try {
-      await updateGameAuditLog(gameStore.current!.id, audit.id, {
+    auditMutation.mutate({
+      game_id: props.gameId,
+      audit_id: audit.id,
+      audit: {
         ...audit,
         state: AuditState.Confirmed,
-      });
-      refreshAudits();
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail"));
-    }
+      }
+    });
   }
   const matches = createBreakpoints(breakpoints);
   return (
     <>
       <div class="grid grid-cols-1 w-full">
         <For
-          each={audits()}
+          each={audits.data?.[0] || []}
           fallback={
             <div class="min-h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
               <Show
-                when={loading()}
+                when={audits.isLoading}
                 fallback={
                   <>
                     <span class="shrink-0 icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
@@ -105,7 +88,7 @@ export function AuditList() {
                     {audit.user_name}
                   </A>
                   <span class="text-info opacity-60">@</span>
-                  <A class="font-bold opacity-60" href={`/games/${gameStore.current?.id}/teams/${audit.team_id}`}>
+                  <A class="font-bold opacity-60" href={`/games/${props.gameId}/teams/${audit.team_id}`}>
                     {audit.team_name ?? "wheel"}
                   </A>
                   <span title={audit.reason}>{audit.reason}</span>
@@ -115,7 +98,7 @@ export function AuditList() {
               <div class="flex flex-row space-x-2 items-center flex-wrap">
                 <A
                   class="hover:underline flex space-x-2 items-center"
-                  href={`/games/${gameStore.current?.id}/challenges?challenge=${audit.challenge_id}`}
+                  href={`/games/${props.gameId}/challenges?challenge=${audit.challenge_id}`}
                 >
                   <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
                   <span>{audit.challenge_name}</span>
@@ -171,7 +154,7 @@ export function AuditList() {
       </div>
       <Pagination
         class="p-6 lg:p-9"
-        count={total()}
+        count={audits.data?.[1] || 0}
         pageSize={pageSize}
         page={page()}
         onPageChange={(page) => setSearchParams({ page: page.page })}
@@ -180,31 +163,17 @@ export function AuditList() {
   );
 }
 
-export function SubmissionList(props: { inGame?: boolean; archived?: boolean }) {
+export function SubmissionList(props: { inGame?: boolean; archived?: boolean; gameId: number }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string, 10)) || 1);
   const pageSize = 15;
-  const [total, setTotal] = createSignal(0);
-  const [submissions, setSubmissions] = createSignal([] as Submission[]);
-  const [loading, setLoading] = createSignal(false);
-  async function refreshSubmissions() {
-    setLoading(true);
-    try {
-      const resp = await getGameSubmissions(gameStore.current!.id, page(), pageSize);
-      setSubmissions(resp[0]);
-      setTotal(resp[1]);
-    } catch (err) {
-      handleHttpError(err as Error, t("game.monitor.errors.fetchSubmission.title"));
-    }
-    setLoading(false);
-  }
-  createEffect(() => {
-    if (gameStore.current && page()) {
-      untrack(refreshSubmissions);
-    }
+  const submissions = useGameSubmissions({
+    game_id: () => props.gameId,
+    page: () => page(),
+    page_size: () => pageSize,
   });
   const timer = setInterval(() => {
-    refreshSubmissions();
+    submissions.refetch();
   }, 5000);
   onCleanup(() => {
     clearInterval(timer);
@@ -214,11 +183,11 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean }) 
     <>
       <div class="grid grid-cols-1 w-full">
         <For
-          each={submissions()}
+          each={submissions.data?.[0] || []}
           fallback={
             <div class="min-h-12 flex items-center border-b border-b-layer-content/10 space-x-2 opacity-60">
               <Show
-                when={loading()}
+                when={submissions.isLoading}
                 fallback={
                   <>
                     <span class="shrink-0 icon-[fluent--emoji-sad-slight-20-regular] w-5 h-5" />
@@ -239,7 +208,7 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean }) 
                 </A>
                 <Show when={props.inGame}>
                   <span class="text-info opacity-60">@</span>
-                  <A class="font-bold opacity-60" href={`/games/${gameStore.current?.id}/teams/${submission.team_id}`}>
+                  <A class="font-bold opacity-60" href={`/games/${props.gameId}/teams/${submission.team_id}`}>
                     {submission.team_name ?? "wheel"}
                   </A>
                 </Show>
@@ -260,8 +229,8 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean }) 
                   class="hover:underline flex space-x-2 items-center"
                   href={
                     !props.inGame || props.archived
-                      ? `/training/${gameStore.current?.id}?challenge=${submission.challenge_id}`
-                      : `/games/${gameStore.current?.id}/challenges?challenge=${submission.challenge_id}`
+                      ? `/training/${props.gameId}?challenge=${submission.challenge_id}`
+                      : `/games/${props.gameId}/challenges?challenge=${submission.challenge_id}`
                   }
                 >
                   <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
@@ -288,7 +257,7 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean }) 
       </div>
       <Pagination
         class="p-6 lg:p-9"
-        count={total()}
+        count={submissions.data?.[1] || 0}
         pageSize={pageSize}
         page={page()}
         onPageChange={(page) => setSearchParams({ page: page.page })}

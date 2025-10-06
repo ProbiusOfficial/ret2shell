@@ -252,7 +252,7 @@ export async function getInstitutes() {
   return await api.get(`${api_root}/account/institute`).json<Institute[]>();
 }
 
-export function useInstitutes(props: { enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+export function useInstitutes(props: { enabled?: () => boolean; onError?: (err: Error) => boolean }={}) {
   return useQuery(() => ({
     queryKey: ["account", "institute"],
     queryFn: getInstitutes,

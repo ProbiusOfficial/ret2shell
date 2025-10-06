@@ -1,11 +1,9 @@
-import { getInstitutes, getProfile } from "@api/account";
-import type { Institute } from "@models/institute";
+import { getProfile } from "@api/account";
 import type { Permission, Token, User } from "@models/user";
 import { base64urlnopad } from "@scure/base";
 import { makePersisted } from "@solid-primitives/storage";
 import { HTTPError } from "ky";
 import { createStore } from "solid-js/store";
-import { resetGameStore } from "./game";
 
 export const [accountStore, setAccountStore] = makePersisted(
   createStore({
@@ -15,7 +13,6 @@ export const [accountStore, setAccountStore] = makePersisted(
     token: null as string | null,
     info: null as User | null,
     permissions: [] as Permission[],
-    institutes: [] as Institute[],
     warnedCodeGeneration: false,
   }),
   { name: "account" }
@@ -52,17 +49,6 @@ export async function refreshUser() {
   } catch (e) {
     if (e instanceof HTTPError && e.response.status >= 400 && e.response.status < 500) {
       resetUser();
-      resetGameStore();
     }
-  }
-}
-
-export async function refreshInstitutes() {
-  try {
-    const institutes = await getInstitutes();
-    setAccountStore({ institutes });
-  } catch {
-    // make eslint happy
-    setAccountStore({ institutes: [] });
   }
 }

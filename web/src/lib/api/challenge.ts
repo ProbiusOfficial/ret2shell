@@ -107,7 +107,7 @@ export async function updateChallenge(game_id: number, challenge: Challenge) {
 export function useUpdateChallengeMutation(props: {
   onSuccess?: (challenge: Challenge) => void;
   onError?: (err: Error) => void;
-}) {
+}={}) {
   return useMutation(() => ({
     mutationFn: (req: { game_id: number; challenge: Challenge }) => updateChallenge(req.game_id, req.challenge),
     onSuccess: (data: Challenge) => {

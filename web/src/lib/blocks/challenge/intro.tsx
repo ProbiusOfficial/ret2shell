@@ -9,7 +9,7 @@ import {
   useStopChallengeInstanceMutation,
 } from "@api/challenge";
 import { useCalmdownStatus } from "@api/cluster";
-import { useGame } from "@api/game";
+import { useGame, useGameInstances } from "@api/game";
 import { useSelfTeam } from "@api/team";
 import Spin from "@assets/animates/spin";
 import { getWsrxLink, wsrx } from "@lib/wsrx";
@@ -41,8 +41,9 @@ passiveSupport({
 });
 
 export default function (props: { inGame?: boolean; gameId: number; challengeId: number }) {
+  const instances = useGameInstances({ game_id: () => props.gameId });
   const instance = createMemo(() => {
-    return wsrx.instances().find((s) => s.challenge_id === props.challengeId) ?? null;
+    return instances.data?.find((s) => s.challenge_id === props.challengeId) ?? null;
   });
   const calmdownStatus = useCalmdownStatus();
   const game = useGame({ id: () => props.gameId });
@@ -57,7 +58,7 @@ export default function (props: { inGame?: boolean; gameId: number; challengeId:
 
   let instanceStateIter = 0;
   async function maintainInstances() {
-    await wsrx.syncRemote();
+    await instances.refetch();
     await wsrx.deleteOutdatedLocal();
     await wsrx.openAllTraffic();
   }
@@ -70,7 +71,7 @@ export default function (props: { inGame?: boolean; gameId: number; challengeId:
     return maintainInstancesWorker;
   }
   const instanceCountExceeded = createMemo(() => {
-    return wsrx.instances().length >= (isGameInProgress(game.data) && team.data ? (game.data?.team_size ?? 1) : 1);
+    return instances.data && instances.data.length >= (isGameInProgress(game.data) && team.data ? (game.data?.team_size ?? 1) : 1);
   });
 
   const timer = setInterval(maintainInstancesWorker(), 1000);
@@ -380,7 +381,7 @@ export default function (props: { inGame?: boolean; gameId: number; challengeId:
                     </Button>
                   </Match>
                   <Match when={instanceCountExceeded()}>
-                    <For each={wsrx.instances()}>
+                    <For each={instances.data}>
                       {(inst) => (
                         <Button
                           ghost

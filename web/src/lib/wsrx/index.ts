@@ -1,12 +1,9 @@
-import { getGameInstances } from "@api/game";
+import { useGameInstances } from "@api/game";
 import type { Instance } from "@models/instance";
-import { gameStore } from "@storage/game";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import { Wsrx, WsrxError, WsrxFeature, type WsrxInstance, type WsrxOptions, WsrxState } from "@xdsec/wsrx";
-import { HTTPError } from "ky";
-import { DateTime } from "luxon";
 import { type Accessor, createEffect, createSignal } from "solid-js";
 
 export class WsrxWrapper {
@@ -14,14 +11,11 @@ export class WsrxWrapper {
   setApiAddr: (apiAddr: string) => void;
   state: Accessor<WsrxState>;
   setState: (state: WsrxState) => void;
-  instances: Accessor<Instance[]>;
-  setInstances: (instances: Instance[]) => void;
   traffics: Accessor<WsrxInstance[]>;
   setTraffics: (traffic: WsrxInstance[]) => void;
   private wsrx: Wsrx;
   constructor() {
     [this.state, this.setState] = createSignal(WsrxState.Invalid);
-    [this.instances, this.setInstances] = createSignal([]);
     [this.traffics, this.setTraffics] = createSignal([]);
     [this.apiAddr, this.setApiAddr] = createSignal("http://127.0.0.1:3307");
     this.wsrx = new Wsrx({
@@ -61,25 +55,6 @@ export class WsrxWrapper {
     await this.wsrx.connect();
   }
 
-  public async syncRemote() {
-    if (gameStore.current) {
-      try {
-        const result = await getGameInstances(gameStore.current.id);
-        this.setInstances(
-          result.filter((instance) => instance.created_at.plus({ hours: instance.renew_count + 1 }) > DateTime.now())
-        );
-      } catch (err) {
-        if (err instanceof HTTPError) {
-          addToast({
-            level: "error",
-            description: `${t("challenge.instance.errors.fetchInstances.title")}: ${await err.response.text()}`,
-            duration: 5000,
-          });
-        }
-      }
-    }
-  }
-
   public async syncLocal() {
     if (this.wsrx.getState() === WsrxState.Usable) {
       try {
@@ -104,10 +79,11 @@ export class WsrxWrapper {
     }
   }
 
-  public async deleteOutdatedLocal() {
+  public async deleteOutdatedLocal(game_id?: number) {
+    const instances = useGameInstances({ game_id: () => game_id || 0 });
     if (this.wsrx.getState() === WsrxState.Usable) {
       for (const { local, remote } of this.traffics()) {
-        if (!this.instances().some((instance) => remote.includes(instance.traffic))) {
+        if (!instances.data?.some((instance) => remote.includes(instance.traffic))) {
           await this.deleteLocal(local);
         }
       }
@@ -148,9 +124,10 @@ export class WsrxWrapper {
     }
   }
 
-  public async openAllTraffic() {
+  public async openAllTraffic(game_id?: number) {
+    const instances = useGameInstances({ game_id: () => game_id || 0 });
     if (this.wsrx.getState() === WsrxState.Usable) {
-      for (const instance of this.instances()) {
+      for (const instance of instances.data ?? []) {
         await this.addLocal(instance);
       }
     }

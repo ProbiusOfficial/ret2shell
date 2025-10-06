@@ -6,10 +6,26 @@ import { type ComponentProps, createEffect, onCleanup, onMount, untrack } from "
 import { colorPalette, themeStore } from "../storage/theme";
 import { Shell } from "./shell";
 import "@xterm/xterm/css/xterm.css";
-import { challengeStore } from "@storage/challenge";
+import { useChallenge } from "@api/challenge";
+import { useGame } from "@api/game";
+import { useSelfTeam } from "@api/team";
+import type { Challenge } from "@models/challenge";
 import clsx from "clsx";
 
-export default function (props: ComponentProps<"div">) {
+export default function (
+  props: ComponentProps<"div"> & {
+    onStateChange?: (challenge?: Challenge) => void;
+    inGame?: boolean;
+    gameId: number;
+    challengeId: number;
+  }
+) {
+  const challenge = useChallenge({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
+  const game = useGame({ id: () => props.gameId });
+  const team = useSelfTeam({ game_id: () => props.gameId });
   let terminal: HTMLDivElement;
   const linkHandler = {
     activate(_event: MouseEvent, text: string) {
@@ -72,14 +88,18 @@ export default function (props: ComponentProps<"div">) {
       fitAddon.fit();
     });
     resizeObserver.observe(terminal!);
-
-    shell = new Shell(term, (_cmd, _code) => {});
-    shell.run();
   });
 
   createEffect(() => {
-    if (challengeStore.current) {
-      untrack(() => shell?.setChallenge(challengeStore.current || null));
+    if (game.data && team.data) {
+      shell = new Shell(term, game.data, team.data, (_cmd, _code) => {});
+      shell.run();
+    }
+  });
+
+  createEffect(() => {
+    if (challenge.data) {
+      untrack(() => shell?.setChallenge(challenge.data || null));
     }
   });
 

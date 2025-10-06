@@ -239,7 +239,7 @@ export default function GameEdit(props: {
               inputProps={props}
               name={field.name}
               value={[field.value || 0]}
-              onValueChange={(value: { value: [number] }) => {
+              onValueChange={(value) => {
                 const v = value.value[0] as number;
                 setValues(form, {
                   award_rate: v,
@@ -263,7 +263,7 @@ export default function GameEdit(props: {
                 name={field.name}
                 value={[field.value || 0]}
                 class="flex-1"
-                onValueChange={(value: { value: [number] }) => {
+                onValueChange={(value) => {
                   const v = value.value[0] as number;
                   setValues(form, {
                     first_blood_award: v,
@@ -283,7 +283,7 @@ export default function GameEdit(props: {
                 name={field.name}
                 value={[field.value || 0]}
                 class="flex-1"
-                onValueChange={(value: { value: [number] }) => {
+                onValueChange={(value) => {
                   const v = value.value[0] as number;
                   setValues(form, {
                     second_blood_award: v,
@@ -303,7 +303,7 @@ export default function GameEdit(props: {
                 name={field.name}
                 value={[field.value || 0]}
                 class="flex-1"
-                onValueChange={(value: { value: [number] }) => {
+                onValueChange={(value) => {
                   const v = value.value[0] as number;
                   setValues(form, {
                     third_blood_award: v,
