@@ -95,7 +95,7 @@ impl EventManager {
     self.tx.send(Broadcast::Publish(Box::new(message))).ok();
   }
 
-  pub async fn heartbeat(&self) {
+  pub async fn cry(&self) {
     loop {
       self.tx.send(Broadcast::Heartbeat).ok();
       tokio::time::sleep(std::time::Duration::from_secs(10)).await;
@@ -107,7 +107,8 @@ pub async fn initialize(stream: Stream) -> EventManager {
   let manager = EventManager::new();
   let future = worker::event_pusher(stream, manager.clone());
   tokio::spawn(future);
-  let heartbeater = manager.clone();
-  tokio::spawn(async move { heartbeater.heartbeat().await });
+  let saki = manager.clone();
+  // NOTE: 祥 移動
+  tokio::spawn(async move { saki.cry().await });
   manager
 }
