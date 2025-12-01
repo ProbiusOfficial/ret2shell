@@ -11,16 +11,6 @@ import type { Article as ArticleModel } from "@models/article";
 import { stringifyState, TeamState } from "@models/team";
 import { A, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import {
-  canParticipate,
-  gameStore,
-  inArchived,
-  inArchiving,
-  inProgress,
-  inRegister,
-  isGameAdmin,
-  setGameStore,
-} from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Article from "@widgets/article";

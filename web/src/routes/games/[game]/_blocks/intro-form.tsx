@@ -1,5 +1,5 @@
 import { handleHttpError } from "@api";
-import { useGame, useUpdateGameIntroductionMutation } from "@api/game";
+import { useGame } from "@api/game";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { useParams } from "@solidjs/router";
@@ -34,8 +34,6 @@ export default function IntroForm(props: { onDone: (article: Article) => Promise
       });
     }
   });
-
-  const mutation = useUpdateGameIntroductionMutation();
 
   async function onSubmit(result: ArticleForm) {
     setLoading(true);
@@ -76,7 +74,7 @@ export default function IntroForm(props: { onDone: (article: Article) => Promise
           />
         )}
       </Field>
-      <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+      <Button type="submit" level="primary" class="mt-4!" loading={loading()} disabled={loading()}>
         {t("general.actions.save.title")}
       </Button>
     </Form>

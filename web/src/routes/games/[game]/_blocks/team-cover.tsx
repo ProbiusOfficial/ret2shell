@@ -1,19 +1,33 @@
+import { useGame } from "@api/game";
+import { useSelfTeam } from "@api/team";
 import LogoAnimate from "@assets/animates/logo-animate";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { mediaPath } from "@lib/utils/media";
+import { gameCoverStore } from "@routes/games/_blocks/cover";
+import { useParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import Divider from "@widgets/divider";
 import clsx from "clsx";
 import { type ComponentProps, createEffect, Show, untrack } from "solid-js";
+import { createStore } from "solid-js/store";
+
+export const [teamCoverStore, setTeamCoverStore] = createStore<{
+  showTeamCover: boolean;
+}>({
+  showTeamCover: false,
+});
 
 export default function TeamCover(props: ComponentProps<"div">) {
-  const expanded = () => !!gameStore.showTeamCover;
+  const gameId = () => Number.parseInt(useParams().game || "UNKN0WN", 10);
+  const game = useGame({ id: () => gameId() });
+  const team = useSelfTeam({ game_id: () => gameId() });
+  const expanded = () => !!teamCoverStore.showTeamCover;
   createEffect(() => {
     if (expanded()) {
       untrack(() => {
         setTimeout(() => {
-          setGameStore({ showTeamCover: false });
+          setTeamCoverStore({ showTeamCover: false });
         }, 3000);
       });
     }
@@ -35,8 +49,8 @@ export default function TeamCover(props: ComponentProps<"div">) {
           )}
           alt="Cover"
           src={
-            (gameStore.preload?.cover && mediaPath(gameStore.preload.cover)) ||
-            (gameStore.current?.cover && mediaPath(gameStore.current.cover)) ||
+            (gameCoverStore.preload?.cover && mediaPath(gameCoverStore.preload.cover)) ||
+            (game.data?.cover && mediaPath(game.data.cover)) ||
             bgGameDefault
           }
         />
@@ -54,7 +68,7 @@ export default function TeamCover(props: ComponentProps<"div">) {
               )}
             >
               <span class="shrink-0 icon-[fluent--flag-20-regular] w-16 h-16 text-error" />
-              <span class="flex-1 text-start truncate">{gameStore.team?.name}</span>
+              <span class="flex-1 text-start truncate">{team.data?.name}</span>
               <span class="text-warning">{t("team.coming")}</span>
             </h2>
             <Divider class="w-full" />
@@ -74,11 +88,11 @@ export default function TeamCover(props: ComponentProps<"div">) {
                 expanded() ? "opacity-100" : "opacity-0 translate-x-8"
               )}
             >
-              <Show when={gameStore.current?.logo} fallback={<LogoAnimate width={64} height={64} />}>
-                <img src={mediaPath(gameStore.current!.logo!)} width={64} height={64} alt="Logo Broken" />
+              <Show when={game.data?.logo} fallback={<LogoAnimate width={64} height={64} />}>
+                <img src={mediaPath(game.data!.logo!)} width={64} height={64} alt="Logo Broken" />
               </Show>
               <Divider direction="vertical" class="h-12 w-1" />
-              <h2 class="font-bold text-3xl">{gameStore.current?.name}</h2>
+              <h2 class="font-bold text-3xl">{game.data?.name}</h2>
             </div>
             <p
               class={clsx(
@@ -86,7 +100,7 @@ export default function TeamCover(props: ComponentProps<"div">) {
                 expanded() ? "opacity-60" : "opacity-0 translate-y-8"
               )}
             >
-              {gameStore.current?.brief}
+              {game.data?.brief}
             </p>
           </div>
         </div>
