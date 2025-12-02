@@ -47,13 +47,22 @@ export default function (props: { inGame?: boolean; gameId: number; challengeId:
   });
   const calmdownStatus = useCalmdownStatus();
   const game = useGame({ id: () => props.gameId });
-  const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
+  const challenge = useChallenge({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
   const attachments = useChallengeAttachments({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
   });
-  const env = useChallengeEnv({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
-  const solveStatus = useChallengeSolveStatus({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
+  const env = useChallengeEnv({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
+  const solveStatus = useChallengeSolveStatus({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
   const team = useSelfTeam({ game_id: () => props.gameId });
 
   let instanceStateIter = 0;
@@ -432,12 +441,12 @@ export default function (props: { inGame?: boolean; gameId: number; challengeId:
                               <div class="flex">
                                 <ClipboardBtn
                                   size="sm"
-                                  class="!rounded-r-none"
+                                  class="rounded-r-none!"
                                   title={t("wsrx.actions.copyLocal.title")}
                                   value={local.local}
                                   label={local.local}
                                 />
-                                <Button size="sm" class="!rounded-l-none">
+                                <Button size="sm" class="rounded-l-none!">
                                   <span
                                     class={clsx(
                                       (local.latency &&

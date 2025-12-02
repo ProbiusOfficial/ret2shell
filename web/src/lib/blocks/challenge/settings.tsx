@@ -43,9 +43,9 @@ export default function (props: {
       score: challenge.data?.score ?? result.initial,
       bucket: challenge.data!.bucket!,
       score_rule: {
-        initial: result.initial ?? challengeStore.current?.score_rule.initial ?? 0,
-        minimum: result.minimum ?? challengeStore.current?.score_rule.minimum ?? 0,
-        decay: result.decay ?? challengeStore.current?.score_rule.decay ?? 0,
+        initial: result.initial ?? challenge.data?.score_rule.initial ?? 0,
+        minimum: result.minimum ?? challenge.data?.score_rule.minimum ?? 0,
+        decay: result.decay ?? challenge.data?.score_rule.decay ?? 0,
       },
       release_at: result.release_at ? DateTime.fromSeconds(result.release_at) : null,
       archive_at: result.archive_at ? DateTime.fromSeconds(result.archive_at) : null,

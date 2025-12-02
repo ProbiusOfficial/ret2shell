@@ -100,7 +100,7 @@ export default function (
         error={props.idFieldError || props.answerFieldError}
         extraBtn={
           <Button
-            class="!rounded-l-none"
+            class="rounded-l-none!"
             loading={calculating() || captcha.isLoading}
             onClick={() => {
               setValue(props.captchaForm, "captcha_answer", "");

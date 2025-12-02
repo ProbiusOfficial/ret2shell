@@ -20,7 +20,10 @@ export default function (props: {
   const [inEdit, setInEdit] = createSignal(false);
   const game = useGame({ id: () => props.gameId });
 
-  const answerQuery = useChallengeAnswer({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
+  const answerQuery = useChallengeAnswer({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
 
   const updateAnswerMutation = useUpdateChallengeAnswerMutation({
     onSuccess: () => {
@@ -87,7 +90,7 @@ export default function (props: {
       >
         <Suspense
           fallback={
-            <article class="article !max-w-5xl w-full">
+            <article class="article max-w-5xl! w-full">
               <p>
                 <LoadingTips />
               </p>

@@ -63,7 +63,10 @@ function BottomPanel(props: {
     return pages[page() as keyof typeof pages];
   };
 
-  const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
+  const challenge = useChallenge({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
 
   const deleteMutation = useDeleteChallengeMutation({
     onSuccess: () => {
@@ -181,9 +184,15 @@ function BottomPanel(props: {
                   class="self-end"
                   onClick={async () => {
                     if (challenge.data?.hidden === true) {
-                      await upMutation.mutate({ game_id: props.gameId, challenge_id: props.challengeId });
+                      upMutation.mutate({
+                        game_id: props.gameId,
+                        challenge_id: props.challengeId,
+                      });
                     } else {
-                      await downMutation.mutate({ game_id: props.gameId, challenge_id: props.challengeId });
+                      downMutation.mutate({
+                        game_id: props.gameId,
+                        challenge_id: props.challengeId,
+                      });
                     }
                     setChallengeStateWarningDialogOpen(false);
                   }}

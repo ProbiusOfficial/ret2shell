@@ -106,7 +106,7 @@ export default function (props: { gameId: number }) {
                 ghost
                 justify="start"
                 href={`/games/${game.data?.id}/admin/git?path=${object.path}`}
-                class={clsx("overflow-hidden relative", loading() && object.path === path() && "!bg-layer-content/5")}
+                class={clsx("overflow-hidden relative", loading() && object.path === path() && "bg-layer-content/5!")}
                 disabled={loading() || object.type === "blob"}
                 title={object.subject || ""}
               >

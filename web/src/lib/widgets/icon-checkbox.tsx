@@ -37,8 +37,8 @@ export default function (
           )}
         >
           <Checkbox.Control class="w-5 h-5 relative">
-            <span class={clsx(checkboxProps.uncheckedIcon, "!w-5 !h-5 absolute top-0 left-0")} />
-            <Checkbox.Indicator class={clsx(checkboxProps.checkedIcon, "text-primary", "!w-5", "!h-5")} />
+            <span class={clsx(checkboxProps.uncheckedIcon, "w-5! h-5! absolute top-0 left-0")} />
+            <Checkbox.Indicator class={clsx(checkboxProps.checkedIcon, "text-primary", "w-5!", "h-5!")} />
           </Checkbox.Control>
           <Checkbox.HiddenInput {...checkboxProps.inputProps} />
         </Checkbox.Root>

@@ -35,7 +35,10 @@ export function FormBare(props: {
 
   // Load edit source
   const game = useGame({ id: () => props.gameId });
-  const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId || 0 });
+  const challenge = useChallenge({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId || 0,
+  });
 
   createEffect(() => {
     if (challenge.data) {
@@ -220,7 +223,7 @@ export function FormBare(props: {
           />
         )}
       </Field>
-      <Button type="submit" level="primary" class="!mt-4" loading={props.loading} disabled={props.loading}>
+      <Button type="submit" level="primary" class="mt-4!" loading={props.loading} disabled={props.loading}>
         {props.challengeId ? t("general.actions.save.title") : t("general.actions.create.title")}
       </Button>
     </Form>

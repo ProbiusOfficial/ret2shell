@@ -47,7 +47,7 @@ export function ChatBlock(props: {
             </A>
           </header>
         </Show>
-        <Article class="!max-w-full" content={props.content} noExtraPaddings compact extra />
+        <Article class="max-w-full!" content={props.content} noExtraPaddings compact extra />
         <footer class="text-xs flex items-center space-x-2">
           <span class="opacity-30 group-hover:opacity-80 transition-opacity duration-300">
             {props.sendAt.toFormat("yyyy-MM-dd HH:mm")}
@@ -136,7 +136,10 @@ export default function (props: {
   const [chat, setChat] = createSignal("");
 
   const game = useGame({ id: () => props.gameId });
-  const team = useSelfTeam({ game_id: () => props.gameId, enabled: () => !!props.inGame && !isAdminOfGame(game.data) });
+  const team = useSelfTeam({
+    game_id: () => props.gameId,
+    enabled: () => !!props.inGame && !isAdminOfGame(game.data),
+  });
 
   const sendMutation = useSendGamePlayerChatMessageMutation({
     onSuccess: () => {

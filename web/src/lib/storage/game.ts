@@ -1,3 +1,4 @@
+import { useAccountProfile } from "@api/account";
 import type { Game } from "@models/game";
 import { type Team, TeamState } from "@models/team";
 import { Permission } from "@models/user";
@@ -60,6 +61,7 @@ export function isGameInArchived(game?: Game) {
 }
 
 export function isGameCanParticipate(game?: Game) {
+  const account = useAccountProfile();
   if (!game?.can_register_after_started && game?.start_at && game.start_at < DateTime.now()) {
     return false;
   }
@@ -70,8 +72,7 @@ export function isGameCanParticipate(game?: Game) {
     return false;
   }
   if (game?.access_policy.restrict) {
-    if (accountStore.info?.institute_id && game.access_policy.institutes.includes(accountStore.info.institute_id))
-      return true;
+    if (account.data?.institute_id && game.access_policy.institutes.includes(account.data.institute_id)) return true;
     return false;
   }
 

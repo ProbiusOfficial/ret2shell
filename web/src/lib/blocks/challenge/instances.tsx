@@ -46,13 +46,22 @@ function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () 
   const [selected, setSelected] = createSignal(false);
 
   const game = useGame({ id: () => fnProps.gameId });
-  const challenge = useChallenge({ game_id: () => fnProps.gameId, challenge_id: () => fnProps.challengeId });
-  const challengeEnv = useChallengeEnv({ game_id: () => fnProps.gameId, challenge_id: () => fnProps.challengeId });
+  const challenge = useChallenge({
+    game_id: () => fnProps.gameId,
+    challenge_id: () => fnProps.challengeId,
+  });
+  const challengeEnv = useChallengeEnv({
+    game_id: () => fnProps.gameId,
+    challenge_id: () => fnProps.challengeId,
+  });
 
   const repos = useRegistryRepositories({ game_id: () => fnProps.gameId });
   const registryConfig = useRegistryConfig({ game_id: () => fnProps.gameId });
 
-  const tags = useRegistryImageTags({ game_id: () => fnProps.gameId, repo: () => searchedRepo() });
+  const tags = useRegistryImageTags({
+    game_id: () => fnProps.gameId,
+    repo: () => searchedRepo(),
+  });
 
   function sanitizeChallengeImage(image: ChallengeImage): ChallengeImage {
     return {
@@ -192,7 +201,7 @@ function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () 
                       extraBtn={
                         <Button
                           square
-                          class="!rounded-l-none"
+                          class="rounded-l-none!"
                           onClick={() =>
                             refreshMutation.mutate({
                               game_id: fnProps.gameId,
@@ -473,7 +482,7 @@ function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () 
       <Button
         type="submit"
         level="primary"
-        class="!mt-4"
+        class="mt-4!"
         loading={addMutation.isPending}
         disabled={addMutation.isPending}
       >
@@ -484,7 +493,10 @@ function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () 
 }
 
 function InstanceList(props: { gameId: number; challengeId: number }) {
-  const pods = useChallengeInstance({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
+  const pods = useChallengeInstance({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
   const refreshTimer = setInterval(() => {
     pods.refetch();
   }, 30 * 1000);
@@ -570,8 +582,14 @@ export default function (props: {
   gameId: number;
 }) {
   let pullSecretInput: HTMLInputElement;
-  const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
-  const challengeEnv = useChallengeEnv({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
+  const challenge = useChallenge({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
+  const challengeEnv = useChallengeEnv({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
+  });
 
   const registryConfig = useRegistryConfig({ game_id: () => props.gameId });
   const repos = useRegistryRepositories({ game_id: () => props.gameId });
@@ -741,7 +759,7 @@ export default function (props: {
           value={challengeEnv.data?.pull_secret || ""}
           extraBtn={
             <Button
-              class="!rounded-l-none"
+              class="rounded-l-none!"
               onClick={() => {
                 onSavePullSecret(pullSecretInput!.value);
               }}

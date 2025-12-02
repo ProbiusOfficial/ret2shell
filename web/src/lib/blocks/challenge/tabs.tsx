@@ -1,4 +1,4 @@
-import { useChallenge } from "@api/challenge";
+import { useChallenge, useChallenges } from "@api/challenge";
 import { useGame } from "@api/game";
 import type { Challenge } from "@models/challenge";
 import { useNavigate, useSearchParams } from "@solidjs/router";
@@ -23,6 +23,10 @@ export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame
     game_id: () => props.gameId,
     challenge_id: () => (selectedChallengeId() ? selectedChallengeId()! : -1),
     enabled: () => selectedChallengeId() !== null,
+  });
+  const challenges = useChallenges({
+    game_id: () => props.gameId,
+    enabled: () => !!game.data,
   });
   const [challengeHistory, setChallengeHistory] = createSignal<{ id: number; name: string }[]>([]);
   const inCreate = createMemo(() => searchParams.create === "true");
@@ -161,13 +165,13 @@ export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame
             </Show>
           </div>
           <For each={challengeHistory()}>
-            {(challenge) => {
+            {(c) => {
               const challengeName = createMemo(() => {
-                if (challenge.id === challengeStore.current?.id) {
-                  return challengeStore.current?.name;
+                if (c.id === challenge.data?.id) {
+                  return challenge.data?.name;
                 }
-                const name = challengeStore.challenges.find((c) => c.id === challenge.id)?.name ?? challenge.name;
-                challenge.name = name;
+                const name = challenges.data?.[0].find((challenge) => challenge.id === c.id)?.name ?? c.name;
+                c.name = name;
                 return name;
               });
               return (
@@ -177,26 +181,26 @@ export default function Tabs(props: { baseUrl: string; loading?: boolean; inGame
                     onClick={() => {
                       // setSearchParams({ challenge: challenge.id });
                       navigate(
-                        `${props.baseUrl}?challenge=${challenge.id}${searchParams.tab ? `&tab=${searchParams.tab}` : ""}`
+                        `${props.baseUrl}?challenge=${c.id}${searchParams.tab ? `&tab=${searchParams.tab}` : ""}`
                       );
                     }}
                     onMouseUp={(e) => {
-                      if (e.button === 1) closeChallengeTab(challenge.id);
+                      if (e.button === 1) closeChallengeTab(c.id);
                     }}
-                    id={`challenge-${challenge.id}`}
-                    active={challenge.id === selectedChallengeId() && inCreate() === false}
+                    id={`challenge-${c.id}`}
+                    active={c.id === selectedChallengeId() && inCreate() === false}
                     ghost
                     class={clsx("max-w-48", "pr-0")}
                   >
                     <span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />
                     <span class="truncate flex-1 text-left">{challengeName()}</span>
                     <Button
-                      class="!rounded-l-none"
+                      class="rounded-l-none!"
                       square
                       ghost
                       onClick={(e) => {
                         e.stopPropagation();
-                        closeChallengeTab(challenge.id);
+                        closeChallengeTab(c.id);
                       }}
                     >
                       <span class="shrink-0 icon-[fluent--dismiss-20-regular] w-5 h-5 opacity-60" />
