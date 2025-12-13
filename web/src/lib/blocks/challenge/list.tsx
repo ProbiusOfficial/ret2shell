@@ -10,13 +10,14 @@ import clsx from "clsx";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createMemo, createSignal, Match, Show, Switch } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 
-export default function ChallengeList(props: {
-  gameId: number;
-  showScore?: boolean;
-  paginated?: boolean;
-  inGame?: boolean;
-}) {
+export default function ChallengeList(
+  props: ChallengeWidgetProps & {
+    showScore?: boolean;
+    paginated?: boolean;
+  }
+) {
   const [searchParams, _] = useSearchParams();
   const selectedChallengeId = createMemo(() => {
     return Number.parseInt((searchParams.challenge as string) || "", 10) ?? null;
@@ -43,7 +44,7 @@ export default function ChallengeList(props: {
       const submission = solves.data?.find((s) => s.challenge_id === challenge.id);
       result.push({
         challenge,
-        solved: (props.inGame && submission?.team_id) || !!submission,
+        solved: (!props.training && submission?.team_id) || !!submission,
       });
     }
     const tree = [] as TreeNode[];
@@ -71,9 +72,9 @@ export default function ChallengeList(props: {
           name: c.challenge.name,
           type: "item",
           searchValue: c.challenge.id.toString(),
-          link: props.inGame
-            ? `/games/${props.gameId}/challenges?challenge=${c.challenge.id}`
-            : `/training/${props.gameId}?challenge=${c.challenge.id}`,
+          link: props.training
+            ? `/training/${props.gameId}?challenge=${c.challenge.id}`
+            : `/games/${props.gameId}/challenges?challenge=${c.challenge.id}`,
           extraClasses: c.solved ? "opacity-60" : "",
           icon: c.challenge.hidden
             ? "icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning"
@@ -117,7 +118,7 @@ export default function ChallengeList(props: {
               placeholder={t("challenge.search.placeholder")}
               onInput={(e) => setSearch(e.currentTarget.value)}
             />
-            <Show when={props.inGame}>
+            <Show when={!props.training}>
               <div class="flex flex-row space-x-1">
                 <Button
                   class="my-1 bg-layer"

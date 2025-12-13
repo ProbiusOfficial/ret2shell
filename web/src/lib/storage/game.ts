@@ -62,17 +62,19 @@ export function isGameInArchived(game?: Game) {
 
 export function isGameCanParticipate(game?: Game) {
   const account = useAccountProfile();
-  if (!game?.can_register_after_started && game?.start_at && game.start_at < DateTime.now()) {
+  if (!game) return false;
+  if (!game.can_register_after_started && game.start_at && game.start_at < DateTime.now()) {
     return false;
   }
-  if (game?.end_at && game.end_at < DateTime.now()) {
+  if (game.end_at && game.end_at < DateTime.now()) {
     return false;
   }
   if (isAdminOfGame(game)) {
     return false;
   }
-  if (game?.access_policy.restrict) {
-    if (account.data?.institute_id && game.access_policy.institutes.includes(account.data.institute_id)) return true;
+  if (game.access_policy.restrict) {
+    const instituteId = account.data?.institute_id;
+    if (instituteId && game.access_policy.institutes.includes(instituteId)) return true;
     return false;
   }
 
@@ -112,7 +114,7 @@ export function isAdminOfGame(game?: Game) {
   return false;
 }
 
-export function gameParticipateState(game: Game) {
+export function gameParticipateState(game: Game): [boolean, string] {
   if (game.register_at && game.register_at > DateTime.now()) {
     return [false, t("game.registerNotStarted")];
   }

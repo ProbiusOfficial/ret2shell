@@ -1,6 +1,5 @@
 import { useChallengeAnswer, useUpdateChallengeAnswerMutation } from "@api/challenge";
 import { useGame } from "@api/game";
-import type { Challenge } from "@models/challenge";
 import { isAdminOfGame } from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -9,13 +8,9 @@ import Button from "@widgets/button";
 import { EditorBare } from "@widgets/editor";
 import LoadingTips from "@widgets/loading-tips";
 import { createSignal, Show, Suspense } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   const [answer, setAnswer] = createSignal("");
   const [inEdit, setInEdit] = createSignal(false);
   const game = useGame({ id: () => props.gameId });
@@ -33,7 +28,6 @@ export default function (props: {
         duration: 5000,
       });
       setInEdit(false);
-      if (props.onStateChange) props.onStateChange();
       answerQuery.refetch();
     },
   });

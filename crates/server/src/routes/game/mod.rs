@@ -511,7 +511,7 @@ async fn get_self_solves(
       None,
       None,
       Some(token.id),
-      false,
+      true,
     )
     .await?;
     return Ok(Json(solves));
@@ -525,7 +525,7 @@ async fn get_self_solves(
     None,
     team.clone().map(|t| t.id),
     if team.is_none() { Some(token.id) } else { None },
-    false,
+    true,
   )
   .await?;
   Ok(Json(solves))
@@ -803,21 +803,21 @@ struct GameStatistics {
 
 #[derive(Deserialize, Clone)]
 struct GameStatisticsQuery {
-  pub in_game: Option<bool>,
+  pub training: Option<bool>,
   pub institute: Option<i64>,
 }
 
 async fn get_game_statistics_impl(
   db: &Database, game: &game::Model, query: GameStatisticsQuery,
 ) -> Result<GameStatistics, ResponseError> {
-  let in_game = query.in_game.unwrap_or(false);
+  let training = query.training.unwrap_or(true);
   let institutes = institute::get_list(&db.conn).await?;
-  let total_players = user::count(&db.conn, false, query.institute, Some(game.id), in_game).await?;
+  let total_players = user::count(&db.conn, false, query.institute, Some(game.id), training).await?;
   let mut institute_players = HashMap::new();
   for i in institutes.iter() {
     institute_players.insert(
       i.id,
-      user::count(&db.conn, false, Some(i.id), Some(game.id), in_game).await?,
+      user::count(&db.conn, false, Some(i.id), Some(game.id), training).await?,
     );
   }
   let total_teams =
@@ -839,7 +839,7 @@ async fn get_game_statistics_impl(
     None,
     None,
     query.institute,
-    in_game,
+    training,
   )
   .await?;
   let total_solves = submission::count(
@@ -850,7 +850,7 @@ async fn get_game_statistics_impl(
     None,
     None,
     query.institute,
-    in_game,
+    training,
   )
   .await?;
 
@@ -868,7 +868,7 @@ async fn get_game_statistics_impl(
         None,
         None,
         query.institute,
-        in_game,
+        training,
       )
       .await?,
     );
@@ -882,7 +882,7 @@ async fn get_game_statistics_impl(
         None,
         None,
         query.institute,
-        in_game,
+        training,
       )
       .await?,
     );

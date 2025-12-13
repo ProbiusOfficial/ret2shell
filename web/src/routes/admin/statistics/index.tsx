@@ -249,10 +249,10 @@ export default function () {
                         itemStyle: {
                           color: "#db640e",
                         },
-                        value: statistics.data!.challenges.in_game,
+                        value: statistics.data!.challenges.total - statistics.data!.challenges.training,
                       },
                       {
-                        value: statistics.data!.challenges.total - statistics.data!.challenges.in_game,
+                        value: statistics.data!.challenges.training,
                         itemStyle: {
                           color: "#0991ed",
                         },
@@ -280,7 +280,9 @@ export default function () {
             <h3 class="font-bold flex items-center space-x-2">{t("challenge.title")}</h3>
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="shrink-0 icon-[fluent--code-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-warning">{statistics.data?.challenges.in_game}</span>
+              <span class="font-bold text-3xl text-warning">
+                {statistics.data!.challenges.total - statistics.data!.challenges.training}
+              </span>
               <span class="opacity-60">{t("challenge.inGame")}</span>
             </div>
             <div class="flex flex-row space-x-4 items-center flex-1">

@@ -94,7 +94,7 @@ export default function () {
             <For each={nodes.data?.items}>
               {(node) => (
                 <Button
-                  class="m-1 min-w-fit !h-auto py-2"
+                  class="m-1 min-w-fit h-auto! py-2"
                   level={shownNode()?.metadata?.name === node.metadata?.name ? "primary" : undefined}
                   onClick={() => setShownNode(node)}
                 >
@@ -165,7 +165,7 @@ export default function () {
                     <td class="font-bold opacity-60 p-2">Addresses</td>
                     <td class="p-2">
                       {shownNode()
-                        ?.status!.addresses!.map((a) => a.address)
+                        ?.status?.addresses?.map((a) => a.address)
                         .join(", ")}
                     </td>
                   </tr>

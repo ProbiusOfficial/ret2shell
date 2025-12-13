@@ -196,7 +196,7 @@ async fn get_team_solves(
       None,
       Some(team.id),
       None,
-      true,
+      false,
     )
     .await?,
   ))
@@ -484,7 +484,7 @@ async fn update_team_info(
         None,
         Some(team.id),
         None,
-        true,
+        false,
       )
       .await
       {

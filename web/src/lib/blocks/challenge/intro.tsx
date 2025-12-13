@@ -29,6 +29,7 @@ import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
 import { createEffect, createMemo, createSignal, For, Match, onCleanup, Show, Switch, untrack } from "solid-js";
 import DownloadButton from "../download-button";
+import type { ChallengeWidgetProps } from ".";
 
 passiveSupport({
   events: ["mousewheel", "wheel"],
@@ -40,7 +41,7 @@ passiveSupport({
   ],
 });
 
-export default function (props: { inGame?: boolean; gameId: number; challengeId: number }) {
+export default function (props: ChallengeWidgetProps) {
   const instances = useGameInstances({ game_id: () => props.gameId });
   const instance = createMemo(() => {
     return instances.data?.find((s) => s.challenge_id === props.challengeId) ?? null;
@@ -174,7 +175,7 @@ export default function (props: { inGame?: boolean; gameId: number; challengeId:
               </span>
               <span class="flex-1" />
               <div class="flex flex-row justify-end items-center flex-wrap gap-y-2 gap-x-6">
-                <Show when={props.inGame}>
+                <Show when={!props.training}>
                   <span
                     class={clsx(
                       "font-bold flex flex-row space-x-2 items-center",

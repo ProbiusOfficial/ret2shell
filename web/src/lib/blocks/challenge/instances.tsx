@@ -15,7 +15,7 @@ import {
 } from "@api/game";
 import { Popover as ArkPopover } from "@ark-ui/solid";
 import UploadButton from "@blocks/upload-button";
-import type { Challenge, ChallengeImage } from "@models/challenge";
+import type { ChallengeImage } from "@models/challenge";
 import { createForm, getValue, pattern, required, setValue, setValues } from "@modular-forms/solid";
 import { A } from "@solidjs/router";
 import { fullTheme, t } from "@storage/theme";
@@ -33,6 +33,7 @@ import Select from "@widgets/select";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createSignal, For, Match, onCleanup, Show, Switch } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 
 function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () => void }) {
   const [form, { Form, Field }] = createForm<ChallengeImage>();
@@ -492,7 +493,7 @@ function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () 
   );
 }
 
-function InstanceList(props: { gameId: number; challengeId: number }) {
+function InstanceList(props: ChallengeWidgetProps) {
   const pods = useChallengeInstance({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
@@ -575,12 +576,7 @@ function InstanceList(props: { gameId: number; challengeId: number }) {
   );
 }
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  challengeId: number;
-  gameId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   let pullSecretInput: HTMLInputElement;
   const challenge = useChallenge({
     game_id: () => props.gameId,

@@ -10,7 +10,7 @@ import Popover from "@widgets/popover";
 import { createEffect, onMount, Show } from "solid-js";
 // import Calendar from "./calendar";
 
-export default function() {
+export default function () {
   const [searchParams] = useSearchParams();
   let calendarSection: HTMLElement;
   const navigate = useNavigate();

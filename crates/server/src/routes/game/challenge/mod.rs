@@ -557,7 +557,7 @@ async fn get_challenge_solves_status(
     None,
     None,
     None,
-    team.is_some(),
+    team.is_none(),
   )
   .await?;
   let solved = if let Some(team) = team {
@@ -569,7 +569,7 @@ async fn get_challenge_solves_status(
       Some(team.id),
       None,
       None,
-      false,
+      true,
     )
     .await?
       > 0
@@ -582,7 +582,7 @@ async fn get_challenge_solves_status(
       None,
       Some(token.id),
       None,
-      false,
+      true,
     )
     .await?
       > 0

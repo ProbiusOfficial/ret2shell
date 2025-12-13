@@ -1,11 +1,11 @@
 import { useChallengeCheckerScript, useUpdateChallengeCheckerScriptMutation } from "@api/challenge";
-import type { Challenge } from "@models/challenge";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import { EditorBare } from "@widgets/editor";
 import Select from "@widgets/select";
 import { createEffect, createMemo, createSignal, untrack } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 import dynamicLeetChecker from "./scripts/dynamic-leet.rx";
 import dynamicUuidChecker from "./scripts/dynamic-uuid.rx";
 import mappedChecker from "./scripts/mapped.rx";
@@ -71,12 +71,7 @@ const checkerCtx = {
   },
 } as const;
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   const [preset, setPreset] = createSignal(null as PresetChecker | null);
   const presetChecker = createMemo(() => {
     if (!preset()) return null;

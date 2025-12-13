@@ -204,7 +204,7 @@ export default function () {
           <Button
             type="submit"
             level="primary"
-            class="!mt-4"
+            class="mt-4!"
             loading={config.isLoading || mutation.isPending}
             disabled={config.isLoading || mutation.isPending}
           >

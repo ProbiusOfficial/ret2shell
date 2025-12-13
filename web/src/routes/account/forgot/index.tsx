@@ -108,7 +108,7 @@ export default function () {
             <Button
               type="submit"
               level="primary"
-              class="!mt-4"
+              class="mt-4!"
               loading={submitMutation.isPending}
               disabled={submitMutation.isPending}
             >

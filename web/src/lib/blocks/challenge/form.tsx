@@ -8,6 +8,7 @@ import Input from "@widgets/input";
 import Select from "@widgets/select";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createEffect, Show, untrack } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 import ScorePicker from "./score-picker";
 
 export type ChallengeForm = {
@@ -21,13 +22,11 @@ export type ChallengeForm = {
   archive_at: number | null;
 };
 
-export function FormBare(props: {
-  onDone: (challenge: ChallengeForm) => void;
-  loading?: boolean;
-  inGame?: boolean;
-  gameId: number;
-  challengeId?: number;
-}) {
+export function FormBare(
+  props: ChallengeWidgetProps & {
+    onDone: (challenge: ChallengeForm) => void;
+  }
+) {
   const [form, { Form, Field }] = createForm<ChallengeForm>();
   function onSubmit(result: ChallengeForm) {
     props.onDone(result);
@@ -93,7 +92,7 @@ export function FormBare(props: {
           />
         )}
       </Field>
-      <Show when={props.inGame}>
+      <Show when={!props.training}>
         <div class="flex space-y-2 lg:space-x-2 lg:space-y-0 flex-col lg:flex-row">
           <Field name="initial" type="number">
             {(initialField, initialProps) => (
@@ -164,7 +163,7 @@ export function FormBare(props: {
           </Field>
         </div>
       </Show>
-      <Show when={props.inGame && (game.data?.timeline_presets?.length ?? 0) > 0}>
+      <Show when={!props.training && (game.data?.timeline_presets?.length ?? 0) > 0}>
         <Field name="release_at" type="number">
           {() => (
             <Field name="archive_at" type="number">
@@ -223,20 +222,24 @@ export function FormBare(props: {
           />
         )}
       </Field>
-      <Button type="submit" level="primary" class="mt-4!" loading={props.loading} disabled={props.loading}>
+      <Button
+        type="submit"
+        level="primary"
+        class="mt-4!"
+        loading={game.isLoading || challenge.isLoading}
+        disabled={game.isLoading || challenge.isLoading}
+      >
         {props.challengeId ? t("general.actions.save.title") : t("general.actions.create.title")}
       </Button>
     </Form>
   );
 }
 
-export default function (props: {
-  onDone: (challenge: ChallengeForm) => void;
-  loading?: boolean;
-  inGame?: boolean;
-  gameId: number;
-  challengeId?: number;
-}) {
+export default function (
+  props: ChallengeWidgetProps & {
+    onDone: (challenge: ChallengeForm) => void;
+  }
+) {
   return (
     <div class="flex-1 w-full relative">
       <div class="absolute top-0 left-0 w-full h-full overflow-hidden">

@@ -874,7 +874,7 @@ async fn delete_self(
   let txn = db.conn.begin().await?;
 
   // Check if user is the only user
-  let user_count = user::count(&txn, false, None, None, false).await?;
+  let user_count = user::count(&txn, false, None, None, true).await?;
   if user_count == 1 {
     warn!("the only user cannot delete itself");
     return Err(ResponseError::Forbidden(

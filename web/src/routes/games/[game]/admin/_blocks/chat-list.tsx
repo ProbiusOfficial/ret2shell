@@ -1,8 +1,6 @@
-import { handleHttpError } from "@api";
-import { getGameAdminChatSessions } from "@api/game";
+import { useGameAdminChatSessions } from "@api/game";
 import type { ChatSession } from "@models/chat";
-import { useSearchParams } from "@solidjs/router";
-import { gameStore } from "@storage/game";
+import { useParams, useSearchParams } from "@solidjs/router";
 import { fullTheme, t } from "@storage/theme";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
@@ -61,34 +59,33 @@ function mergeChats(oldSessions: ChatSession[], newSessions: ChatSession[]) {
 
 export default function ChatList() {
   const [sessions, setSessions] = createSignal([] as ChatSession[]);
+  const params = useParams();
   const [searchParams, _] = useSearchParams();
+  const gameId = createMemo(() => Number.parseInt(params.game ?? "", 10) || -1);
   const pageSize = 30;
   const [page, setPage] = createSignal(1);
   const teamId = createMemo(() => Number.parseInt((searchParams.team as string) ?? "", 10) || null);
   const challengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) ?? "", 10) || null);
-  async function refreshChats() {
-    if (gameStore.current) {
-      try {
-        const resp = await getGameAdminChatSessions(gameStore.current!.id, undefined, 1, pageSize * page());
-        const result = mergeChats(sessions(), resp[0]);
-        setSessions([...result]);
-      } catch (err) {
-        handleHttpError(err as Error, t("game.hammer.errors.fetchSessions.title"));
-      }
+
+  const sessionsQuery = useGameAdminChatSessions({
+    game_id: gameId,
+    page: () => 1,
+    page_size: () => pageSize * page(),
+    enabled: () => gameId() > 0,
+  });
+
+  createEffect(() => {
+    if (sessionsQuery.data) {
+      const result = mergeChats([...sessions()], sessionsQuery.data[0]);
+      untrack(() => setSessions([...result]));
     }
-  }
+  });
 
   const timer = setInterval(() => {
-    refreshChats();
+    if (gameId() > 0) sessionsQuery.refetch();
   }, 5000);
 
   onCleanup(() => clearInterval(timer));
-
-  createEffect(() => {
-    if (gameStore.current) {
-      untrack(refreshChats);
-    }
-  });
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
       <div class="h-16 flex flex-row px-4 space-x-2 items-center backdrop-blur-sm border-b border-b-layer-content/10">
@@ -122,9 +119,9 @@ export default function ChatList() {
             <For each={sessions()}>
               {(session) => (
                 <Link
-                  href={`/games/${gameStore.current?.id}/admin/hammers?challenge=${session.challenge_id}&team=${session.team_id}`}
+                  href={`/games/${gameId()}/admin/hammers?challenge=${session.challenge_id}&team=${session.team_id}`}
                   ghost={!(teamId() === session.team_id && challengeId() === session.challenge_id)}
-                  class="flex-row items-center h-auto py-2 !px-3 fade-group-right"
+                  class="flex-row items-center h-auto py-2 px-3! fade-group-right"
                 >
                   <div class="w-8 h-8 aspect-square shrink-0 relative">
                     <Avatar class="w-full h-full" src={undefined} fallback={session.team_name} />
@@ -158,7 +155,7 @@ export default function ChatList() {
               ghost
               onClick={() => {
                 setPage(page() + 1);
-                refreshChats();
+                sessionsQuery.refetch();
               }}
             >
               <span class="shrink-0 icon-[fluent--chevron-double-down-20-regular] w-5 h-5 opacity-60 hover:opacity-100" />

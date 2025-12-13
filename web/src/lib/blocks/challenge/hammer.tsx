@@ -2,7 +2,6 @@ import { useGame, useGamePlayerChatMessages, useSelfSolves, useSendGamePlayerCha
 import { useSelfTeam } from "@api/team";
 import platformAvatar from "@assets/imgs/rx.webp";
 import { mediaPath } from "@lib/utils/media";
-import type { Challenge } from "@models/challenge";
 import type { Chat } from "@models/chat";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A } from "@solidjs/router";
@@ -17,6 +16,8 @@ import Link from "@widgets/link";
 import clsx from "clsx";
 import { DateTime } from "luxon";
 import { createMemo, createSignal, For, Match, onCleanup, onMount, Show, Switch, untrack } from "solid-js";
+
+import type { ChallengeWidgetProps } from ".";
 
 export function ChatBlock(props: {
   avatar?: string;
@@ -124,21 +125,14 @@ export function mergeChats(
   return [changed, aa.sort((x, y) => x.created_at.toMillis() - y.created_at.toMillis())];
 }
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  onExpand?: () => void;
-  expanded?: boolean;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   const [prevChats, setPrevChats] = createSignal([] as Chat[]);
   const [chat, setChat] = createSignal("");
 
   const game = useGame({ id: () => props.gameId });
   const team = useSelfTeam({
     game_id: () => props.gameId,
-    enabled: () => !!props.inGame && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !isAdminOfGame(game.data),
   });
 
   const sendMutation = useSendGamePlayerChatMessageMutation({
@@ -151,11 +145,11 @@ export default function (props: {
   const chatsQuery = useGamePlayerChatMessages({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
-    enabled: () => !!props.inGame && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !isAdminOfGame(game.data),
   });
   const solvesQuery = useSelfSolves({
     game_id: () => props.gameId,
-    enabled: () => !!props.inGame && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !isAdminOfGame(game.data),
   });
 
   const chats = createMemo(() => {
@@ -317,7 +311,6 @@ export default function (props: {
             size="sm"
             square
             onClick={() => {
-              if (props.onExpand && !props.expanded) props.onExpand();
               setEditorExpanded(!editorExpanded());
             }}
           >

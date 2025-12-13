@@ -2,22 +2,17 @@ import { api_root } from "@api";
 import { useChallengeAttachments, useDeleteChallengeAttachmentMutation } from "@api/challenge";
 import DownloadButton from "@blocks/download-button";
 import UploadButton from "@blocks/upload-button";
-import type { Challenge } from "@models/challenge";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
 import LoadingTips from "@widgets/loading-tips";
 import { createSignal, For, Suspense } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 
 type FileType = "static" | "mapped" | "checker";
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   const [folder, setFolder] = createSignal<FileType>("static");
 
   const attachmentsQuery = useChallengeAttachments({

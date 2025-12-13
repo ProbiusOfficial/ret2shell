@@ -733,12 +733,12 @@ export type GameStatistics = {
   challenge_solves: { [key: number]: number };
 };
 
-export async function getGameStatistics(game_id: number, in_game?: boolean, institute?: number) {
+export async function getGameStatistics(game_id: number, training?: boolean, institute?: number) {
   return await api
     .get(`${api_root}/game/${game_id}/statistics`, {
       searchParams: JSON.parse(
         JSON.stringify({
-          in_game,
+          training,
           institute,
         })
       ),
@@ -748,21 +748,21 @@ export async function getGameStatistics(game_id: number, in_game?: boolean, inst
 
 export function useGameStatistics({
   game_id,
-  in_game,
+  training,
   institute,
   enabled,
   onError,
 }: {
   game_id: () => number;
-  in_game?: () => boolean | undefined;
+  training?: () => boolean | undefined;
   institute?: () => number | undefined;
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {
-  const keys = createMemo(() => ["game", game_id(), "statistics", institute?.(), in_game?.()]);
+  const keys = createMemo(() => ["game", game_id(), "statistics", institute?.(), training?.()]);
   return useQuery(() => ({
     queryKey: keys(),
-    queryFn: async () => await getGameStatistics(game_id(), in_game?.(), institute?.()),
+    queryFn: async () => await getGameStatistics(game_id(), training?.(), institute?.()),
     enabled,
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.statistics.errors.fetch"));
@@ -777,12 +777,12 @@ export type GameStatisticsExport = {
   audits: Audit[];
 };
 
-export async function getGameStatisticsExport(game_id: number, in_game?: boolean, institute?: number) {
+export async function getGameStatisticsExport(game_id: number, training?: boolean, institute?: number) {
   return await api
     .get(`${api_root}/game/${game_id}/statistics/export`, {
       searchParams: JSON.parse(
         JSON.stringify({
-          in_game,
+          training,
           institute,
         })
       ),
@@ -792,21 +792,21 @@ export async function getGameStatisticsExport(game_id: number, in_game?: boolean
 
 export function useGameStatisticsExport({
   game_id,
-  in_game,
+  training,
   institute,
   enabled,
   onError,
 }: {
   game_id: () => number;
-  in_game?: () => boolean;
+  training?: () => boolean;
   institute?: () => number;
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {
-  const keys = createMemo(() => ["game", game_id(), "statistics", "export", institute?.(), in_game?.()]);
+  const keys = createMemo(() => ["game", game_id(), "statistics", "export", institute?.(), training?.()]);
   return useQuery(() => ({
     queryKey: keys(),
-    queryFn: async () => await getGameStatisticsExport(game_id(), in_game?.(), institute?.()),
+    queryFn: async () => await getGameStatisticsExport(game_id(), training?.(), institute?.()),
     enabled,
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.statistics.errors.export"));

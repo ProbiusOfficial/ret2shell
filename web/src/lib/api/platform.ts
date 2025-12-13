@@ -66,7 +66,7 @@ export type PlatformStatistics = {
   };
   challenges: {
     total: number;
-    in_game: number;
+    training: number;
   };
 };
 

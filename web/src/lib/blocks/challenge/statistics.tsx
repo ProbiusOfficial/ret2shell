@@ -1,5 +1,4 @@
 import { useChallenge, useChallengeCommitHistory, useChallengeSubmissions } from "@api/challenge";
-import type { Challenge } from "@models/challenge";
 import { createBreakpoints } from "@solid-primitives/media";
 import { breakpoints, t } from "@storage/theme";
 import Button from "@widgets/button";
@@ -9,8 +8,9 @@ import Pagination from "@widgets/pagination";
 import Tag from "@widgets/tag";
 import { DateTime } from "luxon";
 import { createSignal, For, Match, Show, Switch } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 
-function StatisticsPanel(props: { gameId: number; challengeId: number }) {
+function StatisticsPanel(props: ChallengeWidgetProps) {
   const [page, setPage] = createSignal(1);
   const [pageSize] = createSignal(10);
   const [onlySolved, setOnlySolved] = createSignal(true);
@@ -111,7 +111,7 @@ function StatisticsPanel(props: { gameId: number; challengeId: number }) {
   );
 }
 
-function HistoryPanel(props: { gameId: number; challengeId: number }) {
+function HistoryPanel(props: ChallengeWidgetProps) {
   const history = useChallengeCommitHistory({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
@@ -155,12 +155,7 @@ function HistoryPanel(props: { gameId: number; challengeId: number }) {
   );
 }
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   const [tab, setTab] = createSignal("statistics" as "statistics" | "history");
   return (
     <div class="flex flex-row min-h-full">
@@ -172,7 +167,7 @@ export default function (props: {
             onClick={() => setTab("statistics")}
             title={t("challenge.statistics.solves.title")}
           >
-            <div class="flex flex-col py-2 items-start w-full">
+            <div class="flex flex-col py-2 items-start w-full text-start">
               <span>{t("challenge.statistics.solves.title")}</span>
               <span class="font-normal opacity-60 w-full text-start truncate">
                 {t("challenge.statistics.solves.subject")}
@@ -187,7 +182,7 @@ export default function (props: {
             onClick={() => setTab("history")}
             title={t("challenge.statistics.commits.title")}
           >
-            <div class="flex flex-col py-2 items-start w-full">
+            <div class="flex flex-col py-2 items-start w-full text-start">
               <span>{t("challenge.statistics.commits.title")}</span>
               <span class="font-normal opacity-60 w-full text-start truncate">
                 {t("challenge.statistics.commits.subject")}

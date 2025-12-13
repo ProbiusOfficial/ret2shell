@@ -163,7 +163,7 @@ export function AuditList(props: { gameId: number }) {
   );
 }
 
-export function SubmissionList(props: { inGame?: boolean; archived?: boolean; gameId: number }) {
+export function SubmissionList(props: { training?: boolean; archived?: boolean; gameId: number }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string, 10)) || 1);
   const pageSize = 15;
@@ -206,7 +206,7 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean; ga
                 <A class="font-bold" href={`/users/${submission.user_id}`}>
                   {submission.user_name}
                 </A>
-                <Show when={props.inGame}>
+                <Show when={!props.training}>
                   <span class="text-info opacity-60">@</span>
                   <A class="font-bold opacity-60" href={`/games/${props.gameId}/teams/${submission.team_id}`}>
                     {submission.team_name ?? "wheel"}
@@ -228,7 +228,7 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean; ga
                 <A
                   class="hover:underline flex space-x-2 items-center"
                   href={
-                    !props.inGame || props.archived
+                    props.training || props.archived
                       ? `/training/${props.gameId}?challenge=${submission.challenge_id}`
                       : `/games/${props.gameId}/challenges?challenge=${submission.challenge_id}`
                   }

@@ -94,7 +94,7 @@ async fn score_maintenance_worker_exec(
     Some(challenge.id),
     None,
     None,
-    true,
+    false,
   )
   .await?;
   for submission in submissions {
@@ -251,7 +251,7 @@ async fn submission_worker_exec(
     submission.team_id,
     None,
     None,
-    true,
+    false,
   )
   .await?
     > 0;

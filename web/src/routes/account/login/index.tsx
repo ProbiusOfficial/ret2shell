@@ -164,7 +164,7 @@ export default function () {
             <Button
               type="submit"
               level="primary"
-              class="!mt-4"
+              class="mt-4!"
               loading={loginMutation.isPending}
               disabled={loginMutation.isPending}
             >
@@ -183,18 +183,18 @@ export default function () {
             <Switch>
               <Match when={oauthProviders.data?.filter((s) => s.portal).length === 1}>
                 {(() => {
-                  const svc = oauthProviders.data?.find((s) => s.portal)!;
+                  const svc = oauthProviders.data?.find((s) => s.portal);
                   return (
-                    <Link class="w-full !mt-4" href={svc.portal} title={svc.name}>
-                      <img src={mediaPath(svc.avatar ?? "")} alt={svc.name} width={24} height={24} />
-                      <span>{svc.name}</span>
+                    <Link class="w-full mt-4!" href={svc?.portal} title={svc?.name}>
+                      <img src={mediaPath(svc?.avatar ?? "")} alt={svc?.name} width={24} height={24} />
+                      <span>{svc?.name}</span>
                     </Link>
                   );
                 })()}
               </Match>
               <Match when={oauthProviders.data && oauthProviders.data.filter((s) => s.portal).length > 1}>
                 <Popover
-                  class="w-full !mt-4"
+                  class="w-full mt-4!"
                   btnContent={
                     <>
                       <span class="shrink-0 icon-[fluent--person-passkey-20-regular] w-5 h-5" />

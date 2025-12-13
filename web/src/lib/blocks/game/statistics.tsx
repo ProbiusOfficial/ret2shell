@@ -14,13 +14,13 @@ import Divider from "@widgets/divider";
 import Select from "@widgets/select";
 import { createMemo, createSignal, Show } from "solid-js";
 
-export default function GameStatistics(props: { inGame?: boolean; gameId: number }) {
+export default function GameStatistics(props: { training?: boolean; gameId: number }) {
   const [selectedInstituteId, setSelectedInstituteId] = createSignal<number | null>(null);
   const game = useGame({ id: () => props.gameId });
   const challenges = useChallenges({ game_id: () => props.gameId });
   const stats = useGameStatistics({
     game_id: () => props.gameId,
-    in_game: () => props.inGame,
+    training: () => props.training,
     institute: () => selectedInstituteId() ?? undefined,
   });
   const institutes = useInstitutes();
@@ -55,7 +55,7 @@ export default function GameStatistics(props: { inGame?: boolean; gameId: number
     if (game.data) {
       setExporting(true);
       try {
-        const data = await getGameStatisticsExport(game.data.id, props.inGame, selectedInstituteId() ?? undefined);
+        const data = await getGameStatisticsExport(game.data.id, !props.training, selectedInstituteId() ?? undefined);
         // save as json
         const blob = new Blob([JSON.stringify(data)], {
           type: "application/json",
@@ -176,7 +176,7 @@ export default function GameStatistics(props: { inGame?: boolean; gameId: number
       setExporting(true);
       try {
         _exportStatisticsXlsx(
-          await getGameStatisticsExport(game.data.id, props.inGame, selectedInstituteId() ?? undefined)
+          await getGameStatisticsExport(game.data.id, !props.training, selectedInstituteId() ?? undefined)
         );
       } catch (err) {
         handleHttpError(err as Error, t("game.statistics.errors.export"));
@@ -193,7 +193,7 @@ export default function GameStatistics(props: { inGame?: boolean; gameId: number
         <h2 class="text-5xl font-bold">{t("game.statistics.title")}</h2>
       </div>
       <div class="flex flex-row space-x-2 p-3">
-        <Show when={props.inGame}>
+        <Show when={!props.training}>
           <Select
             class="flex-1 max-w-64 min-w-0 w-0"
             size="sm"
@@ -382,7 +382,7 @@ export default function GameStatistics(props: { inGame?: boolean; gameId: number
         </div>
       </div>
       <Show
-        when={props.inGame}
+        when={!props.training}
         fallback={
           <div class="flex flex-col space-y-4">
             <div class="flex flex-row items-center">

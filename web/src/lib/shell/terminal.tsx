@@ -9,13 +9,11 @@ import "@xterm/xterm/css/xterm.css";
 import { useChallenge } from "@api/challenge";
 import { useGame } from "@api/game";
 import { useSelfTeam } from "@api/team";
-import type { Challenge } from "@models/challenge";
 import clsx from "clsx";
 
 export default function (
   props: ComponentProps<"div"> & {
-    onStateChange?: (challenge?: Challenge) => void;
-    inGame?: boolean;
+    training?: boolean;
     gameId: number;
     challengeId: number;
   }

@@ -240,7 +240,7 @@ where
     None,
     None,
     None,
-    true,
+    false,
   )
   .await?;
   let score = if decay < 1 {

@@ -1,5 +1,5 @@
 import { handleHttpError } from "@api";
-import { useGame } from "@api/game";
+import { useGame, useGameIntroduction } from "@api/game";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { useParams } from "@solidjs/router";
@@ -13,17 +13,18 @@ type ArticleForm = {
   content: string;
 };
 
-export default function IntroForm(props: { onDone: (article: Article) => Promise<void>; editSource?: Article }) {
+export default function IntroForm(props: { onDone: (article: Article) => Promise<void> }) {
   const [form, { Form, Field }] = createForm<ArticleForm>();
   const [loading, setLoading] = createSignal(false);
   const params = useParams();
-  const gameId = Number.parseInt(params.game || 'UNKN0WN', 10);
-  const game = useGame({id: () => gameId});
+  const gameId = Number.parseInt(params.game || "UNKN0WN", 10);
+  const game = useGame({ id: () => gameId, enabled: () => !!gameId });
+  const introduction = useGameIntroduction({ id: () => gameId, enabled: () => !!gameId });
   createEffect(() => {
-    if (props.editSource) {
+    if (introduction.data) {
       untrack(() => {
         setValues(form, {
-          content: props.editSource!.content || "",
+          content: introduction.data?.content || "",
         });
       });
     } else {
@@ -39,10 +40,10 @@ export default function IntroForm(props: { onDone: (article: Article) => Promise
     setLoading(true);
     try {
       props.onDone({
-        id: props.editSource?.id || 0,
+        id: introduction.data?.id || 0,
         content: result.content,
-        created_at: props.editSource?.created_at || DateTime.now(),
-        updated_at: props.editSource?.updated_at || DateTime.now(),
+        created_at: introduction.data?.created_at || DateTime.now(),
+        updated_at: introduction.data?.updated_at || DateTime.now(),
         publisher_id: 0,
         access_policy: ArticleAccessPolicy.Game,
         draft: false,

@@ -5,7 +5,6 @@ import {
   useUpChallengeMutation,
 } from "@api/challenge";
 import { useGame } from "@api/game";
-import type { Challenge } from "@models/challenge";
 import { useSearchParams } from "@solidjs/router";
 import { isAdminOfGame } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
@@ -29,13 +28,14 @@ import Settings from "./settings";
 import Statistics from "./statistics";
 import Terminal from "./terminal";
 
-function BottomPanel(props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame: boolean;
-  archived: boolean;
+export type ChallengeWidgetProps = {
+  training?: boolean;
+  archived?: boolean;
   gameId: number;
   challengeId: number;
-}) {
+};
+
+function BottomPanel(props: ChallengeWidgetProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const pages = {
     terminal: Terminal,
@@ -57,7 +57,7 @@ function BottomPanel(props: {
     if (!isAdminOfGame(game.data) && ["statistics", "instances", "checker", "settings"].includes(page())) {
       return pages.terminal;
     }
-    if (!props.inGame && page() === "hammer") {
+    if (props.training && page() === "hammer") {
       return pages.terminal;
     }
     return pages[page() as keyof typeof pages];
@@ -75,7 +75,6 @@ function BottomPanel(props: {
         description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
-      props.onStateChange?.();
       setSearchParams({ challenge: null });
     },
   });
@@ -110,7 +109,7 @@ function BottomPanel(props: {
           <Button
             onClick={() => setSearchParams({ tab: "hammer" })}
             ghost={page() !== "hammer"}
-            disabled={!props.inGame}
+            disabled={props.training}
           >
             <span class="shrink-0 icon-[fluent-emoji-flat--hammer] w-5 h-5" />
             <span>{t("challenge.hammer.title")}</span>
@@ -251,22 +250,15 @@ function BottomPanel(props: {
   );
 }
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  archived: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   return (
     <div class="flex-1">
       <Splitter
-        startPanel={() => <Intro inGame={props.inGame} gameId={props.gameId} challengeId={props.challengeId} />}
+        startPanel={() => <Intro training={props.training} gameId={props.gameId} challengeId={props.challengeId} />}
         endPanel={() => (
           <BottomPanel
-            inGame={props.inGame ?? false}
+            training={props.training ?? false}
             archived={props.archived}
-            onStateChange={props.onStateChange}
             gameId={props.gameId}
             challengeId={props.challengeId}
           />

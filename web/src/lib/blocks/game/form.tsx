@@ -1,4 +1,4 @@
-import type { Game } from "@models/game";
+import { useGame } from "@api/game";
 import { createForm, maxRange, minRange, required, setValues } from "@modular-forms/solid";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
@@ -31,28 +31,24 @@ export type GameForm = {
   outer_hammer_url?: string;
 };
 
-export default function GameEdit(props: {
-  onDone: (result: GameForm) => void;
-  editSource?: Game;
-  loading?: boolean;
-  inGame?: boolean;
-}) {
+export default function GameEdit(props: { onDone: (result: GameForm) => void; gameId?: number; training?: boolean }) {
+  const game = useGame({ id: () => props.gameId ?? -1, enabled: () => !!props.gameId });
   const [form, { Form, Field }] = createForm<GameForm>();
   createEffect(() => {
-    if (props.editSource) {
+    if (game.data) {
       untrack(() => {
         setValues(form, {
-          ...props.editSource,
-          start_at: props.editSource!.start_at.toSeconds(),
-          end_at: props.editSource!.end_at.toSeconds(),
-          register_at: props.editSource!.register_at.toSeconds(),
-          archive_at: props.editSource!.archive_at.toSeconds(),
-          first_blood_award: props.editSource!.award_rates?.[0] || props.editSource!.award_rate,
-          second_blood_award: Math.floor(props.editSource!.award_rates?.[1] || (props.editSource!.award_rate * 2) / 3),
-          third_blood_award: Math.floor(props.editSource!.award_rates?.[2] || props.editSource!.award_rate / 3),
-          enable_hammer: props.editSource!.hammer_policy?.enabled || false,
-          outer_hammer_label: props.editSource!.hammer_policy?.outer_label || "",
-          outer_hammer_url: props.editSource!.hammer_policy?.outer_url || "",
+          ...game.data,
+          start_at: game.data!.start_at.toSeconds(),
+          end_at: game.data!.end_at.toSeconds(),
+          register_at: game.data!.register_at.toSeconds(),
+          archive_at: game.data!.archive_at.toSeconds(),
+          first_blood_award: game.data!.award_rates?.[0] || game.data!.award_rate,
+          second_blood_award: Math.floor(game.data!.award_rates?.[1] || (game.data!.award_rate * 2) / 3),
+          third_blood_award: Math.floor(game.data!.award_rates?.[2] || game.data!.award_rate / 3),
+          enable_hammer: game.data!.hammer_policy?.enabled || false,
+          outer_hammer_label: game.data!.hammer_policy?.outer_label || "",
+          outer_hammer_url: game.data!.hammer_policy?.outer_url || "",
         });
       });
     }
@@ -87,7 +83,7 @@ export default function GameEdit(props: {
           />
         )}
       </Field>
-      <Show when={props.inGame}>
+      <Show when={!props.training}>
         <Field name="start_at" type="number" validate={[required(t("game.form.startAt.required"))]}>
           {(startAtField) => (
             <Field name="end_at" type="number" validate={[required(t("game.form.endAt.required"))]}>
@@ -153,7 +149,7 @@ export default function GameEdit(props: {
             </Checkbox>
           )}
         </Field>
-        <Show when={props.inGame}>
+        <Show when={!props.training}>
           <Field name="frozen" type="boolean">
             {(field, props) => (
               <Checkbox
@@ -181,7 +177,7 @@ export default function GameEdit(props: {
         </Show>
       </div>
 
-      <Show when={props.inGame}>
+      <Show when={!props.training}>
         <div class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-2">
           <Field
             name="team_size"
@@ -354,7 +350,7 @@ export default function GameEdit(props: {
           )}
         </Field>
       </Show>
-      <Button type="submit" level="primary" class="mt-4!" loading={props.loading} disabled={props.loading}>
+      <Button type="submit" level="primary" class="mt-4!" loading={game.isLoading} disabled={game.isLoading}>
         {t("general.actions.save.title")}
       </Button>
     </Form>

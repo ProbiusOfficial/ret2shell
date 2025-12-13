@@ -166,7 +166,7 @@ export default function () {
             <span class={clsx(enableTimer() ? "icon-[fluent--stop-16-regular]" : "icon-[fluent--play-16-regular]")} />
           </Button>
         </div>
-        <div class="inline-flex flex-row items-center flex-wrap p-3 lg:p-6 !pb-0">
+        <div class="inline-flex flex-row items-center flex-wrap p-3 lg:p-6 pb-0!">
           <For each={logFiles.data}>
             {(file) => (
               <DownloadButton

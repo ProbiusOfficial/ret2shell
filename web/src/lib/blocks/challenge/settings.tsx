@@ -3,14 +3,10 @@ import type { Challenge } from "@models/challenge";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import { DateTime } from "luxon";
+import type { ChallengeWidgetProps } from ".";
 import { type ChallengeForm, FormBare } from "./form";
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   const challenge = useChallenge({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
@@ -63,7 +59,7 @@ export default function (props: {
       </header>
       <FormBare
         onDone={handleUpdateChallenge}
-        inGame={props.inGame}
+        training={props.training}
         gameId={props.gameId}
         challengeId={props.challengeId}
       />

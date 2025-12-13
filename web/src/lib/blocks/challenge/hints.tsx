@@ -7,7 +7,6 @@ import {
 } from "@api/challenge";
 import { useGame } from "@api/game";
 import { useSelfTeam, useTeamExtras } from "@api/team";
-import type { Challenge } from "@models/challenge";
 import { clearError, createForm, required, reset as resetForm, setValue } from "@modular-forms/solid";
 import { isAdminOfGame } from "@storage/game";
 import { t } from "@storage/theme";
@@ -21,29 +20,29 @@ import { LoremIpsum } from "lorem-ipsum";
 import { DateTime } from "luxon";
 import { createSignal, For, Show } from "solid-js";
 
+import type { ChallengeWidgetProps } from ".";
+
 type CreateHintForm = {
   content: string;
   cost: number;
 };
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-  gameId: number;
-  challengeId: number;
-}) {
+export default function (props: ChallengeWidgetProps) {
   // const [hints, setHints] = createSignal([] as Hint[]);
   // const [extras, setExtras] = createSignal([] as Extra[]);
   // const [unlocking, setUnlocking] = createSignal(false);
   const game = useGame({ id: () => props.gameId });
   const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
-  const team = useSelfTeam({ game_id: () => props.gameId, enabled: () => !!props.inGame && !isAdminOfGame(game.data) });
+  const team = useSelfTeam({
+    game_id: () => props.gameId,
+    enabled: () => !props.training && !isAdminOfGame(game.data),
+  });
 
   const hints = useChallengeHints({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
   const extras = useTeamExtras({
     game_id: () => props.gameId,
     team_id: () => team.data?.id || 0,
-    enabled: () => !!props.inGame && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !isAdminOfGame(game.data),
   });
 
   const createMutation = useCreateChallengeHintMutation({
@@ -60,7 +59,6 @@ export default function (props: {
         },
       });
       setPtsInputIconIndex(0);
-      if (props.onStateChange) props.onStateChange();
       hints.refetch();
     },
   });
@@ -72,8 +70,8 @@ export default function (props: {
   const unlockMutation = useUnlockChallengeHintMutation({
     onSuccess: () => {
       hints.refetch();
+      team.refetch();
       extras.refetch();
-      if (props.onStateChange) props.onStateChange();
     },
   });
 
@@ -111,7 +109,7 @@ export default function (props: {
             <span class="shrink-0 icon-[fluent--info-20-regular] w-5 h-5 text-primary" />
             <Show
               when={
-                !props.inGame ||
+                props.training ||
                 isAdminOfGame(game.data) ||
                 hint.cost === 0 ||
                 extras.data?.find((e) => e.hint_id === hint.id) ||
