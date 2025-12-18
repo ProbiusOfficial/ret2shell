@@ -50,11 +50,12 @@ export default function () {
     return games.data?.[0].find((game) => game.id === selectedGameId()) ?? games.data?.[0].at(0);
   });
   createEffect(() => {
+    console.log("hello");
     setGameCoverStore({ preload: selectedGame() || null });
   });
 
   function onCreated(game: Game) {
-    setGameCoverStore({ preload: game });
+    setGameCoverStore({ preload: game, goto: game.id });
   }
 
   return (
@@ -236,7 +237,7 @@ export default function () {
             >
               <Picture
                 class="aspect-video"
-                src={(selectedGame()?.cover && mediaPath(selectedGame()!.cover!)) || bgGameDefault}
+                src={(selectedGame()?.cover && mediaPath(selectedGame()?.cover)) || bgGameDefault}
               />
             </Show>
             <Tag
@@ -284,7 +285,7 @@ export default function () {
             >
               <img
                 class="hidden lg:block"
-                src={mediaPath(selectedGame()!.logo!)}
+                src={mediaPath(selectedGame()?.logo)}
                 width={64}
                 height={64}
                 alt={selectedGame()?.name}

@@ -7,7 +7,6 @@ import { createForm, email, getValue, required, setValue, setValues } from "@mod
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
@@ -75,23 +74,10 @@ export default function () {
     }
   }
 
-  const resendEmailMutation = useResendEmailMutation({
-    onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.send.status.success"),
-        duration: 5000,
-      });
-    },
-  });
+  const resendEmailMutation = useResendEmailMutation();
 
   const updateMutation = useChangeProfileMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       profile.refetch();
     },
   });
@@ -145,14 +131,14 @@ export default function () {
               {(field, props) => (
                 <Avatar
                   class="w-28 h-28 relative m-2"
-                  src={(getValue(form, "avatar") && mediaPath(getValue(form, "avatar")!)) || undefined}
+                  src={(getValue(form, "avatar") && mediaPath(getValue(form, "avatar"))) || undefined}
                   fallback={profile.data?.account}
                 >
                   <Button
                     loading={avatarUploading()}
                     disabled={avatarUploading()}
                     type="button"
-                    class="opacity-0 hover:opacity-100 !bg-layer/80 absolute top-0 left-0 w-full h-full"
+                    class="opacity-0 hover:opacity-100 bg-layer/80! absolute top-0 left-0 w-full h-full"
                     onClick={() => {
                       if (avatarSet()) {
                         setAvatarSet(false);
@@ -232,7 +218,7 @@ export default function () {
           <Button
             type="submit"
             level="primary"
-            class="!mt-4"
+            class="mt-4!"
             loading={updateMutation.isPending}
             disabled={updateMutation.isPending}
           >

@@ -6,7 +6,7 @@ import type { Chat } from "@models/chat";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import { isAdminOfGame } from "@storage/game";
+import { isAdminOfGame, isGameInProgress } from "@storage/game";
 import { breakpoints, t } from "@storage/theme";
 import Article from "@widgets/article";
 import Avatar from "@widgets/avatar";
@@ -132,7 +132,7 @@ export default function (props: ChallengeWidgetProps) {
   const game = useGame({ id: () => props.gameId });
   const team = useSelfTeam({
     game_id: () => props.gameId,
-    enabled: () => !props.training && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !!game.data && isGameInProgress(game.data) && !isAdminOfGame(game.data),
   });
 
   const sendMutation = useSendGamePlayerChatMessageMutation({

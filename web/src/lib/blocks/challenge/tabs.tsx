@@ -11,19 +11,21 @@ import clsx from "clsx";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createEffect, createMemo, createSignal, For, Show, untrack } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
-import type { ChallengeWidgetProps } from ".";
 
-export default function Tabs(props: ChallengeWidgetProps) {
+export default function Tabs(props: {
+  training?: boolean;
+  archived?: boolean;
+  gameId: number;
+  challengeId?: number;
+}) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const game = useGame({ id: () => props.gameId });
-  const selectedChallengeId = createMemo(
-    () => Number.parseInt((searchParams.challenge as string) || "NaN", 10) || null
-  );
+
   const challenge = useChallenge({
     game_id: () => props.gameId,
-    challenge_id: () => (selectedChallengeId() ? selectedChallengeId()! : -1),
-    enabled: () => selectedChallengeId() !== null,
+    challenge_id: () => props.challengeId || 0,
+    enabled: () => !!props.challengeId,
   });
   const challenges = useChallenges({
     game_id: () => props.gameId,
@@ -60,13 +62,14 @@ export default function Tabs(props: ChallengeWidgetProps) {
     }, 100);
   }
   function closeChallengeTab(challengeId: number) {
-    if (challengeId === selectedChallengeId()) setSearchParams({ challenge: null });
+    if (challengeId === props.challengeId) setSearchParams({ challenge: null });
     setChallengeHistory([...challengeHistory().filter((s) => s.id !== challengeId)]);
   }
+
   createEffect(() => {
-    if (selectedChallengeId() === null) return;
+    if (!props.challengeId) return;
     if (challenge.isLoading || !challenge.data) return;
-    appendChallengeHistory(untrack(() => challenge.data!));
+    untrack(() => appendChallengeHistory(challenge.data));
   });
   return (
     <OverlayScrollbarsComponent
@@ -92,7 +95,7 @@ export default function Tabs(props: ChallengeWidgetProps) {
               ghost
               class="transition-all duration-300 overflow-hidden"
               active={
-                selectedChallengeId() === null &&
+                !props.challengeId &&
                 inCreate() === false &&
                 inEditGame() === false &&
                 inStatistics() === false &&
@@ -189,14 +192,14 @@ export default function Tabs(props: ChallengeWidgetProps) {
                     onMouseUp={(e) => {
                       if (e.button === 1) closeChallengeTab(c.id);
                     }}
-                    loading={challenge.isLoading && c.id === selectedChallengeId()}
+                    loading={challenge.isLoading && c.id === props.challengeId}
                     id={`challenge-${c.id}`}
-                    active={c.id === selectedChallengeId() && inCreate() === false}
+                    active={c.id === props.challengeId && inCreate() === false}
                     ghost
                     class={clsx("max-w-48", "pr-0")}
                   >
                     <Show
-                      when={challenge.isLoading && c.id === selectedChallengeId()}
+                      when={challenge.isLoading && c.id === props.challengeId}
                       fallback={<span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />}
                     >
                       {null /* Loading spinner handled by Button component */}
@@ -219,7 +222,7 @@ export default function Tabs(props: ChallengeWidgetProps) {
             }}
           </For>
         </TransitionGroup>
-        <Show when={challenge.isLoading && !challenges.data?.[0].find((c) => c.id === selectedChallengeId())}>
+        <Show when={challenge.isLoading && !challenges.data?.[0].find((c) => c.id === props.challengeId)}>
           <Button class="opacity-60" loading ghost>
             <span>{t("general.loading.short")}</span>
           </Button>

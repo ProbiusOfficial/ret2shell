@@ -1,3 +1,4 @@
+import { useAccountProfile } from "@api/account";
 import { useGame } from "@api/game";
 import { useSelfTeam } from "@api/team";
 import LogoAnimate from "@assets/animates/logo-animate";
@@ -49,12 +50,12 @@ function GlobalTitleLink() {
 
 function GameTitleLink() {
   const params = useParams();
-  const gameId = Number.parseInt(params.game, 10);
+  const gameId = Number.parseInt(params.game || "", 10);
   const game = useGame({ id: () => gameId, enabled: () => !!gameId });
   return (
     <Link ghost href={`/games/${gameId}/`}>
       <Show when={game.data?.logo} fallback={<LogoAnimate width={24} height={24} />}>
-        <img src={mediaPath(game.data!.logo!)} width={24} height={24} alt="CTF" />
+        <img src={mediaPath(game.data?.logo)} width={24} height={24} alt="CTF" />
       </Show>
       <span />
       <span>{game.data?.name}</span>
@@ -63,6 +64,7 @@ function GameTitleLink() {
 }
 
 function GlobalNav(props: { size: "sm" | "md" }) {
+  const accountInfo = useAccountProfile({ enabled: () => !!accountStore.token });
   return (
     <>
       <Show
@@ -111,10 +113,10 @@ function GlobalNav(props: { size: "sm" | "md" }) {
       <Show
         when={
           accountStore.token &&
-          accountStore.info &&
-          (accountStore.info?.permissions.includes(Permission.Statistics) ||
-            accountStore.info?.permissions.includes(Permission.DevOps) ||
-            accountStore.info?.permissions.includes(Permission.User))
+          accountInfo.data &&
+          (accountInfo.data?.permissions.includes(Permission.Statistics) ||
+            accountInfo.data?.permissions.includes(Permission.DevOps) ||
+            accountInfo.data?.permissions.includes(Permission.User))
         }
       >
         <li class="nav whitespace-nowrap">
@@ -130,9 +132,14 @@ function GlobalNav(props: { size: "sm" | "md" }) {
 
 function GameNav(props: { size: "sm" | "md" }) {
   const params = useParams();
-  const gameId = Number.parseInt(params.game, 10);
+  const gameId = Number.parseInt(params.game || "", 10);
   const game = useGame({ id: () => gameId, enabled: () => !!gameId });
-  const team = useSelfTeam({ game_id: () => gameId, enabled: () => !!accountStore.token && !!gameId });
+  const team = useSelfTeam({
+    game_id: () => gameId,
+    enabled: () => !!accountStore.token && !!game.data && !isAdminOfGame(game.data),
+    silenced: true,
+  });
+  const accountInfo = useAccountProfile({ enabled: () => !!accountStore.token });
   return (
     <>
       <li class="nav whitespace-nowrap">
@@ -216,10 +223,10 @@ function GameNav(props: { size: "sm" | "md" }) {
           <Show
             when={
               accountStore.token &&
-              accountStore.info &&
-              (accountStore.info?.permissions.includes(Permission.Statistics) ||
-                accountStore.info?.permissions.includes(Permission.DevOps) ||
-                accountStore.info?.permissions.includes(Permission.User))
+              accountInfo.data &&
+              (accountInfo.data?.permissions.includes(Permission.Statistics) ||
+                accountInfo.data?.permissions.includes(Permission.DevOps) ||
+                accountInfo.data?.permissions.includes(Permission.User))
             }
           >
             <li class="nav whitespace-nowrap">
@@ -247,8 +254,8 @@ export default function TitleBar() {
     null
   );
   const params = useParams();
-  const gameId = Number.parseInt(params.game, 10);
-  const game = useGame({ id: () => gameId, enabled: () => !!gameId });
+  const gameId = () => Number.parseInt(params.game || "", 10);
+  const game = useGame({ id: () => gameId(), enabled: () => !!gameId() });
   const location = useLocation();
   const inDocs = () => location.pathname.startsWith("/docs");
   const [offlineLoading, setOfflineLoading] = createSignal(false);

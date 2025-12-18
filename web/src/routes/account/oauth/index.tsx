@@ -1,4 +1,3 @@
-import { handleHttpError } from "@api";
 import { useBindWithOAuthMutation, useLoginWithOAuthMutation, useOAuthProviders } from "@api/account";
 import LogoAnimate from "@assets/animates/logo-animate";
 // import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
@@ -8,7 +7,6 @@ import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import LoadingTips from "@widgets/loading-tips";
 import clsx from "clsx";
 import { createEffect, createSignal } from "solid-js";
@@ -47,15 +45,8 @@ export default function () {
         return;
       }
       navigate("/", { replace: true });
-      addToast({
-        level: "success",
-        description: t("account.login.status.success.message"),
-        duration: 5000,
-        // img: xdsecMascotHappy,
-      });
     },
-    onError: (err: Error) => {
-      handleHttpError(err as Error, t("account.login.errors.login.title"));
+    onError: () => {
       setTimeout(() => {
         navigate("/account/login", { replace: true });
       });
@@ -66,8 +57,7 @@ export default function () {
     onSuccess: () => {
       navigate("/account/settings/oauth", { replace: true });
     },
-    onError: (err: Error) => {
-      handleHttpError(err as Error, t("account.oauth.errors.bind.title"));
+    onError: () => {
       setTimeout(() => {
         navigate("/account/settings/oauth", { replace: true });
       });

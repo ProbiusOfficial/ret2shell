@@ -22,8 +22,16 @@ type WikiForm = {
 export default function (props: { onDone: (article: Article) => void; editSource?: Article }) {
   const [form, { Form, Field }] = createForm<WikiForm>();
 
-  const createWikiMutation = useCreateWikiMutation();
-  const updateWikiMutation = useUpdateWikiMutation();
+  const createWikiMutation = useCreateWikiMutation({
+    onSuccess: (saved) => {
+      props.onDone(saved);
+    },
+  });
+  const updateWikiMutation = useUpdateWikiMutation({
+    onSuccess: (saved) => {
+      props.onDone(saved);
+    },
+  });
   const loading = createMemo(() => createWikiMutation.isPending || updateWikiMutation.isPending);
 
   createEffect(() => {
@@ -51,7 +59,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
       });
     }
   });
-  async function onSubmit(result: WikiForm) {
+  function onSubmit(result: WikiForm) {
     const article: Article = {
       ...result,
       path: result.path.split("/"),
@@ -62,10 +70,11 @@ export default function (props: { onDone: (article: Article) => void; editSource
       access_policy: ArticleAccessPolicy.Wiki,
       weight: 0,
     };
-    const saved = props.editSource
-      ? await updateWikiMutation.mutateAsync(article)
-      : await createWikiMutation.mutateAsync(article);
-    props.onDone(saved);
+    if (props.editSource) {
+      updateWikiMutation.mutate(article);
+    } else {
+      createWikiMutation.mutate(article);
+    }
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">

@@ -3,7 +3,6 @@ import type { EmailConfig } from "@models/config";
 import { createForm, custom, getValue, setValues } from "@modular-forms/solid";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Checkbox from "@widgets/checkbox";
 import Divider from "@widgets/divider";
@@ -15,15 +14,7 @@ import { createEffect } from "solid-js";
 export default function () {
   const [form, { Form, Field }] = createForm<EmailConfig>();
   const config = usePlatformConfig();
-  const mutation = useUpdatePlatformConfigMutation({
-    onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
-    },
-  });
+  const mutation = useUpdatePlatformConfigMutation();
   createEffect(() => {
     if (config.data) {
       setValues(form, {
@@ -355,7 +346,7 @@ export default function () {
           <Button
             type="submit"
             level="primary"
-            class="!mt-4"
+            class="mt-4!"
             loading={config.isLoading || mutation.isPending}
             disabled={config.isLoading || mutation.isPending}
           >

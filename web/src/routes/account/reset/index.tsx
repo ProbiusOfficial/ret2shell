@@ -41,11 +41,6 @@ export default function () {
 
   const mutation = useResetPasswordMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("account.reset.status.success.message"),
-        duration: 5000,
-      });
       navigate("/", { replace: true });
     },
     onError: () => {
@@ -163,7 +158,7 @@ export default function () {
             <Button
               type="submit"
               level="primary"
-              class="!mt-4"
+              class="mt-4!"
               loading={mutation.isPending}
               disabled={mutation.isPending}
             >

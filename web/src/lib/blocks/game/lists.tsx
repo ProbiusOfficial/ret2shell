@@ -3,7 +3,6 @@ import { type Audit, AuditState } from "@models/audit";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A, useSearchParams } from "@solidjs/router";
 import { breakpoints, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
@@ -23,11 +22,6 @@ export function AuditList(props: { gameId: number }) {
   const auditMutation = useUpdateGameAuditLogMutation({
     onSuccess: () => {
       audits.refetch();
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
     },
   });
 

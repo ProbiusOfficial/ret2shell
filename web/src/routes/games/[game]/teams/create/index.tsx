@@ -82,9 +82,9 @@ export default function () {
   const submitLabel = createMemo(() => blockReason() ?? t("general.actions.create.title"));
   const submitDisabled = createMemo(() => createTeamMutation.isPending || !game.data || !!blockReason());
 
-  async function onSubmit(data: TeamCreateForm) {
+  function onSubmit(data: TeamCreateForm) {
     if (!game.data) return;
-    await createTeamMutation.mutateAsync({
+    createTeamMutation.mutate({
       game_id: gameId(),
       team: {
         name: data.name,

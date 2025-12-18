@@ -3,7 +3,6 @@ import GameEdit, { type GameForm } from "@blocks/game/form";
 import { useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import { DateTime } from "luxon";
 import { createMemo } from "solid-js";
 
@@ -14,11 +13,6 @@ export default function () {
 
   const updateMutation = useUpdateGameMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });

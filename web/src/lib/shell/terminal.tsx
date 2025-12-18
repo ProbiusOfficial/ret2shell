@@ -9,6 +9,7 @@ import "@xterm/xterm/css/xterm.css";
 import { useChallenge } from "@api/challenge";
 import { useGame } from "@api/game";
 import { useSelfTeam } from "@api/team";
+import { isAdminOfGame, isGameInProgress } from "@storage/game";
 import clsx from "clsx";
 
 export default function (
@@ -23,7 +24,10 @@ export default function (
     challenge_id: () => props.challengeId,
   });
   const game = useGame({ id: () => props.gameId });
-  const team = useSelfTeam({ game_id: () => props.gameId });
+  const team = useSelfTeam({
+    game_id: () => props.gameId,
+    enabled: () => !props.training && !!game.data && isGameInProgress(game.data) && !isAdminOfGame(game.data),
+  });
   let terminal: HTMLDivElement;
   const linkHandler = {
     activate(_event: MouseEvent, text: string) {
@@ -89,15 +93,14 @@ export default function (
   });
 
   createEffect(() => {
-    if (game.data && team.data) {
-      shell = new Shell(term, game.data, team.data, (_cmd, _code) => {});
-      shell.run();
-    }
-  });
-
-  createEffect(() => {
-    if (challenge.data) {
-      untrack(() => shell?.setChallenge(challenge.data || null));
+    if (game.data && challenge.data) {
+      untrack(() => {
+        if (!shell) {
+          shell = new Shell(term, game.data, team.data ?? null, (_cmd, _code) => {});
+          shell.run();
+        }
+        shell?.setChallenge(challenge.data || null);
+      });
     }
   });
 

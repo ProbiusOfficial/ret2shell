@@ -127,7 +127,8 @@ export default function () {
 
   const selfTeam = useSelfTeam({
     game_id: () => gameId(),
-    enabled: () => !!accountStore.id && gameId() > 0,
+    enabled: () => !!accountStore.id && !!gameId(),
+    silenced: true,
   });
 
   const canAccessChallenges = createMemo(() => {

@@ -1,15 +1,11 @@
-import { handleHttpError } from "@api";
 import { useForgotPasswordMutation } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, email, minLength, required } from "@modular-forms/solid";
-import { useNavigate } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
-import { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -21,29 +17,11 @@ type ForgotForm = {
 
 export default function () {
   const [form, { Form, Field }] = createForm<ForgotForm>();
-  const navigate = useNavigate();
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
 
   const submitMutation = useForgotPasswordMutation({
-    onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("account.forgot.status.success.message"),
-        duration: 5000,
-      });
-      navigate("/", { replace: true });
-    },
-    onError: (err: Error) => {
-      if (err instanceof HTTPError && err.response.status === 429) {
-        addToast({
-          level: "error",
-          description: t("account.forgot.status.rateExceeded.message"),
-          duration: 5000,
-        });
-      } else {
-        handleHttpError(err as Error, t("general.actions.create.status.fail"));
-        setTimestamp(DateTime.now().toMillis());
-      }
+    onError: () => {
+      setTimestamp(DateTime.now().toMillis());
     },
   });
 

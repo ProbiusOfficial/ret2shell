@@ -13,7 +13,7 @@ import { useGame, useGameInstances } from "@api/game";
 import { useSelfTeam } from "@api/team";
 import Spin from "@assets/animates/spin";
 import { getWsrxLink, wsrx } from "@lib/wsrx";
-import { isGameInProgress } from "@storage/game";
+import { isAdminOfGame, isGameInProgress } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
@@ -64,7 +64,10 @@ export default function (props: ChallengeWidgetProps) {
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
   });
-  const team = useSelfTeam({ game_id: () => props.gameId });
+  const team = useSelfTeam({
+    game_id: () => props.gameId,
+    enabled: () => !props.training && !!game.data && isGameInProgress(game.data) && !isAdminOfGame(game.data),
+  });
 
   let instanceStateIter = 0;
   async function maintainInstances() {
@@ -217,7 +220,7 @@ export default function (props: ChallengeWidgetProps) {
                   <span class="flex-1" />
                   <span class="text-end">
                     <span class="inline-block">{t("challenge.status.unreleased.countdown")}:</span>
-                    <Timer end={challenge.data!.release_at!} hasHours />
+                    <Timer end={challenge.data?.release_at || DateTime.now()} hasHours />
                   </span>
                 </section>
               </Match>
@@ -246,7 +249,7 @@ export default function (props: ChallengeWidgetProps) {
                   <span class="flex-1" />
                   <span class="text-end">
                     <span class="inline-block">{t("challenge.status.inPeriod.countdown")}:</span>
-                    <Timer end={challenge.data!.archive_at!} hasHours />
+                    <Timer end={challenge.data?.archive_at || DateTime.now()} hasHours />
                   </span>
                 </section>
               </Match>

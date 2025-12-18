@@ -4,9 +4,9 @@ import { type Team, TeamState } from "@models/team";
 import type { User } from "@models/user";
 import { t } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
-import type { SearchParamsOption } from "ky";
+import { HTTPError, type SearchParamsOption } from "ky";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getTeamInfo(game_id: number, team_id: number, ex?: boolean) {
   return await api
@@ -34,15 +34,18 @@ export function useTeamInfo({
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "team", team_id(), "info", ex?.() ?? false]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getTeamInfo(game_id(), team_id(), ex?.() ?? false),
-    enabled,
-    throwOnError: (err: Error) => {
-      handleHttpError(err, t("team.errors.fetch.title"));
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () => getTeamInfo(game_id(), team_id(), ex?.() ?? false),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        handleHttpError(err, t("team.errors.fetch.title"));
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }
 
 export async function getTeamRank(game_id: number, team_id: number) {
@@ -61,14 +64,17 @@ export function useTeamRank({
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "team", team_id(), "rank"]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getTeamRank(game_id(), team_id()),
-    enabled,
-    throwOnError: (err: Error) => {
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () => getTeamRank(game_id(), team_id()),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }
 
 export async function updateTeamInfo(game_id: number, team_id: number, team: Team) {
@@ -86,6 +92,7 @@ export function useUpdateTeamInfoMutation(
     mutationFn: (data: { game_id: number; team_id: number; team: Team }) =>
       updateTeamInfo(data.game_id, data.team_id, data.team),
     onSuccess: (data: Team) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -103,6 +110,7 @@ export function useDeleteTeamMutation(props: { onSuccess?: () => void; onError?:
   return useMutation(() => ({
     mutationFn: (data: { game_id: number; team_id: number }) => deleteTeam(data.game_id, data.team_id),
     onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -128,15 +136,18 @@ export function useTeamMembers({
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "team", team_id(), "members"]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getTeamMembers(game_id(), team_id()),
-    enabled,
-    throwOnError: (err: Error) => {
-      handleHttpError(err, t("team.errors.fetchMember.title"));
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () => getTeamMembers(game_id(), team_id()),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        handleHttpError(err, t("team.errors.fetchMember.title"));
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }
 
 export async function getSelfTeam(game_id: number) {
@@ -144,24 +155,30 @@ export async function getSelfTeam(game_id: number) {
 }
 
 export function useSelfTeam({
+  silenced,
   game_id,
   enabled,
   onError,
 }: {
+  silenced?: boolean;
   game_id: () => number;
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "team", "self"]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getSelfTeam(game_id()),
-    enabled,
-    throwOnError: (err: Error) => {
-      handleHttpError(err, t("team.errors.fetch.title"));
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () => getSelfTeam(game_id()),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        if (!silenced && err instanceof HTTPError && err.response.status !== 404)
+          handleHttpError(err, t("team.errors.fetch.title"));
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }
 
 export async function updateSelfteam(
@@ -182,6 +199,7 @@ export function useUpdateSelfTeamMutation(
     mutationFn: (data: { game_id: number; team: { name: string; tag: string | null; institute_id: number | null } }) =>
       updateSelfteam(data.game_id, data.team),
     onSuccess: (data: Team) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -199,6 +217,7 @@ export function useLeaveSelfTeamMutation(props: { onSuccess?: () => void; onErro
   return useMutation(() => ({
     mutationFn: ({ game_id }: { game_id: number }) => leaveSelfTeam(game_id),
     onSuccess: () => {
+      toastSuccess(t("general.actions.leave.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -224,15 +243,18 @@ export function useTeamExtras({
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "team", team_id(), "extras"]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getTeamExtras(game_id(), team_id()),
-    enabled,
-    throwOnError: (err: Error) => {
-      handleHttpError(err, t("team.errors.fetchExtra.title"));
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () => getTeamExtras(game_id(), team_id()),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        handleHttpError(err, t("team.errors.fetchExtra.title"));
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }
 
 export async function createTeamExtra(game_id: number, team_id: number, extra: Extra) {
@@ -275,15 +297,18 @@ export function useTeamSolves({
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "team", team_id(), "solves"]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getTeamSolves(game_id(), team_id()),
-    enabled,
-    throwOnError: (err: Error) => {
-      handleHttpError(err, t("challenge.hammer.errors.fetchSolve.title"));
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () => getTeamSolves(game_id(), team_id()),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        handleHttpError(err, t("challenge.hammer.errors.fetchSolve.title"));
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }
 
 export async function createTeam(
@@ -389,13 +414,17 @@ export function useTeamList({
     filter?.() ?? "",
     institute_id?.() ?? 0,
   ]);
-  return useQuery(() => ({
-    queryKey: keys(),
-    queryFn: () => getTeamList(game_id(), page?.() ?? 1, page_size?.() ?? 15, order?.(), filter?.(), institute_id?.()),
-    enabled,
-    throwOnError: (err: Error) => {
-      handleHttpError(err, t("team.errors.fetchList.title"));
-      return onError?.(err) ?? false;
-    },
-  }));
+  return useQuery(
+    () => ({
+      queryKey: keys(),
+      queryFn: () =>
+        getTeamList(game_id(), page?.() ?? 1, page_size?.() ?? 15, order?.(), filter?.(), institute_id?.()),
+      enabled: enabled?.(),
+      throwOnError: (err: Error) => {
+        handleHttpError(err, t("team.errors.fetchList.title"));
+        return onError?.(err) ?? false;
+      },
+    }),
+    () => r2sClient
+  );
 }

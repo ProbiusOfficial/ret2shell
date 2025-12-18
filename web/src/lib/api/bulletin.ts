@@ -3,7 +3,7 @@ import { t } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
 import type { SearchParamsOption } from "ky";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getBulletinList(page: number, page_size: number) {
   return await api
@@ -33,12 +33,12 @@ export function useBulletins({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getBulletinList(page() ?? 1, page_size() ?? 15),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("bulletin.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getBulletin(id: number) {
@@ -58,12 +58,12 @@ export function useBulletin({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getBulletin(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("bulletin.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function createBulletin(article: Article) {
@@ -76,6 +76,7 @@ export function useCreateBulletinMutation(
   return useMutation(() => ({
     mutationFn: (article: Article) => createBulletin(article),
     onSuccess: (data: Article) => {
+      toastSuccess(t("general.actions.create.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -95,6 +96,7 @@ export function useUpdateBulletinMutation(
   return useMutation(() => ({
     mutationFn: (article: Article) => updateBulletin(article),
     onSuccess: (data: Article) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -108,10 +110,13 @@ export async function deleteBulletin(id: number) {
   return await api.delete(`${api_root}/bulletin/${id}`).json();
 }
 
-export function useDeleteBulletinMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
+export function useDeleteBulletinMutation(
+  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
   return useMutation(() => ({
     mutationFn: ({ id }: { id: number }) => deleteBulletin(id),
     onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {

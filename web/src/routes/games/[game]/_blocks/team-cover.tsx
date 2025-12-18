@@ -9,19 +9,24 @@ import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import Divider from "@widgets/divider";
 import clsx from "clsx";
-import { type ComponentProps, createEffect, Show, untrack } from "solid-js";
+import { type ComponentProps, createEffect, createRoot, Show, untrack } from "solid-js";
 import { createStore } from "solid-js/store";
 
-export const [teamCoverStore, setTeamCoverStore] = createStore<{
-  showTeamCover: boolean;
-}>({
-  showTeamCover: false,
-});
+const teamCoverRoot = createRoot(() =>
+  createStore<{
+    showTeamCover: boolean;
+  }>({
+    showTeamCover: false,
+  })
+);
+
+export const teamCoverStore = teamCoverRoot[0];
+export const setTeamCoverStore = teamCoverRoot[1];
 
 export default function TeamCover(props: ComponentProps<"div">) {
   const gameId = () => Number.parseInt(useParams().game || "UNKN0WN", 10);
   const game = useGame({ id: () => gameId() });
-  const team = useSelfTeam({ game_id: () => gameId() });
+  const team = useSelfTeam({ game_id: () => gameId(), silenced: true });
   const expanded = () => !!teamCoverStore.showTeamCover;
   createEffect(() => {
     if (expanded()) {
@@ -89,7 +94,7 @@ export default function TeamCover(props: ComponentProps<"div">) {
               )}
             >
               <Show when={game.data?.logo} fallback={<LogoAnimate width={64} height={64} />}>
-                <img src={mediaPath(game.data!.logo!)} width={64} height={64} alt="Logo Broken" />
+                <img src={mediaPath(game.data?.logo)} width={64} height={64} alt="Logo Broken" />
               </Show>
               <Divider direction="vertical" class="h-12 w-1" />
               <h2 class="font-bold text-3xl">{game.data?.name}</h2>

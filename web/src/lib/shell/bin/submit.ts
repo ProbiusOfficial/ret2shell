@@ -1,6 +1,5 @@
-import { useChallenge, useChallengeSolveStatus, useChallenges } from "@api/challenge";
+import { r2sClient } from "@api";
 import { checkSubmissionStatus, submitFlag } from "@api/game";
-import { useSelfTeam } from "@api/team";
 import type { Challenge } from "@models/challenge";
 import type { Game } from "@models/game";
 import { isAdminOfGame, isGameInProgress } from "@storage/game";
@@ -42,26 +41,20 @@ export class Submit implements Command {
         if (st.solved !== null) {
           io.println("");
           if (st.solved) {
-            const c = useChallenge({
-              game_id: () => game!.id,
-              challenge_id: () => challenge!.id,
+            r2sClient.invalidateQueries({
+              queryKey: ["game", game!.id, "challenge", challenge!.id],
             });
-            const s = useChallengeSolveStatus({
-              game_id: () => game!.id,
-              challenge_id: () => challenge!.id,
+            r2sClient.invalidateQueries({
+              queryKey: ["game", game!.id, "challenge", challenge!.id, "solveStatus"],
             });
-            const cs = useChallenges({
-              game_id: () => game!.id,
+            r2sClient.invalidateQueries({
+              queryKey: ["game", game!.id, "challenges", 1, 200],
             });
             io.success(`${t("challenge.submission.status.solved.title")}: ${st.result}`);
-            c.refetch();
-            s.refetch();
-            cs.refetch();
             if (isGameInProgress(game) && !isAdminOfGame(game)) {
-              const te = useSelfTeam({
-                game_id: () => game!.id,
+              r2sClient.invalidateQueries({
+                queryKey: ["game", game.id, "team", "self"],
               });
-              te.refetch();
             }
           } else {
             io.error(`${t("challenge.submission.status.failed.title")}: ${st.result}`);

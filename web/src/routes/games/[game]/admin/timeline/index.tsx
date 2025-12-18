@@ -3,7 +3,6 @@ import { createForm, required } from "@modular-forms/solid";
 import { useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
@@ -33,11 +32,6 @@ export default function Timeline() {
 
   const updateMutation = useUpdateGameMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });

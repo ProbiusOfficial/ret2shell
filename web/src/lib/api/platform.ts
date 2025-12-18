@@ -6,7 +6,7 @@ import { t } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
 import { DateTime } from "luxon";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getPlatformInfo() {
   return await api.get(`${api_root}/platform/info`).json<ServerConfig>();
@@ -16,11 +16,11 @@ export function usePlatformInfo({ enabled, onError }: { enabled?: () => boolean;
   return useQuery(() => ({
     queryKey: ["platform", "info"],
     queryFn: getPlatformInfo,
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getAuthConfig() {
@@ -35,11 +35,11 @@ export function useVersion({ enabled, onError }: { enabled?: () => boolean; onEr
   return useQuery(() => ({
     queryKey: ["platform", "version"],
     queryFn: getVersion,
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export type PlatformStatistics = {
@@ -84,12 +84,12 @@ export function usePlatformStatistics({
   return useQuery(() => ({
     queryKey: ["platform", "statistics"],
     queryFn: getPlatformStatistics,
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("platform.statistics.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getPlatformLogs() {
@@ -106,12 +106,12 @@ export function usePlatformLogs({
   return useQuery(() => ({
     queryKey: ["platform", "logs"],
     queryFn: async () => (await getPlatformLogs()).sort((a, b) => b.localeCompare(a)),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("platform.logs.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export type Log = {
@@ -179,12 +179,12 @@ export function useQueryPlatformLog({
       (await queryPlatformLog(req())).sort((a, b) => {
         return DateTime.fromISO(a._time).toMillis() - DateTime.fromISO(b._time).toMillis();
       }),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("platform.logs.errors.fetchLogs.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export type PlatformLicense = {
@@ -208,11 +208,11 @@ export function usePlatformLicense({
   return useQuery(() => ({
     queryKey: ["platform", "license"],
     queryFn: async () => await getPlatformLicense(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getPlatformConfig() {
@@ -229,12 +229,12 @@ export function usePlatformConfig({
   return useQuery(() => ({
     queryKey: ["platform", "config"],
     queryFn: async () => await getPlatformConfig(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("platform.errors.fetchConfig.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updatePlatformConfig(config: Config) {
@@ -242,11 +242,12 @@ export async function updatePlatformConfig(config: Config) {
 }
 
 export function useUpdatePlatformConfigMutation(
-  props: { onSuccess?: (config: Config) => void; onError?: (err: Error) => void } = {}
+  props: {  onSuccess?: (config: Config) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
     mutationFn: (config: Config) => updatePlatformConfig(config),
     onSuccess: (data: Config) => {
+       toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {

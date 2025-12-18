@@ -8,7 +8,6 @@ import {
 import { useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -44,42 +43,22 @@ export default function Traffic() {
   const updateTrafficMutation = useUpdateGameTrafficMutation({
     onSuccess: (resp) => {
       setLint(resp.lint);
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });
   const deleteTrafficMutation = useDeleteGameTrafficMutation({
     onSuccess: () => {
       setLint(null);
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });
   const updateNodeSelectorMutation = useUpdateGameNodeSelectorMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });
   const deleteNodeSelectorMutation = useDeleteGameNodeSelectorMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });

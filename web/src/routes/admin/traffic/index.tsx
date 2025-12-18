@@ -7,7 +7,6 @@ import {
 import { usePlatformConfig } from "@api/platform";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -51,11 +50,6 @@ export default function Traffic() {
 
   function onSuccess() {
     config.refetch();
-    addToast({
-      level: "success",
-      description: t("general.actions.save.status.success"),
-      duration: 5000,
-    });
   }
 
   const updateTrafficMutation = useUpdateGlobalTrafficScriptMutation({

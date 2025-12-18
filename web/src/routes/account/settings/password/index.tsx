@@ -4,7 +4,6 @@ import { useNavigate } from "@solidjs/router";
 import { accountStore, resetUser } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
 
@@ -20,11 +19,6 @@ export default function () {
 
   const mutation = useChangePasswordMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       setTimeout(() => {
         resetUser();
         navigate("/account/login");
@@ -122,7 +116,7 @@ export default function () {
           <Button
             type="submit"
             level="primary"
-            class="!mt-4"
+            class="mt-4!"
             loading={mutation.isPending}
             disabled={mutation.isPending}
           >

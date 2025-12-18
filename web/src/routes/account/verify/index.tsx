@@ -13,11 +13,6 @@ export default function () {
   const token = createMemo(() => searchParams.token as string | undefined);
   const mutation = useVerifyEmailMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("account.verify.status.success.title"),
-        duration: 5000,
-      });
       navigate("/account/settings", { replace: true });
     },
     onError: () => {

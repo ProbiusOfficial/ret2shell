@@ -40,7 +40,7 @@ export default function () {
           <For each={oauthProviders.data}>
             {(service) => (
               <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-                <img src={mediaPath(service.avatar ?? "")} alt={service.name} class="w-5 h-5" />
+                <img src={mediaPath(service.avatar)} alt={service.name} class="w-5 h-5" />
                 <h4 class="font-bold text-start flex-1">
                   <span>{service.name}</span>
                 </h4>
@@ -68,7 +68,9 @@ export default function () {
                     <Card contentClass="max-w-lg p-2">
                       <table>
                         <For
-                          each={Object.entries(oauthStatus.data!.find((v) => v.provider === service.provider)!.data)}
+                          each={Object.entries(
+                            oauthStatus.data?.find((v) => v.provider === service.provider)?.data ?? []
+                          )}
                         >
                           {([key, value]) => (
                             <tr class="h-12 align-middle text-start border-b border-b-layer-content/15">
@@ -84,8 +86,9 @@ export default function () {
                   <Button
                     size="sm"
                     onClick={() =>
+                      oauthStatus.data?.find((v) => v.provider === service.provider)?.id &&
                       mutation.mutate({
-                        id: oauthStatus.data!.find((v) => v.provider === service.provider)!.id,
+                        id: oauthStatus.data?.find((v) => v.provider === service.provider)?.id || 0,
                       })
                     }
                   >

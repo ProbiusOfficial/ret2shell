@@ -22,7 +22,6 @@ import {
   isGameInRegister,
 } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
@@ -134,19 +133,13 @@ export default function () {
       try {
         const resp = await uploadMedia(coverFile()!, false);
         if (game.data) {
-          await updateGameMutation.mutateAsync({
+          updateGameMutation.mutate({
             id: game.data.id,
             game: {
               ...game.data,
               cover: resp.hash,
             },
           });
-          addToast({
-            level: "success",
-            description: t("general.actions.upload.status.success"),
-            duration: 5000,
-          });
-          void game.refetch();
         }
       } catch (err) {
         handleHttpError(err as Error, t("general.actions.upload.status.fail"));
@@ -187,19 +180,13 @@ export default function () {
       try {
         const resp = await uploadMedia(logoFile()!, false);
         if (game.data) {
-          await updateGameMutation.mutateAsync({
+          updateGameMutation.mutate({
             id: game.data.id,
             game: {
               ...game.data,
               logo: resp.hash,
             },
           });
-          addToast({
-            level: "success",
-            description: t("general.actions.upload.status.success"),
-            duration: 5000,
-          });
-          void game.refetch();
         }
       } catch (err) {
         handleHttpError(err as Error, t("general.actions.upload.status.fail"));
@@ -214,22 +201,26 @@ export default function () {
   }
 
   async function onUpdateIntroduction(result: ArticleModel) {
-    try {
-      await updateIntroductionMutation.mutateAsync({ id: gameId(), article: result });
+    updateIntroductionMutation.mutate({ id: gameId(), article: result });
+  }
+
+  const updateGameMutation = useUpdateGameMutation({
+    onSuccess: () => {
+      void game.refetch();
+    },
+  });
+  const updateIntroductionMutation = useUpdateGameIntroductionMutation({
+    onSuccess: () => {
       setSearchParams({ edit: null });
       void game.refetch();
       void introduction.refetch();
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail"));
-    }
-  }
-
-  const updateGameMutation = useUpdateGameMutation();
-  const updateIntroductionMutation = useUpdateGameIntroductionMutation();
+    },
+  });
 
   const selfTeam = useSelfTeam({
     game_id: gameId,
     enabled: () => !!accountStore.id && gameId() > 0 && !!game.data && !isAdmin(),
+    silenced: true,
   });
   const teamRank = useTeamRank({
     game_id: gameId,
@@ -291,7 +282,7 @@ export default function () {
                     }
                   >
                     <img
-                      src={logoPreviewUrl() || mediaPath(game.data!.logo!)}
+                      src={logoPreviewUrl() || mediaPath(game.data?.logo)}
                       width={64}
                       height={64}
                       alt="Logo Broken"
@@ -474,7 +465,7 @@ export default function () {
               <IntroForm onDone={onUpdateIntroduction} />
             </Match>
             <Match when={introduction.data && !introduction.isFetching}>
-              <Article class="self-center" content={introduction.data!.content!} extra={true} headingAnchors={true} />
+              <Article class="self-center" content={introduction.data?.content || ''} extra={true} headingAnchors={true} />
             </Match>
             <Match when={introduction.isFetching}>
               <div class="flex-1 flex flex-col items-center justify-center space-y-8 opacity-60">

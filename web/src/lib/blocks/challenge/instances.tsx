@@ -76,11 +76,6 @@ function CreateForm(fnProps: { gameId: number; challengeId: number; onDone?: () 
 
   const addMutation = useUpdateChallengeEnvMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.add.status.success"),
-        duration: 5000,
-      });
       setValues(form, {
         name: "",
         tag: "",
@@ -545,7 +540,7 @@ function InstanceList(props: ChallengeWidgetProps) {
                 <Show when={pod.metadata}>
                   <div class="py-2 flex flex-row space-x-2 items-center border-b border-b-layer-content/5">
                     <span class="shrink-0 icon-[fluent--clock-20-regular] w-5 h-5" />
-                    <span>{DateTime.fromISO(pod.metadata!.creationTimestamp!).toFormat("yyyy-MM-dd HH:mm:ss")}</span>
+                    <span>{DateTime.fromISO(pod.metadata?.creationTimestamp || "").toFormat("yyyy-MM-dd HH:mm:ss")}</span>
                   </div>
                 </Show>
                 <For each={pod.status?.containerStatuses || []}>
@@ -591,11 +586,6 @@ export default function (props: ChallengeWidgetProps) {
   const repos = useRegistryRepositories({ game_id: () => props.gameId });
   const updateMutation = useUpdateChallengeEnvMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       challengeEnv.refetch();
     },
   });
@@ -640,11 +630,6 @@ export default function (props: ChallengeWidgetProps) {
 
   const deleteMutation = useDeleteChallengeEnvMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       challengeEnv.refetch();
     },
   });

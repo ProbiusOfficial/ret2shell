@@ -1,7 +1,6 @@
 import { useChallenge, useUpdateChallengeMutation } from "@api/challenge";
 import type { Challenge } from "@models/challenge";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import { DateTime } from "luxon";
 import type { ChallengeWidgetProps } from ".";
 import { type ChallengeForm, FormBare } from "./form";
@@ -12,14 +11,7 @@ export default function (props: ChallengeWidgetProps) {
     challenge_id: () => props.challengeId,
   });
 
-  const updateChallengeMutation = useUpdateChallengeMutation({
-    onSuccess: () =>
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      }),
-  });
+  const updateChallengeMutation = useUpdateChallengeMutation();
 
   async function handleUpdateChallenge(result: ChallengeForm) {
     const tags = result.tag.split("/").map((t) => {
@@ -37,7 +29,7 @@ export default function (props: ChallengeWidgetProps) {
       tag: tags,
       hidden: challenge.data?.hidden ?? false,
       score: challenge.data?.score ?? result.initial,
-      bucket: challenge.data!.bucket!,
+      bucket: challenge.data!.bucket,
       score_rule: {
         initial: result.initial ?? challenge.data?.score_rule.initial ?? 0,
         minimum: result.minimum ?? challenge.data?.score_rule.minimum ?? 0,

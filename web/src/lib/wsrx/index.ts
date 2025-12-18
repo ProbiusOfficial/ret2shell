@@ -1,10 +1,9 @@
-import { useGameInstances } from "@api/game";
 import type { Instance } from "@models/instance";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import { Wsrx, WsrxError, WsrxFeature, type WsrxInstance, type WsrxOptions, WsrxState } from "@xdsec/wsrx";
-import { type Accessor, createEffect, createSignal } from "solid-js";
+import { type Accessor, createEffect, createRoot, createSignal } from "solid-js";
 
 export class WsrxWrapper {
   apiAddr: Accessor<string>;
@@ -79,11 +78,10 @@ export class WsrxWrapper {
     }
   }
 
-  public async deleteOutdatedLocal(game_id?: number) {
-    const instances = useGameInstances({ game_id: () => game_id || 0 });
+  public async deleteOutdatedLocal(instances?: Instance[]) {
     if (this.wsrx.getState() === WsrxState.Usable) {
       for (const { local, remote } of this.traffics()) {
-        if (!instances.data?.some((instance) => remote.includes(instance.traffic))) {
+        if (!instances?.some((instance) => remote.includes(instance.traffic))) {
           await this.deleteLocal(local);
         }
       }
@@ -124,10 +122,9 @@ export class WsrxWrapper {
     }
   }
 
-  public async openAllTraffic(game_id?: number) {
-    const instances = useGameInstances({ game_id: () => game_id || 0 });
+  public async openAllTraffic(instances?: Instance[]) {
     if (this.wsrx.getState() === WsrxState.Usable) {
-      for (const instance of instances.data ?? []) {
+      for (const instance of instances ?? []) {
         await this.addLocal(instance);
       }
     }
@@ -138,7 +135,7 @@ export class WsrxWrapper {
   }
 }
 
-export const wsrx = new WsrxWrapper();
+export const wsrx = createRoot(() => new WsrxWrapper());
 
 export function getWsrxLink(wsrx: string, port: number) {
   const prefix = location.protocol === "https:" ? "wss" : "ws";

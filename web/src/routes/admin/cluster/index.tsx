@@ -131,7 +131,7 @@ export default function () {
               <span class="opacity-60 hidden lg:inline">
                 <span>Online at: </span>
                 <span>
-                  {DateTime.fromISO(shownNode()!.metadata!.creationTimestamp!).toFormat("yyyy-MM-dd HH:mm:ss")}
+                  {DateTime.fromISO(shownNode()?.metadata?.creationTimestamp || "").toFormat("yyyy-MM-dd HH:mm:ss")}
                 </span>
               </span>
               <Button size="sm" square title={t("cluster.actions.refreshNode.title")}>
@@ -149,7 +149,7 @@ export default function () {
               <h3 class="text-center font-bold">{t("cluster.nodeInfo.title")}</h3>
               <table>
                 <tbody>
-                  <For each={Object.entries(shownNode()!.status!.nodeInfo!)}>
+                  <For each={Object.entries(shownNode()?.status?.nodeInfo || {})}>
                     {([key, value]) => (
                       <tr class="border-b border-b-layer-content/10">
                         <td class="font-bold opacity-60 p-2">{`${t(`cluster.nodeInfo.${key}`) as string}`}</td>
@@ -181,7 +181,7 @@ export default function () {
               <div class="flex flex-col lg:flex-row p-3 lg:p-6">
                 <table class="flex-1">
                   <tbody>
-                    <For each={Object.entries(shownNode()!.status!.capacity!)}>
+                    <For each={Object.entries(shownNode()?.status?.capacity || {})}>
                       {([key, value]) => (
                         <tr class="border-b border-b-layer-content/10">
                           <td class="font-bold opacity-60 p-2">Capacity {key}</td>
@@ -193,7 +193,7 @@ export default function () {
                 </table>
                 <table class="flex-1">
                   <tbody>
-                    <For each={Object.entries(shownNode()!.status!.allocatable!)}>
+                    <For each={Object.entries(shownNode()?.status?.allocatable || {})}>
                       {([key, value]) => (
                         <tr class="border-b border-b-layer-content/10">
                           <td class="font-bold opacity-60 p-2">Allocatable {key}</td>

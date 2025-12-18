@@ -5,7 +5,6 @@ import { useNavigate } from "@solidjs/router";
 import { accountStore, resetUser } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -28,11 +27,6 @@ export default function () {
     onSuccess: () => {
       resetUser();
       navigate("/");
-      addToast({
-        level: "success",
-        description: t("account.delete.bye.message"),
-        duration: 5000,
-      });
     },
     onError: () => {
       setTimestamp(DateTime.now().toMillis());

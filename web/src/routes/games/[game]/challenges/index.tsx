@@ -37,13 +37,15 @@ export default function () {
   }
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedChallengeId = createMemo(
-    () => Number.parseInt((searchParams.challenge as string) || "NaN", 10) || null
-  );
+  const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "", 10) || null);
   const inCreate = createMemo(() => searchParams.create === "true");
 
   const game = useGame({ id: () => gameId(), enabled: () => !!gameId() });
-  const team = useSelfTeam({ game_id: () => gameId(), enabled: () => !!accountStore.token && !!gameId() });
+  const team = useSelfTeam({
+    game_id: () => gameId(),
+    enabled: () => !!accountStore.token && !!gameId(),
+    silenced: true,
+  });
 
   const challenge = useChallenge({
     game_id: () => gameId(),
@@ -95,7 +97,7 @@ export default function () {
     },
   });
 
-  async function onCreateChallenge(result: ChallengeForm) {
+  function onCreateChallenge(result: ChallengeForm) {
     const tags = result.tag.split("/").map((t) => {
       return { name: t, primary: false };
     });
@@ -119,7 +121,7 @@ export default function () {
       release_at: result.release_at ? DateTime.fromSeconds(result.release_at) : null,
       archive_at: result.archive_at ? DateTime.fromSeconds(result.archive_at) : null,
     } as ChallengeModel;
-    await createChallengeMutation.mutateAsync({ game_id: gameId(), challenge });
+    createChallengeMutation.mutate({ game_id: gameId(), challenge });
   }
 
   let prevUnreadChats: Chat[] = [];
@@ -191,7 +193,7 @@ export default function () {
         )}
       >
         <div class="flex-1 flex flex-col w-0">
-          <Tabs gameId={gameId()} challengeId={selectedChallengeId() ?? 0} />
+          <Tabs gameId={gameId()} challengeId={selectedChallengeId() ?? undefined} />
           <Switch fallback={<Welcome />}>
             <Match when={challenge.isFetching}>
               <div class="flex-1 flex flex-row space-x-2 items-center justify-center">
@@ -201,7 +203,7 @@ export default function () {
             <Match when={inCreate()}>
               <Form onDone={onCreateChallenge} gameId={gameId()} challengeId={0} />
             </Match>
-            <Match when={challenge.data}>
+            <Match when={selectedChallengeId() && challenge.data}>
               <Challenge challengeId={selectedChallengeId()!} gameId={gameId()} archived={archived()} />
             </Match>
           </Switch>

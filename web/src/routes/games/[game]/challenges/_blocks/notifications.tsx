@@ -6,7 +6,6 @@ import { A } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { isAdminOfGame } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Editor from "@widgets/editor";
@@ -34,11 +33,6 @@ export default function (props: { gameId: number }) {
   const [form, { Form, Field }] = createForm<NotificationForm>();
   const createMutation = useCreateNotificationMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.create.status.success"),
-        duration: 5000,
-      });
       setValues(form, { title: "", content: "" });
       setCreateFormExpanded(false);
       notifications.refetch();
@@ -46,16 +40,11 @@ export default function (props: { gameId: number }) {
   });
   const deleteMutation = useDeleteNotificationMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       notifications.refetch();
     },
   });
 
-  async function onSubmit(result: NotificationForm) {
+  function onSubmit(result: NotificationForm) {
     const payload = {
       id: 0,
       title: result.title,
@@ -64,11 +53,11 @@ export default function (props: { gameId: number }) {
       publisher_id: accountStore.id,
       game_id: props.gameId,
     } as Notification;
-    await createMutation.mutateAsync({ game_id: props.gameId, notification: payload });
+    createMutation.mutate({ game_id: props.gameId, notification: payload });
   }
 
-  async function onDelete(id: number) {
-    await deleteMutation.mutateAsync({ game_id: props.gameId, id });
+  function onDelete(id: number) {
+    deleteMutation.mutate({ game_id: props.gameId, id });
   }
 
   const refreshTimer = setInterval(() => {

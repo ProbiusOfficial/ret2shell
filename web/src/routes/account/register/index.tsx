@@ -7,7 +7,6 @@ import { useNavigate, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
@@ -35,12 +34,6 @@ export default function () {
   const [searchParams, _] = useSearchParams();
 
   function onSuccess() {
-    addToast({
-      level: "success",
-      description: t("account.register.status.success.message"),
-      duration: 5000,
-      // img: xdsecMascotHappy,
-    });
     navigate("/", { replace: true });
   }
 
@@ -135,7 +128,7 @@ export default function () {
                     ref={accountInputRef!}
                     extraBtn={
                       <Button
-                        class="!rounded-l-none"
+                        class="rounded-l-none!"
                         type="button"
                         onClick={async () => {
                           if (accountInputRef! && accountInputRef.value) {
@@ -226,7 +219,7 @@ export default function () {
             <Button
               type="submit"
               level="primary"
-              class="!mt-4"
+              class="mt-4!"
               loading={mutation.isPending || oauthMutation.isPending}
               disabled={mutation.isPending || oauthMutation.isPending}
             >

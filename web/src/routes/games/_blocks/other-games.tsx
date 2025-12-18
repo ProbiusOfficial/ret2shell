@@ -34,7 +34,7 @@ export default function () {
               class="w-full lg:max-w-sm m-4 transform transition-all lg:rounded-b-lg overflow-hidden relative flex flex-col"
               contentClass="relative"
             >
-              <Picture class="aspect-video" src={(game.cover && mediaPath(game.cover!)) || bgGameDefault} />
+              <Picture class="aspect-video" src={(game.cover && mediaPath(game.cover)) || bgGameDefault} />
               <Tag
                 class="absolute top-2 right-2"
                 level={

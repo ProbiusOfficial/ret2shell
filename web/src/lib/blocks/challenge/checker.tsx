@@ -1,6 +1,9 @@
-import { useChallengeCheckerScript, useUpdateChallengeCheckerScriptMutation } from "@api/challenge";
+import { r2sClient } from "@api";
+import {
+  useChallengeCheckerScript,
+  useUpdateChallengeCheckerScriptMutation,
+} from "@api/challenge";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import { EditorBare } from "@widgets/editor";
 import Select from "@widgets/select";
@@ -79,24 +82,39 @@ export default function (props: ChallengeWidgetProps) {
   });
   const [script, setScript] = createSignal("");
 
-  const scriptQuery = useChallengeCheckerScript({
+  const scriptRemote = useChallengeCheckerScript({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId,
+  });
+  const attachmentKeys = createMemo(() => [
+    "game",
+    props.gameId,
+    "challenge",
+    props.challengeId,
+    "attachments",
+    "checker",
+    "all",
+  ]);
+
+  createEffect(() => {
+    if (scriptRemote.data) {
+      untrack(() => {
+        setScript(scriptRemote.data?.script || "");
+      });
+    }
   });
 
   const updateScriptMutation = useUpdateChallengeCheckerScriptMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
+      scriptRemote.refetch();
+      r2sClient.invalidateQueries({
+        queryKey: attachmentKeys(),
       });
-      scriptQuery.refetch();
     },
   });
 
   function restoreScript() {
-    setScript(scriptQuery.data?.script || "");
+    setScript(scriptRemote.data?.script || "");
   }
 
   createEffect(() => {
@@ -161,8 +179,8 @@ export default function (props: ChallengeWidgetProps) {
                   content: script(),
                 })
               }
-              loading={updateScriptMutation.isPending || scriptQuery.isLoading}
-              disabled={updateScriptMutation.isPending || scriptQuery.isLoading}
+              loading={updateScriptMutation.isPending || scriptRemote.isLoading}
+              disabled={updateScriptMutation.isPending || scriptRemote.isLoading}
             >
               {t("general.actions.save.title")}
               <span>&</span>
@@ -176,18 +194,18 @@ export default function (props: ChallengeWidgetProps) {
         lineNumbers
         lang="rust"
         value={script()}
-        lints={scriptQuery.data?.lint ?? []}
+        lints={scriptRemote.data?.lint ?? []}
         onValueChanged={(e) => {
           setScript(e);
         }}
       />
       <footer class="min-h-12 border-t border-t-layer-content/10 flex flex-col lg:flex-row flex-wrap justify-start space-x-2 items-center gap-y-2 py-2">
         <span class="text-primary icon-[fluent--info-16-regular]" />
-        <span class="text-primary">{scriptQuery.data?.lint?.filter((v) => v.kind === "info").length ?? 0}</span>
+        <span class="text-primary">{scriptRemote.data?.lint?.filter((v) => v.kind === "info").length ?? 0}</span>
         <span class="text-warning icon-[fluent--warning-16-regular]" />
-        <span class="text-warning">{scriptQuery.data?.lint?.filter((v) => v.kind === "warning").length ?? 0}</span>
+        <span class="text-warning">{scriptRemote.data?.lint?.filter((v) => v.kind === "warning").length ?? 0}</span>
         <span class="text-error icon-[fluent--warning-16-regular]" />
-        <span class="text-error">{scriptQuery.data?.lint?.filter((v) => v.kind === "error").length ?? 0}</span>
+        <span class="text-error">{scriptRemote.data?.lint?.filter((v) => v.kind === "error").length ?? 0}</span>
         <div class="flex-1" />
         <a href="https://rune-rs.github.io/" class="text-primary hover:underline">
           Rune Grammar <span class="icon-[fluent--open-12-regular]" />

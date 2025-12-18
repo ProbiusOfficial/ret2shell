@@ -5,18 +5,23 @@ import type { Game } from "@models/game";
 import { useNavigate } from "@solidjs/router";
 import LoadingTips from "@widgets/loading-tips";
 import clsx from "clsx";
-import { type ComponentProps, createEffect, createSignal, Show, untrack } from "solid-js";
+import { type ComponentProps, createEffect, createRoot, createSignal, Show, untrack } from "solid-js";
 import { createStore } from "solid-js/store";
 
-export const [gameCoverStore, setGameCoverStore] = createStore<{
-  preload: Game | null;
-  goto: number | null;
-  visited: number[];
-}>({
-  preload: null,
-  goto: null,
-  visited: [],
-});
+const gameCoverRoot = createRoot(() =>
+  createStore<{
+    preload: Game | null;
+    goto: number | null;
+    visited: number[];
+  }>({
+    preload: null,
+    goto: null,
+    visited: [],
+  })
+);
+
+export const gameCoverStore = gameCoverRoot[0];
+export const setGameCoverStore = gameCoverRoot[1];
 
 export default function (props: ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -45,11 +50,13 @@ export default function (props: ComponentProps<"div">) {
       untrack(() => {
         setTimeout(() => {
           navigate(`/games/${gameCoverStore.goto}`);
-          setGameCoverStore({ goto: null, preload: null });
         }, 2000);
         setTimeout(() => {
           setExpanded(false);
         }, 3000);
+        setTimeout(() => {
+          setGameCoverStore({ goto: null, preload: null });
+        }, 4000);
       });
     }
   });
@@ -87,7 +94,7 @@ export default function (props: ComponentProps<"div">) {
             <Show when={gameCoverStore.preload?.logo} fallback={<LogoAnimate class="w-full h-full object-contain" />}>
               <img
                 class="w-full h-full object-contain"
-                src={mediaPath(gameCoverStore.preload!.logo!)}
+                src={mediaPath(gameCoverStore.preload?.logo)}
                 alt={gameCoverStore.preload?.name}
               />
             </Show>

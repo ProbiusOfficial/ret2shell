@@ -149,7 +149,7 @@ export default function ProviderForm(props: {
           {(field, props) => (
             <Avatar
               class="w-32 h-32 relative"
-              src={(getValue(form, "avatar") && mediaPath(getValue(form, "avatar")!)) || undefined}
+              src={(getValue(form, "avatar") && mediaPath(getValue(form, "avatar"))) || undefined}
               fallback={getValue(form, "provider")?.toUpperCase()}
             >
               <Button

@@ -384,7 +384,7 @@ export default function () {
                 xAxis: {
                   type: "category",
                   data: statistics
-                    .data!.users.institutes.map((i) => statistics.data!.institutes.find((ii) => ii.id === i[0])!.name)
+                    .data!.users.institutes.map((i) => statistics.data?.institutes.find((ii) => ii.id === i[0])?.name)
                     .concat(t("platform.statistics.instituteUsers.others")),
                 },
                 yAxis: {

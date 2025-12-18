@@ -11,7 +11,6 @@ import {
 import { mediaPath } from "@lib/utils/media";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
@@ -28,11 +27,6 @@ export default function () {
   function onSuccess() {
     oauthProviders.refetch();
     institutes.refetch();
-    addToast({
-      level: "success",
-      description: t("general.actions.create.status.success"),
-      duration: 5000,
-    });
   }
 
   const createInstituteMutation = useCreateInstituteMutation({ onSuccess });

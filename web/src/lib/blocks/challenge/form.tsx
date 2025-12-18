@@ -37,6 +37,7 @@ export function FormBare(
   const challenge = useChallenge({
     game_id: () => props.gameId,
     challenge_id: () => props.challengeId || 0,
+    enabled: () => !!game.data && !!props.challengeId,
   });
 
   createEffect(() => {

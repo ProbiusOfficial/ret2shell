@@ -2,9 +2,10 @@ import { luxonReplacer, luxonReviver } from "@models/utils";
 import { base64 } from "@scure/base";
 import { accountStore, resetUser, storeToken } from "@storage/account";
 import { platformStore } from "@storage/platform";
+import { QueryClient } from "@tanstack/solid-query";
 import ky from "ky";
 
-export { handleHttpError } from "./utils";
+export { handleHttpError, toastError, toastSuccess } from "./utils";
 
 export const api_root = (import.meta.env.VITE_API_ROOT as string) || "/api";
 
@@ -58,3 +59,12 @@ const api = ky.extend({
 });
 
 export default api;
+
+export const r2sClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});

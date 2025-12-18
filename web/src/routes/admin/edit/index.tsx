@@ -5,7 +5,6 @@ import { createForm, custom, setValues } from "@modular-forms/solid";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Checkbox from "@widgets/checkbox";
 import Input from "@widgets/input";
@@ -26,15 +25,7 @@ type PlatformConfigForm = {
 export default function () {
   const [form, { Form, Field }] = createForm<PlatformConfigForm>();
   const config = usePlatformConfig();
-  const mutation = useUpdatePlatformConfigMutation({
-    onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
-    },
-  });
+  const mutation = useUpdatePlatformConfigMutation();
   async function onSubmit(result: PlatformConfigForm) {
     const mergedConfig = {
       ...config.data,

@@ -8,7 +8,6 @@ import { useGame } from "@api/game";
 import { useSearchParams } from "@solidjs/router";
 import { isAdminOfGame } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -70,11 +69,6 @@ function BottomPanel(props: ChallengeWidgetProps) {
 
   const deleteMutation = useDeleteChallengeMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       setSearchParams({ challenge: null });
     },
   });
@@ -97,7 +91,6 @@ function BottomPanel(props: ChallengeWidgetProps) {
         defer
       >
         <div class="h-full flex px-2 py-0 items-center space-x-2 min-w-max w-max">
-          <Divider direction="vertical" class="h-8" />
           <Button onClick={() => setSearchParams({ tab: "terminal" })} ghost={page() !== "terminal"}>
             <span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />
             <span>{t("challenge.terminal.title")}</span>

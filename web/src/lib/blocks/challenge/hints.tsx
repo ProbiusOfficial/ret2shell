@@ -10,7 +10,6 @@ import { useSelfTeam, useTeamExtras } from "@api/team";
 import { clearError, createForm, required, reset as resetForm, setValue } from "@modular-forms/solid";
 import { isAdminOfGame } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
@@ -35,23 +34,18 @@ export default function (props: ChallengeWidgetProps) {
   const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
   const team = useSelfTeam({
     game_id: () => props.gameId,
-    enabled: () => !props.training && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !!game.data && !isAdminOfGame(game.data),
   });
 
   const hints = useChallengeHints({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
   const extras = useTeamExtras({
     game_id: () => props.gameId,
     team_id: () => team.data?.id || 0,
-    enabled: () => !props.training && !isAdminOfGame(game.data),
+    enabled: () => !props.training && !!game.data && !isAdminOfGame(game.data),
   });
 
   const createMutation = useCreateChallengeHintMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.create.status.success"),
-        duration: 5000,
-      });
       resetForm(form, {
         initialValues: {
           content: "",

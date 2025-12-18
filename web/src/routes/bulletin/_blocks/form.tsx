@@ -83,7 +83,7 @@ export default function (props: { onDone: (calendar: Article) => void; articleId
                 <Field name="weight" type="boolean">
                   {(field, props) => (
                     <IconCheckbox
-                      class="!rounded-none"
+                      class="rounded-none!"
                       uncheckedIcon="icon-[fluent--pin-20-regular]"
                       checkedIcon="icon-[fluent--pin-20-filled]"
                       inputProps={props}
@@ -96,7 +96,7 @@ export default function (props: { onDone: (calendar: Article) => void; articleId
                 <Field name="enable_comment" type="boolean">
                   {(field, props) => (
                     <IconCheckbox
-                      class="!rounded-l-none"
+                      class="rounded-l-none!"
                       title={t("bulletin.form.enableComment.label")}
                       uncheckedIcon="icon-[fluent--chat-20-regular]"
                       checkedIcon="icon-[fluent--chat-20-filled]"
@@ -130,7 +130,7 @@ export default function (props: { onDone: (calendar: Article) => void; articleId
       <Button
         type="submit"
         level="primary"
-        class="!mt-4"
+        class="mt-4!"
         loading={createBulletinMutation.isPending || updateBulletinMutation.isPending}
         disabled={createBulletinMutation.isPending || updateBulletinMutation.isPending}
       >

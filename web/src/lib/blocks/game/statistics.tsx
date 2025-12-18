@@ -188,7 +188,7 @@ export default function GameStatistics(props: { training?: boolean; gameId: numb
   return (
     <div class="flex-1 flex flex-col p-3 lg:p-6 gap-3 lg:gap-6 w-full">
       <div class="hidden lg:flex items-center justify-start space-x-12 px-12">
-        <img class="w-24 h-24" src={game.data?.logo ? mediaPath(game.data!.logo) : logo} alt="CTF" />
+        <img class="w-24 h-24" src={game.data?.logo ? mediaPath(game.data.logo) : logo} alt="CTF" />
         <h1 class="text-5xl font-bold flex-1 truncate">{game.data?.name}</h1>
         <h2 class="text-5xl font-bold">{t("game.statistics.title")}</h2>
       </div>

@@ -2,7 +2,6 @@ import { useDeleteGameMutation, useGame } from "@api/game";
 import { useNavigate, useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Input from "@widgets/input";
@@ -19,11 +18,6 @@ export default function () {
 
   const deleteMutation = useDeleteGameMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       navigate("/games", { replace: true });
     },
   });

@@ -9,7 +9,7 @@ import { createMemo } from "solid-js";
 import type { Extra } from "../models/extra";
 import type { CommitHistory } from "../models/git";
 import type { Hint } from "../models/hint";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getChallengeList(game_id: number, page?: number, page_size?: number) {
   return (
@@ -37,16 +37,16 @@ export function useChallenges({
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {
-  const keys = createMemo(() => ["game", game_id(), "challenge", "list", page?.() ?? 1, page_size?.() ?? 15]);
+  const keys = createMemo(() => ["game", game_id(), "challenge", "list", page?.() ?? 1, page_size?.() ?? 200]);
   return useQuery(() => ({
     queryKey: keys(),
-    queryFn: async () => await getChallengeList(game_id(), page?.() ?? 1, page_size?.() ?? 15),
-    enabled,
+    queryFn: async () => await getChallengeList(game_id(), page?.() ?? 1, page_size?.() ?? 200),
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getChallenge(game_id: number, challenge_id: number) {
@@ -65,15 +65,16 @@ export function useChallenge({
   onError?: (err: Error) => boolean;
 }) {
   const keys = createMemo(() => ["game", game_id(), "challenge", challenge_id()]);
+
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallenge(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function createChallenge(game_id: number, challenge: Challenge) {
@@ -110,6 +111,7 @@ export function useUpdateChallengeMutation(
   return useMutation(() => ({
     mutationFn: (req: { game_id: number; challenge: Challenge }) => updateChallenge(req.game_id, req.challenge),
     onSuccess: (data: Challenge) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -165,6 +167,7 @@ export function useDeleteChallengeMutation(props: { onSuccess?: () => void; onEr
   return useMutation(() => ({
     mutationFn: (req: { game_id: number; challenge_id: number }) => deleteChallenge(req.game_id, req.challenge_id),
     onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -193,12 +196,12 @@ export function useChallengeHints({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeHint(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.hint.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function unlockChallengeHint(game_id: number, challenge_id: number, hint_id: number) {
@@ -244,6 +247,7 @@ export function useCreateChallengeHintMutation(props: {
     mutationFn: (req: { game_id: number; challenge_id: number; hint: Hint }) =>
       createChallengeHint(req.game_id, req.challenge_id, req.hint),
     onSuccess: (data: Hint[]) => {
+      toastSuccess(t("general.actions.create.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -322,12 +326,12 @@ export function useChallengeAttachments({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeAttachments(game_id(), challenge_id(), all?.(), folder?.()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.file.errors.fetchFiles.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function deleteChallengeAttachment(
@@ -386,12 +390,12 @@ export function useChallengeEnv({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeEnv(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.instance.errors.fetchInstances.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getChallengeInstance(game_id: number, challenge_id: number) {
@@ -413,12 +417,12 @@ export function useChallengeInstance({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeInstance(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.instance.errors.fetchInstances.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateChallengeEnv(game_id: number, challenge_id: number, env: ChallengeEnv) {
@@ -434,6 +438,7 @@ export function useUpdateChallengeEnvMutation(props: { onSuccess?: () => void; o
     mutationFn: (req: { game_id: number; challenge_id: number; env: ChallengeEnv }) =>
       updateChallengeEnv(req.game_id, req.challenge_id, req.env),
     onSuccess: () => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -451,6 +456,7 @@ export function useDeleteChallengeEnvMutation(props: { onSuccess?: () => void; o
   return useMutation(() => ({
     mutationFn: (req: { game_id: number; challenge_id: number }) => deleteChallengeEnv(req.game_id, req.challenge_id),
     onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -490,12 +496,12 @@ export function useChallengeCheckerScript({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeCheckerScript(game_id(), challenge_id(), true),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.checker.errors.fetchScript.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateChallengeCheckerScript(game_id: number, challenge_id: number, content: string) {
@@ -516,6 +522,7 @@ export function useUpdateChallengeCheckerScriptMutation(props: {
     mutationFn: (req: { game_id: number; challenge_id: number; content: string }) =>
       updateChallengeCheckerScript(req.game_id, req.challenge_id, req.content),
     onSuccess: () => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -576,12 +583,12 @@ export function useChallengeSubmissions({
     queryKey: keys(),
     queryFn: async () =>
       await getChallengeSubmission(game_id(), challenge_id(), page?.() ?? 1, page_size?.() ?? 15, !!only_solved?.()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.statistics.errors.fetchSubmission.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function startChallengeInstance(game_id: number, challenge_id: number) {
@@ -657,12 +664,12 @@ export function useChallengeCommitHistory({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeCommitHistory(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.statistics.errors.fetchCommitHistory"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getChallengeSolveStatus(game_id: number, challenge_id: number) {
@@ -687,12 +694,12 @@ export function useChallengeSolveStatus({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeSolveStatus(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.submission.errors.fetchSolveStatus.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getChallengeAnswer(game_id: number, challenge_id: number) {
@@ -714,12 +721,12 @@ export function useChallengeAnswer({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getChallengeAnswer(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.answer.errors.fetchAnswer.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateChallengeAnswer(game_id: number, challenge_id: number, answer: string) {
@@ -738,6 +745,7 @@ export function useUpdateChallengeAnswerMutation(props: {
     mutationFn: (req: { game_id: number; challenge_id: number; answer: string }) =>
       updateChallengeAnswer(req.game_id, req.challenge_id, req.answer),
     onSuccess: (data: string) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {

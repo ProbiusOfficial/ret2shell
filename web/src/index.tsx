@@ -3,10 +3,11 @@ import { render } from "solid-js/web";
 import { routes } from "./routes/routes";
 import "overlayscrollbars/overlayscrollbars.css";
 import "@widgets/styles/base.css";
+import { r2sClient } from "@api";
 import { Router } from "@solidjs/router";
 import { fullTheme, initTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
-import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
+import { QueryClientProvider } from "@tanstack/solid-query";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { ErrorBoundary, onMount } from "solid-js";
 
@@ -42,15 +43,6 @@ function postUpdated() {
     }, 1000);
   }
 }
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-  },
-});
 
 render(() => {
   checkEdition();
@@ -111,7 +103,7 @@ render(() => {
         </div>
       )}
     >
-      <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={r2sClient}>
         <OverlayScrollbarsComponent
           options={{
             scrollbars: {

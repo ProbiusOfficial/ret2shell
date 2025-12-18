@@ -6,7 +6,6 @@ import { createBreakpoints } from "@solid-primitives/media";
 import { A, useSearchParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { breakpoints, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
 import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
@@ -173,11 +172,6 @@ export default function () {
 
   const mutation = useUpdateUserMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       user.refetch();
     },
   });

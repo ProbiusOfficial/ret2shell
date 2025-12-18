@@ -11,7 +11,7 @@ import type { DiagnosticMarker } from "@widgets/editor";
 import { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient } from ".";
 
 export async function getCaptcha() {
   return await api.get(`${api_root}/account/captcha`).json<Captcha>();
@@ -29,13 +29,13 @@ export function useCaptcha({
   return useQuery(() => ({
     queryKey: ["account", "captcha", timestamp],
     queryFn: async () => await getCaptcha(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("captcha.errors.fetch.title"));
       onError?.(err);
       return false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export type RegisterRequest = {
@@ -52,7 +52,15 @@ export async function register(req: RegisterRequest) {
 export function useRegisterMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: register,
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      addToast({
+        level: "success",
+        description: t("account.register.status.success.message"),
+        duration: 5000,
+        // img: xdsecMascotHappy,
+      });
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("account.register.errors.register.title"));
       props.onError?.(err);
@@ -72,7 +80,15 @@ export async function login(req: LoginRequest) {
 export function useLoginMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: login,
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      addToast({
+        level: "success",
+        description: t("account.login.status.success.message"),
+        duration: 5000,
+        // img: xdsecMascotHappy,
+      });
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("account.login.errors.login.title"));
       props.onError?.(err);
@@ -87,7 +103,9 @@ export async function logout() {
 export function useLogoutMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: logout,
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      props.onSuccess?.();
+    },
     onError: (err: Error) => props.onError?.(err),
   }));
 }
@@ -211,9 +229,9 @@ export function useAccountProfile(props: { enabled?: () => boolean; onError?: (e
   return useQuery(() => ({
     queryKey: ["account", "profile"],
     queryFn: async () => await getProfile(),
-    enabled: props.enabled,
+    enabled: props.enabled?.(),
     throwOnError: (err: Error) => props.onError?.(err) ?? false,
-  }));
+  }), () => r2sClient);
 }
 
 export async function changeProfile(req: User) {
@@ -249,7 +267,14 @@ export async function deleteSelf(captcha: CaptchaRequest) {
 export function useDeleteSelfMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: deleteSelf,
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      addToast({
+        level: "success",
+        description: t("account.delete.bye.message"),
+        duration: 5000,
+      });
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("account.delete.errors.delete.title"));
       props.onError?.(err);
@@ -264,13 +289,13 @@ export async function getInstitutes() {
 export function useInstitutes(props: { enabled?: () => boolean; onError?: (err: Error) => boolean } = {}) {
   return useQuery(() => ({
     queryKey: ["account", "institute"],
-    queryFn: getInstitutes,
-    enabled: props.enabled,
+      queryFn: getInstitutes,
+      enabled: props.enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("institute.errors.fetchList.title"));
       return props.onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getAccountCode() {
@@ -281,12 +306,12 @@ export function useAccountCode(props: { enabled?: () => boolean; onError?: (err:
   return useQuery(() => ({
     queryKey: ["account", "code"],
     queryFn: getAccountCode,
-    enabled: props.enabled,
+    enabled: props.enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("account.errors.fetchCode.title"));
       return props.onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function generateAccountCode() {
@@ -334,12 +359,12 @@ export function useOAuthProviders(props: { enabled?: () => boolean; onError?: (e
   return useQuery(() => ({
     queryKey: ["account", "oauth", "providers"],
     queryFn: getOAuthProviders,
-    enabled: props.enabled,
+    enabled: props.enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("account.oauth.errors.fetchProvider.title"));
       return props.onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getOAuthProvider(service: string) {
@@ -368,7 +393,7 @@ export function useOAuthProvider({
       handleHttpError(err, t("account.oauth.errors.fetchProvider.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateOAuthProvider(service: string, req: OAuthProvider) {
@@ -584,12 +609,12 @@ export function useOAuthStatus({
   return useQuery(() => ({
     queryKey: ["account", "oauth", "status"],
     queryFn: async () => await getOAuthStatus(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("account.oauth.errors.fetchStatus.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateInstitute(req: Institute) {

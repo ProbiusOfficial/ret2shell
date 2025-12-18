@@ -11,10 +11,10 @@ import type { User } from "@models/user";
 import { t } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
 import type { DiagnosticMarker } from "@widgets/editor";
-import type { SearchParamsOption } from "ky";
+import { HTTPError, type SearchParamsOption } from "ky";
 import type { DateTime } from "luxon";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getGames(page?: number, page_size?: number, host_type?: HostType, weight?: number) {
   return (
@@ -50,12 +50,12 @@ export function useGames({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGames(page?.() ?? 1, page_size?.() ?? 15, host_type?.(), weight?.()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getGame(id: number) {
@@ -75,12 +75,12 @@ export function useGame({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGame(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function createGame(game: Game) {
@@ -92,7 +92,10 @@ export function useCreateGameMutation(
 ) {
   return useMutation(() => ({
     mutationFn: createGame,
-    onSuccess: (data: Game) => props.onSuccess?.(data),
+    onSuccess: (data: Game) => {
+      toastSuccess(t("general.actions.create.status.success"));
+      props.onSuccess?.(data);
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.create.status.fail"));
       props.onError?.(err);
@@ -109,7 +112,10 @@ export function useUpdateGameMutation(
 ) {
   return useMutation(() => ({
     mutationFn: ({ id, game }: { id: number; game: Game }) => updateGame(id, game),
-    onSuccess: (data: Game) => props.onSuccess?.(data),
+    onSuccess: (data: Game) => {
+      toastSuccess(t("general.actions.save.status.success"));
+      props.onSuccess?.(data);
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.save.status.fail"));
       props.onError?.(err);
@@ -124,7 +130,10 @@ export async function deleteGame(id: number) {
 export function useDeleteGameMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: ({ id }: { id: number }) => deleteGame(id),
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.delete.status.fail"));
       props.onError?.(err);
@@ -149,12 +158,13 @@ export function useGameIntroduction({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameIntroduction(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
+      if (err instanceof HTTPError && err.response.status === 404) return onError?.(err) ?? false;
       handleHttpError(err, t("game.errors.fetchIntroduction.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateGameIntroduction(id: number, article: Article) {
@@ -229,12 +239,12 @@ export function useGameScoreboard({
     queryKey: keys(),
     queryFn: async () =>
       await getGameScoreboard(id(), page?.() ?? 1, page_size?.() ?? 15, with_hidden?.(), institute_id?.()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.scoreboard.errors.fetchScoreboard.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export type EventDeviceInfo = {
@@ -260,12 +270,12 @@ export function useGameDevices({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameDevices(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.events.errors.fetchDevices.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function regenerateGameToken(game_id: number) {
@@ -306,12 +316,12 @@ export function useGameAdmins({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameAdmins(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.administrator.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateGameAdmins(game_id: number, admins: number[]) {
@@ -350,12 +360,13 @@ export function useGameInstances({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameInstances(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
+      if (err instanceof HTTPError && err.response.status === 404) return onError?.(err) ?? false;
       handleHttpError(err, t("challenge.instance.errors.fetchInstances.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function submitFlag(game_id: number, challenge_id: number, flag: string) {
@@ -379,7 +390,7 @@ export function useSubmitFlagMutation(
       handleHttpError(err, t("challenge.submission.errors.submit.title"));
       props.onError?.(err);
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function checkSubmissionStatus(game_id: number, challenge_id: number, submission_id: number) {
@@ -409,12 +420,12 @@ export function useSelfSolves({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getSelfSolves(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.submission.errors.fetchSolves.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getGameAdminChatSessions(
@@ -464,12 +475,12 @@ export function useGameAdminChatSessions({
     queryKey: keys(),
     queryFn: async () =>
       await getGameAdminChatSessions(game_id(), challenge_id?.(), page?.() ?? 1, page_size?.() ?? 15),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.hammer.errors.fetchSessions.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getGameAdminChatMessages(game_id: number, challenge_id: number, team_id: number) {
@@ -500,12 +511,12 @@ export function useGameAdminChatMessages({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameAdminChatMessages(game_id(), challenge_id(), team_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.hammer.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function sendGameAdminChatMessage(
@@ -562,12 +573,12 @@ export function useGamePlayerChatMessages({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGamePlayerChatMessages(game_id(), challenge_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.hammer.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function sendGamePlayerChatMessage(game_id: number, challenge_id: number, content: string) {
@@ -613,12 +624,12 @@ export function useCheckUnreadMessages({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await checkUnreadMessages(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.hammer.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getGameSubmissions(game_id: number, page?: number, page_size?: number) {
@@ -651,12 +662,12 @@ export function useGameSubmissions({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameSubmissions(game_id(), page?.() ?? 1, page_size?.() ?? 15),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.monitor.errors.fetchSubmission.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getGameAuditLogs(game_id: number, page?: number, page_size?: number) {
@@ -689,12 +700,12 @@ export function useGameAuditLogs({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameAuditLogs(game_id(), page?.() ?? 1, page_size?.() ?? 15),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.monitor.errors.fetchAudit.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateGameAuditLog(game_id: number, audit_id: number, audit: Audit) {
@@ -712,6 +723,7 @@ export function useUpdateGameAuditLogMutation(
     mutationFn: (params: { game_id: number; audit_id: number; audit: Audit }) =>
       updateGameAuditLog(params.game_id, params.audit_id, params.audit),
     onSuccess: (data: Audit) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -763,12 +775,12 @@ export function useGameStatistics({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameStatistics(game_id(), training?.(), institute?.()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.statistics.errors.fetch"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export type GameStatisticsExport = {
@@ -807,12 +819,12 @@ export function useGameStatisticsExport({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameStatisticsExport(game_id(), training?.(), institute?.()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.statistics.errors.export"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getRegistryConfig(game_id: number) {
@@ -832,12 +844,12 @@ export function useRegistryConfig({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getRegistryConfig(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.instance.errors.fetchRegistry.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getRegistryRepositories(game_id: number) {
@@ -857,12 +869,12 @@ export function useRegistryRepositories({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getRegistryRepositories(game_id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.instance.errors.fetchRegistry.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function refreshRegistry(game_id: number) {
@@ -901,12 +913,12 @@ export function useRegistryImageTags({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getRegistryImageTags(game_id(), repo()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.instance.errors.fetchConfigImages.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateGameTraffic(game_id: number, traffic: string) {
@@ -927,6 +939,7 @@ export function useUpdateGameTrafficMutation(
   return useMutation(() => ({
     mutationFn: (params: { game_id: number; traffic: string }) => updateGameTraffic(params.game_id, params.traffic),
     onSuccess: (data) => {
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -943,7 +956,10 @@ export async function deleteGameTraffic(game_id: number) {
 export function useDeleteGameTrafficMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: ({ game_id }: { game_id: number }) => deleteGameTraffic(game_id),
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.delete.status.fail"));
       props.onError?.(err);
@@ -967,7 +983,10 @@ export function useUpdateGameNodeSelectorMutation(
   return useMutation(() => ({
     mutationFn: (params: { game_id: number; node_selector: string }) =>
       updateGameNodeSelector(params.game_id, params.node_selector),
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      toastSuccess(t("general.actions.save.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.save.status.fail"));
       props.onError?.(err);
@@ -984,7 +1003,10 @@ export function useDeleteGameNodeSelectorMutation(
 ) {
   return useMutation(() => ({
     mutationFn: ({ game_id }: { game_id: number }) => deleteGameNodeSelector(game_id),
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+      toastSuccess(t("general.actions.delete.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.delete.status.fail"));
       props.onError?.(err);
@@ -1017,10 +1039,10 @@ export function useGameRepo({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getGameRepo(game_id(), path()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("game.git.errors.fetchRepo.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }

@@ -107,54 +107,6 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
       if (editorProps.form && editorProps.name) setValue(editorProps.form, editorProps.name, content);
     });
 
-    createEffect(() => {
-      if (themeStore.colorScheme && editor) {
-        editor.setTheme(`ace/theme/${themeStore.colorScheme === "light" ? "kuroir" : "github_dark"}`);
-      }
-    });
-
-    createEffect(() => {
-      if (editorProps.lints && editor) {
-        const annotations = editorProps.lints.map((lint) => ({
-          row: lint.start_line,
-          column: lint.start_column,
-          text: lint.message,
-          type: lint.kind === "error" ? "error" : lint.kind === "warning" ? "warning" : "info",
-        }));
-        editor.getSession().setAnnotations(annotations);
-        const markers = editorProps.lints.map((lint) => ({
-          startRow: lint.start_line,
-          startCol: lint.start_column,
-          endRow: lint.end_line,
-          endCol: lint.end_column,
-          className:
-            lint.kind === "error"
-              ? "ace_error-marker"
-              : lint.kind === "warning"
-                ? "ace_warning-marker"
-                : "ace_info-marker",
-          type: "text" as "text" | "line" | "fullLine",
-        }));
-        const prevMarkers = editor.session.getMarkers();
-        if (prevMarkers) {
-          const prevMarkersArr: number[] = Object.keys(prevMarkers).map((v) => Number.parseInt(v, 10));
-          for (const item of prevMarkersArr) {
-            editor.session.removeMarker(prevMarkers[item].id as number);
-          }
-        }
-        for (const marker of markers) {
-          editor
-            .getSession()
-            .addMarker(
-              new ace.Range(marker.startRow, marker.startCol, marker.endRow, marker.endCol),
-              marker.className,
-              marker.type,
-              false
-            );
-        }
-      }
-    });
-
     editor.on("blur", () => {
       editorProps.onBlur?.();
     });
@@ -209,6 +161,52 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
   createEffect(() => {
     if (editorProps.value !== editor?.getValue()) {
       editor?.setValue(editorProps.value || "");
+    }
+  });
+  createEffect(() => {
+    if (themeStore.colorScheme && editor) {
+      editor.setTheme(`ace/theme/${themeStore.colorScheme === "light" ? "kuroir" : "github_dark"}`);
+    }
+  });
+  createEffect(() => {
+    if (editorProps.lints && editor) {
+      const annotations = editorProps.lints.map((lint) => ({
+        row: lint.start_line,
+        column: lint.start_column,
+        text: lint.message,
+        type: lint.kind === "error" ? "error" : lint.kind === "warning" ? "warning" : "info",
+      }));
+      editor.getSession().setAnnotations(annotations);
+      const markers = editorProps.lints.map((lint) => ({
+        startRow: lint.start_line,
+        startCol: lint.start_column,
+        endRow: lint.end_line,
+        endCol: lint.end_column,
+        className:
+          lint.kind === "error"
+            ? "ace_error-marker"
+            : lint.kind === "warning"
+              ? "ace_warning-marker"
+              : "ace_info-marker",
+        type: "text" as "text" | "line" | "fullLine",
+      }));
+      const prevMarkers = editor.session.getMarkers();
+      if (prevMarkers) {
+        const prevMarkersArr: number[] = Object.keys(prevMarkers).map((v) => Number.parseInt(v, 10));
+        for (const item of prevMarkersArr) {
+          editor.session.removeMarker(prevMarkers[item].id as number);
+        }
+      }
+      for (const marker of markers) {
+        editor
+          .getSession()
+          .addMarker(
+            new ace.Range(marker.startRow, marker.startCol, marker.endRow, marker.endCol),
+            marker.className,
+            marker.type,
+            false
+          );
+      }
     }
   });
 

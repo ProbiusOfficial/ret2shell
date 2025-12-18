@@ -19,7 +19,7 @@ import { createEffect, createSignal, For, Show, untrack } from "solid-js";
 
 export function InstanceBoxContent() {
   const params = useParams();
-  const gameId = Number.parseInt(params.game, 10);
+  const gameId = Number.parseInt(params.game || "", 10);
   const game = useGame({ id: () => gameId });
   const instances = useGameInstances({
     game_id: () => gameId,
@@ -276,7 +276,7 @@ export function InstanceBoxContent() {
                 })}
               />
               <TimeProgress
-                class="absolute bottom-[calc(var(--spacing)_*_-1)] left-2 right-2"
+                class="absolute -bottom-1 left-2 right-2"
                 startAt={instance.created_at}
                 endAt={instance.created_at.plus({
                   hours: instance.renew_count + 1,

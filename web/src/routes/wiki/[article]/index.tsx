@@ -5,7 +5,6 @@ import { A, useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Divider from "@widgets/divider";
 import { HTTPError } from "ky";
@@ -38,8 +37,8 @@ export default function () {
     if (Number.isNaN(article_id())) navigate("/sigtrap/404", { replace: true });
   });
 
-  async function onDelete() {
-    await deleteWikiMutation.mutateAsync({ id: article_id() });
+  function onDelete() {
+    deleteWikiMutation.mutate({ id: article_id() });
   }
 
   async function onDone() {
@@ -50,11 +49,6 @@ export default function () {
 
   const deleteWikiMutation = useDeleteWikiMutation({
     onSuccess: async () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
       await wikiTree.refetch();
       navigate("/wiki", { replace: true });
     },

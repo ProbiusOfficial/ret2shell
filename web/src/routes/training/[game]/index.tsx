@@ -99,11 +99,6 @@ export default function () {
 
   const updateGameMutation = useUpdateGameMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });

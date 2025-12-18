@@ -4,7 +4,6 @@ import AdministratorsManagement from "@blocks/game/administrators";
 import { useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Checkbox from "@widgets/checkbox";
 import LoadingTips from "@widgets/loading-tips";
 import { createMemo, For, Show } from "solid-js";
@@ -14,11 +13,6 @@ function InstituteManagement(props: { gameId: number }) {
   const institutes = useInstitutes();
   const updateMutation = useUpdateGameMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       game.refetch();
     },
   });

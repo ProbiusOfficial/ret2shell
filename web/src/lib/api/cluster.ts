@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/solid-query";
 import type { DiagnosticMarker } from "@widgets/editor";
 import type { ConfigMapList, NodeList } from "kubernetes-types/core/v1";
 import { DateTime } from "luxon";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getClusterConfig() {
   return await api.get(`${api_root}/cluster/config`).json<ConfigMapList>();
@@ -19,12 +19,12 @@ export function useClusterConfig({
   return useQuery(() => ({
     queryKey: ["cluster", "config"],
     queryFn: async () => await getClusterConfig(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("cluster.errors.fetchConfig.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getClusterNodes() {
@@ -41,12 +41,12 @@ export function useClusterNodes({
   return useQuery(() => ({
     queryKey: ["cluster", "nodes"],
     queryFn: async () => await getClusterNodes(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("cluster.errors.fetchNodes.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getCalmdownStatus() {
@@ -67,11 +67,11 @@ export function useCalmdownStatus({
   return useQuery(() => ({
     queryKey: ["cluster", "calmdown"],
     queryFn: async () => await getCalmdownStatus(),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateGlobalTrafficScript(traffic: string) {
@@ -81,11 +81,16 @@ export async function updateGlobalTrafficScript(traffic: string) {
 }
 
 export function useUpdateGlobalTrafficScriptMutation(
-  props: { onSuccess?: (resp: { lint: DiagnosticMarker[] | null }) => void; onError?: (err: Error) => void } = {}
+  props: {
+    
+    onSuccess?: (resp: { lint: DiagnosticMarker[] | null }) => void;
+    onError?: (err: Error) => void;
+  } = {}
 ) {
   return useMutation(() => ({
     mutationFn: ({ traffic }: { traffic: string }) => updateGlobalTrafficScript(traffic),
     onSuccess: (resp) => {
+       toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(resp);
     },
     onError: (err: Error) => {
@@ -100,11 +105,14 @@ export async function deleteGlobalTrafficScript() {
 }
 
 export function useDeleteGlobalTrafficScriptMutation(
-  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+  props: {  onSuccess?: () => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
     mutationFn: deleteGlobalTrafficScript,
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+       toastSuccess(t("general.actions.delete.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.delete.status.fail"));
       props.onError?.(err);
@@ -117,11 +125,14 @@ export async function updateDefaultNodeSelector(node_selector: string) {
 }
 
 export function useUpdateDefaultNodeSelectorMutation(
-  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+  props: {  onSuccess?: () => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
     mutationFn: ({ node_selector }: { node_selector: string }) => updateDefaultNodeSelector(node_selector),
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+       toastSuccess(t("general.actions.save.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.save.status.fail"));
       props.onError?.(err);
@@ -134,11 +145,14 @@ export async function deleteDefaultNodeSelector() {
 }
 
 export function useDeleteDefaultNodeSelectorMutation(
-  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+  props: {  onSuccess?: () => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
     mutationFn: deleteDefaultNodeSelector,
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+       toastSuccess(t("general.actions.delete.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.delete.status.fail"));
       props.onError?.(err);

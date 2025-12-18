@@ -7,7 +7,6 @@ import { A, useLocation, useNavigate } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -38,12 +37,6 @@ export default function () {
 
   const loginMutation = useLoginMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("account.login.status.success.message"),
-        duration: 5000,
-        // img: xdsecMascotHappy,
-      });
       const redirectUrl = location.query.redirect;
       if (redirectUrl) {
         const url = Array.isArray(redirectUrl) ? redirectUrl[0] : redirectUrl;
@@ -186,7 +179,7 @@ export default function () {
                   const svc = oauthProviders.data?.find((s) => s.portal);
                   return (
                     <Link class="w-full mt-4!" href={svc?.portal} title={svc?.name}>
-                      <img src={mediaPath(svc?.avatar ?? "")} alt={svc?.name} width={24} height={24} />
+                      <img src={mediaPath(svc?.avatar)} alt={svc?.name} width={24} height={24} />
                       <span>{svc?.name}</span>
                     </Link>
                   );
@@ -206,7 +199,7 @@ export default function () {
                     <For each={oauthProviders.data?.filter((s) => s.portal)}>
                       {(service) => (
                         <Link class="w-full" justify="start" size="sm" href={service.portal} title={service.name} ghost>
-                          <img src={mediaPath(service.avatar ?? "")} alt={service.name} width={24} height={24} />
+                          <img src={mediaPath(service.avatar)} alt={service.name} width={24} height={24} />
                           <span>{service.name}</span>
                         </Link>
                       )}

@@ -10,7 +10,7 @@ import { createMemo, Match, Switch } from "solid-js";
 
 export default function (props: { gameId: number }) {
   const game = useGame({ id: () => props.gameId });
-  const team = useSelfTeam({ game_id: () => props.gameId });
+  const team = useSelfTeam({ game_id: () => props.gameId, silenced: true });
   const rank = useTeamRank({
     game_id: () => props.gameId,
     team_id: () => team.data?.id || 0,

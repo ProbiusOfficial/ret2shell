@@ -2,7 +2,6 @@ import { useChallengeAnswer, useUpdateChallengeAnswerMutation } from "@api/chall
 import { useGame } from "@api/game";
 import { isAdminOfGame } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
 import { EditorBare } from "@widgets/editor";
@@ -22,11 +21,6 @@ export default function (props: ChallengeWidgetProps) {
 
   const updateAnswerMutation = useUpdateChallengeAnswerMutation({
     onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
       setInEdit(false);
       answerQuery.refetch();
     },

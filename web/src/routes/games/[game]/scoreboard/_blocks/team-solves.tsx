@@ -32,7 +32,7 @@ export default function TeamSolves(props: { game?: Game; teams: Team[]; challeng
       <header class="border-b border-b-layer-content/10 flex flex-col">
         <div class="flex flex-row items-center self-end space-x-6 h-24 sticky right-3 lg:right-6">
           <Show when={props.game?.logo} fallback={<LogoAnimate width={80} height={80} />}>
-            <img class="shrink-0" src={mediaPath(props.game!.logo!)} width={80} height={80} alt="Logo Broken" />
+            <img class="shrink-0" src={mediaPath(props.game?.logo)} width={80} height={80} alt="Logo Broken" />
           </Show>
           <h1 class="text-3xl font-bold">{props.game?.name}</h1>
         </div>

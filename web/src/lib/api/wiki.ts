@@ -2,7 +2,7 @@ import type { Article } from "@models/article";
 import { t } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getWikiTree() {
   return await api.get(`${api_root}/wiki`).json<Article[]>();
@@ -12,12 +12,12 @@ export function useWikiTree({ enabled, onError }: { enabled?: () => boolean; onE
   return useQuery(() => ({
     queryKey: ["wiki", "tree"],
     queryFn: getWikiTree,
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("wiki.errors.fetchToc.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getWiki(id: number) {
@@ -37,12 +37,12 @@ export function useWiki({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getWiki(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("wiki.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function createWiki(article: Article) {
@@ -87,10 +87,15 @@ export async function deleteWiki(id: number) {
   return await api.delete(`${api_root}/wiki/${id}`).json();
 }
 
-export function useDeleteWikiMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
+export function useDeleteWikiMutation(
+  props: {  onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
   return useMutation(() => ({
     mutationFn: ({ id }: { id: number }) => deleteWiki(id),
-    onSuccess: () => props.onSuccess?.(),
+    onSuccess: () => {
+       toastSuccess(t("general.actions.delete.status.success"));
+      props.onSuccess?.();
+    },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.delete.status.fail"));
       props.onError?.(err);

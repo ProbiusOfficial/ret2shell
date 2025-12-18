@@ -6,7 +6,6 @@ import { A, useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import { HTTPError } from "ky";
 import { Show } from "solid-js";
@@ -14,7 +13,7 @@ import EditForm from "../_blocks/form";
 
 export default function () {
   const params = useParams();
-  const articleId = Number.parseInt(params.article, 10);
+  const articleId = Number.parseInt(params.article || "", 10);
   const [searchParams, setSearchParams] = useSearchParams();
   const inEdit = () => searchParams.edit === "true";
   const navigate = useNavigate();
@@ -34,11 +33,6 @@ export default function () {
   const deleteMutation = useDeleteBulletinMutation({
     onSuccess: () => {
       navigate("/bulletin", { replace: true });
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
     },
   });
 

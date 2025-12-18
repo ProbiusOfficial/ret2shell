@@ -29,7 +29,6 @@ import { accountStore } from "@storage/account";
 import { isAdminOfGame } from "@storage/game";
 import { Title } from "@storage/header";
 import { breakpoints, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Chart from "@widgets/chart";
@@ -87,17 +86,12 @@ function AdminManagement(props: { gameId: number; team: Team | null; onDone?: (t
   const updateMutation = useUpdateTeamInfoMutation({
     onSuccess: (team) => {
       props.onDone?.(team);
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
     },
   });
 
-  async function onSubmit(result: TeamAdminUpdateForm) {
+  function onSubmit(result: TeamAdminUpdateForm) {
     if (!props.team) return;
-    await updateMutation.mutateAsync({
+    updateMutation.mutate({
       game_id: props.gameId,
       team_id: props.team.id,
       team: {
@@ -113,17 +107,12 @@ function AdminManagement(props: { gameId: number; team: Team | null; onDone?: (t
   const deleteMutation = useDeleteTeamMutation({
     onSuccess: () => {
       navigate(`/games/${props.gameId}/scoreboard`);
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
     },
   });
 
-  async function handleDeleteTeam() {
+  function handleDeleteTeam() {
     if (!props.team) return;
-    await deleteMutation.mutateAsync({ game_id: props.gameId, team_id: props.team.id });
+    deleteMutation.mutate({ game_id: props.gameId, team_id: props.team.id });
   }
   return (
     <>
@@ -312,16 +301,11 @@ function SelfManagement(props: { gameId: number; onDone?: (team: Team) => void; 
   const updateMutation = useUpdateSelfTeamMutation({
     onSuccess: (team) => {
       props.onDone?.(team);
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success"),
-        duration: 5000,
-      });
     },
   });
 
-  async function onSubmit(result: TeamSelfUpdateForm) {
-    await updateMutation.mutateAsync({
+  function onSubmit(result: TeamSelfUpdateForm) {
+    updateMutation.mutate({
       game_id: props.gameId,
       team: {
         name: result.name,
@@ -334,16 +318,11 @@ function SelfManagement(props: { gameId: number; onDone?: (team: Team) => void; 
   const leaveMutation = useLeaveSelfTeamMutation({
     onSuccess: () => {
       props.onLeft?.();
-      addToast({
-        level: "success",
-        description: t("general.actions.leave.status.success"),
-        duration: 5000,
-      });
     },
   });
 
-  async function handleLeaveTeam() {
-    await leaveMutation.mutateAsync({ game_id: props.gameId });
+  function handleLeaveTeam() {
+    leaveMutation.mutate({ game_id: props.gameId });
   }
 
   return (
@@ -476,9 +455,9 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
     },
   });
 
-  async function onSubmit(result: CreateExtraForm) {
+  function onSubmit(result: CreateExtraForm) {
     if (!props.team) return;
-    await createExtraMutation.mutateAsync({
+    createExtraMutation.mutate({
       game_id: gameId(),
       team_id: props.team.id,
       extra: {
@@ -621,6 +600,7 @@ export default function () {
   const selfTeam = useSelfTeam({
     game_id: gameId,
     enabled: () => gameId() > 0 && !!accountStore.id,
+    silenced: true,
   });
 
   const isSelfTeam = createMemo(() => !!selfTeam.data && !!team.data && selfTeam.data.id === team.data.id);

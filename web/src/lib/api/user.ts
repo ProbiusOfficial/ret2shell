@@ -6,7 +6,7 @@ import { t } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
 import type { SearchParamsOption } from "ky";
 import { createMemo } from "solid-js";
-import api, { api_root, handleHttpError } from ".";
+import api, { api_root, handleHttpError, r2sClient, toastSuccess } from ".";
 
 export async function getUserList(
   page?: number,
@@ -58,12 +58,12 @@ export function useUsers({
         filter?.() ?? undefined,
         institute_id?.() ?? undefined
       ),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("user.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getUser(id: number) {
@@ -83,12 +83,12 @@ export function useUser({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getUser(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("user.errors.fetch.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getUserTeams(id: number) {
@@ -108,12 +108,12 @@ export function useUserTeams({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getUserTeams(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("team.errors.fetchList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function updateUser(user: User) {
@@ -121,11 +121,12 @@ export async function updateUser(user: User) {
 }
 
 export function useUpdateUserMutation(
-  props: { onSuccess?: (user: User) => void; onError?: (err: Error) => void } = {}
+  props: {  onSuccess?: (user: User) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
     mutationFn: (user: User) => updateUser(user),
     onSuccess: (data: User) => {
+       toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(data);
     },
     onError: (err: Error) => {
@@ -139,10 +140,13 @@ export async function deleteUser(id: number) {
   return await api.delete(`${api_root}/user/${id}`).json();
 }
 
-export function useDeleteUserMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
+export function useDeleteUserMutation(
+  props: {  onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
   return useMutation(() => ({
     mutationFn: ({ id }: { id: number }) => deleteUser(id),
     onSuccess: () => {
+       toastSuccess(t("general.actions.delete.status.success"));
       props.onSuccess?.();
     },
     onError: (err: Error) => {
@@ -169,12 +173,12 @@ export function useUserIpList({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getUserIpList(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("user.errors.fetchIpList.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }
 
 export async function getUserOAuthList(id: number) {
@@ -194,10 +198,10 @@ export function useUserOAuthList({
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () => await getUserOAuthList(id()),
-    enabled,
+    enabled: enabled?.(),
     throwOnError: (err: Error) => {
       handleHttpError(err, t("user.errors.fetchOAuth.title"));
       return onError?.(err) ?? false;
     },
-  }));
+  }), () => r2sClient);
 }

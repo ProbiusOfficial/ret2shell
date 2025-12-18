@@ -7,7 +7,6 @@ import { Permission, permissionToString, type User } from "@models/user";
 import { createForm, email, getValue, required, setValue, setValues } from "@modular-forms/solid";
 import { A } from "@solidjs/router";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
@@ -105,15 +104,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
       setAvatarUploading(false);
     }
   }
-  const deleteMutation = useDeleteUserMutation({
-    onSuccess: () => {
-      addToast({
-        level: "success",
-        description: t("general.actions.delete.status.success"),
-        duration: 5000,
-      });
-    },
-  });
+  const deleteMutation = useDeleteUserMutation();
   async function handleDeleteUser() {
     if (!compProps.editSource) return;
     deleteMutation.mutate({ id: compProps.editSource.id });
@@ -275,14 +266,14 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
             {(field, props) => (
               <Avatar
                 class="w-28 h-28 relative m-2"
-                src={(getValue(form, "avatar") && mediaPath(getValue(form, "avatar")!)) || undefined}
+                src={(getValue(form, "avatar") && mediaPath(getValue(form, "avatar"))) || undefined}
                 fallback={getValue(form, "account")}
               >
                 <Button
                   loading={avatarUploading()}
                   disabled={avatarUploading()}
                   type="button"
-                  class="opacity-0 hover:opacity-100 !bg-layer/80 absolute top-0 left-0 w-full h-full"
+                  class="opacity-0 hover:opacity-100 bg-layer/80! absolute top-0 left-0 w-full h-full"
                   onClick={() => {
                     if (avatarSet()) {
                       setAvatarSet(false);
@@ -413,7 +404,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
             )}
           </Field>
         </div>
-        <Button type="submit" level="primary" class="!mt-4" loading={compProps.loading} disabled={compProps.loading}>
+        <Button type="submit" level="primary" class="mt-4!" loading={compProps.loading} disabled={compProps.loading}>
           {t("general.actions.save.title")}
         </Button>
       </Form>

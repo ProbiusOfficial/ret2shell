@@ -1,5 +1,6 @@
+import { r2sClient } from "@api";
 import { delayChallengeInstance, getChallengeEnv, startChallengeInstance, stopChallengeInstance } from "@api/challenge";
-import { useGameInstances } from "@api/game";
+import { getGameInstances } from "@api/game";
 import { deunicode } from "@api/rpc";
 import { getWsrxLink, wsrx } from "@lib/wsrx";
 import type { Challenge } from "@models/challenge";
@@ -81,23 +82,22 @@ export class Service implements Command {
 
   async start(io: Stdio, envVars: { game: Game; challenge: Challenge; team: Team }) {
     const env = await this.getEnv(io, envVars);
-    const instances = useGameInstances({ game_id: () => envVars.game.id || 0 });
-    await instances.refetch();
+    const instances = await getGameInstances(envVars.game.id);
     if (!env) {
       io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
     if (
-      instances.data &&
-      instances.data.length > (isGameInProgress(envVars.game) ? (envVars.game?.team_size ?? 1) : 1)
+      instances &&
+      instances.length > (isGameInProgress(envVars.game) ? (envVars.game?.team_size ?? 1) : 1)
     ) {
-      if (instances.data?.find((v) => v.challenge_id === envVars.challenge.id)) {
+      if (instances?.find((v) => v.challenge_id === envVars.challenge.id)) {
         await this.status(io, envVars);
         return 0;
       }
       io.warning(t("challenge.instance.errors.singleton.title"));
       io.info(
-        `${t("challenge.instance.errors.singleton.current")}:\n\t${instances.data
+        `${t("challenge.instance.errors.singleton.current")}:\n\t${instances
           .map(
             (inst) =>
               `${link(ansiColors.bold(inst.challenge_id.toString()), `rnix://command/${inst.challenge_id}`)}: ${link(inst.challenge_name!, `rnix://challenge/${inst.challenge_id}`)}`
@@ -115,7 +115,7 @@ export class Service implements Command {
         return 1;
       }
       try {
-        const inst = instances.data?.find((v) => v.challenge_id === chall_id);
+        const inst = instances.find((v) => v.challenge_id === chall_id);
         if (!inst) {
           io.warning(t("challenge.instance.errors.noAction.title"));
           return 1;
@@ -168,9 +168,11 @@ export class Service implements Command {
       }
     }
     await new Promise((r) => setTimeout(r, 500));
-    const instances = useGameInstances({ game_id: () => envVars.game.id || 0 });
-    await instances.refetch();
-    await wsrx.deleteOutdatedLocal(envVars.game.id);
+    const instances = await getGameInstances(envVars.game.id);
+    await wsrx.deleteOutdatedLocal(instances);
+    await r2sClient.invalidateQueries({
+      queryKey: ["game", envVars.game.id, "instances"],
+    });
     return 0;
   }
 
@@ -192,9 +194,8 @@ export class Service implements Command {
       io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
-    const instances = useGameInstances({ game_id: () => envVars.game.id || 0 });
-    await instances.refetch();
-    const inst = instances.data?.find((instance) => instance.challenge_id === envVars.challenge.id);
+    const instances = await getGameInstances(envVars.game.id);
+    const inst = instances.find((instance) => instance.challenge_id === envVars.challenge.id);
     const d_service_name = await deunicode(envVars.challenge.name);
     io.println(`${inst ? ansiColors.greenBright("●") : ansiColors.dim("○")} ${d_service_name}.service`);
     function getInstState(inst?: Instance, with_time = true) {

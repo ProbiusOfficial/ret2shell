@@ -13,7 +13,7 @@ export function ThemeBoxContent() {
         <Button
           ghost
           size="sm"
-          class="!min-h-0 !h-0 group-hover:!min-h-8 group-hover:!h-8 overflow-hidden border-none"
+          class="min-h-0! h-0! group-hover:min-h-8! group-hover:h-8! overflow-hidden border-none"
           onClick={() => {
             setThemeStore({
               colorSchemeFollowsSystem: !themeStore.colorSchemeFollowsSystem,
