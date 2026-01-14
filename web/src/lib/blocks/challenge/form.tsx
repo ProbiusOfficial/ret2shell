@@ -25,7 +25,7 @@ export type ChallengeForm = {
 
 export function FormBare(
   props: ChallengeWidgetProps & {
-    onDone: (challenge: ChallengeForm) => void;
+    onDone: (challenge: ChallengeForm) => Promise<void>;
   }
 ) {
   // Load edit source
@@ -47,14 +47,12 @@ export function FormBare(
       archive_at: challenge.data?.archive_at?.toSeconds() ?? null,
     },
   });
-  function onSubmit(result: ChallengeForm) {
-    props.onDone(result);
+  async function onSubmit(result: ChallengeForm) {
+    await props.onDone(result);
     inflyClient.invalidateQueries({
       queryKey: ["game", props.gameId, "challenge", props.challengeId, "commitHistory"],
     });
-    inflyClient.invalidateQueries({
-      queryKey: ["game", props.gameId, "challenge", props.challengeId],
-    });
+    challenge.refetch();
   }
 
   createEffect(() => {
@@ -255,7 +253,7 @@ export function FormBare(
 
 export default function (
   props: ChallengeWidgetProps & {
-    onDone: (challenge: ChallengeForm) => void;
+    onDone: (challenge: ChallengeForm) => Promise<void>;
   }
 ) {
   return (

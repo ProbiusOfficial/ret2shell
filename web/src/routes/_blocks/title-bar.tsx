@@ -7,7 +7,7 @@ import { unicodeStrDisplayLength } from "@lib/shell/pty";
 import { mediaPath } from "@lib/utils/media";
 import { HostType } from "@models/game";
 import { Permission } from "@models/user";
-import { useParams } from "@solidjs/router";
+import { useLocation, useParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import {
   currentTimelinePeriod,
@@ -292,6 +292,7 @@ export default function TitleBar() {
   );
   const platformInfo = usePlatformInfo();
   const params = useParams();
+  const location = useLocation();
   const gameId = () => Number.parseInt(params.game || "NaN", 10);
   const game = useGame({ id: () => gameId(), enabled: () => !!gameId() });
   const [offlineLoading, setOfflineLoading] = createSignal(false);
@@ -335,7 +336,7 @@ export default function TitleBar() {
                           params.game &&
                           game.data &&
                           game.data.host_type === HostType.Game &&
-                          location.pathname.startsWith(`/games/${params.game}`)
+                          location.pathname.startsWith("/games/")
                         }
                       >
                         <GameNav size="sm" />

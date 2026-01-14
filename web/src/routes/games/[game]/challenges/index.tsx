@@ -97,7 +97,7 @@ export default function () {
     },
   });
 
-  function onCreateChallenge(result: ChallengeForm) {
+  async function onCreateChallenge(result: ChallengeForm) {
     const tags = result.tag.split("/").map((t) => {
       return { name: t, primary: false };
     });
@@ -121,7 +121,7 @@ export default function () {
       release_at: result.release_at ? DateTime.fromSeconds(result.release_at) : null,
       archive_at: result.archive_at ? DateTime.fromSeconds(result.archive_at) : null,
     } as ChallengeModel;
-    createChallengeMutation.mutate({ game_id: gameId(), challenge });
+    await createChallengeMutation.mutateAsync({ game_id: gameId(), challenge });
   }
 
   let prevUnreadChats: Chat[] = [];

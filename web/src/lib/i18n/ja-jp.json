@@ -390,6 +390,10 @@
       "hideMaker": {
         "disabled": "あなたのライセンスではこの項目を非表示にすることはできません",
         "label": "開発者情報を非表示にする"
+      },
+      "zenGame": {
+        "label": "Zen大会モード",
+        "placeholder": "ゲームを選択してください"
       }
     },
     "logs": {

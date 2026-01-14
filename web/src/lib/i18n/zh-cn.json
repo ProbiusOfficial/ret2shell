@@ -390,6 +390,10 @@
       "hideMaker": {
         "disabled": "你的许可证不允许隐藏此项",
         "label": "隐藏开发者信息"
+      },
+      "zenGame": {
+        "label": "独立比赛模式",
+        "placeholder": "选择比赛……"
       }
     },
     "logs": {

@@ -1,6 +1,7 @@
 import { api_root } from "@api";
 import { type Log, usePlatformLogs, useQueryPlatformLog } from "@api/platform";
 import DownloadButton from "@blocks/download-button";
+import { createForm, getValue, setValue } from "@modular-forms/solid";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A, useSearchParams } from "@solidjs/router";
 import { Title } from "@storage/header";
@@ -11,7 +12,7 @@ import LoadingTips from "@widgets/loading-tips";
 import Select from "@widgets/select";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import { createSignal, For, Match, onCleanup, Show, Switch } from "solid-js";
+import { createEffect, createSignal, For, Match, onCleanup, Show, Switch } from "solid-js";
 
 function LogField(log: Log) {
   if (!log) return null;
@@ -96,75 +97,170 @@ export default function () {
   const time = (ts: string, format: string) => DateTime.fromISO(ts).toFormat(format);
   const matches = createBreakpoints(breakpoints);
   let bottomDiv: HTMLDivElement;
+
+  type QueryParams = {
+    trace?: string;
+    from?: string;
+    account?: string;
+    query?: string;
+  };
+
+  const [form, { Form, Field }] = createForm<QueryParams>({
+    initialValues: {
+      trace: searchParams.trace as string | undefined,
+      from: searchParams.from as string | undefined,
+      account: searchParams.account as string | undefined,
+      query: searchParams.query as string | undefined,
+    },
+  });
+
+  createEffect(() => {
+    if (searchParams.trace) {
+      setValue(form, "trace", searchParams.trace as string);
+    } else {
+      setValue(form, "trace", "");
+    }
+    if (searchParams.from) {
+      setValue(form, "from", searchParams.from as string);
+    } else {
+      setValue(form, "from", "");
+    }
+    if (searchParams.account) {
+      setValue(form, "account", searchParams.account as string);
+    } else {
+      setValue(form, "account", "");
+    }
+    if (searchParams.query) {
+      setValue(form, "query", searchParams.query as string);
+    } else {
+      setValue(form, "query", "");
+    }
+  });
+
   return (
     <>
       <Title page={t("platform.logs.title")} route="/admin/logs" />
       <div class="flex-1 flex flex-col">
-        <div class="sticky top-16 h-16 z-20 backdrop-blur-sm border-b border-b-layer-content/10 flex flex-row space-x-4 items-center pr-4 pl-3 lg:pl-6">
-          <h1 class="flex-1 font-bold flex flex-row space-x-2 items-center">
-            <span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />
-            <span>{t("platform.logs.title")}</span>
-          </h1>
-          <Input
-            size="sm"
-            class="w-48"
-            icon={<span class="icon-[fluent--flash-16-regular]" />}
-            value={searchParams.trace ?? ""}
-            placeholder="Trace ID"
-            onInput={(e) => setSearchParams({ trace: e.currentTarget.value })}
-          />
-          <Input
-            size="sm"
-            class="w-48"
-            icon={<span class="icon-[fluent--person-16-regular]" />}
-            value={searchParams.account ?? ""}
-            placeholder="Account"
-            onInput={(e) => setSearchParams({ account: e.currentTarget.value })}
-          />
-          <Input
-            size="sm"
-            class="w-48"
-            icon={<span class="icon-[fluent--location-16-regular]" />}
-            value={searchParams.from ?? ""}
-            placeholder="IP"
-            onInput={(e) => setSearchParams({ from: e.currentTarget.value })}
-          />
-          <Select
-            class="w-36"
-            placeholder="LEVEL"
-            size="sm"
-            items={[
-              { label: "ALL", value: "" },
-              { label: "DEBUG", value: "DEBUG" },
-              { label: "INFO", value: "INFO" },
-              { label: "WARN", value: "WARN" },
-              { label: "ERROR", value: "ERROR" },
-            ]}
-            value={[(searchParams.limit as string) ?? "20"]}
-            onValueChange={(val) => setSearchParams({ level: val.value.at(0) })}
-          />
-          <Select
-            class="w-36"
-            placeholder="LIMIT"
-            size="sm"
-            items={[
-              { label: "10", value: "10" },
-              { label: "20", value: "20" },
-              { label: "50", value: "50" },
-              { label: "100", value: "100" },
-              { label: "1000", value: "1000" },
-            ]}
-            value={[(searchParams.level as string) ?? ""]}
-            onValueChange={(val) => setSearchParams({ limit: val.value.at(0) })}
-          />
-          <Button
-            square
-            size="sm"
-            level={enableTimer() ? "error" : "success"}
-            onClick={() => setEnableTimer(!enableTimer())}
+        <div class="sticky top-16 h-26 z-20 backdrop-blur-sm border-b border-b-layer-content/10 flex flex-col space-y-2">
+          <div class="h-12 flex flex-row space-x-2 items-end px-3">
+            <h1 class="h-8 flex-1 font-bold flex flex-row space-x-2 items-center pl-2">
+              <span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />
+              <span>{t("platform.logs.title")}</span>
+            </h1>
+            <h2 class="h-8 items-center flex text-success">LEVEL=</h2>
+            <Select
+              class="w-36"
+              placeholder="LEVEL"
+              size="sm"
+              items={[
+                { label: "ALL", value: "" },
+                { label: "DEBUG", value: "DEBUG" },
+                { label: "INFO", value: "INFO" },
+                { label: "WARN", value: "WARN" },
+                { label: "ERROR", value: "ERROR" },
+              ]}
+              value={[(searchParams.level as string) ?? ""]}
+              onValueChange={(val) => setSearchParams({ level: val.value.at(0) })}
+            />
+            <h2 class="h-8 items-center flex text-success">&nbsp;&nbsp;SIZE=</h2>
+            <Select
+              class="w-36"
+              placeholder="LIMIT"
+              size="sm"
+              items={[
+                { label: "10", value: "10" },
+                { label: "20", value: "20" },
+                { label: "50", value: "50" },
+                { label: "100", value: "100" },
+                { label: "1000", value: "1000" },
+              ]}
+              value={[(searchParams.limit as string) ?? "20"]}
+              onValueChange={(val) => setSearchParams({ limit: val.value.at(0) })}
+            />
+          </div>
+          <Form
+            class="h-12 flex flex-row space-x-2 items-start px-3"
+            onSubmit={(values) => {
+              setSearchParams({
+                trace: values.trace || undefined,
+                from: values.from || undefined,
+                account: values.account || undefined,
+                query: values.query || undefined,
+              });
+            }}
           >
-            <span class={clsx(enableTimer() ? "icon-[fluent--stop-16-regular]" : "icon-[fluent--play-16-regular]")} />
-          </Button>
+            <Field name="query">
+              {(field, props) => (
+                <Input
+                  size="sm"
+                  class="flex-1"
+                  icon={<span class="icon-[fluent--code-16-regular]" />}
+                  {...props}
+                  noLabel
+                  value={field.value}
+                  error={field.error}
+                  placeholder="Log Query SQL..."
+                />
+              )}
+            </Field>
+            <Field name="trace">
+              {(field, props) => (
+                <Input
+                  size="sm"
+                  class="w-48"
+                  icon={<span class="icon-[fluent--flash-16-regular]" />}
+                  {...props}
+                  noLabel
+                  value={field.value}
+                  error={field.error}
+                  placeholder="Trace ID"
+                  disabled={!!getValue(form, "query")}
+                />
+              )}
+            </Field>
+            <Field name="account">
+              {(field, props) => (
+                <Input
+                  size="sm"
+                  class="w-48"
+                  icon={<span class="icon-[fluent--person-16-regular]" />}
+                  {...props}
+                  noLabel
+                  value={field.value}
+                  error={field.error}
+                  placeholder="Account"
+                  disabled={!!getValue(form, "query")}
+                />
+              )}
+            </Field>
+            <Field name="from">
+              {(field, props) => (
+                <Input
+                  size="sm"
+                  class="w-48"
+                  icon={<span class="icon-[fluent--location-16-regular]" />}
+                  {...props}
+                  noLabel
+                  value={field.value}
+                  error={field.error}
+                  placeholder="IP"
+                  disabled={!!getValue(form, "query")}
+                />
+              )}
+            </Field>
+            <Button size="sm" type="submit" square level="primary">
+              <span class="icon-[fluent--search-16-regular]" />
+            </Button>
+            <Button
+              type="button"
+              square
+              size="sm"
+              level={enableTimer() ? "error" : "success"}
+              onClick={() => setEnableTimer(!enableTimer())}
+            >
+              <span class={clsx(enableTimer() ? "icon-[fluent--stop-16-regular]" : "icon-[fluent--play-16-regular]")} />
+            </Button>
+          </Form>
         </div>
         <div class="inline-flex flex-row items-center flex-wrap p-3 lg:p-6 pb-0!">
           <For each={logFiles.data}>

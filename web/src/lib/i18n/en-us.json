@@ -390,6 +390,10 @@
       "hideMaker": {
         "disabled": "Your license does not allow hiding this item",
         "label": "Hide developer information tags"
+      },
+      "zenGame": {
+        "label": "Zen game mode",
+        "placeholder": "Select game..."
       }
     },
     "logs": {
