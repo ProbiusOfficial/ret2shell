@@ -558,7 +558,7 @@ async fn get_challenge_solves_status(
     None,
     None,
     None,
-    team.is_some(),
+    team.is_none(),
   )
   .await?;
   let solved = if let Some(team) = team {
@@ -570,7 +570,7 @@ async fn get_challenge_solves_status(
       Some(team.id),
       None,
       None,
-      false,
+      true,
     )
     .await?
       > 0
@@ -583,7 +583,7 @@ async fn get_challenge_solves_status(
       None,
       Some(token.id),
       None,
-      false,
+      true,
     )
     .await?
       > 0
@@ -985,7 +985,7 @@ async fn unlock_hint(
       "team unlocked hint",
     );
     tokio::spawn(async move {
-      worker::update_team_state(&db, team).await.ok();
+      worker::game::update_team_state(&db, team).await.ok();
     });
     Ok(Json(extra))
   } else {
@@ -1254,8 +1254,7 @@ async fn start_challenge_instance(
           ("ret.sh.cn/internet", env_config.internet.to_string()),
         ]
         .iter()
-        .cloned()
-        .map(|(k, v)| (k.to_owned(), v.to_owned()))
+        .map(|(k, v)| (k.to_owned().to_owned(), v.to_owned()))
         .collect(),
         [
           ("ret.sh.cn/challenge", challenge.name.to_string()),
@@ -1271,8 +1270,7 @@ async fn start_challenge_instance(
           ("ret.sh.cn/ports", ports),
         ]
         .iter()
-        .cloned()
-        .map(|(k, v)| (k.to_owned(), v.to_owned()))
+        .map(|(k, v)| (k.to_owned().to_owned(), v.to_owned()))
         .collect(),
         env_map,
         env_config,

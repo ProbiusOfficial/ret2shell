@@ -13,6 +13,7 @@ use k8s_openapi::{
     networking::v1::NetworkPolicy,
   },
   apimachinery::pkg::{api::resource::Quantity, version::Info},
+  jiff,
 };
 use kube::{
   Api, Client,
@@ -122,7 +123,8 @@ impl Cluster {
           follow,
           container,
           tail_lines,
-          since_time,
+          since_time: since_time
+            .map(|t| jiff::Timestamp::from_second(t.timestamp()).unwrap_or_default()),
           timestamps: true,
           ..LogParams::default()
         },
@@ -279,7 +281,7 @@ impl Cluster {
       .clone()
       .ok_or(ClusterError::MissingField("creation_timestamp".to_string()))?
       .0
-      .timestamp();
+      .as_second();
     let now = Utc::now().timestamp();
     Ok(now - started_at > 3600 * (renew + 1) as i64)
   }
@@ -580,7 +582,6 @@ impl Cluster {
         selector: Some(
           [("ret.sh.cn/traffic".to_owned(), traffic.clone())]
             .iter()
-            .cloned()
             .map(|(k, v)| (k.to_owned(), v.to_owned()))
             .collect(),
         ),

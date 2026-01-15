@@ -1,6 +1,6 @@
+import { useChallenges } from "@api/challenge";
+import { useSelfSolves } from "@api/game";
 import { useSearchParams } from "@solidjs/router";
-import { challengeStore, refreshChallenges, refreshSolves } from "@storage/challenge";
-import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
@@ -9,34 +9,47 @@ import TreeView, { type TreeNode } from "@widgets/treeview";
 import clsx from "clsx";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { createEffect, createMemo, createSignal, Match, Show, Switch, untrack } from "solid-js";
+import { createMemo, createSignal, Match, Show, Switch } from "solid-js";
+import type { ChallengeWidgetProps } from ".";
 
-export default function ChallengeList(props: { showScore?: boolean; paginated?: boolean; inGame?: boolean }) {
+export default function ChallengeList(
+  props: ChallengeWidgetProps & {
+    showScore?: boolean;
+    paginated?: boolean;
+  }
+) {
   const [searchParams, _] = useSearchParams();
   const selectedChallengeId = createMemo(() => {
     return Number.parseInt((searchParams.challenge as string) || "", 10) ?? null;
   });
-  const [loading, setLoading] = createSignal(false);
   const [search, setSearch] = createSignal("");
   const [hideSolved, setHideSolved] = createSignal(false);
   const [hideArchived, setHideArchived] = createSignal(false);
-  const selectedChallenge = createMemo(() => challengeStore.challenges.find((c) => c.id === selectedChallengeId()));
+
+  const challenges = useChallenges({
+    game_id: () => props.gameId,
+  });
+  const solves = useSelfSolves({
+    game_id: () => props.gameId,
+  });
+
+  const selectedChallenge = createMemo(() => challenges.data?.[0].find((c) => c.id === selectedChallengeId()));
   const challengesEx = createMemo(() => {
     const result = [];
-    for (const challenge of challengeStore.challenges.filter(
+    for (const challenge of challenges.data?.[0].filter(
       (c) =>
         c.name.toLowerCase().includes(search().toLowerCase()) ||
         !!c.tag.find((t) => t.name.toLowerCase().includes(search().toLowerCase()))
-    )) {
-      const submission = challengeStore.solves.find((s) => s.challenge_id === challenge.id);
+    ) ?? []) {
+      const submission = solves.data?.find((s) => s.challenge_id === challenge.id);
       result.push({
         challenge,
-        solved: (props.inGame && submission?.team_id) || !!submission,
+        solved: (!props.training && submission?.team_id) || !!submission,
       });
     }
     const tree = [] as TreeNode[];
     const tags = new Set(
-      challengeStore.challenges.flatMap((c) => c.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown")!)
+      challenges.data?.[0].flatMap((c) => c.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown"))
     );
     const tagsArray = Array.from(tags).sort((a, b) => a.localeCompare(b));
     for (const tag of tagsArray) {
@@ -59,9 +72,9 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
           name: c.challenge.name,
           type: "item",
           searchValue: c.challenge.id.toString(),
-          link: props.inGame
-            ? `/games/${gameStore.current?.id}/challenges?challenge=${c.challenge.id}`
-            : `/training/${gameStore.current?.id}?challenge=${c.challenge.id}`,
+          link: props.training
+            ? `/training/${props.gameId}?challenge=${c.challenge.id}`
+            : `/games/${props.gameId}/challenges?challenge=${c.challenge.id}`,
           extraClasses: c.solved ? "opacity-60" : "",
           icon: c.challenge.hidden
             ? "icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning"
@@ -84,18 +97,6 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
     }
     return tree;
   });
-  createEffect(() => {
-    if (gameStore.current) {
-      untrack(() => {
-        // fetch challenges and set them.
-        setLoading(true);
-        refreshChallenges().finally(() => {
-          refreshSolves();
-          setLoading(false);
-        });
-      });
-    }
-  });
   return (
     <div class="flex-1 overflow-hidden">
       <OverlayScrollbarsComponent
@@ -117,7 +118,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
               placeholder={t("challenge.search.placeholder")}
               onInput={(e) => setSearch(e.currentTarget.value)}
             />
-            <Show when={props.inGame}>
+            <Show when={!props.training}>
               <div class="flex flex-row space-x-1">
                 <Button
                   class="my-1 bg-layer"
@@ -162,20 +163,19 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
               </div>
             }
           >
-            <Match when={loading()}>
+            <Match when={challenges.isLoading}>
               <div class="flex flex-row items-center justify-center p-3">
                 <LoadingTips />
               </div>
             </Match>
-
-            <Match when={challengeStore.challenges.length > 0}>
+            <Match when={challenges.data && challenges.data[0].length > 0}>
               <TreeView
                 tree={challengesEx()}
                 activeSearchParams="challenge"
                 highlightPaths={
                   selectedChallengeId()
                     ? [
-                        selectedChallenge()?.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown")!,
+                        selectedChallenge()?.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown"),
                         selectedChallengeId().toString(),
                       ]
                     : undefined

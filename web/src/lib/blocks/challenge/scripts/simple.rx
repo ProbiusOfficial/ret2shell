@@ -12,7 +12,7 @@ const CASE_SENSITIVE = true;
 const PREFIX = "flag";
 /// the flag template (readable recommended), used to generate the correct flag content
 /// if regex enabled, the template is like `^you_.+_impact$`
-const TEMPLATE = "you_said_right_but_you_should_play_genshin_impact";
+const TEMPLATE = "%MOTTO()%";
 
 /// Check flag submitted by user.
 ///
