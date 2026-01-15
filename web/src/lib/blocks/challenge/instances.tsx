@@ -591,7 +591,6 @@ export default function (props: ChallengeWidgetProps) {
   const repos = useRegistryRepositories({ game_id: () => props.gameId });
   const updateMutation = useUpdateChallengeEnvMutation({
     onSuccess: () => {
-      challengeEnv.refetch();
       inflyClient.invalidateQueries({
         queryKey: ["game", props.gameId, "challenge", props.challengeId],
       });

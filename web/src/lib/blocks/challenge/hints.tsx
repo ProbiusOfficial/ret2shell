@@ -27,9 +27,6 @@ type CreateHintForm = {
 };
 
 export default function (props: ChallengeWidgetProps) {
-  // const [hints, setHints] = createSignal([] as Hint[]);
-  // const [extras, setExtras] = createSignal([] as Extra[]);
-  // const [unlocking, setUnlocking] = createSignal(false);
   const game = useGame({ id: () => props.gameId });
   const challenge = useChallenge({ game_id: () => props.gameId, challenge_id: () => props.challengeId });
   const team = useSelfTeam({
@@ -53,7 +50,6 @@ export default function (props: ChallengeWidgetProps) {
         },
       });
       setPtsInputIconIndex(0);
-      hints.refetch();
       inflyClient.invalidateQueries({
         queryKey: ["game", props.gameId, "challenge", props.challengeId],
       });
@@ -61,8 +57,6 @@ export default function (props: ChallengeWidgetProps) {
   });
   const deleteMutation = useDeleteChallengeHintMutation({
     onSuccess: () => {
-      hints.refetch();
-
       inflyClient.invalidateQueries({
         queryKey: ["game", props.gameId, "challenge", props.challengeId],
       });
@@ -221,6 +215,7 @@ export default function (props: ChallengeWidgetProps) {
                 id: 0,
                 created_at: DateTime.now(),
                 challenge_id: props.challengeId,
+                cost: (value.cost || 0) * (ptsInputIconIndex() === 0 ? 1 : -1),
               },
             });
           }}

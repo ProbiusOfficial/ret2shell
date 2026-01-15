@@ -40,6 +40,7 @@ import UserBox from "./user-box";
 function TitleLink() {
   const platformInfo = usePlatformInfo();
   const params = useParams();
+  const location = useLocation();
   const gameId = () => Number.parseInt(params.game || "", 10);
   const game = useGame({ id: () => gameId(), enabled: () => !!gameId() });
   const link = createMemo(() => {
@@ -50,7 +51,7 @@ function TitleLink() {
   });
 
   const name = createMemo(() => {
-    if (game.data) {
+    if (game.data && game.data.host_type === HostType.Game && location.pathname.startsWith("/games/")) {
       return game.data.name;
     }
     return platformInfo.data?.name || t("platform.name");
@@ -76,7 +77,7 @@ function TitleLink() {
       <div class="w-6 h-6">
         <Transition name="fade-group-flip" mode="outin">
           <Switch fallback={<LogoAnimate class="fade-group-flip hidden lg:inline-block" width={24} height={24} />}>
-            <Match when={game.data?.logo}>
+            <Match when={game.data?.logo && location.pathname.startsWith("/games/")}>
               <img class="fade-group-flip" src={mediaPath(game.data?.logo)} width={24} height={24} alt="CTF" />
             </Match>
           </Switch>

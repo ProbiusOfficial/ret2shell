@@ -69,6 +69,10 @@ const checkerCtx = {
     const alphabet = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     return Array.from({ length: n }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
   },
+  MOTTO() {
+    const mottos = ["the_quick_brown_fox_jumps_over_the_lazy_dog"];
+    return mottos[Math.floor(Math.random() * mottos.length)];
+  },
 } as const;
 
 export default function (props: ChallengeWidgetProps) {
