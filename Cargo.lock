@@ -3939,7 +3939,7 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "r2s-auditor"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "aho-corasick",
  "r2s-config",
@@ -3950,7 +3950,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-bucket"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "chrono",
  "deunicode",
@@ -3969,7 +3969,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cache"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "fred",
  "r2s-config",
@@ -3981,7 +3981,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-captcha"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "async-trait",
  "biosvg",
@@ -3997,7 +3997,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-checker"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "chrono",
  "r2s-bucket",
@@ -4014,7 +4014,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cluster"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "axum",
  "chrono",
@@ -4039,7 +4039,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-config"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "sea-orm",
  "serde",
@@ -4050,7 +4050,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-database"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "chrono",
  "num-derive",
@@ -4066,7 +4066,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-email"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "async-nats",
  "chrono",
@@ -4083,7 +4083,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-engine"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "chrono",
  "once_cell",
@@ -4098,7 +4098,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-event"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "async-nats",
  "axum",
@@ -4115,7 +4115,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-license"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "chrono",
  "clap",
@@ -4127,7 +4127,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-media"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "hex",
  "image",
@@ -4144,7 +4144,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-migrator"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "r2s-config",
  "sea-orm",
@@ -4156,7 +4156,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-oauth"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "async-trait",
  "chrono",
@@ -4175,7 +4175,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-queue"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "async-nats",
  "chrono",
@@ -4188,7 +4188,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-server"
-version = "3.10.1"
+version = "3.10.2"
 dependencies = [
  "anyhow",
  "argon2",
