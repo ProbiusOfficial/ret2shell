@@ -47,7 +47,6 @@
 			"settings": {
 				"editor.tabSize": 2,
 				"lldb.executable": "/usr/bin/lldb",
-				// VS Code don't watch files under ./target
 				"files.watcherExclude": {
 					"**/target/**": true,
 					"**/node_modules/**": true
