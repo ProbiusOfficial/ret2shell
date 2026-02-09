@@ -23,4 +23,4 @@ cd deploy/compose
 update_env "DOCKER_SVC_NAME" "$(grep -oP '^name:\s*\K\S+' docker-compose.dev.yml)"
 
 source .env
-docker compose -f docker-compose.dev.yaml up -d --no-deps
+docker compose -f docker-compose.dev.yml up -d --no-deps
