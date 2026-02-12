@@ -385,8 +385,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@cyberalien/svg-utils@1.1.1':
-    resolution: {integrity: sha512-i05Cnpzeezf3eJAXLx7aFirTYYoq5D1XUItp1XsjqkerNJh//6BG9sOYHbiO7v0KYMvJAx3kosrZaRcNlQPdsA==}
+  '@cyberalien/svg-utils@1.1.3':
+    resolution: {integrity: sha512-AoEJO7XEa24esSnkDpIF/Ow1YmUxcylVOq9Ye+oYUE4WjmwDgmWEhc2DB1QKNYl8qBSbuY/sIp/qQIGUl3ZvEw==}
 
   '@e965/xlsx@0.20.3':
     resolution: {integrity: sha512-703RN/3OdsRD5mtse2HBX7Um7xwaP9tlswEG6svOtjqokXoX7rJdQj7DyabD2I+xk22RgaIIU+R6BHgkpZGB/w==}
@@ -2528,7 +2528,7 @@ snapshots:
   '@biomejs/cli-win32-x64@2.3.14':
     optional: true
 
-  '@cyberalien/svg-utils@1.1.1':
+  '@cyberalien/svg-utils@1.1.3':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -2644,7 +2644,7 @@ snapshots:
 
   '@iconify/tools@5.0.3':
     dependencies:
-      '@cyberalien/svg-utils': 1.1.1
+      '@cyberalien/svg-utils': 1.1.3
       '@iconify/types': 2.0.0
       '@iconify/utils': 3.1.0
       fflate: 0.8.2
