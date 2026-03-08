@@ -20,6 +20,8 @@ mod admin;
 mod challenge;
 mod chat;
 mod core;
+pub(crate) mod hook;
+pub(crate) mod lifecycle;
 mod notification;
 mod participant;
 mod registry;
@@ -46,6 +48,10 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route(
           "/traffic",
           patch(runtime::update_game_traffic).delete(runtime::delete_game_traffic),
+        )
+        .route(
+          "/lifecycle",
+          patch(runtime::update_game_lifecycle).delete(runtime::delete_game_lifecycle),
         )
         .route(
           "/node-selector",
