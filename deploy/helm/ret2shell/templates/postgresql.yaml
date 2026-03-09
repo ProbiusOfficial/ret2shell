@@ -1,0 +1,146 @@
+{{- if eq .Values.postgresql.mode "internal" }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "ret2shell.postgresqlName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ret2shell.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+type: Opaque
+stringData:
+  username: {{ .Values.postgresql.auth.username | quote }}
+  password: {{ .Values.postgresql.auth.password | quote }}
+  database: {{ .Values.postgresql.auth.database | quote }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ret2shell.postgresqlName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ret2shell.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+spec:
+  clusterIP: None
+  ports:
+    - name: postgres
+      port: {{ .Values.postgresql.service.port }}
+      targetPort: postgres
+  selector:
+    {{- include "ret2shell.componentLabels" (dict "component" "postgresql" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ret2shell.postgresqlName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ret2shell.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: postgresql
+spec:
+  serviceName: {{ include "ret2shell.postgresqlName" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ret2shell.componentLabels" (dict "component" "postgresql" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ret2shell.componentLabels" (dict "component" "postgresql" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 8 }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: postgresql
+          image: {{ include "ret2shell.image" .Values.postgresql.image }}
+          imagePullPolicy: {{ .Values.postgresql.image.pullPolicy }}
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ret2shell.postgresqlName" . }}
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ret2shell.postgresqlName" . }}
+                  key: password
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ret2shell.postgresqlName" . }}
+                  key: database
+          ports:
+            - name: postgres
+              containerPort: {{ .Values.postgresql.service.port }}
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -ec
+                - pg_isready -h 127.0.0.1 -p {{ .Values.postgresql.service.port }} -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -ec
+                - pg_isready -h 127.0.0.1 -p {{ .Values.postgresql.service.port }} -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+          {{- with .Values.postgresql.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- if .Values.postgresql.persistence.existingClaim }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.postgresql.persistence.existingClaim }}
+      {{- else if not .Values.postgresql.persistence.enabled }}
+      volumes:
+        - name: data
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.postgresql.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgresql.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgresql.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if and .Values.postgresql.persistence.enabled (not .Values.postgresql.persistence.existingClaim) }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          {{- include "ret2shell.commonLabels" . | nindent 10 }}
+          app.kubernetes.io/component: postgresql
+      spec:
+        accessModes:
+          - {{ .Values.postgresql.persistence.accessMode }}
+        resources:
+          requests:
+            storage: {{ .Values.postgresql.persistence.size }}
+        {{- $sc := include "ret2shell.storageClass" (dict "root" . "local" .Values.postgresql.persistence.storageClass) }}
+        {{- if $sc }}
+        storageClassName: {{ $sc }}
+        {{- end }}
+  {{- end }}
+{{- end }}

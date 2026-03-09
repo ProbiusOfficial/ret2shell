@@ -1,0 +1,249 @@
+global:
+  imagePullSecrets: []
+  storageClass: ""
+  labels: {}
+  annotations: {}
+  testImage:
+    repository: curlimages/curl
+    tag: 8.12.1
+    digest: ""
+    pullPolicy: IfNotPresent
+
+platform:
+  image:
+    repository: ghcr.io/ret2shell/ret2shell
+    tag: latest
+    digest: ""
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  podAnnotations: {}
+  podLabels: {}
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  serviceAccount:
+    create: true
+    name: ""
+    annotations: {}
+    automountServiceAccountToken: true
+  rbac:
+    create: true
+    useClusterAdmin: true
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 420Gi
+    storageClass: ""
+  exposure:
+    type: ingress
+  service:
+    port: 8080
+    clusterIPAnnotations: {}
+    nodePort: 30307
+    nodePortAnnotations: {}
+  ingress:
+    className: nginx
+    annotations: {}
+    hosts:
+      - host: ret2shell.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+  config:
+    existingSecret: ""
+    auth:
+      signingKey: K3yInD3v3l0pm3nt
+      bufferTime: 21600
+      expiresTime: 86400
+    captcha:
+      enabled: true
+      difficulty: 4
+      validator: pow
+    email:
+      enabled: false
+      host: smtp.example.com
+      port: 587
+      sender: Ret2Shell
+      senderAddress: ""
+      username: dev@example.com
+      password: ""
+      tls: starttls
+    logging:
+      compress: true
+      filesKept: 3
+      level: info,tower_http=info,sqlx=warn
+    cluster:
+      enabled: true
+      nodeSelector: ""
+      traffic: ""
+      lifecycle: ""
+      enableCapture: true
+    server:
+      apiBasePath: /api
+      corsOrigins: "*"
+      externalDomain: ret2shell.local
+      externalHttps: true
+      name: ""
+      footerInfo: ""
+      footerUrl: ""
+      subjectInfo: ""
+      subjectUrl: ""
+      record: ""
+      hideMaker: false
+      highlightBanner: ""
+      zenGame: 0
+      rateLimit:
+        burstLimit: 32
+        burstRestoreRate: 500
+    extraToml: ""
+  blocked:
+    existingConfigMap: ""
+    content: ""
+
+postgresql:
+  mode: internal
+  image:
+    repository: postgres
+    tag: 18-alpine
+    digest: ""
+    pullPolicy: IfNotPresent
+  auth:
+    database: ret2shell
+    username: ret2shell
+    password: P@ssw02dInD3v3l0pm3nt
+  service:
+    port: 5432
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 140Gi
+    storageClass: ""
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  external:
+    host: postgresql.example.com
+    port: 5432
+    database: ret2shell
+    username: ret2shell
+    password: replace-me
+    sslMode: disable
+
+valkey:
+  mode: internal
+  image:
+    repository: valkey/valkey
+    tag: 8-alpine
+    digest: ""
+    pullPolicy: IfNotPresent
+  auth:
+    enabled: true
+    password: P@ssw0rdInD3v3l0pm3nt
+  service:
+    port: 6379
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: ""
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  external:
+    url: redis://:replace-me@valkey.example.com:6379/0
+
+nats:
+  mode: internal
+  image:
+    repository: nats
+    tag: 2-alpine
+    digest: ""
+    pullPolicy: IfNotPresent
+  auth:
+    enabled: true
+    token: T0k3nInD3v3l0pm3nt
+  service:
+    port: 4222
+  jetstream:
+    storeDir: /data
+    maxMemoryStore: 1Gi
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    storageClass: ""
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  external:
+    host: nats.example.com
+    port: 4222
+    token: replace-me
+    user: ""
+    password: ""
+    tls: false
+
+registry:
+  mode: internal
+  image:
+    repository: registry
+    tag: "3"
+    digest: ""
+    pullPolicy: IfNotPresent
+  service:
+    port: 5000
+    annotations: {}
+  externalAccess:
+    enabled: true
+    serviceType: NodePort
+    annotations: {}
+    nodePort: 30310
+    host: registry.example.com:30310
+    insecure: true
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 300Gi
+    storageClass: ""
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  external:
+    server: registry.example.com
+    external: registry.example.com
+    insecure: false
+    username: ""
+    password: ""
+
+victoriaLogs:
+  mode: internal
+  image:
+    repository: victoriametrics/victoria-logs
+    tag: v1.43.1
+    digest: ""
+    pullPolicy: IfNotPresent
+  service:
+    port: 9428
+  persistence:
+    enabled: true
+    existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 3Gi
+    storageClass: ""
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  external:
+    url: http://victoria-logs.example.com:9428

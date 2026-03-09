@@ -38,7 +38,6 @@ jobs:
       - name: Build on version ${{ env.app_v }}-${{ env.commit_sha }}
         id: build
         run: |
-          base64 -d <<< '${{ vars.PUBKEY_BASE64 }}' > config/pub.bin
           image="$(echo ${{ inputs.image }} | tr -d '[:space:]')"
           if [ -z "$image" ]; then
             image='ret2shell:${{ env.app_v }}'

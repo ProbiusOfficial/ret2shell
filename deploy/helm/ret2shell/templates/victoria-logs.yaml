@@ -1,0 +1,111 @@
+{{- if eq .Values.victoriaLogs.mode "internal" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ret2shell.victoriaLogsName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ret2shell.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: victoria-logs
+spec:
+  clusterIP: None
+  ports:
+    - name: http
+      port: {{ .Values.victoriaLogs.service.port }}
+      targetPort: http
+  selector:
+    {{- include "ret2shell.componentLabels" (dict "component" "victoria-logs" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 4 }}
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ret2shell.victoriaLogsName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ret2shell.commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: victoria-logs
+spec:
+  serviceName: {{ include "ret2shell.victoriaLogsName" . }}
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ret2shell.componentLabels" (dict "component" "victoria-logs" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ret2shell.componentLabels" (dict "component" "victoria-logs" "Chart" .Chart "Release" .Release "Values" .Values) | nindent 8 }}
+    spec:
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range . }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: victoria-logs
+          image: {{ include "ret2shell.image" .Values.victoriaLogs.image }}
+          imagePullPolicy: {{ .Values.victoriaLogs.image.pullPolicy }}
+          args:
+            - --storageDataPath=/vlogs
+          ports:
+            - name: http
+              containerPort: {{ .Values.victoriaLogs.service.port }}
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: data
+              mountPath: /vlogs
+          {{- with .Values.victoriaLogs.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- if .Values.victoriaLogs.persistence.existingClaim }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.victoriaLogs.persistence.existingClaim }}
+      {{- else if not .Values.victoriaLogs.persistence.enabled }}
+      volumes:
+        - name: data
+          emptyDir: {}
+      {{- end }}
+      {{- with .Values.victoriaLogs.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.victoriaLogs.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.victoriaLogs.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if and .Values.victoriaLogs.persistence.enabled (not .Values.victoriaLogs.persistence.existingClaim) }}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          {{- include "ret2shell.commonLabels" . | nindent 10 }}
+          app.kubernetes.io/component: victoria-logs
+      spec:
+        accessModes:
+          - {{ .Values.victoriaLogs.persistence.accessMode }}
+        resources:
+          requests:
+            storage: {{ .Values.victoriaLogs.persistence.size }}
+        {{- $sc := include "ret2shell.storageClass" (dict "root" . "local" .Values.victoriaLogs.persistence.storageClass) }}
+        {{- if $sc }}
+        storageClassName: {{ $sc }}
+        {{- end }}
+  {{- end }}
+{{- end }}

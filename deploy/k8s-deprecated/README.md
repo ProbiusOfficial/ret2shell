@@ -42,26 +42,18 @@ You can setup more nodes following documents here: https://docs.k3s.io/quick-sta
 
 **UPLOAD TO YOUR SERVER**
 
-You need prepare 3 files to launch ret2shell, templates could be found at ![here](../../config/):
+You need prepare 2 files to launch ret2shell, templates could be found at ![here](../../config/):
 
 ```bash
 config.toml # the config file.
 blocked.txt # the sensitive word list, leave it empty if you do not need it
-license     # the license
 ```
 
-## Setup license and compile your image
+## Compile your image
 
 **IN PROJECT ROOT DIRECTORY**
 
-The license currently not restrict anything, you can generate it by yourself:
-
-```bash
-cargo run --bin r2s-license -- init -p ./config/
-cargo run --bin r2s-license -- new --ca ./config/priv.bin --path ./config/ --issuer <Your Org> --website <Domain> --date 2077-01-01 --level enterprise
-```
-
-The ret2shell image needs `priv.bin` to compile, after setup these things, run:
+After setting up these files, run:
 
 ```
 ./release-image.sh
@@ -100,7 +92,6 @@ helm install ret2shell-logs ./6-logs -n ret2shell-platform         # Optional, t
 before deploying `7-platform.yaml`, we should mount configmaps first:
 
 ```
-kubectl -n ret2shell-platform create configmap ret2shell-license --from-file /path/to/license
 kubectl -n ret2shell-platform create configmap ret2shell-blocked --from-file /path/to/blocked.txt
 kubectl -n ret2shell-platform create configmap ret2shell-config --from-file /path/to/config.toml
 ```

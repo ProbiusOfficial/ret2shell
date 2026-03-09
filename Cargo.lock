@@ -4180,18 +4180,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "r2s-license"
-version = "3.10.3"
-dependencies = [
- "chrono",
- "clap",
- "ring",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
-]
-
-[[package]]
 name = "r2s-media"
 version = "3.10.3"
 dependencies = [
@@ -4287,7 +4275,6 @@ dependencies = [
  "r2s-email",
  "r2s-engine",
  "r2s-event",
- "r2s-license",
  "r2s-media",
  "r2s-migrator",
  "r2s-oauth",

@@ -22,7 +22,6 @@ mod traits;
 mod utility;
 mod worker;
 
-const PUB_KEY: &[u8] = include_bytes!("../../../config/pub.bin");
 include!(concat!(env!("OUT_DIR"), "/constants.rs"));
 
 /// Show greet information.
@@ -43,19 +42,11 @@ pub use routes::run_post_receive;
 pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   let guards = logger::initialize(&config.logging).await?;
   info!(">> server initialization started <<");
-  let license = match r2s_license::check_license(PUB_KEY) {
-    Ok(license) => license,
-    Err(err) => {
-      error!("license check failed: {}", err.to_string().red());
-      error!("please contact tech support <support@ret.sh.cn>.");
-      return Err(err.into());
-    }
-  };
-
+  info!("Ret2Shell is distributed under AGPL-3.0.");
   info!(
-    "[{:?}] Licensed to {} ({}), will expire at {}",
-    license.level, license.issuer, license.website, license.date
+    "If you modify and run Ret2Shell for users over a network, you must offer the corresponding source code."
   );
+  info!("See https://www.gnu.org/licenses/agpl-3.0.html for details.");
 
   match crypto::aws_lc_rs::default_provider().install_default() {
     Ok(_) => info!("using `AWS Libcrypto` as default crypto backend."),
@@ -117,7 +108,6 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     event,
     queue,
     oauth,
-    license,
     cluster,
     checker,
     media,

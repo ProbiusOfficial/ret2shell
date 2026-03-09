@@ -388,7 +388,7 @@
         "label": "China MIIT ICP record"
       },
       "hideMaker": {
-        "disabled": "Your license does not allow hiding this item",
+        "disabled": "This option is currently unavailable",
         "label": "Hide developer information tags"
       },
       "zenGame": {

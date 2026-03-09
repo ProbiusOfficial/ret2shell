@@ -33,6 +33,4 @@ jobs:
       - uses: chetan/git-restore-mtime-action@v2
 
       - name: Test ${{ matrix.steps.script }}
-        run: |
-          base64 -d <<< '${{ vars.PUBKEY_BASE64 }}' > config/pub.bin
-          ${{ matrix.steps.shell }} '${{ matrix.steps.script }}'
+        run: ${{ matrix.steps.shell }} '${{ matrix.steps.script }}'

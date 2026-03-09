@@ -52,23 +52,9 @@ corepack enable pnpm
 
 ### 2. Setup Development Environment
 
-#### Generate license
+#### License notice
 
-Ret2Shell server binary has public key `pub.bin` (in [config/](config/)) integrated. It will check the `license` file (in [config/](config/)) which is signed by the paired private key, at the startup.
-
-To generate a new CA with `priv.bin` and `pub.bin`, please run:
-
-```bash
-cargo run --bin r2s-license -- init -p config
-```
-
-Then you could generate a new license file with the CA:
-
-```bash
-cargo run --bin r2s-license -- new --ca ./config/priv.bin --path ./config/ --issuer Developer --website localhost --level enterprise --date 2077-01-01
-```
-
-Change `--issuer` to your organization name, `--website` to your domain, and `--date` to the expiration date.
+Ret2Shell is distributed under AGPL-3.0. If you modify and run it for users over a network, you must offer the corresponding source code to those users.
 
 #### Setup frontend
 
@@ -155,6 +141,4 @@ You can also build the docker image:
 
 ## License
 
-Copyright (c) Ret2Shell Team. All rights reserved.
-
-Please refer to [LICENSE](LICENSE) for more information.
+Ret2Shell is licensed under AGPL-3.0. Please refer to [LICENSE](LICENSE) for the full license text.

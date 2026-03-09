@@ -388,7 +388,7 @@
         "label": "中国工信部 ICP 备案号"
       },
       "hideMaker": {
-        "disabled": "你的许可证不允许隐藏此项",
+        "disabled": "该选项当前不可用",
         "label": "隐藏开发者信息"
       },
       "zenGame": {

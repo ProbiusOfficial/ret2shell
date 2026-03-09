@@ -14,7 +14,6 @@ use r2s_config::GlobalConfig;
 use r2s_database::DbErr;
 use r2s_engine::Engine;
 use r2s_event::EventManager;
-use r2s_license::License;
 use r2s_media::Media;
 use r2s_migrator::Database;
 use r2s_oauth::OAuth;
@@ -36,7 +35,6 @@ pub struct GlobalState {
   pub queue: Queue,
   pub oauth: OAuth,
   pub cluster: Cluster,
-  pub license: License,
   pub media: Media,
   pub checker: Checker,
   pub event: EventManager,

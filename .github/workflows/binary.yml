@@ -5,7 +5,6 @@ on:
     paths:
       - ".github/workflows/binary.yml"
       - ".github/setup-env.sh"
-      - "config/pub.bin"
       - "crates/**"
       - "Cargo.toml"
       - "Cargo.lock"
@@ -15,7 +14,6 @@ on:
     paths:
       - ".github/workflows/binary.yml"
       - ".github/setup-env.sh"
-      - "config/pub.bin"
       - "crates/**"
       - "Cargo.toml"
       - "Cargo.lock"
@@ -90,15 +88,6 @@ jobs:
             cargo-target-${{ runner.os }}-stable-
             cargo-target-${{ runner.os }}-
 
-      - name: Prepare public key
-        run: |
-          mkdir -p config
-          if [ -n '${{ vars.PUBKEY_BASE64 }}' ]; then
-            base64 -d <<< '${{ vars.PUBKEY_BASE64 }}' > config/pub.bin
-          elif [ ! -f config/pub.bin ]; then
-            : > config/pub.bin
-          fi
-
       - name: Run tests
         run: cargo test --locked --workspace --all-features
 
@@ -162,14 +151,7 @@ jobs:
             cargo-target-${{ runner.os }}-
 
       - name: Build on version ${{ env.app_v }}-${{ env.commit_sha }}
-        run: |
-          mkdir -p config
-          if [ -n '${{ vars.PUBKEY_BASE64 }}' ]; then
-            base64 -d <<< '${{ vars.PUBKEY_BASE64 }}' > config/pub.bin
-          elif [ ! -f config/pub.bin ]; then
-            : > config/pub.bin
-          fi
-          cargo build --locked --bin r2s-server --release --target '${{ matrix.target }}'
+        run: cargo build --locked --bin r2s-server --release --target '${{ matrix.target }}'
 
       - name: Upload artifact
         continue-on-error: true

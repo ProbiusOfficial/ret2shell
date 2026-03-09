@@ -63,10 +63,6 @@ spec:
               mountPath: /etc/ret2shell/blocked.txt
               readOnly: true
               subPath: blocked.txt
-            - name: ret2shell-platform-license
-              mountPath: /etc/ret2shell/license
-              readOnly: true
-              subPath: license
       volumes:
         - name: ret2shell-platform-data
           persistentVolumeClaim:
@@ -77,6 +73,3 @@ spec:
         - name: ret2shell-platform-blocked
           configMap:
             name: ret2shell-blocked
-        - name: ret2shell-platform-license
-          configMap:
-            name: ret2shell-license

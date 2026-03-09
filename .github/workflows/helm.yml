@@ -1,0 +1,73 @@
+name: Helm
+
+on:
+  push:
+    paths:
+      - ".github/workflows/helm.yml"
+      - "deploy/helm/**"
+      - "docs/helm-chart-plan.md"
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - ".github/workflows/helm.yml"
+      - "deploy/helm/**"
+      - "docs/helm-chart-plan.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: helm-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chart:
+    name: Lint and Package
+    runs-on: [self-hosted, linux, x64]
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash -leo pipefail {0}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Lint chart
+        run: helm lint deploy/helm/ret2shell --namespace ret2shell-platform
+
+      - name: Render chart
+        run: |
+          helm template ret2shell deploy/helm/ret2shell --namespace ret2shell-platform > /tmp/ret2shell-default.yaml
+          for values in deploy/helm/ret2shell/examples/*.yaml; do
+            name="$(basename "$values" .yaml)"
+            helm template ret2shell deploy/helm/ret2shell --namespace ret2shell-platform -f "$values" > "/tmp/${name}.yaml"
+          done
+
+      - name: Verify fixed namespace guard
+        run: |
+          if helm template ret2shell deploy/helm/ret2shell --namespace default >/tmp/ret2shell-wrong-ns.out 2>/tmp/ret2shell-wrong-ns.err; then
+            echo "chart unexpectedly rendered outside ret2shell-platform" >&2
+            exit 1
+          fi
+          grep -q "ret2shell chart must be installed into namespace ret2shell-platform" /tmp/ret2shell-wrong-ns.err
+
+      - name: Package chart
+        run: |
+          mkdir -p "${RUNNER_TEMP}/helm-dist"
+          helm package deploy/helm/ret2shell --destination "${RUNNER_TEMP}/helm-dist"
+          sha256sum "${RUNNER_TEMP}/helm-dist/"*.tgz > "${RUNNER_TEMP}/helm-dist/sha256sum.txt"
+
+      - name: Upload artifact
+        if: ${{ github.event_name != 'pull_request' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: helm-chart
+          path: |
+            ${{ runner.temp }}/helm-dist/*.tgz
+            ${{ runner.temp }}/helm-dist/sha256sum.txt
+          retention-days: 1

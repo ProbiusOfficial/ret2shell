@@ -211,10 +211,10 @@ export function useQueryPlatformLog({
 }
 
 export type PlatformLicense = {
-  issuer: string;
-  website: string;
-  date: string;
-  level: string;
+  spdx_id: string;
+  name: string;
+  url: string;
+  notice: string;
 };
 
 export async function getPlatformLicense() {
