@@ -25,32 +25,32 @@ jobs:
         shell: bash -leo pipefail {0}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Read workspace version
         id: cargo-version
-        uses: SebRollen/toml-action@v1.2.0
+        uses: SebRollen/toml-action@v1
         with:
           file: Cargo.toml
           field: workspace.package.version
 
       - name: Read chart version
         id: chart-version
-        uses: mikefarah/yq@v4.52.4
+        uses: mikefarah/yq@v4
         with:
           cmd: yq '.version' '${{ env.CHART_DIR }}/Chart.yaml'
 
       - name: Read chart appVersion
         id: chart-app-version
-        uses: mikefarah/yq@v4.52.4
+        uses: mikefarah/yq@v4
         with:
           cmd: yq '.appVersion' '${{ env.CHART_DIR }}/Chart.yaml'
 
       - name: Read chart image tag
         id: chart-image-tag
-        uses: mikefarah/yq@v4.52.4
+        uses: mikefarah/yq@v4
         with:
           cmd: yq '.platform.image.tag' '${{ env.CHART_DIR }}/values.yaml'
 
@@ -173,13 +173,9 @@ jobs:
             echo "chart_download_url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/download/${RELEASE_VERSION}/${chart_filename}"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Setup Docker Buildx
-        if: ${{ env.ACT != 'true' }}
-        uses: docker/setup-buildx-action@v3
-
       - name: Log in to GHCR
         if: ${{ env.ACT != 'true' }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -188,7 +184,7 @@ jobs:
       - name: Prepare image metadata
         if: ${{ env.ACT != 'true' }}
         id: image-meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ steps.vars.outputs.image_repo }}
           tags: |
@@ -204,15 +200,53 @@ jobs:
       - name: Build and push container image
         if: ${{ env.ACT != 'true' }}
         id: build-image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Containerfile
-          build-args: |
-            R2S_GIT_VERSION=${{ steps.vars.outputs.commit_sha }}
-          labels: ${{ steps.image-meta.outputs.labels }}
-          push: true
-          tags: ${{ steps.image-meta.outputs.tags }}
+        env:
+          IMAGE_LABELS: ${{ steps.image-meta.outputs.labels }}
+          IMAGE_REPO: ${{ steps.vars.outputs.image_repo }}
+          IMAGE_TAGS: ${{ steps.image-meta.outputs.tags }}
+          PRIMARY_TAG: ${{ steps.vars.outputs.image_repo }}:${{ steps.vars.outputs.release_version }}
+        run: |
+          declare -a build_args=(
+            --build-arg "R2S_GIT_VERSION=${{ steps.vars.outputs.commit_sha }}"
+            -f Containerfile
+          )
+
+          while IFS= read -r label; do
+            if [ -n "$label" ]; then
+              build_args+=(--label "$label")
+            fi
+          done <<< "$IMAGE_LABELS"
+
+          while IFS= read -r tag; do
+            if [ -n "$tag" ]; then
+              build_args+=(-t "$tag")
+            fi
+          done <<< "$IMAGE_TAGS"
+
+          docker build "${build_args[@]}" .
+
+          while IFS= read -r tag; do
+            if [ -n "$tag" ]; then
+              docker push "$tag"
+            fi
+          done <<< "$IMAGE_TAGS"
+
+          digest=""
+          while IFS= read -r repo_digest; do
+            case "$repo_digest" in
+              "${IMAGE_REPO}"@sha256:*)
+                digest="${repo_digest#*@}"
+                break
+                ;;
+            esac
+          done < <(docker image inspect "$PRIMARY_TAG" --format '{{join .RepoDigests "\n"}}')
+
+          if [ -z "$digest" ]; then
+            echo "failed to resolve pushed image digest for $PRIMARY_TAG" >&2
+            exit 1
+          fi
+
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
 
       - name: Set act image digest
         if: ${{ env.ACT == 'true' }}
