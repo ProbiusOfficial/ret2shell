@@ -2092,6 +2092,9 @@
     "title": "管理",
     "platformTitle": "プラットフォーム管理"
   },
+  "license": {
+    "title": "GPL-3.0 ライセンス"
+  },
   "traffic": {
     "title": "環境ルーティング",
     "nodeSelector": "ノードセレクター",

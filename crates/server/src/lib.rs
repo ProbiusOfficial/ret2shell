@@ -42,11 +42,11 @@ pub use routes::run_post_receive;
 pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   let guards = logger::initialize(&config.logging).await?;
   info!(">> server initialization started <<");
-  info!("Ret2Shell is distributed under AGPL-3.0.");
+  info!("Ret2Shell is distributed under GPL-3.0.");
   info!(
-    "If you modify and run Ret2Shell for users over a network, you must offer the corresponding source code."
+    "You can redistribute Ret2Shell and/or modify it under the terms of the GNU General Public License version 3."
   );
-  info!("See https://www.gnu.org/licenses/agpl-3.0.html for details.");
+  info!("See https://www.gnu.org/licenses/gpl-3.0.html for details.");
 
   match crypto::aws_lc_rs::default_provider().install_default() {
     Ok(_) => info!("using `AWS Libcrypto` as default crypto backend."),

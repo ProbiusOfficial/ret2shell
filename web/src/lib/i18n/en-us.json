@@ -2092,6 +2092,9 @@
     "title": "Admin",
     "platformTitle": "Platform Management"
   },
+  "license": {
+    "title": "GPL-3.0 License"
+  },
   "traffic": {
     "title": "Traffic",
     "nodeSelector": "Node selector",

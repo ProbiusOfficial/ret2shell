@@ -2092,6 +2092,9 @@
     "title": "管理",
     "platformTitle": "平臺管理"
   },
+  "license": {
+    "title": "GPL-3.0 授權條款"
+  },
   "traffic": {
     "title": "環境路由",
     "nodeSelector": "節點選擇器",

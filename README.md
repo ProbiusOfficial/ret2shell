@@ -54,7 +54,7 @@ corepack enable pnpm
 
 #### License notice
 
-Ret2Shell is distributed under AGPL-3.0. If you modify and run it for users over a network, you must offer the corresponding source code to those users.
+Ret2Shell is distributed under GPL-3.0. You can redistribute it and/or modify it under the terms of the GNU General Public License version 3.
 
 #### Setup frontend
 
@@ -141,4 +141,4 @@ You can also build the docker image:
 
 ## License
 
-Ret2Shell is licensed under AGPL-3.0. Please refer to [LICENSE](LICENSE) for the full license text.
+Ret2Shell is licensed under GPL-3.0. Please refer to [LICENSE](LICENSE) for the full license text.
