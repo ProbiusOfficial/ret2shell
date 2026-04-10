@@ -5,6 +5,7 @@ RUN apk add --update --no-cache musl-dev clang lld
 
 COPY ./.cargo/config.toml /var/lib/ret2shell/.cargo/config.toml
 COPY ./Cargo.toml /var/lib/ret2shell/Cargo.toml
+COPY ./LICENSE /var/lib/ret2shell/LICENSE
 COPY ./crates /var/lib/ret2shell/crates
 WORKDIR /var/lib/ret2shell
 
