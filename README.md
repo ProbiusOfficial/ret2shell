@@ -9,6 +9,12 @@
 
 </div>
 
+## Support
+
+QQ Group: 1104642385
+
+Telegram: https://t.me/ret2shell 
+
 ## Deployment
 
 Ret2Shell is single binary with requirements of `redis/valkey 8+`, `postgres 18+`, `nats 2+` and optional `VictoriaLog` and `registry`.
