@@ -565,17 +565,19 @@ export async function sendGameAdminChatMessage(
   team_id: number,
   content: string
 ) {
-  return await safeJson(api
-    .post(`${api_root}/game/${game_id}/chat/admin/session`, {
-      searchParams: {
-        challenge_id,
-        team_id,
-      },
-      json: {
-        content,
-      },
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .post(`${api_root}/game/${game_id}/chat/admin/session`, {
+        searchParams: {
+          challenge_id,
+          team_id,
+        },
+        json: {
+          content,
+        },
+      })
+      .json<void>()
+  );
 }
 
 export function useSendGameAdminChatMessageMutation(
@@ -625,13 +627,15 @@ export function useGamePlayerChatMessages({
 }
 
 export async function sendGamePlayerChatMessage(game_id: number, challenge_id: number, content: string) {
-  return await safeJson(api
-    .post(`${api_root}/game/${game_id}/chat/${challenge_id}`, {
-      json: {
-        content,
-      },
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .post(`${api_root}/game/${game_id}/chat/${challenge_id}`, {
+        json: {
+          content,
+        },
+      })
+      .json<void>()
+  );
 }
 
 export function useSendGamePlayerChatMessageMutation(
@@ -1082,13 +1086,15 @@ export function useDeleteGameLifecycleMutation(props: { onSuccess?: () => void; 
 }
 
 export async function updateGameNodeSelector(game_id: number, node_selector: string) {
-  return await safeJson(api
-    .patch(`${api_root}/game/${game_id}/node-selector`, {
-      json: {
-        node_selector,
-      },
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .patch(`${api_root}/game/${game_id}/node-selector`, {
+        json: {
+          node_selector,
+        },
+      })
+      .json<void>()
+  );
 }
 
 export function useUpdateGameNodeSelectorMutation(

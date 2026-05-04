@@ -34,7 +34,7 @@ const api = ky.extend({
     init: [
       (options) => {
         if (!(options.headers instanceof Headers)) {
-          options.headers = new Headers(options.headers);
+          options.headers = new Headers(options.headers as unknown as HeadersInit);
         }
         const token = accountStore.token;
         if (token) {

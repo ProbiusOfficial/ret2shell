@@ -29,7 +29,10 @@ use crate::{
     data,
   },
   traits::{GlobalState, ResponseError},
-  utility::password::{hash_password, verify_password},
+  utility::{
+    password::{hash_password, verify_password},
+    string::account_str,
+  },
 };
 
 mod captcha;
@@ -448,6 +451,81 @@ struct RegisterRequest {
   pub captcha_answer: String,
 }
 
+fn validate_register_request(
+  account: &str, nickname: &str, email: &str, password: &str,
+) -> Result<(), ResponseError> {
+  validate_account(account)?;
+  validate_nickname(nickname)?;
+  validate_email(email)?;
+  validate_password(password)?;
+  Ok(())
+}
+
+fn validate_account(account: &str) -> Result<(), ResponseError> {
+  let len = account.chars().count();
+  if len < 4 {
+    return Err(ResponseError::BadRequest(
+      "account must be at least 4 characters".to_owned(),
+    ));
+  }
+  if len > 32 {
+    return Err(ResponseError::BadRequest(
+      "account must be at most 32 characters".to_owned(),
+    ));
+  }
+  if account_str(account) != account {
+    return Err(ResponseError::BadRequest(
+      "account contains invalid characters".to_owned(),
+    ));
+  }
+  Ok(())
+}
+
+fn validate_nickname(nickname: &str) -> Result<(), ResponseError> {
+  let len = nickname.chars().count();
+  if len < 2 {
+    return Err(ResponseError::BadRequest(
+      "nickname must be at least 2 characters".to_owned(),
+    ));
+  }
+  if len > 32 {
+    return Err(ResponseError::BadRequest(
+      "nickname must be at most 32 characters".to_owned(),
+    ));
+  }
+  Ok(())
+}
+
+fn validate_email(email: &str) -> Result<(), ResponseError> {
+  let Some((local, domain)) = email.split_once('@') else {
+    return Err(ResponseError::BadRequest("invalid email".to_owned()));
+  };
+  if local.is_empty()
+    || domain.is_empty()
+    || domain.contains('@')
+    || email.chars().any(char::is_whitespace)
+    || !domain
+      .split('.')
+      .all(|label| !label.is_empty() && !label.starts_with('-') && !label.ends_with('-'))
+    || !domain.contains('.')
+  {
+    return Err(ResponseError::BadRequest("invalid email".to_owned()));
+  }
+  Ok(())
+}
+
+fn validate_password(password: &str) -> Result<(), ResponseError> {
+  let len = password.chars().count();
+  if !(8..=40).contains(&len)
+    || !password.chars().any(|c| c.is_ascii_lowercase())
+    || !password.chars().any(|c| c.is_ascii_uppercase())
+    || !password.chars().any(|c| c.is_ascii_digit())
+  {
+    return Err(ResponseError::BadRequest("password is too weak".to_owned()));
+  }
+  Ok(())
+}
+
 async fn register(
   State(ref db): State<Database>, State(cache): State<Cache>, State(ref queue): State<Queue>,
   Extension(config): Extension<config::Model>, Extension(token_tracker): Extension<TokenTracker>,
@@ -462,6 +540,7 @@ async fn register(
   {
     captcha_protected!(cache, &body.captcha_id, &body.captcha_answer);
   }
+  validate_register_request(&body.account, &body.nickname, &body.email, &body.password)?;
 
   // if user::get_user_by_account(db, &body.email).await.is_ok() {
   //     return Err((StatusCode::CONFLICT, "account already exists"));
@@ -919,4 +998,46 @@ async fn delete_self(
 
   txn.commit().await?;
   Ok(StatusCode::OK)
+}
+
+#[cfg(test)]
+mod tests {
+  use super::{
+    validate_account, validate_email, validate_nickname, validate_password,
+    validate_register_request,
+  };
+
+  #[test]
+  fn register_validation_accepts_frontend_valid_fields() {
+    assert!(
+      validate_register_request(
+        "Valid_User_01",
+        "测试用户",
+        "user@example.com",
+        "StrongPass1"
+      )
+      .is_ok()
+    );
+  }
+
+  #[test]
+  fn register_validation_rejects_invalid_accounts_after_filtering() {
+    assert!(validate_account("abc").is_err());
+    assert!(validate_account("a".repeat(33).as_str()).is_err());
+    assert!(validate_account("bad-user").is_err());
+    assert!(validate_account("bad user").is_err());
+    assert!(validate_account("测试_user").is_err());
+  }
+
+  #[test]
+  fn register_validation_rejects_invalid_nickname_email_and_password() {
+    assert!(validate_nickname("a").is_err());
+    assert!(validate_nickname("a".repeat(33).as_str()).is_err());
+    assert!(validate_email("not-an-email").is_err());
+    assert!(validate_email("user@example").is_err());
+    assert!(validate_password("weakpass1").is_err());
+    assert!(validate_password("WEAKPASS1").is_err());
+    assert!(validate_password("WeakPass").is_err());
+    assert!(validate_password("Aa1".repeat(14).as_str()).is_err());
+  }
 }

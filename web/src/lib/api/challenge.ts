@@ -270,13 +270,15 @@ export function useCreateChallengeHintMutation(props: {
 }
 
 export async function deleteChallengeHint(game_id: number, challenge_id: number, hint_id: number) {
-  return await safeJson(api
-    .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`, {
-      searchParams: {
-        id: hint_id,
-      },
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`, {
+        searchParams: {
+          id: hint_id,
+        },
+      })
+      .json<void>()
+  );
 }
 
 export function useDeleteChallengeHintMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void }) {
@@ -355,14 +357,16 @@ export async function deleteChallengeAttachment(
   folder: "static" | "mapped" | "checker",
   file: string
 ) {
-  return await safeJson(api
-    .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
-      searchParams: {
-        folder,
-        file,
-      },
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
+        searchParams: {
+          folder,
+          file,
+        },
+      })
+      .json<void>()
+  );
 }
 
 export function useDeleteChallengeAttachmentMutation(props: {
@@ -504,11 +508,13 @@ export function useChallengeInstance({
 }
 
 export async function updateChallengeEnv(game_id: number, challenge_id: number, env: ChallengeEnv) {
-  return await safeJson(api
-    .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`, {
-      json: normalizeChallengeEnv(env),
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/env`, {
+        json: normalizeChallengeEnv(env),
+      })
+      .json<void>()
+  );
 }
 
 export function useUpdateChallengeEnvMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
@@ -586,13 +592,15 @@ export function useChallengeCheckerScript({
 }
 
 export async function updateChallengeCheckerScript(game_id: number, challenge_id: number, content: string) {
-  return await safeJson(api
-    .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/checker`, {
-      json: {
-        content,
-      },
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .patch(`${api_root}/game/${game_id}/challenge/${challenge_id}/checker`, {
+        json: {
+          content,
+        },
+      })
+      .json<void>()
+  );
 }
 
 export function useUpdateChallengeCheckerScriptMutation(props: {

@@ -272,11 +272,13 @@ export function useChangeProfileMutation(props: { onSuccess?: () => void; onErro
 
 export async function deleteSelf(captcha: CaptchaRequest) {
   await sleep(1000); // artificial delay to prevent brute-force
-  return await safeJson(api
-    .delete(`${api_root}/account/profile`, {
-      json: captcha,
-    })
-    .json<void>());
+  return await safeJson(
+    api
+      .delete(`${api_root}/account/profile`, {
+        json: captcha,
+      })
+      .json<void>()
+  );
 }
 
 export function useDeleteSelfMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
@@ -546,14 +548,16 @@ export async function registerWithOAuth(
   }
 ) {
   await sleep(500); // artificial delay to prevent brute-force
-  return await safeJson(api
-    .post(`${api_root}/account/oauth/register`, {
-      json: {
-        token,
-        ...req,
-      },
-    })
-    .json());
+  return await safeJson(
+    api
+      .post(`${api_root}/account/oauth/register`, {
+        json: {
+          token,
+          ...req,
+        },
+      })
+      .json()
+  );
 }
 
 export function useRegisterWithOAuthMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
@@ -598,13 +602,15 @@ export function useBindWithOAuthMutation(props: { onSuccess?: () => void; onErro
 }
 
 export async function unbindWithOAuth(id: number) {
-  return await safeJson(api
-    .delete(`${api_root}/account/oauth/bind`, {
-      searchParams: {
-        id,
-      },
-    })
-    .json());
+  return await safeJson(
+    api
+      .delete(`${api_root}/account/oauth/bind`, {
+        searchParams: {
+          id,
+        },
+      })
+      .json()
+  );
 }
 
 export function useUnbindWithOAuthMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {

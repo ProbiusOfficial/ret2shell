@@ -29,7 +29,7 @@ use crate::{
     auth::{Token, TokenTracker, captcha_protected, permission_required_all},
     data,
   },
-  routes::account::{EmailType, send_email},
+  routes::account::{EmailType, send_email, validate_register_request},
   traits::{GlobalState, ResponseError},
   utility::password::hash_password,
 };
@@ -267,6 +267,7 @@ async fn register_with_oauth_account(
   {
     captcha_protected!(cache, &req.captcha_id, &req.captcha_answer);
   }
+  validate_register_request(&req.account, &req.nickname, &req.email, &req.password)?;
   let cached_token = cache
     .at("oauth")
     .get::<OAuthCachedToken>(&req.token)
